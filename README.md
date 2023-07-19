@@ -15,3 +15,5 @@ Assuming you have all requirements installed, you can run the project by running
 
  - `yarn start` to start the metro bundler, in a dedicated terminal window
  - `yarn ios` or `yarn android` to run the application on any of these platform
+
+NOTE: Please install `pod` once for iOS by going into `ios` directory and run `pod install` command.

@@ -1,16 +1,15 @@
-# TODO: update this
-# name: CI - Develop/Next/Main
+name: CI - Develop/Next/Main
 
-# on:
-#   pull_request:
-#     branches: [ develop, next, main ]
-#     paths:
-#       - template/**/*
+on:
+  pull_request:
+    branches: [ develop, next, main ]
+    paths:
+      - template/**/*
 
-# jobs:
-#   run_lint:
-#     uses: ./.github/workflows/w-run-linters.yml
-#   run_test:
-#     if: ${{ success() }}
-#     uses: ./.github/workflows/w-run-tests.yml
-#     needs: [ run_lint ]
+jobs:
+  run_lint:
+    uses: ./.github/workflows/w-run-linters.yml
+  run_test:
+    if: ${{ success() }}
+    uses: ./.github/workflows/w-run-tests.yml
+    needs: [ run_lint ]

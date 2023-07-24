@@ -1,24 +1,35 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/lib/integration/react';
-import { store, persistor } from './store';
 import ApplicationNavigator from './navigators/Application';
 import './translations';
+import ErrorBoundary from 'react-native-error-boundary';
+import {
+  SafeAreaProvider,
+  SafeAreaView,
+  initialWindowMetrics,
+} from 'react-native-safe-area-context';
+import { Text } from 'react-native';
+import { AccountContextProvider } from './contexts';
 
-const App = () => (
-  <Provider store={store}>
-    {/**
-     * PersistGate delays the rendering of the app's UI until the persisted state has been retrieved
-     * and saved to redux.
-     * The `loading` prop can be `null` or any react instance to show during loading (e.g. a splash screen),
-     * for example `loading={<SplashScreen />}`.
-     * @see https://github.com/rt2zz/redux-persist/blob/master/docs/PersistGate.md
-     */}
-    <PersistGate loading={null} persistor={persistor}>
-      <ApplicationNavigator />
-    </PersistGate>
-  </Provider>
-);
+const App = () => {
+  return (
+    <ErrorBoundary
+      onError={(e, stack) => console.error(`App Error: ${e} ${stack}`)}
+      // eslint-disable-next-line react/no-unstable-nested-components
+      FallbackComponent={({}) => (
+        <SafeAreaView>
+          <Text>Oops!</Text>
+          <Text>Something went wrong.</Text>
+        </SafeAreaView>
+      )}
+    >
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <AccountContextProvider>
+          <ApplicationNavigator />
+        </AccountContextProvider>
+      </SafeAreaProvider>
+    </ErrorBoundary>
+  );
+};
 
 export default App;

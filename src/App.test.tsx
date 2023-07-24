@@ -6,15 +6,14 @@ import App from './App';
 import { it } from '@jest/globals';
 
 // Note: test renderer must be required after react-native.
-import { Provider } from 'react-redux';
-import { store } from './store';
 import { render } from '@testing-library/react-native';
+import { AccountContextProvider } from './contexts';
 
 it('App renders correctly', () => {
   const component = (
-    <Provider store={store}>
+    <AccountContextProvider>
       <App />
-    </Provider>
+    </AccountContextProvider>
   );
 
   render(component);

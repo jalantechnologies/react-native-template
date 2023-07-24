@@ -1,14 +1,13 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
 import Brand from './Brand';
-import { Provider } from 'react-redux';
-import { store } from '../../store';
+import { AccountContextProvider } from 'boilerplate-react-native/src/contexts';
 
 test('render correctly', () => {
   const component = (
-    <Provider store={store}>
+    <AccountContextProvider>
       <Brand />
-    </Provider>
+    </AccountContextProvider>
   );
 
   render(component);

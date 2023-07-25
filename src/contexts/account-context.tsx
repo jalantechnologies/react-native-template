@@ -1,6 +1,4 @@
-import React, { useMemo } from 'react';
-import { PropsWithChildren, createContext } from 'react';
-import { Account } from '../models';
+import React, { PropsWithChildren, createContext, useMemo } from 'react';
 import { AccountService } from '../services';
 
 export interface AccountContextInterface {
@@ -9,14 +7,14 @@ export interface AccountContextInterface {
 
 export const AccountContext = createContext<AccountContextInterface>(undefined);
 
-export const AccountContextProvider: React.FC<PropsWithChildren<{}>> = ({
+export const AccountContextProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
   const accountService = useMemo(() => new AccountService(), []);
 
   const getCatFacts = async () => {
-    const data = await accountService.getFacts();
-    return data.data;
+    const { data } = await accountService.getCatFacts();
+    return data;
   };
 
   return (

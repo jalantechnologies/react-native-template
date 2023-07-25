@@ -9,14 +9,16 @@ import { it } from '@jest/globals';
 import { render } from '@testing-library/react-native';
 import { AccountContextProvider } from './contexts';
 
-it('App renders correctly', () => {
-  const component = (
-    <AccountContextProvider>
-      <App />
-    </AccountContextProvider>
-  );
+test('App', () => {
+  it('App renders correctly', () => {
+    const component = (
+      <AccountContextProvider>
+        <App />
+      </AccountContextProvider>
+    );
 
-  render(component);
+    render(component);
 
-  expect(component).toBeDefined();
+    expect(component).toBeDefined();
+  });
 });

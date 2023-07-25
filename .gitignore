@@ -64,3 +64,6 @@ yarn-error.log
 
 # Log files
 *.log
+
+# VS Code
+.vscode/

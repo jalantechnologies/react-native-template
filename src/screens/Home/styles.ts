@@ -23,9 +23,9 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: 'cyan',
-    width: 40,
-    height: 24,
+    width: 'auto',
+    height: 'auto',
+    borderRadius: 5,
   },
   fact: {
     display: 'flex',

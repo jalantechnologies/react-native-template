@@ -1,37 +1,39 @@
 import React, { useContext, useState } from 'react';
-import { Button, Text, TextInput, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 import { styles } from './styles';
 import { AccountContext, AccountContextInterface } from '../../contexts';
+import { Button } from '@rneui/base';
 
-const Home = () => {
+const Home: React.FC = () => {
   const { getCatFacts } = useContext<AccountContextInterface>(AccountContext);
 
   const [name, setName] = useState('');
   const [submitLoader, setSubmitLoader] = useState(false);
-  const [catFacts, setCatFacts] = useState('');
+  const [catFact, setCatFact] = useState('');
 
   const handleBtnSubmit = async () => {
     setSubmitLoader(true);
-    const data = await getCatFacts(name);
+    const data = await getCatFacts();
+    setSubmitLoader(false);
     if (data) {
-      setCatFacts(data.fact);
+      setCatFact(data.fact);
     }
   };
 
   return (
     <View style={styles.home}>
-      {catFacts && name ? (
+      {catFact && name ? (
         <View style={styles.fact}>
           <Text style={styles.name}>Hi, {name}</Text>
           <Text style={styles.catFact}>Here is a cat fact:</Text>
-          <Text style={styles.catFact}>{catFacts}</Text>
+          <Text style={styles.catFact}>{catFact}</Text>
         </View>
       ) : (
         <View>
           <Text style={styles.welcomeText}>Welcome to JTC</Text>
           <View style={styles.spacer} />
           <TextInput
-            onChangeText={text => setName(text)}
+            onChangeText={setName}
             style={styles.input}
             placeholder="Enter name"
             placeholderTextColor="#C3C3C3"
@@ -44,6 +46,8 @@ const Home = () => {
             onPress={handleBtnSubmit}
             disabled={submitLoader}
             title="Submit"
+            loading={submitLoader}
+            buttonStyle={styles.button}
           />
         </View>
       )}

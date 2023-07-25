@@ -4,11 +4,12 @@ export class AccountService extends APIService {
   constructor() {
     super();
   }
+  static readonly FACTS = '/fact';
 
-  async getFacts(): Promise<ServiceResponse<any>> {
+  async getCatFacts(): Promise<ServiceResponse<any>> {
     try {
-      const { data: res } = await this.get('');
-      return new ServiceResponse<any>(res);
+      const { data } = await this.get(AccountService.FACTS);
+      return new ServiceResponse<any>(data);
     } catch (e) {
       return new ServiceResponse<any>(undefined, e.message);
     }

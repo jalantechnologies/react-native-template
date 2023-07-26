@@ -1,23 +1,40 @@
 import React, { useContext, useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
-import { styles } from './styles';
+import { View } from 'react-native';
 import { AccountContext, AccountContextInterface } from '../../contexts';
-import { Button } from '@rneui/base';
+import { Input, Text } from '@rneui/themed';
+import { CustomButton } from 'boilerplate-react-native/src/components';
+import { useStyles } from './styles';
 
 const Home: React.FC = () => {
   const { getCatFacts } = useContext<AccountContextInterface>(AccountContext);
+  const styles = useStyles();
 
   const [name, setName] = useState('');
   const [submitLoader, setSubmitLoader] = useState(false);
   const [catFact, setCatFact] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleBtnSubmit = async () => {
+    if (!name) {
+      setErrorMessage('Please enter name');
+      return;
+    }
     setSubmitLoader(true);
     const data = await getCatFacts();
     setSubmitLoader(false);
     if (data) {
       setCatFact(data.fact);
     }
+  };
+
+  const handleNameChange = async (text: string) => {
+    setErrorMessage('');
+    setName(text);
+  };
+
+  const resetData = () => {
+    setCatFact('');
+    setName('');
   };
 
   return (
@@ -27,27 +44,23 @@ const Home: React.FC = () => {
           <Text style={styles.name}>Hi, {name}</Text>
           <Text style={styles.catFact}>Here is a cat fact:</Text>
           <Text style={styles.catFact}>{catFact}</Text>
+          <CustomButton onPress={resetData} title="Reset" />
         </View>
       ) : (
         <View>
           <Text style={styles.welcomeText}>Welcome to JTC</Text>
           <View style={styles.spacer} />
-          <TextInput
-            onChangeText={setName}
-            style={styles.input}
-            placeholder="Enter name"
-            placeholderTextColor="#C3C3C3"
-            keyboardType="default"
+          <Input
+            placeholder="Enter Name"
             value={name}
-            textContentType="username"
-            autoFocus
+            onChangeText={handleNameChange}
+            errorMessage={errorMessage}
           />
-          <Button
+          <CustomButton
             onPress={handleBtnSubmit}
             disabled={submitLoader}
-            title="Submit"
             loading={submitLoader}
-            buttonStyle={styles.button}
+            title="Submit"
           />
         </View>
       )}

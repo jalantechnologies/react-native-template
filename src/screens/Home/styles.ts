@@ -1,6 +1,7 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { makeStyles } from '@rneui/themed';
+import { Dimensions } from 'react-native';
 
-export const styles = StyleSheet.create({
+export const useStyles = makeStyles({
   home: {
     display: 'flex',
     alignItems: 'center',
@@ -41,5 +42,5 @@ export const styles = StyleSheet.create({
   catFact: {
     fontSize: 18,
     marginBottom: 10,
-  }
+  },
 });

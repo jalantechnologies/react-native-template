@@ -9,6 +9,8 @@ import {
 } from 'react-native-safe-area-context';
 import { AccountContextProvider } from './contexts';
 import { ErrorFallback } from './components';
+import { ThemeProvider } from '@rneui/themed';
+import appTheme from './app-theme';
 
 const App = () => {
   return (
@@ -18,7 +20,9 @@ const App = () => {
     >
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <AccountContextProvider>
-          <ApplicationNavigator />
+          <ThemeProvider theme={appTheme}>
+            <ApplicationNavigator />
+          </ThemeProvider>
         </AccountContextProvider>
       </SafeAreaProvider>
     </ErrorBoundary>

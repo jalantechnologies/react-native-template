@@ -1,12 +1,25 @@
 import { makeStyles } from '@rneui/themed';
 import { Dimensions } from 'react-native';
 
-export const useStyles = makeStyles({
+export const useStyles = makeStyles(theme => ({
   home: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     height: Dimensions.get('window').height,
+    backgroundColor: theme.colors.background,
+  },
+  switchModeBtn: {
+    backgroundColor: theme.colors.tertiary,
+    borderRadius: 5,
+  },
+  switchModeBtnContainer: {
+    marginBottom: 20,
+  },
+  welcomeContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   welcomeText: {
     fontSize: 24,
@@ -43,4 +56,4 @@ export const useStyles = makeStyles({
     fontSize: 18,
     marginBottom: 10,
   },
-});
+}));

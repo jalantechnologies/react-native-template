@@ -1,1 +1,1 @@
-export { AccountService } from './account/account-service';
+export { CatService } from './cats/cat-service';

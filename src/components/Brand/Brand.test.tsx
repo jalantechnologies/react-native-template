@@ -1,13 +1,13 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
 import Brand from './brand';
-import { AccountContextProvider } from 'boilerplate-react-native/src/contexts';
+import { CatContextProvider } from 'boilerplate-react-native/src/contexts';
 
 test('render correctly', () => {
   const component = (
-    <AccountContextProvider>
+    <CatContextProvider>
       <Brand />
-    </AccountContextProvider>
+    </CatContextProvider>
   );
 
   render(component);

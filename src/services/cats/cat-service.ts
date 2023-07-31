@@ -1,6 +1,6 @@
 import { APIService, ServiceResponse } from '../api';
 
-export class AccountService extends APIService {
+export class CatService extends APIService {
   constructor() {
     super();
   }
@@ -8,7 +8,7 @@ export class AccountService extends APIService {
 
   async getCatFacts(): Promise<ServiceResponse<any>> {
     try {
-      const { data } = await this.get(AccountService.FACTS);
+      const { data } = await this.get(CatService.FACTS);
       return new ServiceResponse<any>(data);
     } catch (e) {
       return new ServiceResponse<any>(undefined, e.message);

@@ -1,13 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { View } from 'react-native';
-import { AccountContext, AccountContextInterface } from '../../contexts';
+import { CatContext, CatContextInterface } from '../../contexts';
 import { Button, Input, Text, useTheme, useThemeMode } from '@rneui/themed';
 import { CustomButton } from 'boilerplate-react-native/src/components';
 import { useStyles } from './styles';
 import { useTranslation } from 'react-i18next';
 
 const Home: React.FC = () => {
-  const { getCatFacts } = useContext<AccountContextInterface>(AccountContext);
+  const { getCatFacts } = useContext<CatContextInterface>(CatContext);
   const { t } = useTranslation();
   const styles = useStyles();
   const themeMode = useThemeMode();

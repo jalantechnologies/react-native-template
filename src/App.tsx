@@ -7,7 +7,7 @@ import {
   SafeAreaProvider,
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
-import { AccountContextProvider } from './contexts';
+import { CatContextProvider } from './contexts';
 import { ErrorFallback } from './components';
 import { ThemeProvider } from '@rneui/themed';
 import appTheme from './app-theme';
@@ -20,11 +20,11 @@ const App = () => {
       FallbackComponent={ErrorComponent}
     >
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <AccountContextProvider>
+        <CatContextProvider>
           <ThemeProvider theme={appTheme}>
             <ApplicationNavigator />
           </ThemeProvider>
-        </AccountContextProvider>
+        </CatContextProvider>
       </SafeAreaProvider>
     </ErrorBoundary>
   );

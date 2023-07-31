@@ -7,14 +7,14 @@ import { it } from '@jest/globals';
 
 // Note: test renderer must be required after react-native.
 import { render } from '@testing-library/react-native';
-import { AccountContextProvider } from './contexts';
+import { CatContextProvider } from './contexts';
 
 test('App', () => {
   it('App renders correctly', () => {
     const component = (
-      <AccountContextProvider>
+      <CatContextProvider>
         <App />
-      </AccountContextProvider>
+      </CatContextProvider>
     );
 
     render(component);

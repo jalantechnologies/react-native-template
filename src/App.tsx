@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import ApplicationNavigator from './navigators/Application';
+import ApplicationNavigator from './navigators/application';
 import './translations';
 import ErrorBoundary from 'react-native-error-boundary';
 import {

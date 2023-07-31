@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
-import Brand from './Brand';
+import Brand from './brand';
 import { AccountContextProvider } from 'boilerplate-react-native/src/contexts';
 
 test('render correctly', () => {

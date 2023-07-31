@@ -1,3 +1,3 @@
-export { default as Brand } from './Brand/Brand';
-export { default as CustomButton } from './CustomButton/CustomButton';
-export { default as ErrorFallback } from './ErrorFallback/ErrorFallback';
+export { default as Brand } from './brand/brand';
+export { default as CustomButton } from './custom-button/custom-button';
+export { default as ErrorFallback } from './error-fallback/error-fallback';

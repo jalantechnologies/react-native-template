@@ -6,13 +6,13 @@ module.exports = {
     '<rootDir>/jest.setup.js',
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!(jest-)?react-native|@react-native|@react-native-community|@react-navigation)',
+    'node_modules/(?!(jest-)?react-native|@react-native|@react-native-community|@react-navigation|@rneui)',
   ],
   collectCoverageFrom: [
-    '<rootDir>/src/Components/**/*.jsx',
-    '<rootDir>/src/App.jsx',
-    '<rootDir>/src/Components/**/*.tsx',
-    '<rootDir>/src/App.tsx',
+    '<rootDir>/src/components/**/*.jsx',
+    '<rootDir>/src/app.jsx',
+    '<rootDir>/src/components/**/*.tsx',
+    '<rootDir>/src/app.tsx',
   ],
   coverageReporters: ['html', 'text', 'text-summary', 'cobertura'],
   testMatch: ['**/*.test.ts?(x)', '**/*.test.js?(x)'],

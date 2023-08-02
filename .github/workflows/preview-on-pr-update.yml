@@ -41,21 +41,29 @@ jobs:
 
   
   lint:
-    name: Lint Application
+    name: Lint application
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Lint
-        run: yarn lint
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - run: yarn install
+      - run: yarn lint
   
   test:
-    name: Run Tests
+    name: Run tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Test
-        run: yarn test
+      - name: Set Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - run: yarn install
+      - run: yarn test

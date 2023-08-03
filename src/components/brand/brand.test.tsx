@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
-import Brand from './my-brand';
+import Brand from './brand';
 import { CatContextProvider } from 'boilerplate-react-native/src/contexts';
 
 test('App renders correctly', () => {

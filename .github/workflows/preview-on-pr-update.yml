@@ -6,7 +6,7 @@ on:
 
 jobs:
   sonarqube:
-    name: Sonarqube analyze Application
+    name: analyze
     # only run when updating an 'Open' PR
     if: github.event.pull_request.state == 'open'
     runs-on: ubuntu-latest
@@ -41,7 +41,7 @@ jobs:
 
   
   lint:
-    name: Lint application
+    name: yarn:lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -55,7 +55,7 @@ jobs:
       - run: yarn lint
   
   test:
-    name: Run tests
+    name: yarn:test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

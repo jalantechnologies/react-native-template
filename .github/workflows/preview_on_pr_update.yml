@@ -51,7 +51,7 @@ jobs:
 
       - name: Build application
         id: build
-        uses: ./app/actions/build
+        uses: ./.github/actions/build
         with:
           tags: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native:${{ steps.extract_branch.outputs.branch_hash }}
           build_args: NODE_CONFIG_ENV=preview

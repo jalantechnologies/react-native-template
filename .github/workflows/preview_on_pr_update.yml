@@ -76,7 +76,7 @@ jobs:
           path: app
 
       - name: Run check
-        uses: ./actions/check
+        uses: ./app/.github/actions/check
         with:
           check: ${{ matrix.check }}
           image: ${{ needs.build.outputs.image_ref }}

@@ -3,7 +3,7 @@ version: '3'
 services:
   app:
     platform: 'linux/amd64'
-    image: 'boilerplate-mern'
+    image: 'boilerplate-react-native'
     build:
       context: .
       dockerfile: Dockerfile

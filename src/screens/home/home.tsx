@@ -77,6 +77,7 @@ const Home: React.FC = () => {
             value={name}
             onChangeText={handleNameChange}
             errorMessage={errorMessage}
+            containerStyle={styles.welcomeContainer}
           />
           <CustomButton
             onPress={handleBtnSubmit}

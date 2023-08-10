@@ -74,12 +74,12 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.boilerplate"
+    namespace "com.jalantechnologies.reactnativeboilerplate"
     defaultConfig {
-        applicationId "com.boilerplate"
+        applicationId "com.jalantechnologies.reactnativeboilerplate"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode 1513622
         versionName "1.0"
     }
     signingConfigs {

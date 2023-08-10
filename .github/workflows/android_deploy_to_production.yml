@@ -47,7 +47,7 @@ jobs:
     steps: 
       - uses: actions/checkout@v2 
       - name: Decrypt Android keys 
-        run: sh ./app/.github/scripts/decrypt_android_keys.sh 
+        run: sh ./.github/scripts/decrypt_android_keys.sh 
         env: 
           RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
           RELEASE_KEYSTORE_PASSPHRASE: ${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}
@@ -57,10 +57,6 @@ jobs:
       - uses: actions/setup-ruby@v1 
         with: 
          ruby-version: '3.x' 
-   
-      - name: Install packages 
-        run: | 
-            yarn
    
       - name: Install Fastlane
         run: gem install fastlane

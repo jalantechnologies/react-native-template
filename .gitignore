@@ -27,7 +27,7 @@ template/ios/.xcode.env.local
 /android/build/
 /android/app/build/
 /android/app/release/
-../.idea
+/android/.idea
 .gradle
 local.properties
 *.iml

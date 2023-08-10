@@ -24,7 +24,7 @@ jobs:
         id: extract_branch
         shell: bash
         run: |
-          BRANCH_NAME=$(echo ${{ github.event.ref }} | sed -e 's/^refs\/heads\///g')
+          BRANCH_NAME=$(echo ${{ github.event.pull_request.head.ref }} | sed -e 's/^refs\/heads\///g')
           BRANCH_HASH=$(sha1sum < <(printf '%s' $BRANCH_NAME) | cut -c -15)
 
           echo "##[set-output name=branch_hash;]$(echo $BRANCH_HASH)"

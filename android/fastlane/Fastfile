@@ -77,7 +77,7 @@ platform :android do
       task: 'bundle',
       build_type: 'Release',
       properties: {
-        "android.injected.signing.store.file" => Dir.pwd + "/config/release.keystore",
+        "android.injected.signing.store.file" => Dir.pwd + "/config/upload-keystore.jks",
         "android.injected.signing.store.password" => options[:RELEASE_KEYSTORE_PASSWORD], # keystore password
         "android.injected.signing.key.alias" => options[:RELEASE_KEYSTORE_ALIAS], # alias
         "android.injected.signing.key.password" => options[:RELEASE_KEYSTORE_KEY_PASSWORD], # key password

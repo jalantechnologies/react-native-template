@@ -5,6 +5,7 @@ import { Button, Input, Text, useTheme, useThemeMode } from '@rneui/themed';
 import { CustomButton } from 'boilerplate-react-native/src/components';
 import { useStyles } from './styles';
 import { useTranslation } from 'react-i18next';
+
 const Home: React.FC = () => {
   const { getCatFacts } = useContext<CatContextInterface>(CatContext);
   const { t } = useTranslation();
@@ -15,6 +16,7 @@ const Home: React.FC = () => {
   const [catFact, setCatFact] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const theme = useTheme();
+
   const handleBtnSubmit = async () => {
     if (!name) {
       setErrorMessage('Please enter name');
@@ -27,14 +29,17 @@ const Home: React.FC = () => {
       setCatFact(data.fact);
     }
   };
+
   const handleNameChange = async (text: string) => {
     setErrorMessage('');
     setName(text);
   };
+
   const resetData = () => {
     setCatFact('');
     setName('');
   };
+
   const toggleTheme = () => {
     if (theme.theme.mode === 'dark') {
       themeMode.setMode('light');
@@ -42,6 +47,7 @@ const Home: React.FC = () => {
       themeMode.setMode('dark');
     }
   };
+
   return (
     <View style={styles.home}>
       <Button
@@ -83,4 +89,5 @@ const Home: React.FC = () => {
     </View>
   );
 };
+
 export default Home;

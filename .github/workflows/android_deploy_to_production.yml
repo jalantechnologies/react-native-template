@@ -45,7 +45,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v2 
+      - uses: build 
       - name: Decrypt Android keys 
         run: sh ./.github/scripts/decrypt_android_keys.sh 
         env: 
@@ -53,13 +53,6 @@ jobs:
           RELEASE_KEYSTORE_PASSPHRASE: ${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}
           SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
           SERVICE_ACCOUNT_PASSPHRASE: ${{ secrets.SERVICE_ACCOUNT_PASSPHRASE }}
-   
-      - uses: actions/setup-ruby@v1 
-        with: 
-         ruby-version: '3.x' 
-   
-      - name: Install Fastlane
-        run: gem install fastlane
 
       - name: Upload to PlayStore 
         run: | 

@@ -12,6 +12,7 @@ services:
     environment:
       NODE_ENV: 'development'
       NODE_APP_INSTANCE: 'docker'
+    command: 'yarn start'
     ports:
       - '3000:3000'
     volumes:

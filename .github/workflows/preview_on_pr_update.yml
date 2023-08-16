@@ -89,15 +89,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v3 
-      - name: Decrypt Android keys 
-        run: sh ./.github/scripts/decrypt_android_keys.sh 
-        env: 
-          RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
-          RELEASE_KEYSTORE_PASSPHRASE: ${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}
-          SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
-          SERVICE_ACCOUNT_PASSPHRASE: ${{ secrets.SERVICE_ACCOUNT_PASSPHRASE }}
-      
       - name: Docker setup
         uses: docker/setup-buildx-action@v2
 
@@ -114,5 +105,14 @@ jobs:
           docker pull ${{ needs.build.outputs.image_ref }}
           docker tag ${{ needs.build.outputs.image_ref }} boilerplate-react-native
 
+      - uses: actions/checkout@v3 
+      - name: Decrypt Android keys 
+        run: docker run -t boilerplate-react-native /bin/sh -c sh ./.github/scripts/decrypt_android_keys.sh 
+        env: 
+          RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
+          RELEASE_KEYSTORE_PASSPHRASE: ${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}
+          SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
+          SERVICE_ACCOUNT_PASSPHRASE: ${{ secrets.SERVICE_ACCOUNT_PASSPHRASE }}
+      
       - name: Upload to PlayStore 
         run: docker run -t boilerplate-react-native /bin/sh -c 'cd android && fastlane android release_production RELEASE_KEYSTORE_PASSWORD:${{secrets.RELEASE_KEYSTORE_PASSWORD}} RELEASE_KEYSTORE_KEY_PASSWORD:${{secrets.RELEASE_KEYSTORE_KEY_PASSWORD}} RELEASE_KEYSTORE_ALIAS:${{secrets.RELEASE_KEYSTORE_ALIAS}}'

@@ -4,6 +4,11 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
+# TODO: Debug
+RUN apt-get update && \
+  apt install -y tmux && \
+  apt install -y openssh-server
+
 WORKDIR /app
 
 RUN gem install bundler
@@ -15,7 +20,7 @@ RUN cd /.project
 RUN yarn install \
   --prefer-offline \
   --frozen-lockfile \
-  --non-interactive 
+  --non-interactive
 
 RUN mkdir -p /opt/app && cp -a /.project/. /opt/app/
 

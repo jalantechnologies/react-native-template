@@ -114,6 +114,5 @@ jobs:
           docker pull ${{ needs.build.outputs.image_ref }}
           docker tag ${{ needs.build.outputs.image_ref }} boilerplate-react-native
 
-
       - name: Upload to PlayStore 
         run: docker run -t boilerplate-react-native /bin/sh -c 'cd android && fastlane android release_production RELEASE_KEYSTORE_PASSWORD:${{secrets.RELEASE_KEYSTORE_PASSWORD}} RELEASE_KEYSTORE_KEY_PASSWORD:${{secrets.RELEASE_KEYSTORE_KEY_PASSWORD}} RELEASE_KEYSTORE_ALIAS:${{secrets.RELEASE_KEYSTORE_ALIAS}}'

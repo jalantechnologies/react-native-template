@@ -32,7 +32,6 @@ RUN yarn install \
   --frozen-lockfile \
   --non-interactive 
 
-RUN yarn add @react-native-community/cli-platform-android
 
 RUN mkdir -p /opt/app && cp -a /.project/. /opt/app/
 
@@ -42,6 +41,8 @@ RUN yarn install \
   --prefer-offline \
   --frozen-lockfile \
   --non-interactive
+
+RUN yarn add @react-native-community/cli-platform-android
 
 COPY . /opt/app
 

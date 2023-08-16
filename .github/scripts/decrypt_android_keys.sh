@@ -1,4 +1,4 @@
-mkdir -p fastlane/config
+mkdir -p android/fastlane/config
 echo "$RELEASE_KEYSTORE" > upload-keystore.jks.asc 
 gpg -d --passphrase="$RELEASE_KEYSTORE_PASSPHRASE" --batch upload-keystore.jks.asc > android/fastlane/config/upload-keystore.jks
 

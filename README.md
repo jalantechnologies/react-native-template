@@ -79,6 +79,7 @@ For more details, go to `https://reactnative.dev/docs/environment-setup?platform
     - For MacOS - `brew install rbenv ruby-build`
     - For Linux - `sudo apt install rbenv`
 - Install cocoapods
+    - Go to `ios/` folder and run commands - 
     - `sudo gem install activesupport -v 6.1.7.6`
     - `sudo gem install cocoapods`
 - Install an iOS Simulator in Xcode, open Xcode > Settings and select the Platforms tab. Select a simulator with the corresponding version of iOS you wish to use.
@@ -98,11 +99,8 @@ For more details, go to `https://reactnative.dev/docs/environment-setup?platform
 - update `interface` and `implementation` in  `BoilerplateTests/BoilerplateTests.m`
 - update `target` in `Podfile` (main and Tests)
 - delete `Podfile.lock` file
-- install `pod`. run `pod install` command in `ios` folder
-- If you encounder error, try to deintegrate pod and create new again. 
-    - to deintegrate pod -  `sudo gem install cocoapods-deintegrate cocoapods-clean`
-    - `pod deintegrate`
-    - to install again - `pod update`
+- install `pod`. 
+    - run `pod install` command (in `ios/` folder)
 
 # Running the project
 
@@ -112,6 +110,31 @@ Assuming you have all requirements installed, you can run the project by running
 - `yarn ios` or `yarn android` to run the application on any of these platform
 
 ## Troubleshooting guides
+
+- In MacBook, you'll get a warning prompt similar to this - `XXXXX Can't be opened because it is unidentified developer`, when you try to launch android emulator. 
+To fix this, follow these steps -
+```
+Click on Cancel on the message,
+
+Now go to Apple Menu: System Preferences... / System Settings...
+
+Click on Privacy & Security
+
+Here you should see "Allow apps downloaded from: "Android Emulator" was blocked from use. because it is not from an identified developer.
+
+Click on open Anyways
+
+You will again see a warning: Just click on Open button
+```
+
+- In MacBook, if you get errors while building iOS app, follow these -
+```
+Go to ios/ folder, try to deintegrate pod and create new again. 
+
+    - sudo gem install cocoapods-deintegrate cocoapods-clean
+    - pod deintegrate
+    - pod update
+```
 
 If you're building in a Windows machine and build fails, ensure these things -
 - DO NOT use a folder `C:\` drive or where your windows is installed. Select another drive.

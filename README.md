@@ -2,9 +2,42 @@
 
 This is a boilerplate repository for react native projects.
 
-## Setup
-When cloning the app and using for projects, a few things need to be updated as below:
+NOTE - If you're trying to setup this project in windows machine, below is for you -
+- this project has history of NOT running smoothly on windows machine
+- you may end up wasting lot of time
+- It's highly recommended to switch to dual boot (run linux in windows machine) and setup project in Linux environment instead.
 
+# Setup
+When cloning the app and using for projects, a few things need to be updated as below:
+## Setup Environment
+
+- Install Node v16 -
+    - For MacOS `brew install node16`
+    - For Linux
+        - Download and install Node Version Manager - `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh `
+        - open a new tab and run - `nvm install v16`
+    - For windows 
+        - Go to the official website of [node.js](https://nodejs.org/download/release/v16.20.2/). 
+        - Click on `node-v16.20.2-win-xXX.zip` and let it download 
+
+- Install Watchman - Follow [official documentation](https://facebook.github.io/watchman/docs/install)
+
+- Download (and install) jdk11 
+    - For MacOS 
+        - `brew tap homebrew/cask-versions`
+        - `brew install --cask zulu11`
+        - `brew info --cask zulu11`  - Get path to where cask was installed to double-click installer
+    - For Linux
+        - `sudo add-apt-repository ppa:openjdk-r/ppa`
+        - `sudo apt-get update`
+        - `sudo apt-get install openjdk-11-jdk`
+    - For Windows 
+        - `choco install -y nodejs-lts microsoft-openjdk11`
+    
+Note - After you install the JDK, update your JAVA_HOME environment variable. If you used above steps, JDK will likely be at `/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home`. Once confirmed, add below line in your `.bashrc` or `.bash_profile` or `.zshrc` (as per your kernel)
+- `export PATH="/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home/bin:$PATH"`
+
+## Setup Project
 - update name and displayName in `app.json`
 - update the name of the app in `package.json` file
 - update `sonar.projectKey` in `sonar-project.properties` file
@@ -15,24 +48,6 @@ When cloning the app and using for projects, a few things need to be updated as 
 - update project name in -
     - `.github/workflows/preview_on_pr_update.yml`
     - `.github/workflows/production_on_push.yml`
-
-- Install Node v16 -
-    - For MacOS `brew install node16`
-    - For windows 
-        - Go to the official website of [node.js](https://nodejs.org/download/release/v16.20.2/). 
-        - Click on `node-v16.20.2-win-xXX.zip` and let it download 
-    - For Linux
-        - Download and install Node Version Manager - `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh `
-        - open a new tab and run - `nvm install v16`
-- Install Watchman - Follow [official documentation](https://facebook.github.io/watchman/docs/install)
-
-- Download (and install) jdk11 
-    - `brew tap homebrew/cask-versions`
-    - `brew install --cask zulu11`
-    - `brew info --cask zulu11`  - Get path to where cask was installed to double-click installer
-    
-Note - After you install the JDK, update your JAVA_HOME environment variable. If you used above steps, JDK will likely be at `/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home`. Once confirmed, add below line in your `.bashrc` or `.bash_profile` or `.zshrc` (as per your kernel)
-- `export PATH="/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home/bin:$PATH"`
 
 # Setup Android App
 ## Pre-requisite
@@ -96,9 +111,19 @@ Assuming you have all requirements installed, you can run the project by running
 - `yarn start` to start the metro bundler, in a dedicated terminal window
 - `yarn ios` or `yarn android` to run the application on any of these platform
 
-## Requirements
+## Troubleshooting guides
 
-Node 16 or greater is required. Development for iOS requires a Mac and Xcode 10 or up.
+If you're building in a Windows machine and build fails, ensure these things -
+- DO NOT use a folder `C:\` drive or where your windows is installed. Select another drive.
+- Open VS Code, command promp etc., as admin
+- Check (again) if you're using node v16
+- Try this command - `react-native run-android & react-native start --reset-cache` 
 
-You also need to install the dependencies required by React Native.
+Still doesn't work, check any open/closed issues [here](https://github.com/thecodingmachine/react-native-boilerplate/issues)
+There's a high chance, you'll get a thread similar to the issue you're facing. 
+
+Still doesn't work and didn't get anything? 
+If you've already wasted 4+ hours, STOP here. Install dual boot (run linux in windows machine) and setup in Linux machine instead.
+
+
 Check this for more details - `https://reactnative.dev/docs/environment-setup`

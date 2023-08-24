@@ -2,33 +2,103 @@
 
 This is a boilerplate repository for react native projects.
 
+## Setup
 When cloning the app and using for projects, a few things need to be updated as below:
 
-- update the name of the app in package.json file
-- update name in `android/settings.gradle`
-- update the `namespace` and `applicationId` in `android/app/build.gradle`
+- update name and displayName in `app.json`
+- update the name of the app in `package.json` file
+- update `sonar.projectKey` in `sonar-project.properties` file
+- update package name of `CatContextProvider` in `src/components/brand/brand.test.tsx` file
+- update image in -
+    - `docker-compose.yml`
+    - `docker-compose.test.yml`
+- update project name in -
+    - `.github/workflows/preview_on_pr_update.yml`
+    - `.github/workflows/production_on_push.yml`
+
+- Install Node v16 -
+    - For MacOS `brew install node16`
+    - For windows 
+        - Go to the official website of [node.js](https://nodejs.org/download/release/v16.20.2/). 
+        - Click on `node-v16.20.2-win-xXX.zip` and let it download 
+    - For Linux
+        - Download and install Node Version Manager - `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh `
+        - open a new tab and run - `nvm install v16`
+- Install Watchman - Follow [official documentation](https://facebook.github.io/watchman/docs/install)
+
+- Download (and install) jdk11 
+    - `brew tap homebrew/cask-versions`
+    - `brew install --cask zulu11`
+    - `brew info --cask zulu11`  - Get path to where cask was installed to double-click installer
+    
+Note - After you install the JDK, update your JAVA_HOME environment variable. If you used above steps, JDK will likely be at `/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home`. Once confirmed, add below line in your `.bashrc` or `.bash_profile` or `.zshrc` (as per your kernel)
+- `export PATH="/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home/bin:$PATH"`
+
+# Setup Android App
+## Pre-requisite
+- Download Android Studio (Required, to setup Android emulator). You'll also get Android sdk, when you setup Android studio. 
+- You would also need to setup ANDROID_HOME environment variable along with emulator, in your PATH variables. Confirm your Android sdk location is `/Library/Android/sdk` and add below line in your `.bashrc` or `.bash_profile` or `.zshrc` (as per your kernel) -
+`export ANDROID_HOME=$HOME/Library/Android/sdk`
+`export PATH=$PATH:$ANDROID_HOME/emulator`
+`export PATH=$PATH:$ANDROID_HOME/platform-tools`
+
+For more details, go to `https://reactnative.dev/docs/environment-setup?platform=android&os=macos&guide=native`
+
+## Update Andoid project
+- Go to `android` folder
+- update `rootProject.name` in `settings.gradle`
+- update the `namespace` and `applicationId` in `app/build.gradle`
+- update folder/directory name `app/src/debug/java/com/boilerplate` according to your project name
+- update folder/directory name `app/src/main/java/com/boilerplate` according to your project name
+- update folder/directory name `app/src/release/java/com/boilerplate` according to your project name
+- update package name in `app/src/debug/java/com/boilerplate/ReactNativeFlipper.java` and `app/src/release/java/com/boilerplate/ReactNativeFlipper.java`
+- update package name and method `getMainComponentName()` in `app/src/main/java/com/boilerplate/ReactNativeFlipper.java`
+- update package name in `app/src/main/java/com/boilerplate/MainApplication.java` and `app/src/main/java/com/boilerplate/SplashActivity.java`
+- update `app_name` in `app/src/main/res/values/strings.xml`
 - for android to update the icons you can use `https://easyappicon.com` or similar websites which create a folder with all sizes of the icon, update the folders in `android/app/src/main/res` accordingly.
-- update package name in `android/app/src/debug/java/com/boilerplate/ReactNativeFlipper.java` and change the folder name `/com/boilderplate` also
-- similarly in `android/app/src/main/java/com/boilerplate/MainActivity.java`, `android/app/src/main/java/com/boilerplate/MainApplication.java`, `android/app/src/main/java/com/boilerplate/SplashActivity.java` and `android/app/src/release/java/com/boilerplate/ReactNativeFlipper.java`
-- for ios you can refer to `https://developer.apple.com/documentation/xcode/configuring-your-app-icon`
-- in ios folder, update the Boilerplate name, `ios/Boilerplate/AppDelegate.mm`, `ios/Boilerplate/Info.plist`, `ios/Boilerplate/LaunchScreen.storyboard` and all the folders and files inside `ios/Boilerplate.xcodeproj`, `ios/Boilerplate.xcworkspace`, `ios/BoilerplateTests`, `ios/Podfile`.
 
-## Requirements
+# Setup iOS App
+## Pre-requisite
+- Download and install Xcode. Installing Xcode will also install the iOS Simulator and all the necessary tools to build your iOS app. 
+- install `ruby` 
+    - For MacOS - `brew install rbenv ruby-build`
+    - For Linux - `sudo apt install rbenv`
+- Install cocoapods
+    - `sudo gem install activesupport -v 6.1.7.6`
+    - `sudo gem install cocoapods`
+- Install an iOS Simulator in Xcode, open Xcode > Settings and select the Platforms tab. Select a simulator with the corresponding version of iOS you wish to use.
 
-Node 16 or greater is required. Development for iOS requires a Mac and Xcode 10 or up.
+For more details, go to `https://reactnative.dev/docs/environment-setup?platform=ios&os=macos&guide=native`
 
-You also need to install the dependencies required by React Native:
+## Update iOS project
 
-- for [Android development](https://reactnative.dev/docs/getting-started.html#installing-dependencies-3)
-- for [iOS development](https://reactnative.dev/docs/getting-started.html#installing-dependencies)
+- go to `ios` folder
+- rename folders `Boilerplate....`, according to your project name
+- delete `project.pbxproj` file in `Boilerplate.xcodeproj` folder
+- delete `Boilerplate.xcscheme` file in `Boilerplate.xcodeproj/xcshareddata/xcschemes` folder
+- update `FileRef location` in `Boilerplate.xcworkspace/contents.xcworkspacedata`
+- update `self.moduleName` in `Boilerplate/AppDelegate.mm`
+- update `CFBundleDisplayName` in `Boilerplate/Info.plist` 
+- update `label` in `Boilerplate/LaunchScreen.storyboard`
+- update `interface` and `implementation` in  `BoilerplateTests/BoilerplateTests.m`
+- update `target` in `Podfile` (main and Tests)
+- delete `Podfile.lock` file
+- install `pod`. run `pod install` command in `ios` folder
+- If you encounder error, try to deintegrate pod and create new again. 
+    - to deintegrate pod -  `sudo gem install cocoapods-deintegrate cocoapods-clean`
+    - `pod deintegrate`
+    - to install again - `pod update`
 
-Note: There might be a few problems related to ruby version, you can install `rbenv` to manage ruby versions
-
-## Running the project
+# Running the project
 
 Assuming you have all requirements installed, you can run the project by running:
 
 - `yarn start` to start the metro bundler, in a dedicated terminal window
 - `yarn ios` or `yarn android` to run the application on any of these platform
 
-NOTE: Please install `pod` once for iOS by going into `ios` directory and run `pod install` command.
+## Requirements
+
+Node 16 or greater is required. Development for iOS requires a Mac and Xcode 10 or up.
+
+You also need to install the dependencies required by React Native.
+Check this for more details - `https://reactnative.dev/docs/environment-setup`

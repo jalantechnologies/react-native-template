@@ -25,6 +25,7 @@ template/ios/.xcode.env.local
 
 # Android/IntelliJ
 #
+.idea
 /ios/build/
 ../.idea
 .gradle

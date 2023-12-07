@@ -3,8 +3,8 @@
 This is a boilerplate repository for react native projects.
 
 NOTE - If you're trying to setup this project in windows machine, below is for you -
-- this project has history of NOT running smoothly on windows machine
-- you may end up wasting lot of time
+- this project has history of NOT running smoothly on windows machine. 
+- you may end up wasting lot of time 
 - It's highly recommended to switch to dual boot (run linux in windows machine) and setup project in Linux environment instead.
 
 # Setup

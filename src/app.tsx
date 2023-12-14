@@ -11,21 +11,26 @@ import { CatContextProvider } from './contexts';
 import { ErrorFallback } from './components';
 import { ThemeProvider } from '@rneui/themed';
 import appTheme from './app-theme';
+import { DatadogProvider } from '@datadog/mobile-react-native';
+import DatadogConfig from './services/datadog';
+import { DdLogs } from '@datadog/mobile-react-native';
 
 const App = () => {
   const ErrorComponent = useCallback(() => <ErrorFallback />, []);
   return (
     <ErrorBoundary
-      onError={(e, stack) => console.error(`App Error: ${e} ${stack}`)}
+      onError={(e, stack) => DdLogs.error(`App Error: ${e} ${stack}`)}
       FallbackComponent={ErrorComponent}
     >
-      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <CatContextProvider>
-          <ThemeProvider theme={appTheme}>
-            <ApplicationNavigator />
-          </ThemeProvider>
-        </CatContextProvider>
-      </SafeAreaProvider>
+      <DatadogProvider configuration={DatadogConfig}>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+          <CatContextProvider>
+            <ThemeProvider theme={appTheme}>
+              <ApplicationNavigator />
+            </ThemeProvider>
+          </CatContextProvider>
+        </SafeAreaProvider>
+      </DatadogProvider>
     </ErrorBoundary>
   );
 };

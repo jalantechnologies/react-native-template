@@ -59,6 +59,9 @@ Note - After you install the JDK, update your JAVA_HOME environment variable. If
 
 For more details, go to `https://reactnative.dev/docs/environment-setup?platform=android&os=macos&guide=native`
 
+## Setup logger
+At present, there are two logging options: console logger and Datadog logger, with the console logger set as the default. If you wish to utilize the Datadog logger, you'll need to adjust the environment variable `LOGGER` to `datadog`. Additionally, for seamless integration with Datadog's log manager within GitHub codespaces, ensure you configure the following environment variables: `DD_CLIENT_TOKEN`, `DD_ENVIRONMENT_NAME`, and `DD_RUM_APPLICATION_ID`. You can obtain these credentials from your Datadog account. If you desire to employ both the console and Datadog loggers simultaneously, simply set the `LOGGER` environment variable to `console,datadog`.
+
 ## Update Andoid project
 - Go to `android` folder
 - update `rootProject.name` in `settings.gradle`

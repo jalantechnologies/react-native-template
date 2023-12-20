@@ -13,12 +13,12 @@ import { ThemeProvider } from '@rneui/themed';
 import appTheme from './app-theme';
 import { DatadogProvider } from '@datadog/mobile-react-native';
 import DatadogConfig from './services/datadog';
-import Logger from './services/logger/logger';
+import Logger from './logger/logger';
 
 const App = () => {
   Logger.initializeLoggers();
   const ErrorComponent = useCallback(() => <ErrorFallback />, []);
-  // Logger.info('Starting ...');
+
   return (
     <ErrorBoundary
       onError={(e, stack) => Logger.error(`App Error: ${e} ${stack}`)}

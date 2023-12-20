@@ -1,9 +1,4 @@
-import {
-  DatadogProviderConfiguration,
-  // BatchSize,
-  // SdkVerbosity,
-  // UploadFrequency,
-} from '@datadog/mobile-react-native';
+import { DatadogProviderConfiguration } from '@datadog/mobile-react-native';
 import Config from 'react-native-config';
 
 const DatadogConfig = new DatadogProviderConfiguration(

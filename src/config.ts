@@ -6,4 +6,5 @@ export default class Config {
   static DD_CLIENT_TOKEN: string = RNConfig.DD_CLIENT_TOKEN;
   static DD_ENVIRONMENT_NAME: string = RNConfig.DD_ENVIRONMENT_NAME;
   static DD_RUM_APPLICATION_ID: string = RNConfig.DD_RUM_APPLICATION_ID;
+  static LOGGER: string = RNConfig.LOGGER;
 }

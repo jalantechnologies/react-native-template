@@ -59,6 +59,16 @@ Note - After you install the JDK, update your JAVA_HOME environment variable. If
 
 For more details, go to `https://reactnative.dev/docs/environment-setup?platform=android&os=macos&guide=native`
 
+
+## Setup Datadog
+Setup a RUM React Native Monitoring and Specify application details in the UI.
+- In Datadog, navigate to UX Monitoring > Setup & Configurations > New Application.
+- Choose react-native as the application type.
+- Provide an application name to generate a unique Datadog application ID and client token.
+- To disable automatic user data collection for either client IP or geolocation data, uncheck the boxes for those settings.
+
+For more details, go to `https://docs.datadoghq.com/real_user_monitoring/mobile_and_tv_monitoring/setup/reactnative/`
+
 ## Setup logger
 At present, there are two logging options: console logger and Datadog logger, with the console logger set as the default. If you wish to utilize the Datadog logger, you'll need to adjust the environment variable `LOGGER` to `datadog`. Additionally, for seamless integration with Datadog's log manager within GitHub codespaces, ensure you configure the following environment variables: `DD_CLIENT_TOKEN`, `DD_ENVIRONMENT_NAME`, and `DD_RUM_APPLICATION_ID`. You can obtain these credentials from your Datadog account. If you desire to employ both the console and Datadog loggers simultaneously, simply set the `LOGGER` environment variable to `console,datadog`.
 

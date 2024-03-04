@@ -1,10 +1,13 @@
-FROM node:16-buster
+FROM reactnativecommunity/react-native-android
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
 WORKDIR /app
 
-# install dependencies for node
-RUN apt-get update
-RUN apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+RUN gem install bundler
+RUN gem install fastlane
 
 COPY package.json /.project/package.json
 COPY yarn.lock /.project/yarn.lock
@@ -13,6 +16,7 @@ RUN yarn install \
   --prefer-offline \
   --frozen-lockfile \
   --non-interactive 
+
 RUN mkdir -p /opt/app && cp -a /.project/. /opt/app/
 
 WORKDIR /opt/app

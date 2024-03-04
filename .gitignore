@@ -28,7 +28,7 @@ template/ios/.xcode.env.local
 /android/build/
 /android/app/build/
 /android/app/release/
-../.idea
+/android/.idea
 .gradle
 local.properties
 *.iml
@@ -54,7 +54,7 @@ yarn-error.log
 **/fastlane/Preview.html
 **/fastlane/screenshots
 **/fastlane/test_output
-**/fastlane/config
+**/fastlane/config/*
 
 # Bundle artifact
 *.jsbundle

@@ -20,7 +20,7 @@ jobs:
         if: ${{ github.base_ref == 'main' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
         with:
           args: >
             -Dsonar.pullrequest.key=${{ github.event.number }}
@@ -29,58 +29,61 @@ jobs:
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=1000
 
-  build:
-    runs-on: ubuntu-latest
-    outputs:
-      image_ref: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native@${{ steps.build.outputs.image_digest }}
-    steps:
-      - name: Checkout (app)
-        uses: actions/checkout@v3
-        # make sure to keep checked in code at different directory to avoid colliding with docker caching
-        with:
-          path: app
-
-      - name: Extract branch name
-        id: extract_branch
-        shell: bash
-        run: |
-          BRANCH_NAME=$(echo ${{ github.event.pull_request.head.ref }} | sed -e 's/^refs\/heads\///g')
-          BRANCH_HASH=$(sha1sum < <(printf '%s' $BRANCH_NAME) | cut -c -15)
-
-          echo "##[set-output name=branch_hash;]$(echo $BRANCH_HASH)"
-
-      - name: Build application
-        id: build
-        uses: ./app/.github/actions/build
-        with:
-          tags: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native:${{ steps.extract_branch.outputs.branch_hash }}
-          build_args: NODE_CONFIG_ENV=preview
-          build_secrets: ''
-          context: app/
-          docker_registry: ${{ vars.DOCKER_REGISTRY }}
-          docker_username: ${{ vars.DOCKER_USERNAME }}
-          docker_password: ${{ secrets.DOCKER_PASSWORD }}
-  
   checks:
-    needs: build
     runs-on: ubuntu-latest
     strategy:
       # turn off fail fast, let all the checks run irrespective of failures
       fail-fast: false
       matrix:
-        check: ['yarn:lint', 'compose:test']
+        check: ['yarn:lint', 'yarn:test']
     steps:
       - name: Checkout (app)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
         with:
-          path: app
+          node-version: '16.x'
+
+      - name: Install packages
+        run: yarn install
 
       - name: Run check
-        uses: ./app/.github/actions/check
+        uses: ./.github/actions/check
         with:
           check: ${{ matrix.check }}
-          image: ${{ needs.build.outputs.image_ref }}
-          tag: boilerplate-react-native
-          docker_registry: ${{ vars.DOCKER_REGISTRY }}
-          docker_username: ${{ vars.DOCKER_USERNAME }}
-          docker_password: ${{ secrets.DOCKER_PASSWORD }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1.2'
+
+      - name: Install Fastlane
+        run: cd android && bundle install && cd ..
+
+      - name: Install packages
+        run: yarn install
+
+      - name: Decrypt Android keys
+        env:
+          RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
+          RELEASE_KEYSTORE_PASSPHRASE: ${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}
+          RELEASE_KEYSTORE_KEY_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_KEY_PASSWORD }}
+          RELEASE_KEYSTORE_ALIAS: ${{ secrets.RELEASE_KEYSTORE_ALIAS }}
+          SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
+          SERVICE_ACCOUNT_PASSPHRASE: ${{ secrets.SERVICE_ACCOUNT_PASSPHRASE }}
+        run: |
+          mkdir -p android/fastlane/config
+          echo "$RELEASE_KEYSTORE" > upload-keystore.jks.asc
+          gpg -d --passphrase="$RELEASE_KEYSTORE_PASSPHRASE" --batch upload-keystore.jks.asc > android/fastlane/config/upload-keystore.jks
+          echo "$SERVICE_ACCOUNT" > service-account.json.asc
+          gpg -d --passphrase="$SERVICE_ACCOUNT_PASSPHRASE" --batch service-account.json.asc > android/fastlane/config/service-account.json
+
+      - name: Upload to PlayStore
+        run: cd android && ENVFILE=../.env.staging fastlane android release_internal RELEASE_KEYSTORE_PASSWORD:${{secrets.RELEASE_KEYSTORE_PASSWORD}} RELEASE_KEYSTORE_KEY_PASSWORD:${{secrets.RELEASE_KEYSTORE_KEY_PASSWORD}} RELEASE_KEYSTORE_ALIAS:${{secrets.RELEASE_KEYSTORE_ALIAS}}

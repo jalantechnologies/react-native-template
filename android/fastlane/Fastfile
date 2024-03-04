@@ -45,17 +45,18 @@ platform :android do
   end 
 
   desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do |options|
+  lane :release_internal do |options|
     increment_version_code(
       gradle_file_path: "app/build.gradle",
     )
     gradle(
-      task: "clean assembleRelease"
+      task: "clean bundleRelease"
     )
-    firebase_app_distribution(
-      app: ENV['APP_ID'],
-      groups: ENV["GROUPS"] || options[:groups],
-      release_notes: options[:notes] || "",
+    upload_to_play_store_internal_app_sharing(
+      # package_name: 'com.jalantechnologies.boilerplate',
+      aab: 'app/build/outputs/bundle/release/app-release.aab',
+      # json_key: 'fastlane/config/service-account.json',
+      # root_url: 'https://androidpublisher.googleapis.com'
     )
   end
 

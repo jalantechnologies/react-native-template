@@ -2,9 +2,9 @@ import React, { useContext, useState } from 'react';
 import { Text, View } from 'react-native';
 import { CatContext, CatContextInterface } from '../../contexts';
 import { Button, Input } from '@rneui/themed';
-import { CustomButton } from 'boilerplate-react-native/src/components';
+import { CustomButton } from '../../components';
 import { useTranslation } from 'react-i18next';
-import { useTailwind } from 'boilerplate-react-native/src/utils/tailwind-util';
+import { useTailwind } from '../../utils/tailwind-util';
 import { useColorScheme } from 'nativewind';
 
 const Home: React.FC = () => {

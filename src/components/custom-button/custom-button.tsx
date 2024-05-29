@@ -1,6 +1,6 @@
 import { Button } from '@rneui/themed';
 import React from 'react';
-import { useTailwind } from 'boilerplate-react-native/src/utils/tailwind-util';
+import { useTailwind } from '../../utils/tailwind-util';
 
 interface CustomButtonProps {
   onPress: () => void;

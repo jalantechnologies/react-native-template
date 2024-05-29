@@ -1,22 +1,21 @@
 import React, { useContext, useState } from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 import { CatContext, CatContextInterface } from '../../contexts';
-import { Button, Input, Text, useTheme, useThemeMode } from '@rneui/themed';
+import { Button, Input } from '@rneui/themed';
 import { CustomButton } from 'boilerplate-react-native/src/components';
-import { useStyles } from './styles';
 import { useTranslation } from 'react-i18next';
+import { useTailwind } from 'boilerplate-react-native/src/utils/tailwind-util';
+import { useColorScheme } from 'nativewind';
 
 const Home: React.FC = () => {
   const { getCatFacts } = useContext<CatContextInterface>(CatContext);
   const { t } = useTranslation();
-  const styles = useStyles();
-  const themeMode = useThemeMode();
 
   const [name, setName] = useState('');
   const [submitLoader, setSubmitLoader] = useState(false);
   const [catFact, setCatFact] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const theme = useTheme();
+  const { colorScheme, setColorScheme } = useColorScheme();
 
   const handleBtnSubmit = async () => {
     if (!name) {
@@ -42,36 +41,36 @@ const Home: React.FC = () => {
   };
 
   const toggleTheme = () => {
-    if (theme.theme.mode === 'dark') {
-      themeMode.setMode('light');
+    if (colorScheme === 'dark') {
+      setColorScheme('light');
     } else {
-      themeMode.setMode('dark');
+      setColorScheme('dark');
     }
   };
 
   return (
-    <View style={styles.home}>
+    <View className="flex-1 items-center justify-center bg-gray">
       <Button
-        buttonStyle={styles.switchModeBtn}
-        containerStyle={styles.switchModeBtnContainer}
+        buttonStyle={useTailwind('bg-blue-500')}
+        containerStyle={useTailwind('mb-5')}
         title={
-          theme.theme.mode === 'dark' ? t('home:lightMode') : t('home:darkMode')
+          colorScheme === 'dark' ? t('home:lightMode') : t('home:darkMode')
         }
         onPress={toggleTheme}
       />
       {catFact && name ? (
-        <View style={styles.fact}>
-          <Text style={styles.name}>
+        <View className="flex flex-col p-6 items-center">
+          <Text className="text-2xl mb-5">
             {t('home:hi')} {name}
           </Text>
-          <Text style={styles.catFact}>{t('home:hereCatFact')}:</Text>
-          <Text style={styles.catFact}>{catFact}</Text>
+          <Text className="text-lg mb-2.5">{t('home:hereCatFact')}:</Text>
+          <Text className="text-lg mb-2.5">{catFact}</Text>
           <CustomButton onPress={resetData} title="Reset" />
         </View>
       ) : (
-        <View style={styles.welcomeContainer}>
-          <Text style={styles.welcomeText}>{t('home:title')}</Text>
-          <View style={styles.spacer} />
+        <View className="flex items-center justify-center">
+          <Text className="text-2xl dark:text-white">{t('home:title')}</Text>
+          <View className="mb-5" />
           <Input
             placeholder="Enter Name"
             value={name}

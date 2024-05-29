@@ -1,27 +1,16 @@
 import React from 'react';
-import { View, DimensionValue } from 'react-native';
-import { styles } from './styles';
+import { View } from 'react-native';
 import { Text } from '@rneui/themed';
 
-type Props = {
-  height?: DimensionValue;
-  width?: DimensionValue;
-};
-
-const Brand: React.FC<Props> = ({ height, width }: Props) => {
+const Brand: React.FC = () => {
   return (
     <View
       testID="brand-img-wrapper"
-      style={[styles.brandContainer, { height, width }]}
+      className="items-center justify-center h-96"
     >
       <Text h1>Jalan Technologies</Text>
     </View>
   );
-};
-
-Brand.defaultProps = {
-  height: 400,
-  width: 400,
 };
 
 export default Brand;

@@ -1,6 +1,6 @@
 import { Button } from '@rneui/themed';
 import React from 'react';
-import { useStyles } from './styles';
+import { useTailwind } from 'boilerplate-react-native/src/utils/tailwind-util';
 
 interface CustomButtonProps {
   onPress: () => void;
@@ -15,15 +15,14 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   loading,
   title,
 }: CustomButtonProps) => {
-  const styles = useStyles();
   return (
     <Button
       onPress={onPress}
       disabled={disabled}
       title={title}
       loading={loading}
-      containerStyle={styles.container}
-      buttonStyle={styles.button}
+      containerStyle={useTailwind('mt-2.5 rounded-lg')}
+      buttonStyle={useTailwind('bg-primary min-w-24 rounded-lg')}
     />
   );
 };

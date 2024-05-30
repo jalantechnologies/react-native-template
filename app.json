@@ -1,4 +1,12 @@
 {
   "name": "Boilerplate",
-  "displayName": "Boilerplate"
+  "displayName": "Boilerplate",
+  "expo": {
+    "name": "Boilerplate",
+    "slug": "boilerplate-app-name",
+    "sdkVersion": "42.0.0",
+    "android": {
+      "package": "com.yourcompany.yourappname"
+    }
+  }
 }

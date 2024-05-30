@@ -1176,10 +1176,10 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@datadog/mobile-react-native@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@datadog/mobile-react-native/-/mobile-react-native-2.0.1.tgz#af3f20e284550433141f7d2e28e7374df9d24ba2"
-  integrity sha512-D9gfT5y9iOnRZxm0Wi7O2P+WAN8XP5rRamwwvpvRJYOut5MSGSal+m+0FXcyKWMtVcVb1xKcR5clDBfSsv6RaA==
+"@datadog/mobile-react-native@^2.3.3":
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/@datadog/mobile-react-native/-/mobile-react-native-2.3.3.tgz#77dc1b60d6e296e7da7e6573cd1175d8c8cf3c9d"
+  integrity sha512-LK2fHW4uleT0UYwp8LRqrghu0CWfQ59rOXtj48vw4qjNd9YPoygyMORhPQbvBucxPjJxKKjI1I5QjQOJBrkPrA==
 
 "@egjs/hammerjs@^2.0.17":
   version "2.0.17"

@@ -27,7 +27,7 @@ jobs:
     - name: Log in to Expo
       env:
         EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-      run: EXPO_TOKEN=$EXPO_TOKEN expo login --non-interactive
+      run: expo login --non-interactive
 
     - name: Install Fastlane
       run: sudo gem install fastlane -NV

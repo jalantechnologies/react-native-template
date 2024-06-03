@@ -3,7 +3,7 @@
   "displayName": "Boilerplate",
   "expo": {
     "name": "Boilerplate",
-    "slug": "boilerplate-app-name",
+    "slug": "boiler-plate",
     "sdkVersion": "42.0.0",
     "android": {
       "package": "com.yourcompany.yourappname"

@@ -25,9 +25,7 @@ jobs:
       run: npm install -g expo-cli
 
     - name: Log in to Expo
-      env:
-        EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-      run: expo login --non-interactive
+      run: expo login --username ${{ secrets.EXPO_USERNAME }} --password ${{ secrets.EXPO_PASSWORD }}
 
     - name: Install Fastlane
       run: sudo gem install fastlane -NV

@@ -9,7 +9,6 @@ import { Startup } from '../screens';
 import MainNavigator from './main';
 import { useFlipper } from '@react-navigation/devtools';
 import { ApplicationStackParamList } from '../../@types/navigation';
-import { appStyle } from '../app-styles';
 
 const Stack = createStackNavigator<ApplicationStackParamList>();
 

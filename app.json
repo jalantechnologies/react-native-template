@@ -6,7 +6,12 @@
     "slug": "boiler-plate",
     "sdkVersion": "42.0.0",
     "android": {
-      "package": "com.yourcompany.yourappname"
+      "package": "com.jtc.boilerplate"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ffa8f414-96fa-4f5f-b431-9a4116738484"
+      }
     }
   }
 }

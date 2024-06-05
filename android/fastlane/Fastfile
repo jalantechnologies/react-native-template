@@ -1,9 +1,14 @@
+# fastlane/Fastfile
+
 default_platform(:android)
 
 platform :android do
   desc "Deploy a new version to the Google Play Store"
   lane :deploy do
+    gradle(task: "clean")
     gradle(task: "assembleRelease")
-    supply(track: 'production', aab: "./app/build/outputs/bundle/release/app-release.aab")
+    supply(
+      track: "production", # or any other track like 'beta', 'alpha', etc.
+    )
   end
 end

@@ -22,7 +22,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       title={title}
       loading={loading}
       containerStyle={useTailwind('mt-2.5 rounded-lg')}
-      buttonStyle={useTailwind('bg-primary min-w-24 rounded-lg')}
+      buttonStyle={useTailwind('min-w-24 rounded-lg px-4 py-2 bg-primary')}
     />
   );
 };

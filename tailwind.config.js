@@ -1,16 +1,22 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/app.{js,jsx,ts,tsx}', './src/**/*.{js,jsx,ts,tsx}'],
-  darkMode: 'class',
+  darkMode: 'selector',
   theme: {
     fontFamily: {
       satoshi: ['Satoshi', 'sans-serif'],
     },
     extend: {
       colors: {
-        primary: '#7945AC',
-        secondary: '#665A6F',
-        gray: '#EFF4FB',
+        primary: {
+          light: 'rgb(120, 69, 172)',
+          dark: 'rgb(220, 184, 255)',
+        },
+        secondary: {
+          light: 'rgb(102, 90, 111)',
+          dark: 'rgb(208, 193, 218)',
+        },
+        gray: 'rgb(239, 244, 251)',
       },
       fontSize: {
         'title-xxl': ['44px', '55px'],

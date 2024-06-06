@@ -1,6 +1,5 @@
 import { Button } from '@rneui/themed';
 import React from 'react';
-import { useTailwind } from '../../utils/tailwind-util';
 
 interface CustomButtonProps {
   onPress: () => void;
@@ -21,8 +20,6 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       disabled={disabled}
       title={title}
       loading={loading}
-      containerStyle={useTailwind('mt-2.5 rounded-lg')}
-      buttonStyle={useTailwind('min-w-24 rounded-lg px-4 py-2 bg-primary')}
     />
   );
 };

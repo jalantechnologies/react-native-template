@@ -1,11 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { Text, View } from 'react-native';
 import { CatContext, CatContextInterface } from '../../contexts';
-import { Button, Input } from '@rneui/themed';
-import { CustomButton } from '../../components';
 import { useTranslation } from 'react-i18next';
-import { useTailwind } from '../../utils/tailwind-util';
 import { useColorScheme } from 'nativewind';
+import CustomInput from 'boilerplate-react-native/src/components/custom-input/custom-input';
+import TailwindButton from 'boilerplate-react-native/src/components/custom-button/tailwind-button';
 
 const Home: React.FC = () => {
   const { getCatFacts } = useContext<CatContextInterface>(CatContext);
@@ -49,40 +48,47 @@ const Home: React.FC = () => {
   };
 
   return (
-    <View className="flex-1 items-center justify-center bg-gray">
-      <Button
-        buttonStyle={useTailwind('bg-blue-500')}
-        containerStyle={useTailwind('mb-5')}
-        title={
-          colorScheme === 'dark' ? t('home:lightMode') : t('home:darkMode')
-        }
-        onPress={toggleTheme}
-      />
+    <View className="flex-1 items-center justify-center bg-gray dark:bg-neutral-950">
+      <View className="my-4">
+        <TailwindButton
+          title={
+            colorScheme === 'dark' ? t('home:lightMode') : t('home:darkMode')
+          }
+          onPress={toggleTheme}
+          variant="secondary"
+        />
+      </View>
       {catFact && name ? (
         <View className="flex flex-col p-6 items-center">
-          <Text className="text-2xl mb-5">
+          <Text className="text-2xl mb-5 dark:text-white">
             {t('home:hi')} {name}
           </Text>
-          <Text className="text-lg mb-2.5">{t('home:hereCatFact')}:</Text>
-          <Text className="text-lg mb-2.5">{catFact}</Text>
-          <CustomButton onPress={resetData} title="Reset" />
+          <Text className="text-lg mb-2.5 dark:text-white">
+            {t('home:hereCatFact')}:
+          </Text>
+          <Text className="text-lg mb-2.5 dark:text-white">{catFact}</Text>
+          <TailwindButton onPress={resetData} title="Reset" />
         </View>
       ) : (
         <View className="flex items-center justify-center">
           <Text className="text-2xl dark:text-white">{t('home:title')}</Text>
           <View className="mb-5" />
-          <Input
-            placeholder="Enter Name"
-            value={name}
-            onChangeText={handleNameChange}
-            errorMessage={errorMessage}
-          />
-          <CustomButton
-            onPress={handleBtnSubmit}
-            disabled={submitLoader}
-            loading={submitLoader}
-            title="Submit"
-          />
+          <View className="w-screen px-8">
+            <CustomInput
+              placeholder="Enter Name"
+              value={name}
+              onChangeText={handleNameChange}
+              errorMessage={errorMessage}
+            />
+          </View>
+          <View className="my-5">
+            <TailwindButton
+              onPress={handleBtnSubmit}
+              disabled={submitLoader}
+              loading={submitLoader}
+              title="Submit"
+            />
+          </View>
         </View>
       )}
     </View>

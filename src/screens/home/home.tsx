@@ -3,8 +3,7 @@ import { Text, View } from 'react-native';
 import { CatContext, CatContextInterface } from '../../contexts';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
-import CustomInput from 'boilerplate-react-native/src/components/custom-input/custom-input';
-import TailwindButton from 'boilerplate-react-native/src/components/custom-button/tailwind-button';
+import { CustomInput, TailwindButton } from '../../components';
 
 const Home: React.FC = () => {
   const { getCatFacts } = useContext<CatContextInterface>(CatContext);

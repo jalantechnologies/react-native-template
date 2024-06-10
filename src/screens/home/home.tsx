@@ -1,9 +1,11 @@
 import React, { useContext, useState } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { CatContext, CatContextInterface } from '../../contexts';
+import { Button, Input, Text } from '@rneui/themed';
+import { CustomButton } from '../../components';
 import { useTranslation } from 'react-i18next';
-import { useColorScheme } from 'nativewind';
-import { CustomInput, TailwindButton } from '../../components';
+import tw from '../../lib/tailwind';
+import { useAppColorScheme } from 'twrnc';
 
 const Home: React.FC = () => {
   const { getCatFacts } = useContext<CatContextInterface>(CatContext);
@@ -13,7 +15,7 @@ const Home: React.FC = () => {
   const [submitLoader, setSubmitLoader] = useState(false);
   const [catFact, setCatFact] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const { colorScheme, setColorScheme } = useColorScheme();
+  const [colorScheme, toggleColorScheme] = useAppColorScheme(tw);
 
   const handleBtnSubmit = async () => {
     if (!name) {
@@ -38,56 +40,44 @@ const Home: React.FC = () => {
     setName('');
   };
 
-  const toggleTheme = () => {
-    if (colorScheme === 'dark') {
-      setColorScheme('light');
-    } else {
-      setColorScheme('dark');
-    }
-  };
-
   return (
-    <View className="flex-1 items-center justify-center bg-gray dark:bg-neutral-950">
-      <View className="my-4">
-        <TailwindButton
-          title={
-            colorScheme === 'dark' ? t('home:lightMode') : t('home:darkMode')
-          }
-          onPress={toggleTheme}
-          variant="secondary"
-        />
-      </View>
+    <View style={tw`flex-1 items-center justify-center bg-gray dark:bg-black`}>
+      <Button
+        buttonStyle={tw`rounded-md bg-tertiary-light dark:bg-tertiary-dark`}
+        containerStyle={tw`mb-5`}
+        title={
+          colorScheme === 'dark' ? t('home:lightMode') : t('home:darkMode')
+        }
+        onPress={toggleColorScheme}
+      />
       {catFact && name ? (
-        <View className="flex flex-col p-6 items-center">
-          <Text className="text-2xl mb-5 dark:text-white">
+        <View style={tw`flex-col p-6 items-center`}>
+          <Text style={tw`text-2xl mb-5 dark:text-white`}>
             {t('home:hi')} {name}
           </Text>
-          <Text className="text-lg mb-2.5 dark:text-white">
+          <Text style={tw`text-lg mb-2.5 dark:text-white`}>
             {t('home:hereCatFact')}:
           </Text>
-          <Text className="text-lg mb-2.5 dark:text-white">{catFact}</Text>
-          <TailwindButton onPress={resetData} title="Reset" />
+          <Text style={tw`text-lg mb-2.5 dark:text-white`}>{catFact}</Text>
+          <CustomButton onPress={resetData} title="Reset" />
         </View>
       ) : (
-        <View className="flex items-center justify-center">
-          <Text className="text-2xl dark:text-white">{t('home:title')}</Text>
-          <View className="mb-5" />
-          <View className="w-screen px-8">
-            <CustomInput
-              placeholder="Enter Name"
-              value={name}
-              onChangeText={handleNameChange}
-              errorMessage={errorMessage}
-            />
-          </View>
-          <View className="my-5">
-            <TailwindButton
-              onPress={handleBtnSubmit}
-              disabled={submitLoader}
-              loading={submitLoader}
-              title="Submit"
-            />
-          </View>
+        <View style={tw`items-center justify-center`}>
+          <Text style={tw`text-2xl dark:text-white`}>{t('home:title')}</Text>
+          <View style={tw`mb-5`} />
+          <Input
+            placeholder="Enter Name"
+            value={name}
+            onChangeText={handleNameChange}
+            errorMessage={errorMessage}
+            inputContainerStyle={tw`android:w-full`}
+          />
+          <CustomButton
+            onPress={handleBtnSubmit}
+            disabled={submitLoader}
+            loading={submitLoader}
+            title="Submit"
+          />
         </View>
       )}
     </View>

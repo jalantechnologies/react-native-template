@@ -14,10 +14,13 @@ import appTheme from './app-theme';
 import { DatadogProvider } from '@datadog/mobile-react-native';
 import DatadogConfig from './services/datadog';
 import Logger from './logger/logger';
+import { useDeviceContext } from 'twrnc';
+import tw from './lib/tailwind';
 
 const App = () => {
   Logger.initializeLoggers();
   const ErrorComponent = useCallback(() => <ErrorFallback />, []);
+  useDeviceContext(tw);
 
   return (
     <ErrorBoundary

@@ -16,6 +16,10 @@ module.exports = {
           light: 'rgb(102, 90, 111)',
           dark: 'rgb(208, 193, 218)',
         },
+        tertiary: {
+          light: 'rgb(128, 81, 88)',
+          dark: 'rgb(243, 183, 190)',
+        },
         gray: 'rgb(239, 244, 251)',
       },
       fontSize: {

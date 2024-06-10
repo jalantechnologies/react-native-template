@@ -40,6 +40,6 @@ jobs:
         JSON_KEY_FILE: ${{ secrets.JSON_KEY_FILE }}
       run: |
         cd android
-        mkdir -p ~/.fastlane
-        echo $JSON_KEY_FILE | base64 --decode > ~/.fastlane/credentials.json
-        eas submit -p android --profile production --path ~/.fastlane/credentials.json --latest
+        mkdir -p ~/.expo
+        echo $JSON_KEY_FILE | base64 --decode > ~/.expo/credentials.json
+        eas submit -p android --profile production --path ~/.expo/credentials.json --latest

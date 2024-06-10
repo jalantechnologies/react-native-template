@@ -30,10 +30,10 @@ jobs:
     - name: Log in to Expo
       run: expo login --username ${{ secrets.EXPO_USERNAME }} --password ${{ secrets.EXPO_PASSWORD }}
 
-    - name: Build Android app
-      env:
-        EXPO_APP_ENV: production
-      run: eas build -p android --profile production --non-interactive
+    # - name: Build Android app
+    #   env:
+    #     EXPO_APP_ENV: production
+    #   run: eas build -p android --profile production --non-interactive
     
     - name: Deploy to Google Play Store
       env:

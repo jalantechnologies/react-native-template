@@ -21,24 +21,22 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Install Expo CLI
-      run: npm install -g expo-cli
+    # - name: Install Expo CLI
+    #   run: npm install -g expo-cli
 
-    - name: Install EAS CLI
-      run: npm install -g eas-cli
+    # - name: Install EAS CLI
+    #   run: npm install -g eas-cli
 
-    - name: Log in to Expo
-      run: expo login --username ${{ secrets.EXPO_USERNAME }} --password ${{ secrets.EXPO_PASSWORD }}
+    # - name: Log in to Expo
+    #   run: expo login --username ${{ secrets.EXPO_USERNAME }} --password ${{ secrets.EXPO_PASSWORD }}
 
-    - name: Build Android app
-      env:
-        EXPO_APP_ENV: production
-      run: eas build -p android --profile production --non-interactive
+    # - name: Build Android app
+    #   env:
+    #     EXPO_APP_ENV: production
+    #   run: eas build -p android --profile production --non-interactive
     
     - name: Install Fastlane
       run: sudo gem install fastlane -NV
-
-    
 
     - name: Deploy to Google Play Store
       env:

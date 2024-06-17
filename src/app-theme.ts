@@ -32,8 +32,6 @@ const appTheme = createTheme({
       inputContainerStyle: {
         borderWidth: 2,
         borderRadius: 5,
-        paddingHorizontal: 10,
-        width: 300,
       },
     },
   },

@@ -7,7 +7,7 @@ import {
   SafeAreaProvider,
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
-import { CatContextProvider } from './contexts';
+import { AccountProvider, AuthProvider, CatContextProvider } from './contexts';
 import { ErrorFallback } from './components';
 import { ThemeProvider } from '@rneui/themed';
 import appTheme from './app-theme';
@@ -31,7 +31,11 @@ const App = () => {
         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
           <CatContextProvider>
             <ThemeProvider theme={appTheme}>
-              <ApplicationNavigator />
+              <AuthProvider>
+                <AccountProvider>
+                  <ApplicationNavigator />
+                </AccountProvider>
+              </AuthProvider>
             </ThemeProvider>
           </CatContextProvider>
         </SafeAreaProvider>

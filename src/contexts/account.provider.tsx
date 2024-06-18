@@ -8,7 +8,7 @@ import React, {
 import { Account, ApiResponse, AsyncError } from '../types';
 
 import useAsync from './async.hook';
-import AccountService from '../services/account.service';
+import { AccountService } from '../services';
 
 type AccountContextType = {
   accountDetails: Account;

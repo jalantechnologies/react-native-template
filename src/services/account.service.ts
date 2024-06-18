@@ -3,7 +3,7 @@ import { Account } from '../types/account';
 import { getAccessToken } from '../utils';
 import { APIService } from './api';
 
-export default class AccountService extends APIService {
+export class AccountService extends APIService {
   getAccountDetails = async (): Promise<ApiResponse<Account>> => {
     const userAccessToken = getAccessToken() as AccessToken;
 

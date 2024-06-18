@@ -13,7 +13,7 @@ const Registration: React.FC = () => {
   };
 
   const onRegistrationSuccess = () => {
-    navigation.navigate('Dashboard');
+    navigation.navigate('UserPortal', { screen: 'Dashboard' });
   };
   return (
     <AuthLayout>

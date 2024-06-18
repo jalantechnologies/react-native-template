@@ -4,8 +4,10 @@ import AuthLayout from '../auth-layout';
 import OTPForm from './otp-form';
 import useTimer from '../../../utils/use-timer.hook';
 import { AsyncError } from '../../../types';
+import { useAccountContext } from '../../../contexts';
 
 const OTP: React.FC = ({ route, navigation }) => {
+  const { isNewUser } = useAccountContext();
   const { countryCode, phoneNumber } = route.params;
   const sendOTPDelayInMilliseconds = 60_000;
 
@@ -20,7 +22,11 @@ const OTP: React.FC = ({ route, navigation }) => {
     startTimer();
   };
   const onVerifyOTPSuccess = async () => {
-    navigation.navigate('Auth');
+    if (isNewUser) {
+      navigation.navigate('UserPortal', { screen: 'Registration' });
+    } else {
+      navigation.navigate('UserPortal', { screen: 'Dashboard' });
+    }
   };
   return (
     <AuthLayout>

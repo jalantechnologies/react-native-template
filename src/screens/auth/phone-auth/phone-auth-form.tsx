@@ -93,7 +93,6 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({
       </FormControl>
       <Button
         mt="2"
-        bg={'primary'}
         onPress={() => formik.handleSubmit()}
         isLoading={isSendOTPLoading}
       >

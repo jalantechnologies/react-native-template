@@ -1,16 +1,30 @@
-import React from 'react';
-import { View } from 'react-native';
-import tw from '../../lib/tailwind';
+import React, { PropsWithChildren } from 'react';
+import { Box, Heading } from 'native-base';
 
 interface AuthLayoutProps {
-  children: React.ReactNode;
+  primaryTitle: string;
+  secondaryTitle: string;
 }
 
-const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
+const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
+  primaryTitle,
+  secondaryTitle,
+  children,
+}) => {
   return (
-    <View style={tw`flex-1 justify-center p-5 bg-white gap-10`}>
-      {children}
-    </View>
+    <Box safeArea flex={1} bg={'primary'}>
+      <Box py={'15%'} px={'10%'} fontWeight={'bold'} alignSelf={'flex-start'}>
+        <Heading size="2xl" color={'white'}>
+          {primaryTitle}
+        </Heading>
+        <Heading size="2xl" color={'white'}>
+          {secondaryTitle}
+        </Heading>
+      </Box>
+      <Box py="8" px="10%" w="100%" flex={1} bg={'white'} roundedTop="lg">
+        {children}
+      </Box>
+    </Box>
   );
 };
 

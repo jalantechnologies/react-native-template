@@ -1,11 +1,11 @@
 import React from 'react';
-import { OTP, SignUp } from '../screens';
 import { createStackNavigator } from '@react-navigation/stack';
+import PhoneAuth from '../screens/auth/phone-auth';
+import OTPVerify from '../screens/auth/otp-verify';
+import AuthenticatedStack from './authenticated';
 import { useAuthContext } from '../contexts';
-import UserPortal from './user-portal';
-import { MainParamsList } from '../../@types/navigation';
 
-const Stack = createStackNavigator<MainParamsList>();
+const Stack = createStackNavigator();
 
 // @refresh reset
 const MainNavigator = () => {
@@ -14,13 +14,11 @@ const MainNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {isUserAuthenticated ? (
-        <>
-          <Stack.Screen name="UserPortal" component={UserPortal} />
-        </>
+        <Stack.Screen name="Authenticated" component={AuthenticatedStack} />
       ) : (
         <>
-          <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="OTP" component={OTP} />
+          <Stack.Screen name="PhoneAuth" component={PhoneAuth} />
+          <Stack.Screen name="OTPVerify" component={OTPVerify} />
         </>
       )}
     </Stack.Navigator>

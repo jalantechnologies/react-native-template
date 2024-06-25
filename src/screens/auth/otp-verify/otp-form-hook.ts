@@ -2,14 +2,14 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import constant from '../../../constants/auth';
-import { useAccountContext, useAuthContext } from '../../../contexts';
+import { useAuthContext } from '../../../contexts';
 import { AsyncError } from '../../../types';
 
 interface OTPFormProps {
+  countryCode: string;
   onError: (error: AsyncError) => void;
   onResendOTPSuccess: () => void;
   onVerifyOTPSuccess: () => void;
-  countryCode: string;
   phoneNumber: string;
 }
 
@@ -21,7 +21,6 @@ const useOTPForm = ({
   phoneNumber,
 }: OTPFormProps) => {
   const { isVerifyOTPLoading, sendOTP, verifyOTP } = useAuthContext();
-  const { getAccountDetails, setIsNewUser } = useAccountContext();
 
   const formik = useFormik({
     initialValues: {
@@ -32,19 +31,11 @@ const useOTPForm = ({
       otp: Yup.array().of(Yup.string().required('')),
     }),
 
-    validateOnMount: true,
-
     onSubmit: values => {
       const otp = values.otp.join('');
 
       verifyOTP({ countryCode, phoneNumber }, otp)
         .then(async () => {
-          const account = await getAccountDetails();
-          if (account.firstName && account.lastName) {
-            setIsNewUser(false);
-          } else {
-            setIsNewUser(true);
-          }
           onVerifyOTPSuccess();
         })
         .catch(error => {

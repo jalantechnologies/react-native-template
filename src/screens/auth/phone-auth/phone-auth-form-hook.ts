@@ -7,12 +7,12 @@ import { AsyncError } from '../../../types';
 import constant from '../../../constants/auth';
 import { useNavigation } from '@react-navigation/native';
 
-interface SignUpFormProps {
+interface LoginFormProps {
   onError: (err: AsyncError) => void;
   onSendOTPSuccess: () => void;
 }
 
-const useSignUpForm = ({ onSendOTPSuccess, onError }: SignUpFormProps) => {
+const useLoginForm = ({ onSendOTPSuccess, onError }: LoginFormProps) => {
   const { isSendOTPLoading, sendOTP } = useAuthContext();
   const navigation = useNavigation();
 
@@ -50,7 +50,7 @@ const useSignUpForm = ({ onSendOTPSuccess, onError }: SignUpFormProps) => {
       })
         .then(() => {
           onSendOTPSuccess();
-          navigation.navigate('OTP', {
+          navigation.navigate('OTPVerify', {
             countryCode: formik.values.countryCode,
             phoneNumber: formik.values.phoneNumber,
           });
@@ -67,4 +67,4 @@ const useSignUpForm = ({ onSendOTPSuccess, onError }: SignUpFormProps) => {
   };
 };
 
-export default useSignUpForm;
+export default useLoginForm;

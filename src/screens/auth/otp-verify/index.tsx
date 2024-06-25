@@ -4,10 +4,9 @@ import AuthLayout from '../auth-layout';
 import OTPForm from './otp-form';
 import useTimer from '../../../utils/use-timer.hook';
 import { AsyncError } from '../../../types';
-import { useAccountContext } from '../../../contexts';
+import { Toast } from 'native-base';
 
-const OTP: React.FC = ({ route, navigation }) => {
-  const { isNewUser } = useAccountContext();
+const OTPVerify: React.FC = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;
   const sendOTPDelayInMilliseconds = 60_000;
 
@@ -18,18 +17,19 @@ const OTP: React.FC = ({ route, navigation }) => {
   const onError = (error: AsyncError) => {
     Alert.alert('Error', error.message);
   };
+
   const onResendOTPSuccess = () => {
     startTimer();
   };
-  const onVerifyOTPSuccess = async () => {
-    if (isNewUser) {
-      navigation.navigate('UserPortal', { screen: 'Registration' });
-    } else {
-      navigation.navigate('UserPortal', { screen: 'Dashboard' });
-    }
+
+  const onVerifyOTPSuccess = () => {
+    Toast.show({
+      title: 'OTP verified successfully',
+    });
   };
+
   return (
-    <AuthLayout>
+    <AuthLayout primaryTitle="OTP" secondaryTitle="Verification">
       <OTPForm
         countryCode={countryCode}
         isResendEnabled={isResendEnabled}
@@ -43,4 +43,4 @@ const OTP: React.FC = ({ route, navigation }) => {
   );
 };
 
-export default OTP;
+export default OTPVerify;

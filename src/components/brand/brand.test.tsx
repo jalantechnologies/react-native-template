@@ -1,13 +1,18 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react-native';
 import Brand from './brand';
-import { CatContextProvider } from 'boilerplate-react-native/src/contexts';
+import { NativeBaseProvider } from 'native-base';
+
+const inset = {
+  frame: { x: 0, y: 0, width: 0, height: 0 },
+  insets: { top: 0, left: 0, right: 0, bottom: 0 },
+};
 
 test('App renders correctly', () => {
   const component = (
-    <CatContextProvider>
+    <NativeBaseProvider initialWindowMetrics={inset}>
       <Brand />
-    </CatContextProvider>
+    </NativeBaseProvider>
   );
 
   render(component);
@@ -15,6 +20,6 @@ test('App renders correctly', () => {
   const wrapper = screen.getByTestId('brand-img-wrapper');
 
   expect(wrapper.props.style).toBeInstanceOf(Object);
-  expect(wrapper.props.style.height).toBe(384);
-  expect(wrapper.props.style.width).toBe(384);
+  expect(wrapper.props.style.height).toBe(400);
+  expect(wrapper.props.style.width).toBe(400);
 });

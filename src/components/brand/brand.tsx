@@ -1,17 +1,29 @@
+import { Box, Heading } from 'native-base';
 import React from 'react';
-import { View } from 'react-native';
-import { Text } from '@rneui/themed';
-import tw from '../../lib/tailwind';
+import { DimensionValue } from 'react-native';
 
-const Brand: React.FC = () => {
+type Props = {
+  height?: DimensionValue;
+  width?: DimensionValue;
+};
+
+const Brand: React.FC<Props> = ({ height, width }: Props) => {
   return (
-    <View
+    <Box
       testID="brand-img-wrapper"
-      style={tw`items-center justify-center h-96 w-96`}
+      height={`${height}px`}
+      width={`${width}px`}
+      justifyContent="center"
+      alignItems="center"
     >
-      <Text h1>Jalan Technologies</Text>
-    </View>
+      <Heading>Jalan Technologies</Heading>
+    </Box>
   );
+};
+
+Brand.defaultProps = {
+  height: 400,
+  width: 400,
 };
 
 export default Brand;

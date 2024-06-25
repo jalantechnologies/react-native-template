@@ -1,58 +1,56 @@
-import { Input } from '@rneui/themed';
-import React, { useRef, useState } from 'react';
-import { View, TextInput } from 'react-native';
-import tw from '../../lib/tailwind';
+import React, { useRef } from 'react';
+import { HStack, Input } from 'native-base';
 
 interface OTPInputProps {
-  onChange: (otp: string[]) => void;
+  length: number;
+  otp: string[];
+  setOtp: (otp: string[]) => void;
 }
 
-const OTPInput: React.FC<OTPInputProps> = ({ onChange }) => {
-  const [otp, setOtp] = useState(['', '', '', '']);
-  const inputs = useRef<TextInput[]>([]);
+const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
+  const inputsRef = useRef<Array<any>>([]);
 
   const handleChange = (text: string, index: number) => {
-    if (text.length > 1) {
-      text = text.charAt(text.length - 1);
-    }
-
     const newOtp = [...otp];
     newOtp[index] = text;
     setOtp(newOtp);
-    onChange(newOtp);
 
-    if (text && index < 3) {
-      inputs.current[index + 1].focus();
+    if (text && index < length - 1) {
+      inputsRef.current[index + 1].focus();
     }
   };
 
-  const handleBackspace = (text: string, index: number) => {
-    if (!text && index > 0) {
-      inputs.current[index - 1].focus();
+  const handleKeyPress = (e: any, index: number) => {
+    if (e.nativeEvent.key === 'Backspace' && index > 0 && otp[index] === '') {
+      inputsRef.current[index - 1].focus();
     }
   };
 
   return (
-    <View style={tw`flex-row justify-between items-center gap-4`}>
-      {otp.map((digit, index) => (
-        <Input
-          key={index}
-          ref={(ref: TextInput) => (inputs.current[index] = ref!)}
-          value={digit}
-          onChangeText={text => handleChange(text, index)}
-          onKeyPress={({ nativeEvent }) => {
-            if (nativeEvent.key === 'Backspace') {
-              handleBackspace(digit, index);
-            }
-          }}
-          keyboardType="numeric"
-          maxLength={1}
-          containerStyle={tw`flex-1 px-0`}
-          inputStyle={tw`text-center`}
-          errorStyle={tw`hidden`}
-        />
-      ))}
-    </View>
+    <HStack space={2}>
+      {Array(length)
+        .fill('')
+        .map((_, index) => (
+          <Input
+            ref={el => (inputsRef.current[index] = el)}
+            value={otp[index]}
+            onChangeText={text => handleChange(text, index)}
+            onKeyPress={e => handleKeyPress(e, index)}
+            keyboardType="numeric"
+            maxLength={1}
+            width={10}
+            height={10}
+            textAlign="center"
+            variant="unstyled"
+            borderBottomWidth={2}
+            borderRadius={0}
+            _focus={{
+              borderColor: 'primary',
+            }}
+            key={index}
+          />
+        ))}
+    </HStack>
   );
 };
 

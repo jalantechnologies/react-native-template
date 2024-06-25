@@ -9,18 +9,15 @@ import {
 } from 'react-native-safe-area-context';
 import { AccountProvider, AuthProvider, CatContextProvider } from './contexts';
 import { ErrorFallback } from './components';
-import { ThemeProvider } from '@rneui/themed';
 import appTheme from './app-theme';
 import { DatadogProvider } from '@datadog/mobile-react-native';
 import DatadogConfig from './services/datadog';
 import Logger from './logger/logger';
-import { useDeviceContext } from 'twrnc';
-import tw from './lib/tailwind';
+import { NativeBaseProvider } from 'native-base';
 
 const App = () => {
   Logger.initializeLoggers();
   const ErrorComponent = useCallback(() => <ErrorFallback />, []);
-  useDeviceContext(tw);
 
   return (
     <ErrorBoundary
@@ -30,13 +27,13 @@ const App = () => {
       <DatadogProvider configuration={DatadogConfig}>
         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
           <CatContextProvider>
-            <ThemeProvider theme={appTheme}>
+            <NativeBaseProvider theme={appTheme}>
               <AuthProvider>
                 <AccountProvider>
                   <ApplicationNavigator />
                 </AccountProvider>
               </AuthProvider>
-            </ThemeProvider>
+            </NativeBaseProvider>
           </CatContextProvider>
         </SafeAreaProvider>
       </DatadogProvider>

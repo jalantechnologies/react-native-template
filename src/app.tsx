@@ -20,24 +20,24 @@ const App = () => {
   const ErrorComponent = useCallback(() => <ErrorFallback />, []);
 
   return (
-    <ErrorBoundary
-      onError={(e, stack) => Logger.error(`App Error: ${e} ${stack}`)}
-      FallbackComponent={ErrorComponent}
-    >
-      <DatadogProvider configuration={DatadogConfig}>
-        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-          <CatContextProvider>
-            <NativeBaseProvider theme={appTheme}>
+    <NativeBaseProvider theme={appTheme}>
+      <ErrorBoundary
+        onError={(e, stack) => Logger.error(`App Error: ${e} ${stack}`)}
+        FallbackComponent={ErrorComponent}
+      >
+        <DatadogProvider configuration={DatadogConfig}>
+          <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+            <CatContextProvider>
               <AuthProvider>
                 <AccountProvider>
                   <ApplicationNavigator />
                 </AccountProvider>
               </AuthProvider>
-            </NativeBaseProvider>
-          </CatContextProvider>
-        </SafeAreaProvider>
-      </DatadogProvider>
-    </ErrorBoundary>
+            </CatContextProvider>
+          </SafeAreaProvider>
+        </DatadogProvider>
+      </ErrorBoundary>
+    </NativeBaseProvider>
   );
 };
 

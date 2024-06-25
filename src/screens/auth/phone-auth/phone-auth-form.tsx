@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   VStack,
   Container,
   Heading,
   FormControl,
   HStack,
-  Select,
   Input,
   Button,
+  useDisclose,
+  Text,
+  Pressable,
+  Menu,
+  ScrollView,
 } from 'native-base';
 import useLoginForm from './phone-auth-form-hook';
 import { AsyncError } from '../../../types';
@@ -26,11 +30,55 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({
     onSendOTPSuccess: onSuccess,
     onError: onError,
   });
+
+  const { isOpen, onOpen, onClose } = useDisclose();
+
+  useEffect(() => {
+    console.log('PhoneAuthForm useEffect', formik.values);
+  }, [formik.values]);
+
   const handleSelectChange = (value: string) => {
     const [countryCode, country] = value.split(', ');
     formik.setFieldValue('countryCode', countryCode);
     formik.setFieldValue('country', country);
   };
+
+  const renderCountrySelectMenu = () => {
+    return (
+      <Menu
+        isOpen={isOpen}
+        onOpen={onOpen}
+        onClose={onClose}
+        trigger={triggerProps => (
+          <Pressable
+            {...triggerProps}
+            borderWidth={1}
+            justifyContent="center"
+            borderColor={'warmGray.300'}
+            rounded="sm"
+            px={2}
+          >
+            <Text>{`${formik.values.country} (${formik.values.countryCode})`}</Text>
+          </Pressable>
+        )}
+      >
+        <ScrollView maxH={'200px'}>
+          {COUNTRY_SELECT_OPTIONS.map(option => (
+            <Menu.Item
+              key={option.value}
+              onPress={() => {
+                handleSelectChange(option.value);
+                onClose();
+              }}
+            >
+              {option.label}
+            </Menu.Item>
+          ))}
+        </ScrollView>
+      </Menu>
+    );
+  };
+
   return (
     <VStack space={6}>
       <Container>
@@ -64,26 +112,12 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({
       >
         <FormControl.Label>Phone Number</FormControl.Label>
         <HStack space={2}>
-          <Select
-            selectedValue={`${formik.values.countryCode}, ${formik.values.country}`}
-            onValueChange={handleSelectChange}
-            dropdownIcon={<></>}
-            minWidth={20}
-            px={0}
-          >
-            {COUNTRY_SELECT_OPTIONS.map(option => (
-              <Select.Item
-                key={option.value}
-                label={option.label}
-                value={option.value}
-              />
-            ))}
-          </Select>
+          {renderCountrySelectMenu()}
           <Input
             value={formik.values.phoneNumber}
             onChangeText={formik.handleChange('phoneNumber')}
             keyboardType="numeric"
-            flex={1}
+            flex={3}
             placeholder="XXXXXXXXXX"
           />
         </HStack>

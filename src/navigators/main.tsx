@@ -3,13 +3,15 @@ import { createStackNavigator } from '@react-navigation/stack';
 import PhoneAuth from '../screens/auth/phone-auth';
 import OTPVerify from '../screens/auth/otp-verify';
 import AuthenticatedStack from './authenticated';
-import { useAuthContext } from '../contexts';
+import { useAppSelector } from '../contexts';
 
 const Stack = createStackNavigator();
 
 // @refresh reset
 const MainNavigator = () => {
-  const { isUserAuthenticated } = useAuthContext();
+  const isUserAuthenticated = useAppSelector(
+    state => state.auth.isUserAuthenticated,
+  );
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

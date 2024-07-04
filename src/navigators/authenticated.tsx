@@ -7,18 +7,19 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import { Dashboard } from '../screens';
-import { useAuthContext } from '../contexts';
+import { logout } from '../contexts/auth-slice';
 import { AuthenticatedParamsList } from '../../@types/navigation';
+import { useAppDispatch } from '../contexts';
 
 const Drawer = createDrawerNavigator<AuthenticatedParamsList>();
 
 const CustomDrawerContent = (
   props: React.PropsWithChildren<DrawerContentComponentProps>,
 ) => {
-  const { logout } = useAuthContext();
+  const dispatch = useAppDispatch();
 
   const handleLogout = () => {
-    logout();
+    dispatch(logout());
   };
 
   return (

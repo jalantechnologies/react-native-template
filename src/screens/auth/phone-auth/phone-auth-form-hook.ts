@@ -2,10 +2,11 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { PhoneNumberUtil } from 'google-libphonenumber';
 
-import { useAuthContext } from '../../../contexts';
 import { AsyncError } from '../../../types';
 import constant from '../../../constants/auth';
 import { useNavigation } from '@react-navigation/native';
+import { sendOTP } from '../../../contexts/auth-slice';
+import { useAppDispatch, useAppSelector } from '../../../contexts';
 
 interface LoginFormProps {
   onError: (err: AsyncError) => void;
@@ -13,7 +14,8 @@ interface LoginFormProps {
 }
 
 const useLoginForm = ({ onSendOTPSuccess, onError }: LoginFormProps) => {
-  const { isSendOTPLoading, sendOTP } = useAuthContext();
+  const dispatch = useAppDispatch();
+  const isSendOTPLoading = useAppSelector(state => state.auth.isSendOTPLoading);
   const navigation = useNavigation();
 
   const formik = useFormik({
@@ -44,10 +46,13 @@ const useLoginForm = ({ onSendOTPSuccess, onError }: LoginFormProps) => {
         ?.getNationalNumber()
         ?.toString();
 
-      sendOTP({
-        countryCode: values.countryCode,
-        phoneNumber: formattedPhoneNumber as string,
-      })
+      dispatch(
+        sendOTP({
+          countryCode: values.countryCode,
+          phoneNumber: formattedPhoneNumber as string,
+        }),
+      )
+        .unwrap()
         .then(() => {
           onSendOTPSuccess();
           navigation.navigate('OTPVerify', {

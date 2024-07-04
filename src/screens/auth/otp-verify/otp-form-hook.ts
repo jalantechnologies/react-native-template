@@ -2,8 +2,9 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import constant from '../../../constants/auth';
-import { useAuthContext } from '../../../contexts';
 import { AsyncError } from '../../../types';
+import { sendOTP, verifyOTP } from '../../../contexts/auth-slice';
+import { useAppDispatch, useAppSelector } from '../../../contexts';
 
 interface OTPFormProps {
   countryCode: string;
@@ -20,7 +21,10 @@ const useOTPForm = ({
   countryCode,
   phoneNumber,
 }: OTPFormProps) => {
-  const { isVerifyOTPLoading, sendOTP, verifyOTP } = useAuthContext();
+  const dispatch = useAppDispatch();
+  const isVerifyOTPLoading = useAppSelector(
+    state => state.auth.isVerifyOTPLoading,
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -34,7 +38,16 @@ const useOTPForm = ({
     onSubmit: values => {
       const otp = values.otp.join('');
 
-      verifyOTP({ countryCode, phoneNumber }, otp)
+      dispatch(
+        verifyOTP({
+          phoneNumber: {
+            countryCode,
+            phoneNumber,
+          },
+          otp,
+        }),
+      )
+        .unwrap()
         .then(async () => {
           onVerifyOTPSuccess();
         })
@@ -45,10 +58,13 @@ const useOTPForm = ({
   });
 
   const handleResendOTP = () => {
-    sendOTP({
-      countryCode,
-      phoneNumber,
-    })
+    dispatch(
+      sendOTP({
+        countryCode,
+        phoneNumber,
+      }),
+    )
+      .unwrap()
       .then(async () => {
         onResendOTPSuccess();
       })

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   VStack,
   Container,
@@ -32,10 +32,6 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({
   });
 
   const { isOpen, onOpen, onClose } = useDisclose();
-
-  useEffect(() => {
-    console.log('PhoneAuthForm useEffect', formik.values);
-  }, [formik.values]);
 
   const handleSelectChange = (value: string) => {
     const [countryCode, country] = value.split(', ');

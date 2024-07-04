@@ -28,7 +28,7 @@ export const updateAccountDetails = createAsyncThunk(
       );
       return response;
     } catch (error) {
-      throw (error).response.data;
+      throw error.response.data;
     }
   },
 );

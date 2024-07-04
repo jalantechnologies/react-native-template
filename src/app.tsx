@@ -7,13 +7,14 @@ import {
   SafeAreaProvider,
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
-import { AccountProvider, AuthProvider, CatContextProvider } from './contexts';
+import { CatContextProvider, store } from './contexts';
 import { ErrorFallback } from './components';
 import appTheme from './app-theme';
 import { DatadogProvider } from '@datadog/mobile-react-native';
 import DatadogConfig from './services/datadog';
 import Logger from './logger/logger';
 import { NativeBaseProvider } from 'native-base';
+import { Provider } from 'react-redux';
 
 const App = () => {
   Logger.initializeLoggers();
@@ -28,11 +29,9 @@ const App = () => {
         <DatadogProvider configuration={DatadogConfig}>
           <SafeAreaProvider initialMetrics={initialWindowMetrics}>
             <CatContextProvider>
-              <AuthProvider>
-                <AccountProvider>
-                  <ApplicationNavigator />
-                </AccountProvider>
-              </AuthProvider>
+              <Provider store={store}>
+                <ApplicationNavigator />
+              </Provider>
             </CatContextProvider>
           </SafeAreaProvider>
         </DatadogProvider>

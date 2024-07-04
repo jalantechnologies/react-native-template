@@ -89,6 +89,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
         isLoadingText="Verifying OTP"
         isLoading={isVerifyOTPLoading}
         onPress={() => formik.handleSubmit()}
+        isDisabled={formik.isValid && formik.dirty ? false : true}
       >
         Verify OTP
       </Button>

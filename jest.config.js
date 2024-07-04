@@ -5,8 +5,11 @@ module.exports = {
     './node_modules/react-native-gesture-handler/jestSetup.js',
     '<rootDir>/jest.setup.js',
   ],
+  transform: {
+    '^.+\\.[tj]sx?$': 'babel-jest',
+  },
   transformIgnorePatterns: [
-    'node_modules/(?!(jest-)?react-native|@react-native|@react-native-community|@react-navigation|@rneui)',
+    'node_modules/(?!(jest-)?react-native|@react-native|@react-native-community|@react-navigation|react-redux)',
   ],
   collectCoverageFrom: [
     '<rootDir>/src/components/**/*.jsx',

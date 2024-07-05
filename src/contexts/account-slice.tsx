@@ -1,14 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { Account, ApiResponse, AsyncError } from '../types';
+import { Account, AsyncError } from '../types';
 import { AccountService } from '../services';
 
 const accountService = new AccountService();
 
 export const getAccountDetails = createAsyncThunk(
   'account/getAccountDetails',
-  async (): Promise<ApiResponse<Account>> => {
-    const response = await accountService.getAccountDetails();
-    return response;
+  async (): Promise<Account | undefined> => {
+    try {
+      const response = await accountService.getAccountDetails();
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
   },
 );
 
@@ -20,13 +24,13 @@ export const updateAccountDetails = createAsyncThunk(
   }: {
     firstName: string;
     lastName: string;
-  }): Promise<ApiResponse<Account>> => {
+  }): Promise<Account | undefined> => {
     try {
       const response = await accountService.updateAccountDetails(
         firstName,
         lastName,
       );
-      return response;
+      return response.data;
     } catch (error) {
       throw error.response.data;
     }
@@ -67,7 +71,12 @@ const accountSlice = createSlice({
       })
       .addCase(getAccountDetails.fulfilled, (state, action) => {
         state.isAccountLoading = false;
-        state.accountDetails = action.payload.data;
+        state.accountDetails = action.payload;
+        if (state.accountDetails?.firstName === '') {
+          state.isNewUser = true;
+        } else {
+          state.isNewUser = false;
+        }
       })
       .addCase(getAccountDetails.rejected, (state, action) => {
         state.isAccountLoading = false;
@@ -79,7 +88,7 @@ const accountSlice = createSlice({
       })
       .addCase(updateAccountDetails.fulfilled, (state, action) => {
         state.isUpdateAccountLoading = false;
-        state.accountDetails = action.payload.data;
+        state.accountDetails = action.payload;
       })
       .addCase(updateAccountDetails.rejected, (state, action) => {
         state.isUpdateAccountLoading = false;

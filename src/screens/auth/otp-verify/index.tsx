@@ -5,10 +5,13 @@ import OTPForm from './otp-form';
 import useTimer from '../../../utils/use-timer.hook';
 import { AsyncError } from '../../../types';
 import { Toast } from 'native-base';
+import { useAppDispatch } from 'boilerplate-react-native/src/contexts';
+import { getAccountDetails } from '../../../contexts/account-slice';
 
 const OTPVerify: React.FC = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;
   const sendOTPDelayInMilliseconds = 60_000;
+  const dispatch = useAppDispatch();
 
   const { startTimer, remaininingSecondsStr, isResendEnabled } = useTimer({
     delayInMilliseconds: sendOTPDelayInMilliseconds,
@@ -26,6 +29,7 @@ const OTPVerify: React.FC = ({ route }) => {
     Toast.show({
       title: 'OTP verified successfully',
     });
+    dispatch(getAccountDetails());
   };
 
   return (

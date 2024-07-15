@@ -13,7 +13,7 @@ import {
   Menu,
   ScrollView,
 } from 'native-base';
-import useLoginForm from './phone-auth-form-hook';
+import usePhoneAuthForm from './phone-auth-form-hook';
 import { AsyncError } from '../../../types';
 import COUNTRY_SELECT_OPTIONS from '../../../constants/countries';
 
@@ -23,7 +23,7 @@ interface PhoneAuthFormProps {
 }
 
 const renderCountrySelectMenu = (
-  formik: ReturnType<typeof useLoginForm>['formik'],
+  formik: ReturnType<typeof usePhoneAuthForm>['formik'],
   isOpen: boolean,
   onOpen: () => void,
   onClose: () => void,
@@ -65,7 +65,7 @@ const renderCountrySelectMenu = (
 };
 
 const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => {
-  const { formik, isSendOTPLoading } = useLoginForm({
+  const { formik, isSendOTPLoading } = usePhoneAuthForm({
     onSendOTPSuccess: onSuccess,
     onError: onError,
   });

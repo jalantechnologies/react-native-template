@@ -6,16 +6,17 @@ import { AsyncError, PhoneNumber } from '../../../types';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useAuthContext } from '../../../contexts';
+import { MainScreenProps } from '../../../../@types/navigation';
 
-interface LoginFormProps {
+interface PhoneAuthFormProps {
   onError: (err: AsyncError) => void;
   onSendOTPSuccess: () => void;
 }
 
-const useLoginForm = ({ onSendOTPSuccess, onError }: LoginFormProps) => {
+const usePhoneAuthForm = ({ onSendOTPSuccess, onError }: PhoneAuthFormProps) => {
   const { isSendOTPLoading, sendOTP } = useAuthContext();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<MainScreenProps<'PhoneAuth'>['navigation']>();
   const { t } = useTranslation();
 
   const formik = useFormik({
@@ -70,4 +71,4 @@ const useLoginForm = ({ onSendOTPSuccess, onError }: LoginFormProps) => {
   };
 };
 
-export default useLoginForm;
+export default usePhoneAuthForm;

@@ -7,13 +7,16 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import { Dashboard, RegistrationScreen } from '../screens';
-import { AuthenticatedParamsList } from '../../@types/navigation';
+import {
+  AuthenticatedDrawerParamsList,
+  AuthenticatedStackParamsList,
+} from '../../@types/navigation';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Spinner } from 'native-base';
 import { useAuthContext, useAccountContext } from '../contexts';
 
-const Drawer = createDrawerNavigator<AuthenticatedParamsList>();
-const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator<AuthenticatedDrawerParamsList>();
+const Stack = createStackNavigator<AuthenticatedStackParamsList>();
 
 const CustomDrawerContent = (props: React.PropsWithChildren<DrawerContentComponentProps>) => {
   const { logout } = useAuthContext();

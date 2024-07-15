@@ -6,8 +6,9 @@ import useTimer from '../../../utils/use-timer.hook';
 import { AsyncError } from '../../../types';
 import { Toast } from 'native-base';
 import { useAccountContext } from '../../../contexts';
+import { MainScreenProps } from '../../../../@types/navigation';
 
-const OTPVerify: React.FC = ({ route }) => {
+const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;
   const sendOTPDelayInMilliseconds = 60_000;
   const { getAccountDetails } = useAccountContext();

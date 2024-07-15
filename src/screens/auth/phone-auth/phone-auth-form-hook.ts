@@ -2,7 +2,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { PhoneNumberUtil } from 'google-libphonenumber';
 
-import { AsyncError } from '../../../types';
+import { AsyncError, PhoneNumber } from '../../../types';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useAuthContext } from '../../../contexts';
@@ -45,10 +45,12 @@ const useLoginForm = ({ onSendOTPSuccess, onError }: LoginFormProps) => {
 
       const formattedPhoneNumber = parsedPhoneNumber?.getNationalNumber()?.toString();
 
-      sendOTP({
-        countryCode: values.countryCode,
-        phoneNumber: formattedPhoneNumber as string,
-      })
+      sendOTP(
+        new PhoneNumber({
+          countryCode: values.countryCode,
+          phoneNumber: formattedPhoneNumber,
+        }),
+      )
         .then(() => {
           onSendOTPSuccess();
           navigation.navigate('OTPVerify', {

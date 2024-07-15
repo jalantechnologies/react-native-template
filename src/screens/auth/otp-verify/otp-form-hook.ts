@@ -2,7 +2,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 import constant from '../../../constants/auth';
-import { AsyncError } from '../../../types';
+import { AsyncError, PhoneNumber } from '../../../types';
 import { useAuthContext } from '../../../contexts';
 
 interface OTPFormProps {
@@ -34,13 +34,7 @@ const useOTPForm = ({
     onSubmit: values => {
       const otp = values.otp.join('');
 
-      verifyOTP({
-        phoneNumber: {
-          countryCode,
-          phoneNumber,
-        },
-        otp,
-      })
+      verifyOTP(otp, new PhoneNumber({ countryCode, phoneNumber }))
         .then(() => {
           onVerifyOTPSuccess();
         })
@@ -51,10 +45,7 @@ const useOTPForm = ({
   });
 
   const handleResendOTP = () => {
-    sendOTP({
-      countryCode,
-      phoneNumber,
-    })
+    sendOTP(new PhoneNumber({ countryCode, phoneNumber }))
       .then(async () => {
         onResendOTPSuccess();
       })

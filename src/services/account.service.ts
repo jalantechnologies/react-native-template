@@ -27,7 +27,7 @@ export class AccountService extends APIService {
     const userAccessToken = getAccessToken() as AccessToken;
 
     try {
-      const response = await this.put(`/accounts/${userAccessToken.accountId}`, {
+      const response = await this.patch(`/accounts/${userAccessToken.accountId}`, {
         firstName,
         lastName,
       });

@@ -16,7 +16,7 @@ interface AuthContextInterface {
   isVerifyOTPLoading: boolean;
   logout: () => void;
   sendOTP: (phoneNumber: PhoneNumber) => Promise<void>;
-  verifyOTP: (data: { phoneNumber: PhoneNumber; otp: string }) => Promise<void>;
+  verifyOTP: (otp: string, phoneNumber: PhoneNumber) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextInterface | undefined>(undefined);
@@ -38,13 +38,17 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
 
   const sendOTP = async (phoneNumber: PhoneNumber) => {
     setIsSendOTPLoading(true);
-    await authService.sendOTP(phoneNumber);
+    const { error } = await authService.sendOTP(phoneNumber);
+    if (error) {
+      setIsSendOTPLoading(false);
+      throw error;
+    }
     setIsSendOTPLoading(false);
   };
 
-  const verifyOTP = async ({ phoneNumber, otp }: { phoneNumber: PhoneNumber; otp: string }) => {
+  const verifyOTP = async (otp: string, phoneNumber: PhoneNumber) => {
     setIsVerifyOTPLoading(true);
-    const { data, error } = await authService.verifyOTP(phoneNumber, otp);
+    const { data, error } = await authService.verifyOTP(otp, phoneNumber);
 
     if (data) {
       setAccessToken(data);

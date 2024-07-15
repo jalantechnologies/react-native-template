@@ -1,5 +1,6 @@
 import { AccessToken, ApiResponse } from '../types';
 import { Account } from '../types/account';
+import { ApiError } from '../types/api-response';
 import { getAccessToken } from '../utils';
 import { APIService } from './api';
 
@@ -7,11 +8,16 @@ export class AccountService extends APIService {
   getAccountDetails = async (): Promise<ApiResponse<Account>> => {
     const userAccessToken = getAccessToken() as AccessToken;
 
-    return this.get(`/accounts/${userAccessToken.accountId}`, {
-      headers: {
-        Authorization: `Bearer ${userAccessToken.token}`,
-      },
-    });
+    try {
+      const response = await this.get(`/accounts/${userAccessToken.accountId}`, {
+        headers: {
+          Authorization: `Bearer ${userAccessToken.token}`,
+        },
+      });
+      return new ApiResponse<Account>(new Account(response.data));
+    } catch (error) {
+      return new ApiResponse<Account>(undefined, new ApiError(error.response.data));
+    }
   };
 
   updateAccountDetails = async (
@@ -20,9 +26,14 @@ export class AccountService extends APIService {
   ): Promise<ApiResponse<Account>> => {
     const userAccessToken = getAccessToken() as AccessToken;
 
-    return this.patch(`/accounts/${userAccessToken.accountId}`, {
-      firstName,
-      lastName,
-    });
+    try {
+      const response = await this.put(`/accounts/${userAccessToken.accountId}`, {
+        firstName,
+        lastName,
+      });
+      return new ApiResponse<Account>(new Account(response.data));
+    } catch (error) {
+      return new ApiResponse<Account>(undefined, new ApiError(error.response.data));
+    }
   };
 }

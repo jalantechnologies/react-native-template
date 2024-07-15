@@ -4,6 +4,6 @@ export interface AsyncError {
 }
 
 export interface AsyncResult<T> {
-  error?: AsyncError;
   data?: T;
+  error?: AsyncError;
 }

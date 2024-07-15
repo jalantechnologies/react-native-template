@@ -19,7 +19,6 @@
     "@react-navigation/drawer": "^6.6.15",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/stack": "^6.3.17",
-    "@reduxjs/toolkit": "^2.2.6",
     "axios": "^1.4.0",
     "formik": "^2.4.6",
     "google-libphonenumber": "^3.2.35",
@@ -37,7 +36,6 @@
     "react-native-screens": "^3.22.0",
     "react-native-svg": "12.1.1",
     "react-native-vector-icons": "^10.0.0",
-    "react-redux": "^9.1.2",
     "yup": "^1.4.0"
   },
   "devDependencies": {

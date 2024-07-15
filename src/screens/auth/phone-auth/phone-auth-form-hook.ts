@@ -4,9 +4,8 @@ import { PhoneNumberUtil } from 'google-libphonenumber';
 
 import { AsyncError } from '../../../types';
 import { useNavigation } from '@react-navigation/native';
-import { sendOTP } from '../../../redux/slices/auth-slice';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { useTranslation } from 'react-i18next';
+import { useAuthContext } from '../../../contexts';
 
 interface LoginFormProps {
   onError: (err: AsyncError) => void;
@@ -14,8 +13,8 @@ interface LoginFormProps {
 }
 
 const useLoginForm = ({ onSendOTPSuccess, onError }: LoginFormProps) => {
-  const dispatch = useAppDispatch();
-  const isSendOTPLoading = useAppSelector(state => state.auth.isSendOTPLoading);
+  const { isSendOTPLoading, sendOTP } = useAuthContext();
+
   const navigation = useNavigation();
   const { t } = useTranslation();
 
@@ -46,13 +45,10 @@ const useLoginForm = ({ onSendOTPSuccess, onError }: LoginFormProps) => {
 
       const formattedPhoneNumber = parsedPhoneNumber?.getNationalNumber()?.toString();
 
-      dispatch(
-        sendOTP({
-          countryCode: values.countryCode,
-          phoneNumber: formattedPhoneNumber as string,
-        }),
-      )
-        .unwrap()
+      sendOTP({
+        countryCode: values.countryCode,
+        phoneNumber: formattedPhoneNumber as string,
+      })
         .then(() => {
           onSendOTPSuccess();
           navigation.navigate('OTPVerify', {

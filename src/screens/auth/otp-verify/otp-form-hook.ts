@@ -3,8 +3,7 @@ import * as Yup from 'yup';
 
 import constant from '../../../constants/auth';
 import { AsyncError } from '../../../types';
-import { sendOTP, verifyOTP } from '../../../redux/slices/auth-slice';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { useAuthContext } from '../../../contexts';
 
 interface OTPFormProps {
   countryCode: string;
@@ -21,8 +20,7 @@ const useOTPForm = ({
   countryCode,
   phoneNumber,
 }: OTPFormProps) => {
-  const dispatch = useAppDispatch();
-  const isVerifyOTPLoading = useAppSelector(state => state.auth.isVerifyOTPLoading);
+  const { isVerifyOTPLoading, sendOTP, verifyOTP } = useAuthContext();
 
   const formik = useFormik({
     initialValues: {
@@ -36,17 +34,14 @@ const useOTPForm = ({
     onSubmit: values => {
       const otp = values.otp.join('');
 
-      dispatch(
-        verifyOTP({
-          phoneNumber: {
-            countryCode,
-            phoneNumber,
-          },
-          otp,
-        }),
-      )
-        .unwrap()
-        .then(async () => {
+      verifyOTP({
+        phoneNumber: {
+          countryCode,
+          phoneNumber,
+        },
+        otp,
+      })
+        .then(() => {
           onVerifyOTPSuccess();
         })
         .catch(error => {
@@ -56,13 +51,10 @@ const useOTPForm = ({
   });
 
   const handleResendOTP = () => {
-    dispatch(
-      sendOTP({
-        countryCode,
-        phoneNumber,
-      }),
-    )
-      .unwrap()
+    sendOTP({
+      countryCode,
+      phoneNumber,
+    })
       .then(async () => {
         onResendOTPSuccess();
       })

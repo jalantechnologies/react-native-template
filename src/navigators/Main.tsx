@@ -1,14 +1,26 @@
 import React from 'react';
-import { Home } from '../screens';
 import { createStackNavigator } from '@react-navigation/stack';
+import PhoneAuth from '../screens/auth/phone-auth';
+import OTPVerify from '../screens/auth/otp-verify';
+import AuthenticatedStack from './authenticated';
+import { useAuthContext } from '../contexts';
 
 const Stack = createStackNavigator();
 
 // @refresh reset
 const MainNavigator = () => {
+  const { isUserAuthenticated } = useAuthContext();
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Home" component={Home} />
+      {isUserAuthenticated ? (
+        <Stack.Screen name="Authenticated" component={AuthenticatedStack} />
+      ) : (
+        <>
+          <Stack.Screen name="PhoneAuth" component={PhoneAuth} />
+          <Stack.Screen name="OTPVerify" component={OTPVerify} />
+        </>
+      )}
     </Stack.Navigator>
   );
 };

@@ -1,15 +1,12 @@
 import React from 'react';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {
-  NavigationContainer,
-  useNavigationContainerRef,
-} from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { Startup } from '../screens';
 import MainNavigator from './main';
 import { useFlipper } from '@react-navigation/devtools';
 import { ApplicationStackParamList } from '../../@types/navigation';
-import tw from '../lib/tailwind';
+import { appStyle } from '../app-styles';
 
 const Stack = createStackNavigator<ApplicationStackParamList>();
 
@@ -20,7 +17,7 @@ const ApplicationNavigator = () => {
   useFlipper(navigationRef);
 
   return (
-    <SafeAreaView style={tw`flex w-full h-full`}>
+    <SafeAreaView style={appStyle.appContainer}>
       <NavigationContainer ref={navigationRef}>
         <StatusBar />
         <Stack.Navigator screenOptions={{ headerShown: false }}>

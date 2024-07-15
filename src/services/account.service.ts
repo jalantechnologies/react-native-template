@@ -5,9 +5,7 @@ import { getAccessToken } from '../utils';
 import { APIService } from './api';
 
 export class AccountService extends APIService {
-  getAccountDetails = async (): Promise<ApiResponse<Account>> => {
-    const userAccessToken = getAccessToken() as AccessToken;
-
+  getAccountDetails = async (userAccessToken: AccessToken): Promise<ApiResponse<Account>> => {
     try {
       const response = await this.get(`/accounts/${userAccessToken.accountId}`, {
         headers: {
@@ -23,9 +21,8 @@ export class AccountService extends APIService {
   updateAccountDetails = async (
     firstName: string,
     lastName: string,
+    userAccessToken: AccessToken,
   ): Promise<ApiResponse<Account>> => {
-    const userAccessToken = getAccessToken() as AccessToken;
-
     try {
       const response = await this.patch(`/accounts/${userAccessToken.accountId}`, {
         firstName,

@@ -7,10 +7,14 @@ import React, {
   useState,
 } from 'react';
 import { AuthService } from '../services';
-import { PhoneNumber } from '../types';
-import { clearAccessToken, getAccessToken, setAccessToken } from '../utils';
+import { PhoneNumber, AccessToken } from '../types';
+import { Nullable } from '../types/common-types';
+import { getFromStorage, removeFromStorage, setToStorage } from '../utils/storage-util';
+
+const ACCESS_TOKEN_KEY = 'access-token';
 
 interface AuthContextInterface {
+  getAccessTokenFromStorage: () => Nullable<AccessToken>;
   isSendOTPLoading: boolean;
   isUserAuthenticated: boolean;
   isVerifyOTPLoading: boolean;
@@ -18,6 +22,22 @@ interface AuthContextInterface {
   sendOTP: (phoneNumber: PhoneNumber) => Promise<void>;
   verifyOTP: (otp: string, phoneNumber: PhoneNumber) => Promise<void>;
 }
+
+const getAccessTokenFromStorage = (): Nullable<AccessToken> => {
+  const token = getFromStorage(ACCESS_TOKEN_KEY);
+  if (token) {
+    return JSON.parse(token) as AccessToken;
+  }
+  return null;
+};
+
+const setAccessTokenToStorage = (token: AccessToken) => {
+  setToStorage(ACCESS_TOKEN_KEY, JSON.stringify(token));
+};
+
+const clearAccessTokenFromStorage = (): void => {
+  removeFromStorage(ACCESS_TOKEN_KEY);
+};
 
 export const AuthContext = createContext<AuthContextInterface | undefined>(undefined);
 
@@ -28,11 +48,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
   const authService = useMemo(() => new AuthService(), []);
 
   const [isSendOTPLoading, setIsSendOTPLoading] = useState(false);
-  const [isUserAuthenticated, setIsUserAuthenticated] = useState(!!getAccessToken());
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(!!getAccessTokenFromStorage());
   const [isVerifyOTPLoading, setIsVerifyOTPLoading] = useState(false);
 
   const logout = () => {
-    clearAccessToken();
+    clearAccessTokenFromStorage();
     setIsUserAuthenticated(false);
   };
 
@@ -51,7 +71,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
     const { data, error } = await authService.verifyOTP(otp, phoneNumber);
 
     if (data) {
-      setAccessToken(data);
+      setAccessTokenToStorage(data);
       setIsUserAuthenticated(true);
       setIsVerifyOTPLoading(false);
     } else {
@@ -59,9 +79,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
       throw error;
     }
   };
+
   return (
     <AuthContext.Provider
       value={{
+        getAccessTokenFromStorage,
         isSendOTPLoading,
         isUserAuthenticated,
         isVerifyOTPLoading,

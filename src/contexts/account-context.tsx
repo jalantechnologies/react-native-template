@@ -7,8 +7,9 @@ import React, {
   useState,
 } from 'react';
 import { AccountService } from '../services';
-import { Account } from '../types';
+import { AccessToken, Account } from '../types';
 import { Nullable } from '../types/common-types';
+import { useAuthContext } from './auth-context';
 
 interface AccountContextInterface {
   accountDetails: Nullable<Account>;
@@ -33,9 +34,13 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
   const [isNewUser, setIsNewUser] = useState(false);
   const [isUpdateAccountLoading, setIsUpdateAccountLoading] = useState(false);
 
+  const { getAccessTokenFromStorage } = useAuthContext();
+
   const getAccountDetails = async () => {
     setIsAccountLoading(true);
-    const { data, error } = await accountService.getAccountDetails();
+    const { data, error } = await accountService.getAccountDetails(
+      getAccessTokenFromStorage() as AccessToken,
+    );
     if (data) {
       setAccountDetails(data);
       if (!data.firstName) {
@@ -52,7 +57,11 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
 
   const updateAccountDetails = async (firstName: string, lastName: string) => {
     setIsUpdateAccountLoading(true);
-    const { data, error } = await accountService.updateAccountDetails(firstName, lastName);
+    const { data, error } = await accountService.updateAccountDetails(
+      firstName,
+      lastName,
+      getAccessTokenFromStorage() as AccessToken,
+    );
     if (data) {
       setAccountDetails(data);
       setIsUpdateAccountLoading(false);

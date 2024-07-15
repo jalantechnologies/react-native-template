@@ -1,19 +1,30 @@
 import { MMKV } from 'react-native-mmkv';
+import { useCallback } from 'react';
 
 const localStorage = new MMKV();
 
-export const getFromStorage = (key: string) => {
-  return localStorage.getString(key);
-};
+export const useLocalStorage = () => {
+  const getFromStorage = useCallback((key: string): string | null => {
+    const value = localStorage.getString(key);
+    return value ?? null;
+  }, []);
 
-export const setToStorage = (key: string, value: string) => {
-  localStorage.set(key, value);
-};
+  const setToStorage = useCallback((key: string, value: string): void => {
+    localStorage.set(key, value);
+  }, []);
 
-export const removeFromStorage = (key: string) => {
-  localStorage.delete(key);
-};
+  const removeFromStorage = useCallback((key: string): void => {
+    localStorage.delete(key);
+  }, []);
 
-export const clearStorage = () => {
-  localStorage.clearAll();
+  const clearStorage = useCallback((): void => {
+    localStorage.clearAll();
+  }, []);
+
+  return {
+    getFromStorage,
+    setToStorage,
+    removeFromStorage,
+    clearStorage,
+  };
 };

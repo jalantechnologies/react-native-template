@@ -9,7 +9,7 @@ import React, {
 import { AuthService } from '../services';
 import { PhoneNumber, AccessToken } from '../types';
 import { Nullable } from '../types/common-types';
-import { getFromStorage, removeFromStorage, setToStorage } from '../utils/storage-util';
+import { useLocalStorage } from '../utils';
 
 const ACCESS_TOKEN_KEY = 'access-token';
 
@@ -23,22 +23,6 @@ interface AuthContextInterface {
   verifyOTP: (otp: string, phoneNumber: PhoneNumber) => Promise<void>;
 }
 
-const getAccessTokenFromStorage = (): Nullable<AccessToken> => {
-  const token = getFromStorage(ACCESS_TOKEN_KEY);
-  if (token) {
-    return JSON.parse(token) as AccessToken;
-  }
-  return null;
-};
-
-const setAccessTokenToStorage = (token: AccessToken) => {
-  setToStorage(ACCESS_TOKEN_KEY, JSON.stringify(token));
-};
-
-const clearAccessTokenFromStorage = (): void => {
-  removeFromStorage(ACCESS_TOKEN_KEY);
-};
-
 export const AuthContext = createContext<AuthContextInterface | undefined>(undefined);
 
 export const useAuthContext = (): AuthContextInterface =>
@@ -48,8 +32,27 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
   const authService = useMemo(() => new AuthService(), []);
 
   const [isSendOTPLoading, setIsSendOTPLoading] = useState(false);
-  const [isUserAuthenticated, setIsUserAuthenticated] = useState(!!getAccessTokenFromStorage());
   const [isVerifyOTPLoading, setIsVerifyOTPLoading] = useState(false);
+
+  const { getFromStorage, removeFromStorage, setToStorage } = useLocalStorage();
+
+  const getAccessTokenFromStorage = (): Nullable<AccessToken> => {
+    const token = getFromStorage(ACCESS_TOKEN_KEY);
+    if (token) {
+      return JSON.parse(token) as AccessToken;
+    }
+    return null;
+  };
+
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(!!getAccessTokenFromStorage());
+
+  const setAccessTokenToStorage = (token: AccessToken) => {
+    setToStorage(ACCESS_TOKEN_KEY, JSON.stringify(token));
+  };
+
+  const clearAccessTokenFromStorage = (): void => {
+    removeFromStorage(ACCESS_TOKEN_KEY);
+  };
 
   const logout = () => {
     clearAccessTokenFromStorage();

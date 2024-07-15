@@ -28,7 +28,7 @@ export const useAccountContext = (): AccountContextInterface =>
 export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const accountService = useMemo(() => new AccountService(), []);
 
-  const [accountDetails, setAccountDetails] = useState<Account | null>(null);
+  const [accountDetails, setAccountDetails] = useState<Nullable<Account>>(null);
   const [isAccountLoading, setIsAccountLoading] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
   const [isUpdateAccountLoading, setIsUpdateAccountLoading] = useState(false);

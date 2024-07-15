@@ -14,27 +14,12 @@ const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
 }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        flex={1}
-      >
-        <ScrollView
-          _contentContainerStyle={styles.contentContainerStyle}
-          bounces={false}
-        >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} flex={1}>
+        <ScrollView _contentContainerStyle={styles.contentContainerStyle} bounces={false}>
           <Box safeArea flex={1} bg={'primary'}>
-            <Box
-              py={'15%'}
-              px={'10%'}
-              fontWeight={'bold'}
-              alignSelf={'flex-start'}
-            >
-              <Heading size="2xl" color={'white'}>
-                {primaryTitle}
-              </Heading>
-              <Heading size="2xl" color={'white'}>
-                {secondaryTitle}
-              </Heading>
+            <Box py={'15%'} px={'10%'} fontWeight={'bold'} alignSelf={'flex-start'}>
+              <Heading size="2xl">{primaryTitle}</Heading>
+              <Heading size="2xl">{secondaryTitle}</Heading>
             </Box>
             <Box py="8" px="10%" w="100%" flex={1} bg={'white'} roundedTop="lg">
               {children}

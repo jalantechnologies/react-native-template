@@ -1,11 +1,6 @@
 import * as _ from 'lodash';
 import Config from 'react-native-config';
-import axios, {
-  AxiosInstance,
-  AxiosResponse,
-  AxiosError,
-  AxiosRequestConfig,
-} from 'axios';
+import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
 
 export class APIService {
   service: AxiosInstance;
@@ -31,10 +26,7 @@ export class APIService {
     return _.get(response, 'response.data.error', '');
   }
 
-  protected async get(
-    path: string,
-    config?: AxiosRequestConfig,
-  ): Promise<AxiosResponse> {
+  protected async get(path: string, config?: AxiosRequestConfig): Promise<AxiosResponse> {
     return this.service.get(path, config);
   }
 

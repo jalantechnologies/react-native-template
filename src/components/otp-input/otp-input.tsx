@@ -1,5 +1,6 @@
-import React, { useRef } from 'react';
+import React, { RefObject, useRef } from 'react';
 import { HStack, Input } from 'native-base';
+import { KeyboardKeys } from '../../types/auth';
 
 interface OTPInputProps {
   length: number;
@@ -8,7 +9,7 @@ interface OTPInputProps {
 }
 
 const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
-  const inputsRef = useRef<Array<any>>([]);
+  const inputsRef = useRef<Array<RefObject<typeof Input>>>([]);
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -21,7 +22,7 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
   };
 
   const handleKeyPress = (e: any, index: number) => {
-    if (e.nativeEvent.key === 'Backspace' && index > 0 && otp[index] === '') {
+    if (e.nativeEvent.key === KeyboardKeys.BACKSPACE && index > 0 && otp[index] === '') {
       inputsRef.current[index - 1].focus();
     }
   };
@@ -38,15 +39,7 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
             onKeyPress={e => handleKeyPress(e, index)}
             keyboardType="numeric"
             maxLength={1}
-            width={10}
-            height={10}
-            textAlign="center"
-            variant="unstyled"
-            borderBottomWidth={2}
-            borderRadius={0}
-            _focus={{
-              borderColor: 'primary',
-            }}
+            variant={'otp'}
             key={index}
           />
         ))}

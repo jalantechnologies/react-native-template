@@ -4,7 +4,7 @@ import RegistrationForm from './registration-form';
 import { Toast } from 'native-base';
 import { AsyncError } from '../../../types';
 
-const Registration: React.FC = () => {
+const RegistrationScreen: React.FC = () => {
   const onSuccess = () => {
     Toast.show({
       title: 'Account Created Successfully',
@@ -23,4 +23,4 @@ const Registration: React.FC = () => {
   );
 };
 
-export default Registration;
+export default RegistrationScreen;

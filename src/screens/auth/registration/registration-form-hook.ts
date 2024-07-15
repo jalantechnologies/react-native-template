@@ -1,15 +1,12 @@
-import { useAppDispatch, useAppSelector } from '../../../contexts';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import {
-  updateAccountDetails,
-  setIsNewUser,
-} from '../../../contexts/account-slice';
+import { updateAccountDetails, setIsNewUser } from '../../../redux/slices/account-slice';
 import { AsyncError } from '../../../types';
 
 interface RegistrationFormProps {
-  onRegistrationSuccess: () => void;
   onRegistrationError: (err: AsyncError) => void;
+  onRegistrationSuccess: () => void;
 }
 
 const useRegistrationForm = ({
@@ -17,9 +14,7 @@ const useRegistrationForm = ({
   onRegistrationSuccess,
 }: RegistrationFormProps) => {
   const dispatch = useAppDispatch();
-  const isUpdateAccountLoading = useAppSelector(
-    state => state.account.isUpdateAccountLoading,
-  );
+  const isUpdateAccountLoading = useAppSelector(state => state.account.isUpdateAccountLoading);
 
   const formik = useFormik({
     initialValues: {

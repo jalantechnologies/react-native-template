@@ -1,24 +1,14 @@
 import React from 'react';
 import { AsyncError } from '../../../types';
 import useRegistrationForm from './registration-form-hook';
-import {
-  Button,
-  Container,
-  FormControl,
-  Heading,
-  Input,
-  VStack,
-} from 'native-base';
+import { Button, Container, FormControl, Heading, Input, VStack } from 'native-base';
 
 interface RegistrationFormProps {
-  onSuccess: () => void;
   onError: (error: AsyncError) => void;
+  onSuccess: () => void;
 }
 
-const RegistrationForm: React.FC<RegistrationFormProps> = ({
-  onSuccess,
-  onError,
-}) => {
+const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError }) => {
   const { formik, isUpdateAccountLoading } = useRegistrationForm({
     onRegistrationError: onError,
     onRegistrationSuccess: onSuccess,
@@ -27,10 +17,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
   return (
     <VStack space={4}>
       <Container>
-        <Heading size="sm" fontWeight="600" color="coolGray.800">
-          New User Registration
-        </Heading>
-        <Heading mt={2} size="xs" color="coolGray.600">
+        <Heading size="lg">New User Registration</Heading>
+        <Heading mt={2} size="xs">
           Please fill the form to create an account
         </Heading>
       </Container>
@@ -44,9 +32,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           value={formik.values.firstName}
           placeholder="First Name"
         />
-        <FormControl.ErrorMessage>
-          {formik.errors.firstName}
-        </FormControl.ErrorMessage>
+        <FormControl.ErrorMessage>{formik.errors.firstName}</FormControl.ErrorMessage>
       </FormControl>
       <FormControl isRequired={false}>
         <FormControl.Label>Last Name</FormControl.Label>
@@ -56,10 +42,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({
           placeholder="Last Name"
         />
       </FormControl>
-      <Button
-        onPress={() => formik.handleSubmit()}
-        isLoading={isUpdateAccountLoading}
-      >
+      <Button onPress={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
         Create Account
       </Button>
     </VStack>

@@ -3,8 +3,8 @@ import * as Yup from 'yup';
 
 import constant from '../../../constants/auth';
 import { AsyncError } from '../../../types';
-import { sendOTP, verifyOTP } from '../../../contexts/auth-slice';
-import { useAppDispatch, useAppSelector } from '../../../contexts';
+import { sendOTP, verifyOTP } from '../../../redux/slices/auth-slice';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 
 interface OTPFormProps {
   countryCode: string;
@@ -22,9 +22,7 @@ const useOTPForm = ({
   phoneNumber,
 }: OTPFormProps) => {
   const dispatch = useAppDispatch();
-  const isVerifyOTPLoading = useAppSelector(
-    state => state.auth.isVerifyOTPLoading,
-  );
+  const isVerifyOTPLoading = useAppSelector(state => state.auth.isVerifyOTPLoading);
 
   const formik = useFormik({
     initialValues: {

@@ -1,9 +1,5 @@
 import { AccessToken } from '../types';
-import {
-  getFromStorage,
-  removeFromStorage,
-  setToStorage,
-} from './storage-util';
+import { getFromStorage, removeFromStorage, setToStorage } from './storage-util';
 
 const ACCESS_TOKEN: string = 'access-token';
 

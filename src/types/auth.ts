@@ -14,3 +14,7 @@ export type PhoneNumber = {
   countryCode: string;
   phoneNumber: string;
 };
+
+export enum KeyboardKeys {
+  BACKSPACE = 'Backspace',
+}

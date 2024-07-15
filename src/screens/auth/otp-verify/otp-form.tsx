@@ -55,33 +55,22 @@ const OTPForm: React.FC<OTPFormProps> = ({
     <VStack space={10}>
       <Box>
         <Container>
-          <Heading size="lg" fontWeight="600" color="coolGray.800">
-            Enter OTP
-          </Heading>
-          <Heading mt="1" color="coolGray.600" fontWeight="medium" size="xs">
-            We have the sent the OTP code to {countryCode}{' '}
-            {getMaskedPhoneNumber()}
+          <Heading size="lg">Enter OTP</Heading>
+          <Heading mt="1" size="xs">
+            We have the sent the OTP code to {countryCode} {getMaskedPhoneNumber()}
           </Heading>
         </Container>
         <FormControl py={5}>
           <Center>
-            <OTPInput
-              length={constant.OTP_LENGTH}
-              otp={formik.values.otp}
-              setOtp={handleSetOtp}
-            />
+            <OTPInput length={constant.OTP_LENGTH} otp={formik.values.otp} setOtp={handleSetOtp} />
           </Center>
         </FormControl>
       </Box>
       <Container>
-        <Heading size="sm" color="coolGray.600" fontWeight="medium">
-          Didn't receive the OTP?{' '}
-        </Heading>
+        <Heading size="xs">Didn't receive the OTP? </Heading>
         <Link onPress={handleResendOTP} isUnderlined={false}>
           <Text color={isResendEnabled ? 'primary' : 'coolGray.600'}>
-            {isResendEnabled
-              ? 'Resend OTP'
-              : `Resend OTP in 00:${remaininingSecondsStr}`}
+            {isResendEnabled ? 'Resend OTP' : `Resend OTP in 00:${remaininingSecondsStr}`}
           </Text>
         </Link>
       </Container>

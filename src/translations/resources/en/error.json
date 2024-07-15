@@ -1,4 +1,5 @@
 {
   "oops": "Oops",
-  "somethingWrong": "Something Went Wrong."
+  "somethingWrong": "Something Went Wrong.",
+  "phoneValidation": "Please enter a valid phone number"
 }

@@ -3,9 +3,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { Brand } from '../../components';
 import { ApplicationScreenProps } from '../../../@types/navigation';
 
-const Startup: React.FC<ApplicationScreenProps> = ({
-  navigation,
-}: ApplicationScreenProps) => {
+const Startup: React.FC<ApplicationScreenProps> = ({ navigation }: ApplicationScreenProps) => {
   const init = async () => {
     await new Promise(resolve =>
       setTimeout(() => {

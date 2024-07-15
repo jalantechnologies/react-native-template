@@ -5,8 +5,8 @@ import OTPForm from './otp-form';
 import useTimer from '../../../utils/use-timer.hook';
 import { AsyncError } from '../../../types';
 import { Toast } from 'native-base';
-import { useAppDispatch } from 'boilerplate-react-native/src/contexts';
-import { getAccountDetails } from '../../../contexts/account-slice';
+import { getAccountDetails } from '../../../redux/slices/account-slice';
+import { useAppDispatch } from '../../../redux/hooks';
 
 const OTPVerify: React.FC = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;

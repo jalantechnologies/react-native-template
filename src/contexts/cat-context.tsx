@@ -7,9 +7,7 @@ export interface CatContextInterface {
 
 export const CatContext = createContext<CatContextInterface>(undefined);
 
-export const CatContextProvider: React.FC<PropsWithChildren> = ({
-  children,
-}) => {
+export const CatContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const catService = useMemo(() => new CatService(), []);
 
   const getCatFacts = async () => {
@@ -17,9 +15,5 @@ export const CatContextProvider: React.FC<PropsWithChildren> = ({
     return data;
   };
 
-  return (
-    <CatContext.Provider value={{ getCatFacts }}>
-      {children}
-    </CatContext.Provider>
-  );
+  return <CatContext.Provider value={{ getCatFacts }}>{children}</CatContext.Provider>;
 };

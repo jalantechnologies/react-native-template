@@ -1,10 +1,7 @@
 import React from 'react';
 import { SafeAreaView, StatusBar } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {
-  NavigationContainer,
-  useNavigationContainerRef,
-} from '@react-navigation/native';
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { Startup } from '../screens';
 import MainNavigator from './main';
 import { useFlipper } from '@react-navigation/devtools';

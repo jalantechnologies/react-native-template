@@ -20,6 +20,32 @@ const appTheme = extendTheme({
           backgroundColor: 'background',
         },
       },
+      variants: {
+        otp: {
+          width: 10,
+          height: 10,
+          textAlign: 'center',
+          borderBottomWidth: 2,
+          borderRadius: 0,
+        },
+      },
+    },
+    Heading: {
+      baseStyle: {
+        color: 'coolGray.800',
+      },
+      sizes: {
+        lg: {
+          fontWeight: '600',
+        },
+        xs: {
+          fontWeight: '500',
+          color: 'coolGray.600',
+        },
+        '2xl': {
+          color: 'white',
+        },
+      },
     },
   },
 });

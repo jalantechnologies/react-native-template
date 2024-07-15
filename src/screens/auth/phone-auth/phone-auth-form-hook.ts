@@ -3,10 +3,10 @@ import * as Yup from 'yup';
 import { PhoneNumberUtil } from 'google-libphonenumber';
 
 import { AsyncError } from '../../../types';
-import constant from '../../../constants/auth';
 import { useNavigation } from '@react-navigation/native';
-import { sendOTP } from '../../../contexts/auth-slice';
-import { useAppDispatch, useAppSelector } from '../../../contexts';
+import { sendOTP } from '../../../redux/slices/auth-slice';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { useTranslation } from 'react-i18next';
 
 interface LoginFormProps {
   onError: (err: AsyncError) => void;
@@ -17,6 +17,7 @@ const useLoginForm = ({ onSendOTPSuccess, onError }: LoginFormProps) => {
   const dispatch = useAppDispatch();
   const isSendOTPLoading = useAppSelector(state => state.auth.isSendOTPLoading);
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   const formik = useFormik({
     initialValues: {
@@ -26,7 +27,7 @@ const useLoginForm = ({ onSendOTPSuccess, onError }: LoginFormProps) => {
     },
 
     validationSchema: Yup.object({
-      phoneNumber: Yup.string().required(constant.PHONE_VALIDATION_ERROR),
+      phoneNumber: Yup.string().required(t('auth:phoneNumberRequired')),
     }),
 
     onSubmit: values => {
@@ -34,17 +35,16 @@ const useLoginForm = ({ onSendOTPSuccess, onError }: LoginFormProps) => {
         values.phoneNumber,
         values.country,
       );
-      const isValidPhoneNumber =
-        PhoneNumberUtil.getInstance().isValidNumber(parsedPhoneNumber);
+      const isValidPhoneNumber = PhoneNumberUtil.getInstance().isValidNumber(parsedPhoneNumber);
 
       if (!isValidPhoneNumber) {
-        onError({ message: constant.PHONE_VALIDATION_ERROR } as AsyncError);
+        onError({
+          message: t('error:phoneValidation') as string,
+        } as AsyncError);
         return;
       }
 
-      const formattedPhoneNumber = parsedPhoneNumber
-        ?.getNationalNumber()
-        ?.toString();
+      const formattedPhoneNumber = parsedPhoneNumber?.getNationalNumber()?.toString();
 
       dispatch(
         sendOTP({

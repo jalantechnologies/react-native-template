@@ -22,10 +22,49 @@ interface PhoneAuthFormProps {
   onError: (error: AsyncError) => void;
 }
 
-const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({
-  onSuccess,
-  onError,
-}) => {
+const renderCountrySelectMenu = (
+  formik: ReturnType<typeof useLoginForm>['formik'],
+  isOpen: boolean,
+  onOpen: () => void,
+  onClose: () => void,
+  handleSelectChange: (value: string) => void,
+) => {
+  return (
+    <Menu
+      isOpen={isOpen}
+      onOpen={onOpen}
+      onClose={onClose}
+      trigger={triggerProps => (
+        <Pressable
+          {...triggerProps}
+          borderWidth={1}
+          justifyContent="center"
+          borderColor={'warmGray.300'}
+          rounded="sm"
+          px={2}
+        >
+          <Text>{`${formik.values.country} (${formik.values.countryCode})`}</Text>
+        </Pressable>
+      )}
+    >
+      <ScrollView maxH={'200px'}>
+        {COUNTRY_SELECT_OPTIONS.map(option => (
+          <Menu.Item
+            key={option.value}
+            onPress={() => {
+              handleSelectChange(option.value);
+              onClose();
+            }}
+          >
+            {option.label}
+          </Menu.Item>
+        ))}
+      </ScrollView>
+    </Menu>
+  );
+};
+
+const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => {
   const { formik, isSendOTPLoading } = useLoginForm({
     onSendOTPSuccess: onSuccess,
     onError: onError,
@@ -39,76 +78,21 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({
     formik.setFieldValue('country', country);
   };
 
-  const renderCountrySelectMenu = () => {
-    return (
-      <Menu
-        isOpen={isOpen}
-        onOpen={onOpen}
-        onClose={onClose}
-        trigger={triggerProps => (
-          <Pressable
-            {...triggerProps}
-            borderWidth={1}
-            justifyContent="center"
-            borderColor={'warmGray.300'}
-            rounded="sm"
-            px={2}
-          >
-            <Text>{`${formik.values.country} (${formik.values.countryCode})`}</Text>
-          </Pressable>
-        )}
-      >
-        <ScrollView maxH={'200px'}>
-          {COUNTRY_SELECT_OPTIONS.map(option => (
-            <Menu.Item
-              key={option.value}
-              onPress={() => {
-                handleSelectChange(option.value);
-                onClose();
-              }}
-            >
-              {option.label}
-            </Menu.Item>
-          ))}
-        </ScrollView>
-      </Menu>
-    );
-  };
-
   return (
     <VStack space={6}>
       <Container>
-        <Heading
-          size="lg"
-          fontWeight="600"
-          color="coolGray.800"
-          _dark={{
-            color: 'warmGray.50',
-          }}
-        >
-          Welcome
-        </Heading>
-        <Heading
-          mt="1"
-          _dark={{
-            color: 'warmGray.200',
-          }}
-          color="coolGray.600"
-          fontWeight="medium"
-          size="xs"
-        >
+        <Heading size="lg">Welcome</Heading>
+        <Heading mt="1" size="xs">
           Enter your number to continue
         </Heading>
       </Container>
       <FormControl
         isRequired={true}
-        isInvalid={
-          formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)
-        }
+        isInvalid={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
       >
         <FormControl.Label>Phone Number</FormControl.Label>
         <HStack space={2}>
-          {renderCountrySelectMenu()}
+          {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange)}
           <Input
             value={formik.values.phoneNumber}
             onChangeText={formik.handleChange('phoneNumber')}
@@ -117,15 +101,9 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({
             placeholder="XXXXXXXXXX"
           />
         </HStack>
-        <FormControl.ErrorMessage>
-          {formik.errors.phoneNumber}
-        </FormControl.ErrorMessage>
+        <FormControl.ErrorMessage>{formik.errors.phoneNumber}</FormControl.ErrorMessage>
       </FormControl>
-      <Button
-        mt="2"
-        onPress={() => formik.handleSubmit()}
-        isLoading={isSendOTPLoading}
-      >
+      <Button mt="2" onPress={() => formik.handleSubmit()} isLoading={isSendOTPLoading}>
         Send OTP
       </Button>
     </VStack>

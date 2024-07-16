@@ -15,13 +15,17 @@ export class AccountService extends APIService {
     lastName: string,
     userAccessToken: AccessToken,
   ): Promise<APIResponse> => {
-    return this.patch(`/accounts/${userAccessToken.accountId}`, {
-      firstName,
-      lastName,
-    }, {
-      headers: {
-        Authorization: `Bearer ${userAccessToken.token}`,
+    return this.patch(
+      `/accounts/${userAccessToken.accountId}`,
+      {
+        firstName,
+        lastName,
       },
-    });
+      {
+        headers: {
+          Authorization: `Bearer ${userAccessToken.token}`,
+        },
+      },
+    );
   };
 }

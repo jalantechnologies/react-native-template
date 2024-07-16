@@ -42,19 +42,35 @@ export class APIService {
     return this.request<T>('get', path, undefined, config);
   }
 
-  protected async post<T>(path: string, payload?: any, config?: AxiosRequestConfig): Promise<APIResponse<T>> {
+  protected async post<T>(
+    path: string,
+    payload?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<APIResponse<T>> {
     return this.request<T>('post', path, payload, config);
   }
 
-  protected async patch<T>(path: string, payload?: any, config?: AxiosRequestConfig): Promise<APIResponse<T>> {
+  protected async patch<T>(
+    path: string,
+    payload?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<APIResponse<T>> {
     return this.request<T>('patch', path, payload, config);
   }
 
-  protected async put<T>(path: string, payload?: any, config?: AxiosRequestConfig): Promise<APIResponse<T>> {
+  protected async put<T>(
+    path: string,
+    payload?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<APIResponse<T>> {
     return this.request<T>('put', path, payload, config);
   }
 
-  protected async delete<T>(path: string, payload?: any, config?: AxiosRequestConfig): Promise<APIResponse<T>> {
+  protected async delete<T>(
+    path: string,
+    payload?: any,
+    config?: AxiosRequestConfig,
+  ): Promise<APIResponse<T>> {
     return this.request<T>('delete', path, payload, config);
   }
 }

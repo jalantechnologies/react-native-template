@@ -72,7 +72,8 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
     const { data, error } = await authService.verifyOTP(otp, phoneNumber);
 
     if (data) {
-      setAccessTokenToStorage(data);
+      const token = new AccessToken({ ...data });
+      setAccessTokenToStorage(token);
       setIsUserAuthenticated(true);
       setIsVerifyOTPLoading(false);
     } else {

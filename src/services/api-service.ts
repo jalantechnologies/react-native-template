@@ -1,5 +1,4 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
-import * as _ from 'lodash';
 import Config from 'react-native-config';
 
 import { APIResponse, APIError } from '../types';
@@ -18,14 +17,6 @@ export class APIService {
       (response): AxiosResponse => response,
       (error): Promise<AxiosError> => Promise.reject(error),
     );
-  }
-
-  isE2EEnv(): boolean {
-    return this.environment === 'e2e';
-  }
-
-  protected static parseError(response: AxiosResponse): string {
-    return _.get(response, 'response.data.error', '');
   }
 
   protected async request<T>(
@@ -51,19 +42,19 @@ export class APIService {
     return this.request<T>('get', path, undefined, config);
   }
 
-  protected async post<T>(path: string, payload: any): Promise<APIResponse<T>> {
-    return this.request<T>('post', path, payload);
+  protected async post<T>(path: string, payload?: any, config?: AxiosRequestConfig): Promise<APIResponse<T>> {
+    return this.request<T>('post', path, payload, config);
   }
 
-  protected async patch<T>(path: string, payload: any): Promise<APIResponse<T>> {
-    return this.request<T>('patch', path, payload);
+  protected async patch<T>(path: string, payload?: any, config?: AxiosRequestConfig): Promise<APIResponse<T>> {
+    return this.request<T>('patch', path, payload, config);
   }
 
-  protected async put<T>(path: string, payload: any): Promise<APIResponse<T>> {
-    return this.request<T>('put', path, payload);
+  protected async put<T>(path: string, payload?: any, config?: AxiosRequestConfig): Promise<APIResponse<T>> {
+    return this.request<T>('put', path, payload, config);
   }
 
-  protected async delete<T>(path: string, payload: any): Promise<APIResponse<T>> {
-    return this.request<T>('delete', path, payload);
+  protected async delete<T>(path: string, payload?: any, config?: AxiosRequestConfig): Promise<APIResponse<T>> {
+    return this.request<T>('delete', path, payload, config);
   }
 }

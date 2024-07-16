@@ -12,7 +12,7 @@ export class APIError implements AsyncError {
   }
 }
 
-export class APIResponse<T> implements AsyncResult<T> {
+export class APIResponse<T = any> implements AsyncResult<T> {
   data?: T;
   error?: APIError;
 

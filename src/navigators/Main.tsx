@@ -4,8 +4,9 @@ import PhoneAuth from '../screens/auth/phone-auth';
 import OTPVerify from '../screens/auth/otp-verify';
 import AuthenticatedStack from './authenticated';
 import { useAuthContext } from '../contexts';
+import { MainParamsList } from '../../@types/navigation';
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<MainParamsList>();
 
 // @refresh reset
 const MainNavigator = () => {

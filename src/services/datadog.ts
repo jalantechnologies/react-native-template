@@ -3,7 +3,7 @@ import Config from 'react-native-config';
 
 const DatadogConfig = new DatadogProviderConfiguration(
   Config.DD_CLIENT_TOKEN || '',
-  Config.DD_ENVIRONMENT_NAME || '',
+  Config.DD_ENVIRONMENT_NAME || 'development',
   Config.DD_APPLICATION_ID || '',
   true, // track User interactions (e.g.: Tap on buttons. You can use 'accessibilityLabel' element property to give tap action the name, otherwise element type will be reported)
   true, // track XHR Resources

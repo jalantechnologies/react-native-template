@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   createDrawerNavigator,
   DrawerContentComponentProps,
@@ -34,7 +34,11 @@ const CustomDrawerContent = (props: React.PropsWithChildren<DrawerContentCompone
 };
 
 const AuthenticatedStack = () => {
-  const { isNewUser, isAccountLoading } = useAccountContext();
+  const { isNewUser, isAccountLoading, getAccountDetails } = useAccountContext();
+
+  useEffect(() => {
+    getAccountDetails();
+  }, []);
 
   if (isAccountLoading) {
     return <Spinner flex={1} color={'primary'} size={'lg'} />;

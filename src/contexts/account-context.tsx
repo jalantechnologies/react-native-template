@@ -42,7 +42,7 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
       getAccessTokenFromStorage() as AccessToken,
     );
     if (data) {
-      setAccountDetails(data);
+      setAccountDetails(new Account({ ...data }));
       if (!data.firstName) {
         setIsNewUser(true);
       } else {
@@ -63,7 +63,7 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
       getAccessTokenFromStorage() as AccessToken,
     );
     if (data) {
-      setAccountDetails(data);
+      setAccountDetails(new Account({ ...data }));
       setIsUpdateAccountLoading(false);
     } else {
       setIsUpdateAccountLoading(false);

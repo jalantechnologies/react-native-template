@@ -12,4 +12,8 @@ export class Account {
     this.lastName = json.lastName as string;
     this.username = json.username as string;
   }
+
+  displayName(): string {
+    return `${this.firstName} ${this.lastName}`.trim();
+  }
 }

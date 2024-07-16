@@ -5,13 +5,11 @@ import OTPForm from './otp-form';
 import useTimer from '../../../utils/use-timer.hook';
 import { AsyncError } from '../../../types';
 import { Toast } from 'native-base';
-import { useAccountContext } from '../../../contexts';
 import { MainScreenProps } from '../../../../@types/navigation';
 
 const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;
   const sendOTPDelayInMilliseconds = 60_000;
-  const { getAccountDetails } = useAccountContext();
 
   const { startTimer, remaininingSecondsStr, isResendEnabled } = useTimer({
     delayInMilliseconds: sendOTPDelayInMilliseconds,
@@ -29,7 +27,6 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
     Toast.show({
       title: 'OTP verified successfully',
     });
-    getAccountDetails();
   };
 
   return (

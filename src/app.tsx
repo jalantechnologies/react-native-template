@@ -4,7 +4,7 @@ import ApplicationNavigator from './navigators/application';
 import './translations';
 import ErrorBoundary from 'react-native-error-boundary';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
-import { AccountContextProvider, AuthContextProvider, CatContextProvider } from './contexts';
+import { AccountContextProvider, AuthContextProvider } from './contexts';
 import { ErrorFallback } from './components';
 import appTheme from './app-theme';
 import { DatadogProvider } from '@datadog/mobile-react-native';
@@ -24,13 +24,11 @@ const App = () => {
       >
         <DatadogProvider configuration={DatadogConfig}>
           <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-            <CatContextProvider>
-              <AuthContextProvider>
-                <AccountContextProvider>
-                  <ApplicationNavigator />
-                </AccountContextProvider>
-              </AuthContextProvider>
-            </CatContextProvider>
+            <AuthContextProvider>
+              <AccountContextProvider>
+                <ApplicationNavigator />
+              </AccountContextProvider>
+            </AuthContextProvider>
           </SafeAreaProvider>
         </DatadogProvider>
       </ErrorBoundary>

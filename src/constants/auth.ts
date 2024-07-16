@@ -1,5 +1,4 @@
-const constant = {
-  OTP_LENGTH: 4,
+export const AuthOptions = {
+  AccessTokenStorageKey: 'access_token',
+  OTPLength: 4,
 };
-
-export default constant;

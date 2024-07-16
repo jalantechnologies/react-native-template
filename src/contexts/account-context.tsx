@@ -7,8 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { AccountService } from '../services';
-import { AccessToken, Account } from '../types';
-import { Nullable } from '../types/common-types';
+import { AccessToken, Account, Nullable } from '../types';
 import { useAuthContext } from './auth-context';
 
 interface AccountContextInterface {
@@ -38,7 +37,7 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
 
   const getAccountDetails = async () => {
     setIsAccountLoading(true);
-    const { data, error } = await accountService.getAccountDetails(
+    const { data, error } = await accountService.getAccount(
       getAccessTokenFromStorage() as AccessToken,
     );
     if (data) {
@@ -57,7 +56,7 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
 
   const updateAccountDetails = async (firstName: string, lastName: string) => {
     setIsUpdateAccountLoading(true);
-    const { data, error } = await accountService.updateAccountDetails(
+    const { data, error } = await accountService.updateAccount(
       firstName,
       lastName,
       getAccessTokenFromStorage() as AccessToken,

@@ -1,6 +1,7 @@
-import React, { RefObject, useRef } from 'react';
+import React, { useRef } from 'react';
 import { HStack, Input } from 'native-base';
-import { KeyboardKeys } from '../../types/auth';
+import { KeyboardKeys } from '../../constants';
+import { TextInput } from 'react-native';
 
 interface OTPInputProps {
   length: number;
@@ -9,7 +10,7 @@ interface OTPInputProps {
 }
 
 const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
-  const inputsRef = useRef<Array<RefObject<typeof Input>>>([]);
+  const inputsRef = useRef<Array<TextInput>>([]);
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];

@@ -7,11 +7,9 @@ import React, {
   useState,
 } from 'react';
 import { AuthService } from '../services';
-import { PhoneNumber, AccessToken } from '../types';
-import { Nullable } from '../types/common-types';
+import { PhoneNumber, AccessToken, Nullable } from '../types';
 import { useLocalStorage } from '../utils';
-
-const ACCESS_TOKEN_KEY = 'access-token';
+import { AuthOptions } from '../constants';
 
 interface AuthContextInterface {
   getAccessTokenFromStorage: () => Nullable<AccessToken>;
@@ -37,7 +35,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
   const { getFromStorage, removeFromStorage, setToStorage } = useLocalStorage();
 
   const getAccessTokenFromStorage = (): Nullable<AccessToken> => {
-    const token = getFromStorage(ACCESS_TOKEN_KEY);
+    const token = getFromStorage(AuthOptions.AccessTokenStorageKey);
     if (token) {
       return JSON.parse(token) as AccessToken;
     }
@@ -47,11 +45,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
   const [isUserAuthenticated, setIsUserAuthenticated] = useState(!!getAccessTokenFromStorage());
 
   const setAccessTokenToStorage = (token: AccessToken) => {
-    setToStorage(ACCESS_TOKEN_KEY, JSON.stringify(token));
+    setToStorage(AuthOptions.AccessTokenStorageKey, JSON.stringify(token));
   };
 
   const clearAccessTokenFromStorage = (): void => {
-    removeFromStorage(ACCESS_TOKEN_KEY);
+    removeFromStorage(AuthOptions.AccessTokenStorageKey);
   };
 
   const logout = () => {
@@ -74,7 +72,8 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
     const { data, error } = await authService.verifyOTP(otp, phoneNumber);
 
     if (data) {
-      setAccessTokenToStorage(data);
+      const token = new AccessToken({ ...data });
+      setAccessTokenToStorage(token);
       setIsUserAuthenticated(true);
       setIsVerifyOTPLoading(false);
     } else {

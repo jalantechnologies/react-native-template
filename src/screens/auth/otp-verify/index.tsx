@@ -11,7 +11,7 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;
   const sendOTPDelayInMilliseconds = 60_000;
 
-  const { startTimer, remaininingSecondsStr, isResendEnabled } = useTimer({
+  const { startTimer, remainingSecondsStr, isResendEnabled } = useTimer({
     delayInMilliseconds: sendOTPDelayInMilliseconds,
   });
 
@@ -38,7 +38,7 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
         onResendOTPSuccess={onResendOTPSuccess}
         onVerifyOTPSuccess={onVerifyOTPSuccess}
         phoneNumber={phoneNumber}
-        remaininingSecondsStr={remaininingSecondsStr}
+        remainingSecondsStr={remainingSecondsStr}
       />
     </AuthLayout>
   );

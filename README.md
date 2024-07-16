@@ -92,7 +92,7 @@ For more details, go to the [Datadog documentation](https://docs.datadoghq.com/r
 Currently, there are two logging options: console logger and Datadog logger, with the console logger set as the default.
 To use the Datadog logger, adjust the environment variable `LOGGER` to `datadog`. For seamless integration with
 Datadog's log manager within GitHub Codespaces, configure the following environment
-variables: `DD_CLIENT_TOKEN`, `DD_ENVIRONMENT_NAME`, and `DD_RUM_APPLICATION_ID`. You can obtain these credentials from
+variables: `DD_CLIENT_TOKEN`, `DD_ENVIRONMENT_NAME`, and `DD_APPLICATION_ID`. You can obtain these credentials from
 your Datadog account. To use both the console and Datadog loggers simultaneously, set the `LOGGER` environment variable
 to `console,datadog`.
 

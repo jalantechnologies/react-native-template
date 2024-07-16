@@ -6,7 +6,7 @@ type UseTimerProps = {
 
 type UseTimerType = {
   isResendEnabled: boolean;
-  remaininingSecondsStr: string;
+  remainingSecondsStr: string;
   startTimer: () => void;
   stopTimer: () => void;
 };
@@ -51,13 +51,12 @@ const useTimer = ({ delayInMilliseconds }: UseTimerProps): UseTimerType => {
 
   const isResendEnabled = timerEnd || (remainingTime <= millisecondsInSecond && !started);
 
-  const remaininingSeconds = remainingTime / millisecondsInSecond - 1;
-  const remaininingSecondsStr =
-    remaininingSeconds > 9 ? `${remaininingSeconds}` : `0${remaininingSeconds}`;
+  const remainingSeconds = remainingTime / millisecondsInSecond - 1;
+  const remainingSecondsStr = remainingSeconds > 9 ? `${remainingSeconds}` : `0${remainingSeconds}`;
 
   return {
     isResendEnabled,
-    remaininingSecondsStr,
+    remainingSecondsStr: remainingSecondsStr,
     startTimer,
     stopTimer,
   };

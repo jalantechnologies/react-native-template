@@ -1,12 +1,12 @@
+import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
 import * as _ from 'lodash';
 import Config from 'react-native-config';
-import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
-import { ApiResponse } from '../../types';
-import { ApiError } from '../../types/api-response';
+
+import { APIResponse, APIError } from '../types';
 
 export class APIService {
   service: AxiosInstance;
-  environment: string;
+  environment: string | undefined;
 
   constructor() {
     this.service = axios.create({
@@ -33,7 +33,7 @@ export class APIService {
     path: string,
     data?: any,
     config?: AxiosRequestConfig,
-  ): Promise<ApiResponse<T>> {
+  ): Promise<APIResponse<T>> {
     try {
       const response = await this.service.request({
         method,
@@ -41,29 +41,29 @@ export class APIService {
         data,
         ...config,
       });
-      return new ApiResponse<T>(response.data);
+      return new APIResponse<T>(response.data);
     } catch (error: any) {
-      return new ApiResponse<T>(undefined, new ApiError(error.response.data));
+      return new APIResponse<T>(undefined, new APIError(error.response.data));
     }
   }
 
-  protected async get<T>(path: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+  protected async get<T>(path: string, config?: AxiosRequestConfig): Promise<APIResponse<T>> {
     return this.request<T>('get', path, undefined, config);
   }
 
-  protected async post<T>(path: string, payload: any): Promise<ApiResponse<T>> {
+  protected async post<T>(path: string, payload: any): Promise<APIResponse<T>> {
     return this.request<T>('post', path, payload);
   }
 
-  protected async patch<T>(path: string, payload: any): Promise<ApiResponse<T>> {
+  protected async patch<T>(path: string, payload: any): Promise<APIResponse<T>> {
     return this.request<T>('patch', path, payload);
   }
 
-  protected async put<T>(path: string, payload: any): Promise<ApiResponse<T>> {
+  protected async put<T>(path: string, payload: any): Promise<APIResponse<T>> {
     return this.request<T>('put', path, payload);
   }
 
-  protected async delete<T>(path: string, payload: any): Promise<ApiResponse<T>> {
+  protected async delete<T>(path: string, payload: any): Promise<APIResponse<T>> {
     return this.request<T>('delete', path, payload);
   }
 }

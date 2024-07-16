@@ -1,6 +1,6 @@
 import React, { RefObject, useRef } from 'react';
 import { HStack, Input } from 'native-base';
-import { KeyboardKeys } from '../../types/auth';
+import { KeyboardKeys } from '../../constants';
 
 interface OTPInputProps {
   length: number;

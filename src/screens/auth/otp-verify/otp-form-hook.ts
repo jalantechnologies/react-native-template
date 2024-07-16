@@ -1,9 +1,9 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import constant from '../../../constants/auth';
 import { AsyncError, PhoneNumber } from '../../../types';
 import { useAuthContext } from '../../../contexts';
+import { AuthOptions } from '../../../constants';
 
 interface OTPFormProps {
   countryCode: string;
@@ -24,7 +24,7 @@ const useOTPForm = ({
 
   const formik = useFormik({
     initialValues: {
-      otp: Array(constant.OTP_LENGTH).fill(''),
+      otp: Array(AuthOptions.OTPLength).fill(''),
     },
 
     validationSchema: Yup.object({

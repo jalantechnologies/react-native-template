@@ -4,7 +4,7 @@ interface Country {
   name: string;
 }
 
-const COUNTRIES: Country[] = [
+export const Countries: Country[] = [
   {
     code: 'US',
     dialCode: '+1',
@@ -17,9 +17,7 @@ const COUNTRIES: Country[] = [
   },
 ];
 
-const COUNTRY_SELECT_OPTIONS = COUNTRIES.map(country => ({
+export const CountrySelectOptions = Countries.map(country => ({
   label: ` ${country.code} (${country.dialCode})`,
   value: `${country.dialCode}, ${country.code}`,
 }));
-
-export default COUNTRY_SELECT_OPTIONS;

@@ -15,7 +15,7 @@ import {
 } from 'native-base';
 import usePhoneAuthForm from './phone-auth-form-hook';
 import { AsyncError } from '../../../types';
-import COUNTRY_SELECT_OPTIONS from '../../../constants/countries';
+import { CountrySelectOptions } from '../../../constants';
 
 interface PhoneAuthFormProps {
   onSuccess: () => void;
@@ -48,7 +48,7 @@ const renderCountrySelectMenu = (
       )}
     >
       <ScrollView maxH={'200px'}>
-        {COUNTRY_SELECT_OPTIONS.map(option => (
+        {CountrySelectOptions.map(option => (
           <Menu.Item
             key={option.value}
             onPress={() => {

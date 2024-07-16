@@ -13,7 +13,7 @@ import {
 import useOTPForm from './otp-form-hook';
 import { OTPInput } from '../../../components';
 import { AsyncError } from '../../../types';
-import constant from '../../../constants/auth';
+import { AuthOptions } from '../../../constants';
 
 interface OTPFormProps {
   countryCode: string;
@@ -22,7 +22,7 @@ interface OTPFormProps {
   onResendOTPSuccess: () => void;
   onVerifyOTPSuccess: () => void;
   phoneNumber: string;
-  remaininingSecondsStr: string;
+  remainingSecondsStr: string;
 }
 
 const OTPForm: React.FC<OTPFormProps> = ({
@@ -32,11 +32,10 @@ const OTPForm: React.FC<OTPFormProps> = ({
   onResendOTPSuccess,
   onVerifyOTPSuccess,
   phoneNumber,
-  remaininingSecondsStr,
+  remainingSecondsStr,
 }) => {
   const getMaskedPhoneNumber = () => {
-    const maskedPhoneNumber = phoneNumber.replace(/.(?=.{4})/g, 'X');
-    return maskedPhoneNumber;
+    return phoneNumber.replace(/.(?=.{4})/g, 'X');
   };
 
   const { formik, handleResendOTP, isVerifyOTPLoading } = useOTPForm({
@@ -62,7 +61,11 @@ const OTPForm: React.FC<OTPFormProps> = ({
         </Container>
         <FormControl py={5}>
           <Center>
-            <OTPInput length={constant.OTP_LENGTH} otp={formik.values.otp} setOtp={handleSetOtp} />
+            <OTPInput
+              length={AuthOptions.OTPLength}
+              otp={formik.values.otp}
+              setOtp={handleSetOtp}
+            />
           </Center>
         </FormControl>
       </Box>
@@ -70,7 +73,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
         <Heading size="xs">Didn't receive the OTP? </Heading>
         <Link onPress={handleResendOTP} isUnderlined={false}>
           <Text color={isResendEnabled ? 'primary' : 'coolGray.600'}>
-            {isResendEnabled ? 'Resend OTP' : `Resend OTP in 00:${remaininingSecondsStr}`}
+            {isResendEnabled ? 'Resend OTP' : `Resend OTP in 00:${remainingSecondsStr}`}
           </Text>
         </Link>
       </Container>
@@ -78,7 +81,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
         isLoadingText="Verifying OTP"
         isLoading={isVerifyOTPLoading}
         onPress={() => formik.handleSubmit()}
-        isDisabled={formik.isValid && formik.dirty ? false : true}
+        isDisabled={!(formik.isValid && formik.dirty)}
       >
         Verify OTP
       </Button>

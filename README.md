@@ -137,4 +137,45 @@ For more details, go to [React Native Environment Setup](https://reactnative.dev
 - Rename folders `Boilerplate....` according to your project name.
 - Delete the `project.pbxproj` file in the `Boilerplate.xcodeproj` folder.
 - Delete the `Boilerplate.xcscheme` file in the `Boilerplate.xcodeproj/xcshareddata/xcschemes` folder.
-- Update `FileRef location` in `Boilerplate.xcwor
+- Update `FileRef location` in `Boilerplate.xcworkspace/contents.xcworkspacedata`
+- Update `self.moduleName` in `Boilerplate/AppDelegate.mm`
+- Update `CFBundleDisplayName` in `Boilerplate/Info.plist`
+- Update `label` in `Boilerplate/LaunchScreen.storyboard`
+- Update `interface` and `implementation` in `BoilerplateTests/BoilerplateTests.m`
+- Update `target` in `Podfile` (main and Tests)
+- Delete `Podfile.lock` file
+- Install `pod`.
+    - run `pod install` command (in `ios/` folder)
+
+# Running the project
+
+Assuming you have all requirements installed, you can run the project by running:
+
+- `yarn start` to start the metro bundler, in a dedicated terminal window
+- `yarn ios` or `yarn android` to run the application on any of these platform
+
+# Using Localhost Backend Endpoint on Android
+
+To use the localhost backend endpoint on Android, you need to follow one of these steps:
+
+- Expose your local backend using ngrok or any other similar software.
+- Use `adb reverse tcp` to forward the port from your machine to the Android device:
+    ```
+    adb -s <emulator_device_id> reverse tcp:<localhost_port> tcp:<localhost_port>
+    ```
+
+Then, update the `API_BASE_URL` in your `.env` file accordingly.
+
+## Troubleshooting guides
+
+- In MacBook, you'll get a warning prompt similar to this - `XXXXX Can't be opened because it is unidentified developer`, when you try to launch android emulator. 
+To fix this, follow these steps:
+    ```
+    Click on Cancel on the message,
+    Now go to Apple Menu: System Preferences... / System Settings...
+    Click on Privacy & Security
+    Here you should see "Allow apps downloaded from: "Android Emulator" was blocked from use because it is not from an identified developer."
+    Click on open Anyways
+    You will again see a warning prompt saying "Running "Android Emulator" will harm your computer"
+    Click on open
+    ```

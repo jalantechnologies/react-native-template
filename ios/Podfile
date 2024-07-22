@@ -51,6 +51,9 @@ target 'Boilerplate' do
   end
 
   post_install do |installer|
+
+    # This is a workaround for an issue causing iOS builds to fail due to missing include in Flipper.
+    # For more details, see: https://github.com/facebook/react-native/issues/43335#issuecomment-1980788427
     installer.pods_project.targets.each do |target|
       if target.name == 'Flipper'
         file_path = 'Pods/Flipper/xplat/Flipper/FlipperTransportTypes.h'

@@ -6,8 +6,11 @@ import useProfileUpdateForm from './profile-update-form.hook';
 import ProfileLayout from './profile-layout';
 import AccountDeleteModal from './account-delete-modal';
 import { useAccountContext, useAuthContext } from 'boilerplate-react-native/src/contexts';
+import { AuthenticatedDrawerScreenProps } from 'boilerplate-react-native/@types/navigation';
 
-const Profile: React.FC = () => {
+const Profile: React.FC<AuthenticatedDrawerScreenProps<'Profile'>['navigation']> = ({
+  navigation,
+}) => {
   const [isAccountDeleteModalOpen, setIsAccountDeleteModalOpen] = useState(false);
 
   const { deleteAccount, isDeleteAccountLoading } = useAccountContext();
@@ -44,6 +47,10 @@ const Profile: React.FC = () => {
       title: 'Profile Updated',
       description: 'Your profile has been updated successfully',
       placement: 'top',
+    });
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Profile' }],
     });
   };
 

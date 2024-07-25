@@ -1,4 +1,4 @@
-import { extendTheme } from 'native-base';
+import { extendTheme, Modal } from 'native-base';
 
 const appTheme = extendTheme({
   colors: {
@@ -9,8 +9,33 @@ const appTheme = extendTheme({
   },
   components: {
     Button: {
-      defaultProps: {
-        bg: 'primary',
+      baseStyle: {
+        _text: {
+          color: 'white',
+        },
+      },
+      variants: {
+        solid: {
+          bg: 'primary',
+        },
+        subtle: {
+          bg: 'background',
+          _text: {
+            color: 'coolGray.800',
+          },
+          _pressed: {
+            bg: 'coolGray.200',
+          },
+        },
+        danger: {
+          bg: 'danger.600',
+          _disabled: {
+            bg: 'danger.200',
+          },
+          _pressed: {
+            bg: 'danger.700',
+          },
+        },
       },
     },
     Input: {
@@ -44,6 +69,13 @@ const appTheme = extendTheme({
         },
         '2xl': {
           color: 'white',
+        },
+      },
+    },
+    Toast: {
+      baseStyle: {
+        _title: {
+          textAlign: 'center',
         },
       },
     },

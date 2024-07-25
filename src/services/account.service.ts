@@ -28,4 +28,8 @@ export class AccountService extends APIService {
       },
     );
   };
+
+  deleteAccount = async (userAccessToken: AccessToken): Promise<APIResponse> => {
+    return this.delete(`/accounts/${userAccessToken.accountId}`);
+  };
 }

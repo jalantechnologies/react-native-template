@@ -12,8 +12,10 @@ import { useAuthContext } from './auth-context';
 
 interface AccountContextInterface {
   accountDetails: Nullable<Account>;
+  deleteAccount: () => Promise<void>;
   getAccountDetails: () => Promise<void>;
   isAccountLoading: boolean;
+  isDeleteAccountLoading: boolean;
   isNewUser: boolean;
   isUpdateAccountLoading: boolean;
   setIsNewUser: (isNewUser: boolean) => void;
@@ -32,6 +34,7 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
   const [isAccountLoading, setIsAccountLoading] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
   const [isUpdateAccountLoading, setIsUpdateAccountLoading] = useState(false);
+  const [isDeleteAccountLoading, setIsDeleteAccountLoading] = useState(false);
 
   const { getAccessTokenFromStorage } = useAuthContext();
 
@@ -70,12 +73,26 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
     }
   };
 
+  const deleteAccount = async () => {
+    setIsDeleteAccountLoading(true);
+    const { error } = await accountService.deleteAccount(
+      getAccessTokenFromStorage() as AccessToken,
+    );
+    if (error) {
+      setIsDeleteAccountLoading(false);
+      throw error;
+    }
+    setIsDeleteAccountLoading(false);
+  };
+
   return (
     <AccountContext.Provider
       value={{
         accountDetails,
+        deleteAccount,
         getAccountDetails,
         isAccountLoading,
+        isDeleteAccountLoading,
         isNewUser,
         isUpdateAccountLoading,
         setIsNewUser,

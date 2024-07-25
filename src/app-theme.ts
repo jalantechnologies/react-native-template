@@ -1,4 +1,4 @@
-import { extendTheme, Modal } from 'native-base';
+import { extendTheme } from 'native-base';
 
 const appTheme = extendTheme({
   colors: {

@@ -1,7 +1,7 @@
-import { useAccountContext } from 'boilerplate-react-native/src/contexts';
-import { AsyncError } from 'boilerplate-react-native/src/types';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { AsyncError } from '../../types';
+import { useAccountContext } from '../../contexts';
 
 interface ProfileUpdateFormProps {
   onProfileUpdateError: (err: AsyncError) => void;

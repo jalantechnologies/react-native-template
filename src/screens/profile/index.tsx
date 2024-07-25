@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Button, FormControl, Input, Toast, VStack } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { AsyncError } from 'boilerplate-react-native/src/types';
+import { AsyncError } from '../../types';
 import useProfileUpdateForm from './profile-update-form.hook';
 import ProfileLayout from './profile-layout';
 import AccountDeleteModal from './account-delete-modal';
-import { useAccountContext, useAuthContext } from 'boilerplate-react-native/src/contexts';
-import { AuthenticatedDrawerScreenProps } from 'boilerplate-react-native/@types/navigation';
+import { useAccountContext, useAuthContext } from '../../contexts';
+import { AuthenticatedDrawerScreenProps } from '../../../@types/navigation';
 
 const Profile: React.FC<AuthenticatedDrawerScreenProps<'Profile'>['navigation']> = ({
   navigation,

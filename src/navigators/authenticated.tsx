@@ -6,7 +6,7 @@ import {
   DrawerItem,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import { Dashboard, RegistrationScreen } from '../screens';
+import { Dashboard, Profile, RegistrationScreen } from '../screens';
 import {
   AuthenticatedDrawerParamsList,
   AuthenticatedStackParamsList,
@@ -49,8 +49,12 @@ const AuthenticatedStack = () => {
       <Stack.Screen name="Registration" component={RegistrationScreen} />
     </Stack.Navigator>
   ) : (
-    <Drawer.Navigator drawerContent={CustomDrawerContent}>
+    <Drawer.Navigator
+      drawerContent={CustomDrawerContent}
+      screenOptions={{ headerStatusBarHeight: 0 }}
+    >
       <Drawer.Screen name="Dashboard" component={Dashboard} />
+      <Drawer.Screen name="Profile" component={Profile} />
     </Drawer.Navigator>
   );
 };

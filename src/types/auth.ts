@@ -16,4 +16,8 @@ export class PhoneNumber {
     this.countryCode = json.countryCode as string;
     this.phoneNumber = json.phoneNumber as string;
   }
+
+  getFormattedPhoneNumber(): string {
+    return `${this.countryCode} ${this.phoneNumber}`;
+  }
 }

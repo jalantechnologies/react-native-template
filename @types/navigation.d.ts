@@ -23,6 +23,7 @@ export type MainScreenProps<T extends keyof MainParamsList> = CompositeScreenPro
 
 export type AuthenticatedDrawerParamsList = {
   Dashboard: undefined;
+  Profile: undefined;
 };
 
 export type AuthenticatedDrawerScreenProps<T extends keyof AuthenticatedDrawerParamsList> =

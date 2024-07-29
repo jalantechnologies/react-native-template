@@ -16,19 +16,14 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
+  const { height } = useWindowDimensions();
+
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
 
   return (
-    <Modal
-      _backdrop={{
-        height: useWindowDimensions().height,
-      }}
-      avoidKeyboard={true}
-      isOpen={isModalOpen}
-      onClose={handleModalClose}
-    >
+    <Modal _backdrop={{ height }} isOpen={isModalOpen} onClose={handleModalClose}>
       <Modal.Content>
         <Modal.Header>
           <Box flexDirection={'row'} justifyContent={'space-between'}>

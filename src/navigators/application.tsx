@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusBar } from 'react-native';
+import { Platform, StatusBar } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { Startup } from '../screens';
@@ -17,7 +17,7 @@ const ApplicationNavigator = () => {
   useFlipper(navigationRef);
 
   return (
-    <Box safeArea flex={1}>
+    <Box safeArea safeAreaY={Platform.OS === 'android' && 4} flex={1}>
       <NavigationContainer ref={navigationRef}>
         <StatusBar />
         <Stack.Navigator screenOptions={{ headerShown: false }}>

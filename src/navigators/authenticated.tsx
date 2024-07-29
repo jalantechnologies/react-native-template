@@ -1,43 +1,43 @@
 import React, { useEffect } from 'react';
-import {
-  createDrawerNavigator,
-  DrawerContentComponentProps,
-  DrawerContentScrollView,
-  DrawerItem,
-  DrawerItemList,
-} from '@react-navigation/drawer';
-import { Dashboard, Profile, RegistrationScreen } from '../screens';
-import {
-  AuthenticatedDrawerParamsList,
-  AuthenticatedStackParamsList,
-} from '../../@types/navigation';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Spinner } from 'native-base';
-import { useAuthContext, useAccountContext } from '../contexts';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Spinner, useTheme } from 'native-base';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const Drawer = createDrawerNavigator<AuthenticatedDrawerParamsList>();
+import { Dashboard, RegistrationScreen } from '../screens';
+import { AuthenticatedStackParamsList, AuthenticatedTabParamsList } from '../../@types/navigation';
+import { useAccountContext, useAuthContext } from '../contexts';
+import ProfileStack from './profile';
+
 const Stack = createStackNavigator<AuthenticatedStackParamsList>();
+const Tab = createBottomTabNavigator<AuthenticatedTabParamsList>();
 
-const CustomDrawerContent = (props: React.PropsWithChildren<DrawerContentComponentProps>) => {
-  const { logout } = useAuthContext();
-
-  const handleLogout = () => {
-    logout();
+const getTabBarIcon = (routeName: string) => {
+  return ({ color, size }: { color: string; size: number }) => {
+    let iconName: string;
+    switch (routeName) {
+      case 'Home':
+        iconName = 'home';
+        break;
+      case 'Profile':
+        iconName = 'person';
+        break;
+      default:
+        iconName = 'home';
+    }
+    return <Icon name={iconName} color={color} size={size} />;
   };
-
-  return (
-    <DrawerContentScrollView {...props}>
-      <DrawerItemList {...props} />
-      <DrawerItem label="Logout" onPress={handleLogout} />
-    </DrawerContentScrollView>
-  );
 };
 
 const AuthenticatedStack = () => {
   const { isNewUser, isAccountLoading, getAccountDetails } = useAccountContext();
+  const { logout } = useAuthContext();
+  const { colors } = useTheme();
 
   useEffect(() => {
-    getAccountDetails();
+    getAccountDetails().catch(() => {
+      logout();
+    });
   }, []);
 
   if (isAccountLoading) {
@@ -49,13 +49,17 @@ const AuthenticatedStack = () => {
       <Stack.Screen name="Registration" component={RegistrationScreen} />
     </Stack.Navigator>
   ) : (
-    <Drawer.Navigator
-      drawerContent={CustomDrawerContent}
-      screenOptions={{ headerStatusBarHeight: 0 }}
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarIcon: getTabBarIcon(route.name),
+        tabBarActiveTintColor: colors.violet[900],
+        tabBarInactiveTintColor: colors.muted[400],
+      })}
     >
-      <Drawer.Screen name="Dashboard" component={Dashboard} />
-      <Drawer.Screen name="Profile" component={Profile} />
-    </Drawer.Navigator>
+      <Tab.Screen name="Home" component={Dashboard} />
+      <Tab.Screen name="Profile" component={ProfileStack} />
+    </Tab.Navigator>
   );
 };
 

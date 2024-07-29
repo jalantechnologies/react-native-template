@@ -72,6 +72,11 @@ const appTheme = extendTheme({
         },
       },
     },
+    Icon: {
+      defaultProps: {
+        color: 'primary',
+      },
+    },
     Toast: {
       baseStyle: {
         _title: {

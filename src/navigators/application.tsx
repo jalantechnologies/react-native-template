@@ -17,7 +17,7 @@ const ApplicationNavigator = () => {
   useFlipper(navigationRef);
 
   return (
-    <Box safeArea safeAreaY={Platform.OS === 'android' && 4} flex={1}>
+    <Box safeAreaTop flex={1}>
       <NavigationContainer ref={navigationRef}>
         <StatusBar />
         <Stack.Navigator screenOptions={{ headerShown: false }}>

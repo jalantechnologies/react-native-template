@@ -50,11 +50,7 @@ jobs:
 
       # Step 5: Install bundler, and fastlane
       - name: Install Fastlane
-        run: |
-          cd android
-          gem install bundler -v 2.1.4
-          bundle install
-          cd ../
+        run: cd android && bundle install && cd ../
         env:
           CI: true
     

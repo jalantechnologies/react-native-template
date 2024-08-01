@@ -74,13 +74,13 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.boilerplate"
+    namespace "com.jalantechnologies.boilerplate"
     defaultConfig {
-        applicationId "com.boilerplate"
+        applicationId "com.jalantechnologies.boilerplate"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 7
+        versionName "1.5"
     }
     signingConfigs {
         debug {

@@ -12,6 +12,8 @@ import {
   Pressable,
   Menu,
   ScrollView,
+  Link,
+  Center,
 } from 'native-base';
 import usePhoneAuthForm from './phone-auth-form-hook';
 import { AsyncError } from '../../../types';
@@ -79,34 +81,45 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
   };
 
   return (
-    <VStack space={6}>
-      <Container>
-        <Heading size="lg">Welcome</Heading>
-        <Heading mt="1" size="xs">
-          Enter your number to continue
-        </Heading>
-      </Container>
-      <FormControl
-        isRequired={true}
-        isInvalid={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
-      >
-        <FormControl.Label>Phone Number</FormControl.Label>
-        <HStack space={2}>
-          {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange)}
-          <Input
-            value={formik.values.phoneNumber}
-            onChangeText={formik.handleChange('phoneNumber')}
-            keyboardType="numeric"
-            flex={3}
-            placeholder="XXXXXXXXXX"
-          />
-        </HStack>
-        <FormControl.ErrorMessage>{formik.errors.phoneNumber}</FormControl.ErrorMessage>
-      </FormControl>
-      <Button mt="2" onPress={() => formik.handleSubmit()} isLoading={isSendOTPLoading}>
-        Send OTP
-      </Button>
-    </VStack>
+    <>
+      <VStack space={6} flex={1}>
+        <Container>
+          <Heading size="lg">Welcome</Heading>
+          <Heading mt="1" size="xs">
+            Enter your number to continue
+          </Heading>
+        </Container>
+        <FormControl
+          isRequired={true}
+          isInvalid={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
+        >
+          <FormControl.Label>Phone Number</FormControl.Label>
+          <HStack space={2}>
+            {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange)}
+            <Input
+              value={formik.values.phoneNumber}
+              onChangeText={formik.handleChange('phoneNumber')}
+              keyboardType="numeric"
+              flex={3}
+              placeholder="XXXXXXXXXX"
+            />
+          </HStack>
+          <FormControl.ErrorMessage>{formik.errors.phoneNumber}</FormControl.ErrorMessage>
+        </FormControl>
+        <Button mt="2" onPress={() => formik.handleSubmit()} isLoading={isSendOTPLoading}>
+          Send OTP
+        </Button>
+      </VStack>
+      <Center>
+        <Text>By continuing, you agree to our </Text>
+        <Link
+          _text={{ color: 'primary' }}
+          href="https://jalantechnologies.github.io/boilerplate-react-native/"
+        >
+          Privacy Policy
+        </Link>
+      </Center>
+    </>
   );
 };
 

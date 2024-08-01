@@ -220,6 +220,7 @@ PLATFORMS
 DEPENDENCIES
   fastlane
   fastlane-plugin-increment_version_code
+  rexml (~> 3.2.5)
 
 BUNDLED WITH
    2.1.4

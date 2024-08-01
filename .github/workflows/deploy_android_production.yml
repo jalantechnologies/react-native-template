@@ -76,7 +76,7 @@ jobs:
 
       # Step 8: Fastlane build android
       - name : Build android App via fastlane
-        run : bundle exec fastlane deploy_android_production  
+        run : cd android && bundle exec fastlane deploy_android_production  
         env:
           CI: true
           CD: true

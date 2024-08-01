@@ -23,7 +23,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Fetches the latest version code from the Play Console and increments it by 1
 
-### android deploy
+### android deploy_android_production
 
 ```sh
 [bundle exec] fastlane android deploy_android_production

@@ -113,6 +113,54 @@ to `console,datadog`.
 - For Android icon updates, use [EasyAppIcon](https://easyappicon.com) or similar websites that create a folder with all
   sizes of the icon, then update the folders in `android/app/src/main/res` accordingly.
 
+# Setup Deployment for Android App on Production
+
+## Prerequisites
+
+- Setup the app on Google Play Console and complete all the requirements.
+- Generate an upload key and keystore using this [guide](https://developer.android.com/studio/publish/app-signing).
+- Ensure **at least one version** of the application is **uploaded** on Google Play Console in the Production track.
+
+- Generate a Google Service Account Key and add the Google Service account to Google Play Console using the following steps:
+  1. Enable the [Google Play Developer API](https://console.developers.google.com/apis/api/androidpublisher.googleapis.com/?hl=en) by selecting an existing Google Cloud Project that fits your requirement and clicking **ENABLE**.
+    - If you don't have an existing project or prefer to have a dedicated one for deployment, create a new one and follow the instructions.
+  2. Open [Service Accounts on Google Cloud](https://console.cloud.google.com/iam-admin/serviceaccounts?hl=en) and select the project you'd like to use.
+    - Click the **CREATE SERVICE ACCOUNT** button at the top of the **Google Cloud Platform Console** page.
+    - Verify that you are on the correct Google Cloud Platform Project by checking the **Google Cloud Project ID** from earlier, visible in the light gray text in the second input, preceding .iam.gserviceaccount.com. Alternatively, you can verify the project name in the navigation bar. If not, open the project picker in the top navigation bar, and select the correct one.
+    - Provide a Service account name (e.g., `android-supply`).
+    - Copy the generated email address noted below the Service account ID field for later use.
+    - Click **DONE** (do not click **CREATE AND CONTINUE** as the optional steps such as granting access are not needed).
+    - Click on the **Actions** vertical three-dot icon of the service account you just created.
+    - Select **Manage keys** from the menu.
+    - Click **ADD KEY → Create New Key**.
+    - Ensure **JSON** is selected as the Key type, and click **CREATE**.
+    - Save the file on your computer when prompted and remember its location.
+  3. Open the [Google Play Console](https://play.google.com/console/?hl=en) and select **Users and Permissions**.
+    - Click **Invite new users**.
+    - Paste the email address you saved earlier into the email address field.
+    - Click on **Account Permissions**.
+    - Choose the permissions you'd like this account to have. We recommend **Admin (all permissions)**, but you may want to manually select all checkboxes and leave out some of the **Releases** permissions, such as **Release to production, exclude devices, and use Play App Signing**.
+    - Click on **Invite User**.
+
+## Setting Up Repo Secrets
+
+1. Go to your GitHub repo **Settings**, then **Secrets and Variables** -> **Actions**.
+2. Click on `New Repository Secret` and add the following secrets:
+   - **GPLAY_SERVICE_ACCOUNT_KEY_JSON**: 
+     - GitHub secrets only accept string values. For certain credentials (e.g., .jks or .json files), convert the file to a base64-encoded string before adding it to GitHub secrets. Use this command to convert and copy the resulting string:
+       ```sh
+       base64 -i your_google_service_account_key.json | pbcopy
+       ```
+       Paste the copied string into the value of the repository secret on GitHub.
+   - **KEYSTORE_FILE**: The base64-encoded .jks or .keystore file used to sign your Android builds generated earlier. Convert the keystore file into a base64-encoded string with:
+     ```sh
+     base64 -i your_keystore_file.jks | pbcopy
+     ```
+     Paste the copied string into the value of this secret.
+   - **KEYSTORE_PASSWORD**: The password associated with the keystore file.
+   - **KEY_ALIAS**: The key store alias.
+   - **KEY_PASSWORD**: The private key password.
+
 # Setup iOS App
 
 ## Prerequisite

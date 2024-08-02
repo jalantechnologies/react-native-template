@@ -20,7 +20,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    # Setup java and node
     - uses: actions/checkout@v3
     - name: Set up JDK 11
       uses: actions/setup-java@v3
@@ -32,7 +31,6 @@ runs:
       with:
         node-version: 16.16.0
 
-    # Cache node modules
     - name: Cache node modules
       uses: actions/cache@v2
       with:
@@ -41,7 +39,6 @@ runs:
         restore-keys: |
           ${{ runner.os }}-node-modules-
 
-    # Configure gradle and gradle wrapper with cache
     - name: Cache Gradle Wrapper
       uses: actions/cache@v2
       with:
@@ -55,20 +52,17 @@ runs:
         restore-keys: |
           ${{ runner.os }}-gradle-caches-
 
-    # Install node packages
     - name: Install node modules
       run: yarn install
       shell: bash
       env:
         CI: true
 
-    # Setup ruby
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: "3.3"
         bundler-cache: true
 
-    # Install bundler and fastlane
     - name: Install Fastlane and dependencies
       shell: bash
       run: |
@@ -78,14 +72,12 @@ runs:
       env:
         CI: true
 
-    # Add @react-native-community manually
     - name: Add @react-native-community manually
       shell: bash
       run: yarn add @react-native-community/cli-platform-android@11.3.3
       env:
         CI: true
 
-    # Decode service account file
     - name: Decode Service Account Key JSON File
       uses: timheuer/base64-to-file@v1
       id: service_account_json_file
@@ -93,7 +85,6 @@ runs:
         fileName: "serviceAccount.json"
         encodedString: ${{ inputs.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
 
-    # Decode Keystore File
     - name: Decode Keystore File
       uses: timheuer/base64-to-file@v1
       id: android_keystore
@@ -101,7 +92,6 @@ runs:
         fileName: "android_keystore.keystore"
         encodedString: ${{ inputs.KEYSTORE_FILE }}
 
-    # Fastlane deploy android
     - name: Build and deploy android App via fastlane
       shell: bash
       run: bundle exec fastlane deploy_android_production

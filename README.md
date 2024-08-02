@@ -142,7 +142,7 @@ to `console,datadog`.
     - Choose the permissions you'd like this account to have. We recommend **Admin (all permissions)**, but you may want to manually select all checkboxes and leave out some of the **Releases** permissions, such as **Release to production, exclude devices, and use Play App Signing**.
     - Click on **Invite User**.
 
-## Setting Up Repo Secrets
+## Setting Up Github Workflow
 
 1. Go to your GitHub repo **Settings**, then **Secrets and Variables** -> **Actions**.
 2. Click on `New Repository Secret` and add the following secrets:

@@ -63,7 +63,6 @@ jobs:
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v3
-        # make sure to keep checked in code at different directory to avoid colliding with docker caching
 
       - name: Deploy Android App to Production
         id: deploy_android_production

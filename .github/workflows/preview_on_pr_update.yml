@@ -72,8 +72,9 @@ jobs:
           path: app
 
       - name: Deploy Android App to Production
+        id: deploy_android_production
         uses: ./app/.github/actions/deploy_android_production
-        env:
+        with:
           GPLAY_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
           KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}

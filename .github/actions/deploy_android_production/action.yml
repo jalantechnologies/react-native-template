@@ -1,5 +1,21 @@
 name: 'Deploy Android App to Production'
 description: 'Build and deploy the Android app to Production using Fastlane'
+inputs:
+  GPLAY_SERVICE_ACCOUNT_KEY_JSON:
+    required: true
+    description: 'Service Account Key JSON file for Google Play Store'
+  KEYSTORE_FILE:
+    required: true
+    description: 'Keystore file for signing the Android app'
+  KEYSTORE_PASSWORD:
+    required: true
+    description: 'Password for the keystore file'
+  KEY_ALIAS:
+    required: true
+    description: 'Key alias for the keystore file'
+  KEY_PASSWORD:
+    required: true
+    description: 'Password for the key alias'
 
 runs:
   using: 'composite'
@@ -75,7 +91,7 @@ runs:
       id: service_account_json_file
       with:
         fileName: "serviceAccount.json"
-        encodedString: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
+        encodedString: ${{ inputs.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
 
     # Decode Keystore File
     - name: Decode Keystore File
@@ -83,7 +99,7 @@ runs:
       id: android_keystore
       with:
         fileName: "android_keystore.keystore"
-        encodedString: ${{ secrets.KEYSTORE_FILE }}
+        encodedString: ${{ inputs.KEYSTORE_FILE }}
 
     # Fastlane deploy android
     - name: Build and deploy android App via fastlane
@@ -92,7 +108,7 @@ runs:
       working-directory: android
       env:
         KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
-        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        KEYSTORE_PASSWORD: ${{ inputs.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ inputs.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ inputs.KEY_PASSWORD }}
         ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}

@@ -60,6 +60,25 @@ jobs:
           docker_registry: ${{ vars.DOCKER_REGISTRY }}
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (app)
+        uses: actions/checkout@v3
+        # make sure to keep checked in code at different directory to avoid colliding with docker caching
+        with:
+          path: app
+
+      - name: Deploy Android App to Production
+        uses: ./app/.github/actions/deploy_android_production
+        env:
+          GPLAY_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
   
   checks:
     needs: build

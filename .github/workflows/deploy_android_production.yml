@@ -59,7 +59,13 @@ jobs:
         env:
           CI: true
 
-      # Step 6: Decode service account file
+      # Step 6: Add @react-native-community manually
+      - name: Add @react-native-community manually
+        run: yarn add @react-native-community/cli-platform-android@7.0.1
+        env:
+          CI: true
+
+      # Step 7: Decode service account file
       - name: Decode Service Account Key JSON File
         uses: timheuer/base64-to-file@v1
         id: service_account_json_file
@@ -67,7 +73,7 @@ jobs:
           fileName: "serviceAccount.json"
           encodedString: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
 
-      # Step 7: Decode Keystore File
+      # Step 8: Decode Keystore File
       - name: Decode Keystore File
         uses: timheuer/base64-to-file@v1
         id: android_keystore
@@ -75,7 +81,7 @@ jobs:
           fileName: "android_keystore.keystore"
           encodedString: ${{ secrets.KEYSTORE_FILE }}
 
-      # Step 8: Fastlane build android
+      # Step 9: Fastlane build android
       - name: Build android App via fastlane
         run: cd android && bundle exec fastlane deploy_android_production  
         env:

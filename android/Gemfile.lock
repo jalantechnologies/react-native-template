@@ -165,7 +165,6 @@ GEM
     nkf (0.2.0)
     optparse (0.5.0)
     os (1.1.4)
-    ostruct (0.6.0)
     plist (3.7.1)
     public_suffix (5.1.1)
     rake (13.2.1)
@@ -221,7 +220,6 @@ PLATFORMS
 DEPENDENCIES
   fastlane
   fastlane-plugin-increment_version_code
-  ostruct
 
 BUNDLED WITH
    2.1.4

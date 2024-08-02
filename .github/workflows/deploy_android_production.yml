@@ -20,7 +20,7 @@ jobs:
       - name: Set up NODE
         uses: actions/setup-node@v3
         with:
-          node-version: 16 
+          node-version: 16.16.0
 
       # Step 2: Configure gradle and gradle wrapper with cache
       - name: Cache Gradle Wrapper
@@ -49,10 +49,10 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: false
 
-      # Step 5: Install bundler, rexml, and fastlane
+      # Step 5: Install bundler, and fastlane
       - name: Install Fastlane and dependencies
         run: |
-          gem install bundler -v 2.4.22
+          gem install bundler
           cd android
           bundle install
           cd ../
@@ -61,7 +61,7 @@ jobs:
 
       # Step 6: Add @react-native-community manually
       - name: Add @react-native-community manually
-        run: yarn add @react-native-community/cli-platform-android@7.0.1
+        run: yarn add @react-native-community/cli-platform-android
         env:
           CI: true
 

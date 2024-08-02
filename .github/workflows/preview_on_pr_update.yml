@@ -68,12 +68,10 @@ jobs:
       - name: Checkout (app)
         uses: actions/checkout@v3
         # make sure to keep checked in code at different directory to avoid colliding with docker caching
-        with:
-          path: app
 
       - name: Deploy Android App to Production
         id: deploy_android_production
-        uses: ./app/.github/actions/deploy_android_production
+        uses: ./.github/actions/deploy_android_production
         with:
           GPLAY_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
           KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}

@@ -13,6 +13,10 @@
 # Uncomment the line if you want fastlane to automatically update itself
 # update_fastlane
 
+before_all do
+  require './fastlane/.before_flight'
+end
+
 default_platform(:android)
 
 platform :android do

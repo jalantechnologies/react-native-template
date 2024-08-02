@@ -48,12 +48,16 @@ jobs:
         with:
           ruby-version: "2.6"
 
-      # Step 5: Install bundler, and fastlane
-      - name: Install Fastlane
-        run: cd android && bundle install && cd ../
+      # Step 5: Install bundler, rexml, and fastlane
+      - name: Install Fastlane and dependencies
+        run: |
+          gem install bundler -v 2.1.4
+          cd android
+          bundle install
+          cd ../
         env:
           CI: true
-    
+
       # Step 6: Decode service account file
       - name: Decode Service Account Key JSON File
         uses: timheuer/base64-to-file@v1
@@ -61,8 +65,8 @@ jobs:
         with:
           fileName: "serviceAccount.json"
           encodedString: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
-    
-    # Step 7: Decode Keystore File
+
+      # Step 7: Decode Keystore File
       - name: Decode Keystore File
         uses: timheuer/base64-to-file@v1
         id: android_keystore
@@ -71,13 +75,13 @@ jobs:
           encodedString: ${{ secrets.KEYSTORE_FILE }}
 
       # Step 8: Fastlane build android
-      - name : Build android App via fastlane
-        run : cd android && fastlane deploy_android_production  
+      - name: Build android App via fastlane
+        run: cd android && bundle exec fastlane deploy_android_production  
         env:
           CI: true
           CD: true
           KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS}}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}

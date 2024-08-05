@@ -4,6 +4,7 @@ module.exports = {
   },
   root: true,
   extends: '@react-native',
+  plugins: ['import'],
   rules: {
     'react-hooks/exhaustive-deps': 'off',
     quotes: ['error', 'single'],
@@ -12,6 +13,16 @@ module.exports = {
     'react/require-default-props': ['error'],
     'react/default-props-match-prop-types': ['error'],
     'react/sort-prop-types': ['error'],
+    'import/order': [
+      'error',
+      {
+        'newlines-between': 'always',
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+      },
+    ],
   },
   settings: {
     'import/resolver': {

@@ -1,8 +1,10 @@
-import React from 'react';
-import AuthLayout from '../auth-layout';
-import RegistrationForm from './registration-form';
 import { Toast } from 'native-base';
+import React from 'react';
+
 import { AsyncError } from '../../../types';
+import AuthLayout from '../auth-layout';
+
+import RegistrationForm from './registration-form';
 
 const RegistrationScreen: React.FC = () => {
   const onSuccess = () => {

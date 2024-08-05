@@ -1,5 +1,6 @@
-import React from 'react';
 import { Center, Heading } from 'native-base';
+import React from 'react';
+
 import { useAccountContext } from '../../contexts';
 
 const Dashboard: React.FC = () => {

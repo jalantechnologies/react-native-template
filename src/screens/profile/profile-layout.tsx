@@ -1,5 +1,5 @@
-import React, { PropsWithChildren } from 'react';
 import { Box } from 'native-base';
+import React, { PropsWithChildren } from 'react';
 
 const ProfileLayout = ({ children }: PropsWithChildren) => {
   return (

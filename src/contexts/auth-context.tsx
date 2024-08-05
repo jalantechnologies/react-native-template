@@ -6,10 +6,11 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+
+import { AuthOptions } from '../constants';
 import { AuthService } from '../services';
 import { PhoneNumber, AccessToken, Nullable } from '../types';
 import { useLocalStorage } from '../utils';
-import { AuthOptions } from '../constants';
 
 interface AuthContextInterface {
   getAccessTokenFromStorage: () => Nullable<AccessToken>;

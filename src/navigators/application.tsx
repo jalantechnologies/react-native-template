@@ -1,12 +1,14 @@
+import { useFlipper } from '@react-navigation/devtools';
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Box } from 'native-base';
 import React from 'react';
 import { StatusBar } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
-import { Startup } from '../screens';
-import MainNavigator from './main';
-import { useFlipper } from '@react-navigation/devtools';
+
 import { ApplicationStackParamList } from '../../@types/navigation';
-import { Box } from 'native-base';
+import { Startup } from '../screens';
+
+import MainNavigator from './main';
 
 const Stack = createStackNavigator<ApplicationStackParamList>();
 

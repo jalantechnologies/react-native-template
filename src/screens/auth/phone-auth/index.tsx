@@ -1,7 +1,9 @@
-import React from 'react';
 import { Toast } from 'native-base';
+import React from 'react';
+
 import { AsyncError } from '../../../types';
 import AuthLayout from '../auth-layout';
+
 import PhoneAuthForm from './phone-auth-form';
 
 const PhoneAuth: React.FC = () => {

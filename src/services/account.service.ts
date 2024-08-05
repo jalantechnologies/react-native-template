@@ -1,4 +1,5 @@
 import { AccessToken, APIResponse } from '../types';
+
 import { APIService } from './api-service';
 
 export class AccountService extends APIService {

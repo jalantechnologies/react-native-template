@@ -1,6 +1,8 @@
 import Config from 'react-native-config';
+
 import ConsoleLogger from '../console-logger';
 import DatadogLogger from '../datadog-logger';
+
 import Logger, { LoggerTransport } from './types';
 
 export default class Loggers {

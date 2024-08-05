@@ -1,6 +1,6 @@
+import { Box, Heading, ScrollView, KeyboardAvoidingView } from 'native-base';
 import React, { PropsWithChildren } from 'react';
 import { Keyboard, Platform, TouchableWithoutFeedback } from 'react-native';
-import { Box, Heading, ScrollView, KeyboardAvoidingView } from 'native-base';
 
 interface AuthLayoutProps {
   primaryTitle: string;

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
-import { Brand } from '../../components';
+
 import { ApplicationScreenProps } from '../../../@types/navigation';
+import { Brand } from '../../components';
 
 const Startup: React.FC<ApplicationScreenProps> = ({ navigation }: ApplicationScreenProps) => {
   const init = async () => {

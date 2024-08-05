@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   Button,
@@ -10,10 +9,13 @@ import {
   Text,
   VStack,
 } from 'native-base';
-import useOTPForm from './otp-form-hook';
+import React from 'react';
+
 import { OTPInput } from '../../../components';
-import { AsyncError } from '../../../types';
 import { AuthOptions } from '../../../constants';
+import { AsyncError } from '../../../types';
+
+import useOTPForm from './otp-form-hook';
 
 interface OTPFormProps {
   countryCode: string;

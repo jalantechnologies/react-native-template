@@ -1,5 +1,5 @@
-import React from 'react';
 import { HStack, Icon, Box, Heading, Text } from 'native-base';
+import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { Account, Nullable } from '../../../types';

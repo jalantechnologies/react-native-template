@@ -1,12 +1,12 @@
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { PhoneNumberUtil } from 'google-libphonenumber';
-
-import { AsyncError, PhoneNumber } from '../../../types';
 import { useNavigation } from '@react-navigation/native';
+import { useFormik } from 'formik';
+import { PhoneNumberUtil } from 'google-libphonenumber';
 import { useTranslation } from 'react-i18next';
-import { useAuthContext } from '../../../contexts';
+import * as Yup from 'yup';
+
 import { MainScreenProps } from '../../../../@types/navigation';
+import { useAuthContext } from '../../../contexts';
+import { AsyncError, PhoneNumber } from '../../../types';
 
 interface PhoneAuthFormProps {
   onError: (err: AsyncError) => void;

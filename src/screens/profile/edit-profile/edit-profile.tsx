@@ -1,11 +1,12 @@
+import { Button, FormControl, Input, KeyboardAvoidingView, Toast, VStack } from 'native-base';
 import React from 'react';
 import { Platform } from 'react-native';
-import { Button, FormControl, Input, KeyboardAvoidingView, Toast, VStack } from 'native-base';
+
+import { ProfileStackScreenProps } from '../../../../@types/navigation';
+import { AsyncError } from '../../../types';
+import ProfileLayout from '../profile-layout';
 
 import useProfileUpdateForm from './profile-update-form.hook';
-import ProfileLayout from '../profile-layout';
-import { AsyncError } from '../../../types';
-import { ProfileStackScreenProps } from '../../../../@types/navigation';
 
 const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigation }) => {
   const onProfileUpdateSuccess = () => {

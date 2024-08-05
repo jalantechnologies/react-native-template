@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   VStack,
   Container,
@@ -15,9 +14,12 @@ import {
   Link,
   Center,
 } from 'native-base';
-import usePhoneAuthForm from './phone-auth-form-hook';
-import { AsyncError } from '../../../types';
+import React from 'react';
+
 import { CountrySelectOptions } from '../../../constants';
+import { AsyncError } from '../../../types';
+
+import usePhoneAuthForm from './phone-auth-form-hook';
 
 interface PhoneAuthFormProps {
   onSuccess: () => void;

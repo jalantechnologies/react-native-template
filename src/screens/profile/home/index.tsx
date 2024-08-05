@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
 import { Divider, Toast, VStack } from 'native-base';
+import React, { useState } from 'react';
 
+import { ProfileStackScreenProps } from '../../../../@types/navigation';
+import { useAccountContext, useAuthContext } from '../../../contexts';
 import { AsyncError } from '../../../types';
 import ProfileLayout from '../profile-layout';
+
 import AccountDeleteModal from './account-delete-modal';
-import { useAccountContext, useAuthContext } from '../../../contexts';
 import ProfileAction from './profile-action';
 import ProfileInfoSection from './profile-info-section';
-import { ProfileStackScreenProps } from '../../../../@types/navigation';
 
 const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
   const [isAccountDeleteModalOpen, setIsAccountDeleteModalOpen] = useState(false);

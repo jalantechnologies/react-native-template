@@ -1,11 +1,13 @@
-import { Alert } from 'react-native';
-import React from 'react';
-import AuthLayout from '../auth-layout';
-import OTPForm from './otp-form';
-import useTimer from '../../../utils/use-timer.hook';
-import { AsyncError } from '../../../types';
 import { Toast } from 'native-base';
+import React from 'react';
+import { Alert } from 'react-native';
+
 import { MainScreenProps } from '../../../../@types/navigation';
+import { AsyncError } from '../../../types';
+import useTimer from '../../../utils/use-timer.hook';
+import AuthLayout from '../auth-layout';
+
+import OTPForm from './otp-form';
 
 const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;

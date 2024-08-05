@@ -1,5 +1,5 @@
-import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
+import React from 'react';
 
 import { ProfileStackParamsList } from '../../@types/navigation';
 import { EditProfile, Profile } from '../screens';

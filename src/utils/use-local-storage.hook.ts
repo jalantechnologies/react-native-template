@@ -1,5 +1,5 @@
-import { MMKV } from 'react-native-mmkv';
 import { useCallback } from 'react';
+import { MMKV } from 'react-native-mmkv';
 
 const localStorage = new MMKV();
 

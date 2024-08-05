@@ -1,7 +1,8 @@
-import React, { useRef } from 'react';
 import { HStack, Input } from 'native-base';
-import { KeyboardKeys } from '../../constants';
+import React, { useRef } from 'react';
 import { TextInput } from 'react-native';
+
+import { KeyboardKeys } from '../../constants';
 
 interface OTPInputProps {
   length: number;

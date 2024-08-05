@@ -1,7 +1,8 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { AsyncError } from '../../../types';
+
 import { useAccountContext } from '../../../contexts';
+import { AsyncError } from '../../../types';
 
 interface RegistrationFormProps {
   onRegistrationError: (err: AsyncError) => void;

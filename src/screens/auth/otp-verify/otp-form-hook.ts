@@ -1,9 +1,9 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import { AsyncError, PhoneNumber } from '../../../types';
-import { useAuthContext } from '../../../contexts';
 import { AuthOptions } from '../../../constants';
+import { useAuthContext } from '../../../contexts';
+import { AsyncError, PhoneNumber } from '../../../types';
 
 interface OTPFormProps {
   countryCode: string;

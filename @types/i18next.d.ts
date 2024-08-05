@@ -1,5 +1,5 @@
-import * as resources from '../src/translations/resources';
 import { defaultNS } from '../src/translations';
+import * as resources from '../src/translations/resources';
 
 declare module 'i18next' {
   interface CustomTypeOptions {

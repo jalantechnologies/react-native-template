@@ -1,6 +1,6 @@
+import { Box, Heading } from 'native-base';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Heading } from 'native-base';
 
 const ErrorFallback: React.FC = () => {
   const { t } = useTranslation();

@@ -1,7 +1,8 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react-native';
-import Brand from './brand';
 import { NativeBaseProvider } from 'native-base';
+import React from 'react';
+
+import Brand from './brand';
 
 const inset = {
   frame: { x: 0, y: 0, width: 0, height: 0 },

@@ -1,5 +1,5 @@
-import React from 'react';
 import { Pressable, HStack, Heading, IPressableProps, Icon } from 'native-base';
+import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 interface ProfileActionProps extends IPressableProps {

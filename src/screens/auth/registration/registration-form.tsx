@@ -1,7 +1,9 @@
-import React from 'react';
-import { AsyncError } from '../../../types';
-import useRegistrationForm from './registration-form-hook';
 import { Button, Container, FormControl, Heading, Input, VStack } from 'native-base';
+import React from 'react';
+
+import { AsyncError } from '../../../types';
+
+import useRegistrationForm from './registration-form-hook';
 
 interface RegistrationFormProps {
   onError: (error: AsyncError) => void;

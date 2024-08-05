@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import { Spinner, useTheme } from 'native-base';
+import React, { useEffect } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import { Dashboard, RegistrationScreen } from '../screens';
 import { AuthenticatedStackParamsList, AuthenticatedTabParamsList } from '../../@types/navigation';
 import { useAccountContext, useAuthContext } from '../contexts';
+import { Dashboard, RegistrationScreen } from '../screens';
+
 import ProfileStack from './profile';
 
 const Stack = createStackNavigator<AuthenticatedStackParamsList>();

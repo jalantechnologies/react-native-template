@@ -1,5 +1,6 @@
-import Logger from './internals/types';
 import { DdLogs } from '@datadog/mobile-react-native';
+
+import Logger from './internals/types';
 
 export default class DatadogLogger implements Logger {
   public info(message: string): void {

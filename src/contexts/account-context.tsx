@@ -6,8 +6,10 @@ import React, {
   useMemo,
   useState,
 } from 'react';
+
 import { AccountService } from '../services';
 import { AccessToken, Account, Nullable } from '../types';
+
 import { useAuthContext } from './auth-context';
 
 interface AccountContextInterface {

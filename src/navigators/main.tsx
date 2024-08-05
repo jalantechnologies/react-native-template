@@ -1,10 +1,12 @@
-import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import PhoneAuth from '../screens/auth/phone-auth';
-import OTPVerify from '../screens/auth/otp-verify';
-import AuthenticatedStack from './authenticated';
-import { useAuthContext } from '../contexts';
+import React from 'react';
+
 import { MainParamsList } from '../../@types/navigation';
+import { useAuthContext } from '../contexts';
+import OTPVerify from '../screens/auth/otp-verify';
+import PhoneAuth from '../screens/auth/phone-auth';
+
+import AuthenticatedStack from './authenticated';
 
 const Stack = createStackNavigator<MainParamsList>();
 

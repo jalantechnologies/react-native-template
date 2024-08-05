@@ -1,7 +1,7 @@
-import React from 'react';
 import { Box, Button, Heading, Icon, Modal, Text } from 'native-base';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import React from 'react';
 import { useWindowDimensions } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 interface AccountDeleteModalProps {
   handleDeleteAccountPress: () => void;

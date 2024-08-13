@@ -1,13 +1,13 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import { TaskValidationLimits, TaskValidationMessages } from '../../../constants';
+import { TaskMessages, TaskValidationLimits, TaskValidationMessages } from '../../../constants';
 import { useTaskContext } from '../../../contexts';
-import { Nullable, Task } from '../../../types';
+import { AsyncError, Nullable, Task } from '../../../types';
 
 interface TaskAddEditFormProps {
-  onTaskOperationFailure: () => void;
-  onTaskOperationSuccess: () => void;
+  onTaskOperationFailure: (err: AsyncError) => void;
+  onTaskOperationSuccess: (operation: string) => void;
   task: Nullable<Task>;
 }
 
@@ -42,18 +42,18 @@ const useTaskAddEditForm = ({
       if (task) {
         updateTask({ ...task, ...values })
           .then(() => {
-            onTaskOperationSuccess();
+            onTaskOperationSuccess(TaskMessages.EDIT_OPERATION);
           })
-          .catch(() => {
-            onTaskOperationFailure();
+          .catch(err => {
+            onTaskOperationFailure(err);
           });
       } else {
         addTask(values.description, values.title)
           .then(() => {
-            onTaskOperationSuccess();
+            onTaskOperationSuccess(TaskMessages.ADD_OPERATION);
           })
-          .catch(() => {
-            onTaskOperationFailure();
+          .catch(err => {
+            onTaskOperationFailure(err);
           });
         formik.resetForm();
       }

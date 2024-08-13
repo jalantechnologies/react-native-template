@@ -5,7 +5,7 @@ import SwipeableFlatList from 'react-native-swipeable-list';
 
 import { TaskMessages, TaskOperation } from '../../../constants';
 import { useTaskContext } from '../../../contexts';
-import { Nullable, Task } from '../../../types';
+import { AsyncError, Nullable, Task } from '../../../types';
 
 import TaskAddEditModal from './task-add-edit-modal';
 import TaskHeader from './task-header';
@@ -28,48 +28,30 @@ const TaskSection = () => {
     getTasks();
   }, []);
 
-  const onTaskOperationComplete = () => {
-    const operation = () => {
-      switch (taskOperation) {
-        case TaskOperation.ADD:
-          return TaskMessages.ADD_OPERATION;
-        case TaskOperation.EDIT:
-          return TaskMessages.EDIT_OPERATION;
-        case TaskOperation.DELETE:
-          return TaskMessages.DELETE_OPERATION;
-        default:
-          return '';
-      }
-    };
+  const onTaskOperationComplete = (operation: string) => {
     Toast.show({
       title: TaskMessages.SUCCESS_TITLE,
-      description: TaskMessages.ADD_SUCCESS(operation()),
+      description: TaskMessages.ADD_SUCCESS(operation),
     });
     setTaskOperation(null);
   };
 
-  const onTaskOperationFailure = () => {
+  const onTaskOperationFailure = (err: AsyncError) => {
     Toast.show({
       title: TaskMessages.ERROR_TITLE,
-      description: TaskMessages.ADD_FAILURE(
-        taskOperation === TaskOperation.ADD
-          ? TaskMessages.ADD_FAILURE_OPERATION
-          : TaskMessages.EDIT_FAILURE_OPERATION,
-      ),
+      description: err.message,
     });
     setTaskOperation(null);
   };
 
   const handleDeleteTask = (task: Task) => {
-    setTaskOperation(TaskOperation.DELETE);
     deleteTask(task)
       .then(() => {
-        onTaskOperationComplete();
+        onTaskOperationComplete(TaskMessages.DELETE_OPERATION);
       })
-      .catch(() => {
-        onTaskOperationFailure();
+      .catch(err => {
+        onTaskOperationFailure(err);
       });
-    setTaskOperation(null);
   };
 
   const handleEditTask = (task: Task) => {

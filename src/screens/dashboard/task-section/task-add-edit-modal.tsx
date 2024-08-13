@@ -3,14 +3,14 @@ import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { TaskModal, TaskOperation } from '../../../constants';
-import { Nullable, Task } from '../../../types';
+import { AsyncError, Nullable, Task } from '../../../types';
 
 import useTaskAddEditForm from './task-add-edit-form-hook';
 
 interface TaskAddEditModalProps {
   isModalOpen: boolean;
-  onTaskOperationComplete: () => void;
-  onTaskOperationFailure: () => void;
+  onTaskOperationComplete: (operation: string) => void;
+  onTaskOperationFailure: (err: AsyncError) => void;
   setModalOpen: (isOpen: boolean) => void;
   task?: Nullable<Task>;
   taskOperation: Nullable<TaskOperation>;
@@ -28,9 +28,9 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
     setModalOpen(false);
   };
 
-  const onTaskOperationSuccess = () => {
+  const onTaskOperationSuccess = (operation: string) => {
     handleModalClose();
-    onTaskOperationComplete();
+    onTaskOperationComplete(operation);
   };
 
   const { formik, isAddTaskLoading, isUpdateTaskLoading } = useTaskAddEditForm({

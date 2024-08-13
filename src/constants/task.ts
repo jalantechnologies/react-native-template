@@ -1,7 +1,6 @@
 export enum TaskOperation {
   ADD = 'Add',
   EDIT = 'Edit',
-  DELETE = 'Delete',
 }
 
 export const TaskValidationLimits = {
@@ -20,13 +19,10 @@ export const TaskMessages = {
   SUCCESS_TITLE: 'Success',
   ERROR_TITLE: 'Error',
   ADD_SUCCESS: (operation: string) => `Task ${operation} successfully`,
-  ADD_FAILURE: (operation: string) => `Task ${operation} failed`,
   NO_TASKS_FOUND: 'No tasks found',
   ADD_OPERATION: 'added',
   EDIT_OPERATION: 'updated',
   DELETE_OPERATION: 'deleted',
-  ADD_FAILURE_OPERATION: 'addition',
-  EDIT_FAILURE_OPERATION: 'updation',
 };
 
 export const TaskModal = {

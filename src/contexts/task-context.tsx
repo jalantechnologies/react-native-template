@@ -13,7 +13,7 @@ import { AccessToken, Task } from '../types';
 import { useAuthContext } from './auth-context';
 
 interface TaskContextInterface {
-  addTask: (task: Task) => Promise<void>;
+  addTask: (description: string, title: string) => Promise<void>;
   deleteTask: (task: Task) => Promise<void>;
   getTasks: () => Promise<void>;
   isAddTaskLoading: boolean;
@@ -49,19 +49,25 @@ export const TaskContextProvider: React.FC<PropsWithChildren> = ({ children }) =
       setTasks(data.map((task: Task) => new Task({ ...task })));
     }
     if (error) {
+      setIsTasksLoading(false);
       throw error;
     }
     setIsTasksLoading(false);
   };
 
-  const addTask = async (task: Task) => {
+  const addTask = async (description: string, title: string) => {
     setIsAddTaskLoading(true);
-    const { error } = await taskService.addTask(task, getAccessTokenFromStorage() as AccessToken);
+    const { data, error } = await taskService.addTask(
+      description,
+      title,
+      getAccessTokenFromStorage() as AccessToken,
+    );
     if (error) {
+      setIsAddTaskLoading(false);
       throw error;
-    } else {
-      setTasks(prevTasks => [...prevTasks, task]);
     }
+    const newTask = new Task({ ...data });
+    setTasks(prevTasks => [newTask, ...prevTasks]);
     setIsAddTaskLoading(false);
   };
 
@@ -72,6 +78,7 @@ export const TaskContextProvider: React.FC<PropsWithChildren> = ({ children }) =
       getAccessTokenFromStorage() as AccessToken,
     );
     if (error) {
+      setIsUpdateTaskLoading(false);
       throw error;
     } else {
       setTasks(prevTasks =>
@@ -93,6 +100,7 @@ export const TaskContextProvider: React.FC<PropsWithChildren> = ({ children }) =
       getAccessTokenFromStorage() as AccessToken,
     );
     if (error) {
+      setIsDeleteTaskLoading(false);
       throw error;
     } else {
       setTasks(prevTasks => prevTasks.filter(t => t.id !== task.id));

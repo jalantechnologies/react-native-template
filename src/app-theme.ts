@@ -13,6 +13,9 @@ const appTheme = extendTheme({
         _text: {
           color: 'white',
         },
+        _pressed: {
+          opacity: 0.7,
+        },
       },
       variants: {
         solid: {

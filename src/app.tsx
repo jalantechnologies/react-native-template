@@ -7,7 +7,7 @@ import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-c
 
 import appTheme from './app-theme';
 import { ErrorFallback } from './components';
-import { AccountContextProvider, AuthContextProvider } from './contexts';
+import { AccountContextProvider, AuthContextProvider, TaskContextProvider } from './contexts';
 import Logger from './logger/logger';
 import ApplicationNavigator from './navigators/application';
 import './translations';
@@ -27,7 +27,9 @@ const App = () => {
           <SafeAreaProvider initialMetrics={initialWindowMetrics}>
             <AuthContextProvider>
               <AccountContextProvider>
-                <ApplicationNavigator />
+                <TaskContextProvider>
+                  <ApplicationNavigator />
+                </TaskContextProvider>
               </AccountContextProvider>
             </AuthContextProvider>
           </SafeAreaProvider>

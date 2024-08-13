@@ -39,23 +39,17 @@ const useTaskAddEditForm = ({
     enableReinitialize: true,
 
     onSubmit: async values => {
-      if (task) {
-        updateTask({ ...task, ...values })
-          .then(() => {
-            onTaskOperationSuccess(TaskMessages.EDIT_OPERATION);
-          })
-          .catch(err => {
-            onTaskOperationFailure(err);
-          });
-      } else {
-        addTask(values.description, values.title)
-          .then(() => {
-            onTaskOperationSuccess(TaskMessages.ADD_OPERATION);
-          })
-          .catch(err => {
-            onTaskOperationFailure(err);
-          });
-        formik.resetForm();
+      try {
+        if (task) {
+          await updateTask({ ...task, ...values });
+          onTaskOperationSuccess(TaskMessages.EDIT_OPERATION);
+        } else {
+          await addTask(values.description, values.title);
+          onTaskOperationSuccess(TaskMessages.ADD_OPERATION);
+          formik.resetForm();
+        }
+      } catch (err) {
+        onTaskOperationFailure(err as AsyncError);
       }
     },
   });

@@ -4,10 +4,21 @@ import { Task } from '../types';
 import { APIService } from './api-service';
 
 export class TaskService extends APIService {
-  addTask = async (task: Task, userAccessToken: AccessToken): Promise<APIResponse> => {
-    return this.post('/tasks', task, {
-      headers: { Authorization: `Bearer ${userAccessToken.token}` },
-    });
+  addTask = async (
+    description: string,
+    title: string,
+    userAccessToken: AccessToken,
+  ): Promise<APIResponse> => {
+    return this.post(
+      '/tasks',
+      {
+        title,
+        description,
+      },
+      {
+        headers: { Authorization: `Bearer ${userAccessToken.token}` },
+      },
+    );
   };
 
   getAllTasks = async (userAccessToken: AccessToken): Promise<APIResponse> => {

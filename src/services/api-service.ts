@@ -66,11 +66,7 @@ export class APIService {
     return this.request<T>('put', path, payload, config);
   }
 
-  protected async delete<T>(
-    path: string,
-    payload?: any,
-    config?: AxiosRequestConfig,
-  ): Promise<APIResponse<T>> {
-    return this.request<T>('delete', path, payload, config);
+  protected async delete<T>(path: string, config?: AxiosRequestConfig): Promise<APIResponse<T>> {
+    return this.request<T>('delete', path, undefined, config);
   }
 }

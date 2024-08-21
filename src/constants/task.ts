@@ -8,13 +8,6 @@ export const TaskValidationLimits = {
   DESCRIPTION_MIN_LENGTH: 10,
 };
 
-export const TaskValidationMessages = {
-  TITLE_MIN_LENGTH: `Title must be at least ${TaskValidationLimits.TITLE_MIN_LENGTH} characters`,
-  TITLE_REQUIRED: 'Title is required',
-  DESCRIPTION_MIN_LENGTH: `Description must be at least ${TaskValidationLimits.DESCRIPTION_MIN_LENGTH} characters`,
-  DESCRIPTION_REQUIRED: 'Description is required',
-};
-
 export const TaskMessages = {
   SUCCESS_TITLE: 'Success',
   ERROR_TITLE: 'Error',

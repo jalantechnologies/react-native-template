@@ -1,7 +1,8 @@
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 
-import { TaskMessages, TaskValidationLimits, TaskValidationMessages } from '../../../constants';
+import { TaskMessages, TaskValidationLimits } from '../../../constants';
 import { useTaskContext } from '../../../contexts';
 import { AsyncError, Nullable, Task } from '../../../types';
 
@@ -17,6 +18,7 @@ const useTaskAddEditForm = ({
   task,
 }: TaskAddEditFormProps) => {
   const { addTask, updateTask, isAddTaskLoading, isUpdateTaskLoading } = useTaskContext();
+  const { t } = useTranslation();
 
   const formik = useFormik({
     initialValues: {
@@ -26,14 +28,11 @@ const useTaskAddEditForm = ({
 
     validationSchema: Yup.object({
       title: Yup.string()
-        .min(TaskValidationLimits.TITLE_MIN_LENGTH, TaskValidationMessages.TITLE_MIN_LENGTH)
-        .required(TaskValidationMessages.TITLE_REQUIRED),
+        .min(TaskValidationLimits.TITLE_MIN_LENGTH, t('task:titleMinLength'))
+        .required(t('task:titleRequired')),
       description: Yup.string()
-        .min(
-          TaskValidationLimits.DESCRIPTION_MIN_LENGTH,
-          TaskValidationMessages.DESCRIPTION_MIN_LENGTH,
-        )
-        .required(TaskValidationMessages.DESCRIPTION_REQUIRED),
+        .min(TaskValidationLimits.DESCRIPTION_MIN_LENGTH, t('task:descriptionMinLength'))
+        .required(t('task:descriptionRequired')),
     }),
 
     enableReinitialize: true,

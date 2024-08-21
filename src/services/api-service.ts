@@ -70,7 +70,7 @@ export class APIService {
     return this.request<T>('delete', path, undefined, config);
   }
 
-  protected getBearerTokenHeader(accessToken: string): AxiosRequestConfig {
+  protected getAuthorizationHeader(accessToken: string): AxiosRequestConfig {
     return {
       headers: {
         Authorization: `Bearer ${accessToken}`,

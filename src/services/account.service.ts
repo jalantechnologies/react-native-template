@@ -6,7 +6,7 @@ export class AccountService extends APIService {
   getAccount = async (userAccessToken: AccessToken): Promise<APIResponse> => {
     return this.get(
       `/accounts/${userAccessToken.accountId}`,
-      this.getBearerTokenHeader(userAccessToken.token),
+      this.getAuthorizationHeader(userAccessToken.token),
     );
   };
 
@@ -21,7 +21,7 @@ export class AccountService extends APIService {
         firstName,
         lastName,
       },
-      this.getBearerTokenHeader(userAccessToken.token),
+      this.getAuthorizationHeader(userAccessToken.token),
     );
   };
 

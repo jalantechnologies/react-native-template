@@ -69,4 +69,12 @@ export class APIService {
   protected async delete<T>(path: string, config?: AxiosRequestConfig): Promise<APIResponse<T>> {
     return this.request<T>('delete', path, undefined, config);
   }
+
+  protected getBearerTokenHeader(accessToken: string): AxiosRequestConfig {
+    return {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+  }
 }

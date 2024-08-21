@@ -38,13 +38,11 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
   const [isUpdateAccountLoading, setIsUpdateAccountLoading] = useState(false);
   const [isDeleteAccountLoading, setIsDeleteAccountLoading] = useState(false);
 
-  const { getAccessTokenFromStorage } = useAuthContext();
+  const { getAccessToken } = useAuthContext();
 
   const getAccountDetails = async () => {
     setIsAccountLoading(true);
-    const { data, error } = await accountService.getAccount(
-      getAccessTokenFromStorage() as AccessToken,
-    );
+    const { data, error } = await accountService.getAccount(getAccessToken() as AccessToken);
     if (data) {
       setAccountDetails(new Account({ ...data }));
       if (!data.firstName) {
@@ -64,7 +62,7 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
     const { data, error } = await accountService.updateAccount(
       firstName,
       lastName,
-      getAccessTokenFromStorage() as AccessToken,
+      getAccessToken() as AccessToken,
     );
     if (data) {
       setAccountDetails(new Account({ ...data }));
@@ -77,9 +75,7 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
 
   const deleteAccount = async () => {
     setIsDeleteAccountLoading(true);
-    const { error } = await accountService.deleteAccount(
-      getAccessTokenFromStorage() as AccessToken,
-    );
+    const { error } = await accountService.deleteAccount(getAccessToken() as AccessToken);
     if (error) {
       setIsDeleteAccountLoading(false);
       throw error;

@@ -1,9 +1,10 @@
 import { Box, VStack, HStack, Divider, Text, Toast, Center } from 'native-base';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { RefreshControl } from 'react-native';
 import SwipeableFlatList from 'react-native-swipeable-list';
 
-import { TaskMessages, TaskOperation } from '../../../constants';
+import { TaskOperation } from '../../../constants';
 import { useTaskContext } from '../../../contexts';
 import { AsyncError, Nullable, Task } from '../../../types';
 
@@ -13,6 +14,7 @@ import TaskQuickActionButton from './task-quick-action-button';
 
 const TaskSection = () => {
   const { tasks, getTasks, deleteTask, isDeleteTaskLoading } = useTaskContext();
+  const { t } = useTranslation();
 
   const [taskOperation, setTaskOperation] = useState<Nullable<TaskOperation>>(null);
   const [isAddEditTaskModalOpen, setIsAddEditTaskModalOpen] = useState(false);
@@ -28,17 +30,17 @@ const TaskSection = () => {
     getTasks();
   }, []);
 
-  const onTaskOperationComplete = (operation: string) => {
+  const onTaskOperationComplete = (description: string) => {
     Toast.show({
-      title: TaskMessages.SUCCESS_TITLE,
-      description: TaskMessages.ADD_SUCCESS(operation),
+      title: 'Success',
+      description,
     });
     setTaskOperation(null);
   };
 
   const onTaskOperationFailure = (err: AsyncError) => {
     Toast.show({
-      title: TaskMessages.ERROR_TITLE,
+      title: 'Error',
       description: err.message,
     });
     setTaskOperation(null);
@@ -47,7 +49,7 @@ const TaskSection = () => {
   const handleDeleteTask = (task: Task) => {
     deleteTask(task)
       .then(() => {
-        onTaskOperationComplete(TaskMessages.DELETE_OPERATION);
+        onTaskOperationComplete(t('task:deleteTaskSuccess'));
       })
       .catch(err => {
         onTaskOperationFailure(err);
@@ -113,7 +115,7 @@ const TaskSection = () => {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <Center py={2}>
-              <Text>{TaskMessages.NO_TASKS_FOUND}</Text>
+              <Text>{t('task:noTaskFound')}</Text>
             </Center>
           }
         />

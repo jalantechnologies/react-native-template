@@ -9,7 +9,7 @@ import useTaskAddEditForm from './task-add-edit-form-hook';
 
 interface TaskAddEditModalProps {
   isModalOpen: boolean;
-  onTaskOperationComplete: (operation: string) => void;
+  onTaskOperationComplete: (description: string) => void;
   onTaskOperationFailure: (err: AsyncError) => void;
   setModalOpen: (isOpen: boolean) => void;
   task?: Nullable<Task>;
@@ -28,9 +28,9 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
     setModalOpen(false);
   };
 
-  const onTaskOperationSuccess = (operation: string) => {
+  const onTaskOperationSuccess = (description: string) => {
     handleModalClose();
-    onTaskOperationComplete(operation);
+    onTaskOperationComplete(description);
   };
 
   const { formik, isAddTaskLoading, isUpdateTaskLoading } = useTaskAddEditForm({

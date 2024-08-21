@@ -2,13 +2,13 @@ import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 
-import { TaskMessages, TaskValidationLimits } from '../../../constants';
+import { TaskValidationLimits } from '../../../constants';
 import { useTaskContext } from '../../../contexts';
 import { AsyncError, Nullable, Task } from '../../../types';
 
 interface TaskAddEditFormProps {
   onTaskOperationFailure: (err: AsyncError) => void;
-  onTaskOperationSuccess: (operation: string) => void;
+  onTaskOperationSuccess: (description: string) => void;
   task: Nullable<Task>;
 }
 
@@ -41,10 +41,10 @@ const useTaskAddEditForm = ({
       try {
         if (task) {
           await updateTask({ ...task, ...values });
-          onTaskOperationSuccess(TaskMessages.EDIT_OPERATION);
+          onTaskOperationSuccess(t('task:editTaskSuccess'));
         } else {
           await addTask(values.description, values.title);
-          onTaskOperationSuccess(TaskMessages.ADD_OPERATION);
+          onTaskOperationSuccess(t('task:addTaskSuccess'));
           formik.resetForm();
         }
       } catch (err) {

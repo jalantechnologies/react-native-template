@@ -1,6 +1,10 @@
 {
+    "addTaskSuccess": "Task added successfully",
+    "deleteTaskSuccess": "Task deleted successfully",
     "descriptionMinLength": "Description must be at least 10 characters",
     "descriptionRequired": "Description is required",
+    "editTaskSuccess": "Task edited successfully",
+    "noTaskFound": "No task found",
     "titleMinLength": "Title must be at least 3 characters",
     "titleRequired": "Title is required"
 }

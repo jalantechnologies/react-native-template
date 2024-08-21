@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 
 import { TaskService } from '../services';
-import { AccessToken, Task } from '../types';
+import { Task } from '../types';
 
 import { useAuthContext } from './auth-context';
 
@@ -42,7 +42,7 @@ export const TaskContextProvider: React.FC<PropsWithChildren> = ({ children }) =
 
   const getTasks = async () => {
     setIsTasksLoading(true);
-    const { data, error } = await taskService.getAllTasks(getAccessToken() as AccessToken);
+    const { data, error } = await taskService.getAllTasks(getAccessToken());
     if (data) {
       setTasks(data.map((task: Task) => new Task({ ...task })));
     }
@@ -55,11 +55,7 @@ export const TaskContextProvider: React.FC<PropsWithChildren> = ({ children }) =
 
   const addTask = async (description: string, title: string) => {
     setIsAddTaskLoading(true);
-    const { data, error } = await taskService.addTask(
-      description,
-      title,
-      getAccessToken() as AccessToken,
-    );
+    const { data, error } = await taskService.addTask(description, title, getAccessToken());
     if (error) {
       setIsAddTaskLoading(false);
       throw error;
@@ -71,7 +67,7 @@ export const TaskContextProvider: React.FC<PropsWithChildren> = ({ children }) =
 
   const updateTask = async (task: Task) => {
     setIsUpdateTaskLoading(true);
-    const { error } = await taskService.updateTask(task, getAccessToken() as AccessToken);
+    const { error } = await taskService.updateTask(task, getAccessToken());
     if (error) {
       setIsUpdateTaskLoading(false);
       throw error;
@@ -90,7 +86,7 @@ export const TaskContextProvider: React.FC<PropsWithChildren> = ({ children }) =
 
   const deleteTask = async (task: Task) => {
     setIsDeleteTaskLoading(true);
-    const { error } = await taskService.deleteTask(task, getAccessToken() as AccessToken);
+    const { error } = await taskService.deleteTask(task, getAccessToken());
     if (error) {
       setIsDeleteTaskLoading(false);
       throw error;

@@ -9,11 +9,11 @@ import React, {
 
 import { AuthOptions } from '../constants';
 import { AuthService } from '../services';
-import { PhoneNumber, AccessToken, Nullable } from '../types';
+import { PhoneNumber, AccessToken } from '../types';
 import { useLocalStorage } from '../utils';
 
 interface AuthContextInterface {
-  getAccessToken: () => Nullable<AccessToken>;
+  getAccessToken: () => AccessToken;
   isSendOTPLoading: boolean;
   isUserAuthenticated: boolean;
   isVerifyOTPLoading: boolean;
@@ -35,12 +35,9 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
 
   const { getFromStorage, removeFromStorage, setToStorage } = useLocalStorage();
 
-  const getAccessToken = (): Nullable<AccessToken> => {
-    const token = getFromStorage(AuthOptions.AccessTokenStorageKey);
-    if (token) {
-      return JSON.parse(token) as AccessToken;
-    }
-    return null;
+  const getAccessToken = (): AccessToken => {
+    const token = getFromStorage(AuthOptions.AccessTokenStorageKey) as string;
+    return JSON.parse(token) as AccessToken;
   };
 
   const [isUserAuthenticated, setIsUserAuthenticated] = useState(!!getAccessToken());

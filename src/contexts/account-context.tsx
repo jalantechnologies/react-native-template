@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 
 import { AccountService } from '../services';
-import { AccessToken, Account, Nullable } from '../types';
+import { Account, Nullable } from '../types';
 
 import { useAuthContext } from './auth-context';
 
@@ -42,7 +42,7 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
 
   const getAccountDetails = async () => {
     setIsAccountLoading(true);
-    const { data, error } = await accountService.getAccount(getAccessToken() as AccessToken);
+    const { data, error } = await accountService.getAccount(getAccessToken());
     if (data) {
       setAccountDetails(new Account({ ...data }));
       if (!data.firstName) {
@@ -62,7 +62,7 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
     const { data, error } = await accountService.updateAccount(
       firstName,
       lastName,
-      getAccessToken() as AccessToken,
+      getAccessToken(),
     );
     if (data) {
       setAccountDetails(new Account({ ...data }));
@@ -75,7 +75,7 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
 
   const deleteAccount = async () => {
     setIsDeleteAccountLoading(true);
-    const { error } = await accountService.deleteAccount(getAccessToken() as AccessToken);
+    const { error } = await accountService.deleteAccount(getAccessToken());
     if (error) {
       setIsDeleteAccountLoading(false);
       throw error;

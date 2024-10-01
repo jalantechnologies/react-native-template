@@ -68,4 +68,4 @@ runs:
       if: steps.check.outputs.scheme == 'compose'
       shell: bash
       run: |
-        docker run -t ${{ inputs.image }} yarn run ${{ steps.check.outputs.input }}
+        docker compose -f app/docker-compose.${{ steps.check.outputs.input }}.yml up --exit-code-from app

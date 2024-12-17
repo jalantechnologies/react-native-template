@@ -52,13 +52,30 @@ jobs:
       - name: Install Doppler CLI
         uses: dopplerhq/cli-action@v3
 
-      - name: Overwrite .env with Doppler secrets
+      - name: Overwrite existing .env with Doppler secrets
         run: |
-          doppler secrets download --format=env --no-file > .env
+          # Export Doppler secrets to a temporary file
+          doppler secrets download --format=env --no-file > .doppler_env
+          
+          # Update the existing .env file with values from Doppler secrets
+          if [ -f .env ]; then
+            while IFS='=' read -r key value; do
+              if grep -q "^$key=" .env; then
+                sed -i "s|^$key=.*|$key=$value|" .env
+              else
+                echo "$key=$value" >> .env
+              fi
+            done < .doppler_env
+          else
+            mv .doppler_env .env
+          fi
+
+          # Clean up the temporary file
+          rm -f .doppler_env
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
 
-      - name: Verify .env file
+      - name: Verify updated .env file
         run: cat .env
 
       - name: Build application

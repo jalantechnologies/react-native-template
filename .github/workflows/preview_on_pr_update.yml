@@ -49,6 +49,14 @@ jobs:
 
           echo "##[set-output name=branch_hash;]$(echo $BRANCH_HASH)"
 
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
+      - name: Test Doppler Access
+        run: doppler run -- printenv
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
+
       - name: Build application
         id: build
         uses: ./app/.github/actions/build

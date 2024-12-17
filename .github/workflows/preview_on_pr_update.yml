@@ -100,6 +100,9 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: app
+      
+      - name: Verify .env file
+        run: cat app/.env
 
       - name: Run check
         uses: ./app/.github/actions/check

@@ -52,10 +52,14 @@ jobs:
       - name: Install Doppler CLI
         uses: dopplerhq/cli-action@v3
 
-      - name: Test Doppler Access
-        run: doppler run -- printenv
+      - name: Overwrite .env with Doppler secrets
+        run: |
+          doppler secrets download --format=env --no-file > .env
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
+
+      - name: Verify .env file
+        run: cat .env
 
       - name: Build application
         id: build

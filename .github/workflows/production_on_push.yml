@@ -45,6 +45,32 @@ jobs:
 
           echo "##[set-output name=branch_hash;]$(echo $BRANCH_HASH)"
 
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
+      - name: Overwrite existing .env inside app directory with Doppler secrets
+        run: |
+          # Export Doppler secrets to a temporary file
+          doppler secrets download --format=env --no-file > .doppler_env
+          
+          # Update the existing .env file inside app directory with values from Doppler secrets
+          if [ -f app/.env ]; then
+            while IFS='=' read -r key value; do
+              if grep -q "^$key=" app/.env; then
+                sed -i "s|^$key=.*|$key=$value|" app/.env
+              else
+                echo "$key=$value" >> app/.env
+              fi
+            done < .doppler_env
+          else
+            mv .doppler_env app/.env
+          fi
+
+          # Clean up the temporary file
+          rm -f .doppler_env
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_PRODUCTION_TOKEN }}
+
       - name: Build application
         id: build
         uses: ./app/.github/actions/build

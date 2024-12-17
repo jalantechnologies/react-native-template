@@ -75,9 +75,6 @@ jobs:
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
 
-      - name: Verify updated app/.env file
-        run: cat app/.env
-
       - name: Build application
         id: build
         uses: ./app/.github/actions/build

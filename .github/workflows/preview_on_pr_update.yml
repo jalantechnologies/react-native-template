@@ -52,37 +52,31 @@ jobs:
       - name: Install Doppler CLI
         uses: dopplerhq/cli-action@v3
 
-      - name: List all files in the project
-        run: |
-          ls -alR
-
-      - name: Overwrite existing .env with Doppler secrets
+      - name: Overwrite existing .env inside app directory with Doppler secrets
         run: |
           # Export Doppler secrets to a temporary file
           doppler secrets download --format=env --no-file > .doppler_env
           
-          # Create a backup of the existing .env file (for debugging or rollback purposes)
-          cp .env .env.bak || true
-          
-          # Update or append only keys from Doppler to the .env file
-          while IFS='=' read -r key value; do
-            if grep -q "^$key=" .env; then
-              # Replace the value for existing keys
-              sed -i "s|^$key=.*|$key=$value|" .env
-            else
-              # Append the key if it doesn't exist
-              echo "$key=$value" >> .env
-            fi
-          done < .doppler_env
+          # Update the existing .env file inside app directory with values from Doppler secrets
+          if [ -f app/.env ]; then
+            while IFS='=' read -r key value; do
+              if grep -q "^$key=" app/.env; then
+                sed -i "s|^$key=.*|$key=$value|" app/.env
+              else
+                echo "$key=$value" >> app/.env
+              fi
+            done < .doppler_env
+          else
+            mv .doppler_env app/.env
+          fi
 
-          # Clean up temporary file
+          # Clean up the temporary file
           rm -f .doppler_env
-
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
 
-      - name: Verify updated .env file
-        run: cat .env
+      - name: Verify updated app/.env file
+        run: cat app/.env
 
       - name: Build application
         id: build

@@ -52,9 +52,9 @@ jobs:
       - name: Install Doppler CLI
         uses: dopplerhq/cli-action@v3
 
-      - name: Check files
+      - name: List all files in the project
         run: |
-          ls -la
+          ls -alR
 
       - name: Overwrite existing .env with Doppler secrets
         run: |

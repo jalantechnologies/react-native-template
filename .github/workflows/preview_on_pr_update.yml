@@ -55,23 +55,23 @@ jobs:
       - name: Overwrite existing .env inside app directory with Doppler secrets
         run: |
           # Export Doppler secrets to a temporary file
-          doppler secrets download --format=env --no-file > .doppler_env
+          doppler secrets download --format=env --no-file > app/.env
           
-          # Update the existing .env file inside app directory with values from Doppler secrets
-          if [ -f app/.env ]; then
-            while IFS='=' read -r key value; do
-              if grep -q "^$key=" app/.env; then
-                sed -i "s|^$key=.*|$key=$value|" app/.env
-              else
-                echo "$key=$value" >> app/.env
-              fi
-            done < .doppler_env
-          else
-            mv .doppler_env app/.env
-          fi
+          # # Update the existing .env file inside app directory with values from Doppler secrets
+          # if [ -f app/.env ]; then
+          #   while IFS='=' read -r key value; do
+          #     if grep -q "^$key=" app/.env; then
+          #       sed -i "s|^$key=.*|$key=$value|" app/.env
+          #     else
+          #       echo "$key=$value" >> app/.env
+          #     fi
+          #   done < .doppler_env
+          # else
+          #   mv .doppler_env app/.env
+          # fi
 
-          # Clean up the temporary file
-          rm -f .doppler_env
+          # # Clean up the temporary file
+          # rm -f .doppler_env
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
 

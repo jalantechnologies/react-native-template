@@ -57,21 +57,23 @@ jobs:
           # Export Doppler secrets to a temporary file
           doppler secrets download --format=env --no-file > .doppler_env
           
-          # Update the existing .env file with values from Doppler secrets
-          if [ -f .env ]; then
-            while IFS='=' read -r key value; do
-              if grep -q "^$key=" .env; then
-                sed -i "s|^$key=.*|$key=$value|" .env
-              else
-                echo "$key=$value" >> .env
-              fi
-            done < .doppler_env
-          else
-            mv .doppler_env .env
-          fi
+          # Create a backup of the existing .env file (for debugging or rollback purposes)
+          cp .env .env.bak || true
+          
+          # Update or append only keys from Doppler to the .env file
+          while IFS='=' read -r key value; do
+            if grep -q "^$key=" .env; then
+              # Replace the value for existing keys
+              sed -i "s|^$key=.*|$key=$value|" .env
+            else
+              # Append the key if it doesn't exist
+              echo "$key=$value" >> .env
+            fi
+          done < .doppler_env
 
-          # Clean up the temporary file
+          # Clean up temporary file
           rm -f .doppler_env
+
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
 

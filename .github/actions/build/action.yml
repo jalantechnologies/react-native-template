@@ -44,7 +44,7 @@ runs:
       shell: bash
       run: |
         echo "Keys in .env:"
-        grep -o '^[^=]*' .env
+        grep -o '^[^=]*' app/.env
 
     - name: Docker build
       id: build

@@ -52,6 +52,10 @@ jobs:
       - name: Install Doppler CLI
         uses: dopplerhq/cli-action@v3
 
+      - name: Check files
+        run: |
+          ls -la
+
       - name: Overwrite existing .env with Doppler secrets
         run: |
           # Export Doppler secrets to a temporary file

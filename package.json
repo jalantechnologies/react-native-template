@@ -1,7 +1,11 @@
 {
   "name": "boilerplate-react-native",
   "version": "0.0.1",
-  "private": true,
+  "description": "Boilerplate project for React Native",
+  "engines": {
+    "node": "22.13.1",
+    "yarn": "1.22.22"
+  },
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -12,6 +16,8 @@
     "test:report": "jest --collectCoverage --coverageDirectory=\"./coverage\" --ci --reporters=default --reporters=jest-junit --coverage",
     "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install && cd .."
   },
+  "author": "jalantechnologies",
+  "license": "MIT",
   "dependencies": {
     "@datadog/mobile-react-native": "^2.3.3",
     "@react-native-masked-view/masked-view": "^0.2.9",
@@ -26,7 +32,7 @@
     "native-base": "^3.4.28",
     "react": "18.2.0",
     "react-i18next": "^13.0.1",
-    "react-native": "0.72.1",
+    "react-native": "0.77.0",
     "react-native-config": "^1.5.1",
     "react-native-error-boundary": "^1.2.3",
     "react-native-gesture-handler": "^2.12.0",
@@ -71,8 +77,5 @@
     "react-native-flipper": "^0.202.0",
     "react-test-renderer": "18.2.0",
     "typescript": "4.8.4"
-  },
-  "engines": {
-    "node": ">=16"
   }
 }

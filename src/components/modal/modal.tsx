@@ -1,56 +1,55 @@
 import React from 'react';
-import { Modal as RNModal, View, Text, TouchableOpacity, ViewProps } from 'react-native';
+import { Modal as RNModal, View, ViewProps } from 'react-native';
 
+import ModalBody from './body/modalBody';
+import ModalFooter from './footer/modalFooter';
+import ModalHeader from './header/modalHeader';
 import { styles } from './modal.styles';
 
 interface ModalProps extends ViewProps {
-  isVisible: boolean;
+  isOpen: boolean;
   onClose: () => void;
+  closeable?: boolean;
+  size?: 'small' | 'medium' | 'large';
+  animationType?: 'none' | 'slide' | 'fade';
+  overrides?: object;
   header?: React.ReactNode;
   body?: React.ReactNode;
   footer?: React.ReactNode;
-  size?: 'small' | 'medium' | 'large';
-  animationType?: 'none' | 'slide' | 'fade';
 }
 
 const Modal: React.FC<ModalProps> = ({
-  isVisible,
+  isOpen,
   onClose,
+  closeable = true,
+  size = 'medium',
+  animationType = 'fade',
+  overrides = {},
   header,
   body,
   footer,
-  size = 'medium',
-  animationType = 'fade',
-  style,
   ...rest
 }) => {
   return (
     <RNModal
-      visible={isVisible}
+      visible={isOpen}
       animationType={animationType}
       transparent={true}
       onRequestClose={onClose}
     >
       <View style={styles.backdrop}>
-        <View style={[styles.modal, styles[size], style]} {...rest}>
-          {header && <View style={styles.header}>{header}</View>}
-          {body && <View style={styles.body}>{body}</View>}
-          {footer && <View style={styles.footer}>{footer}</View>}
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>X</Text>
-          </TouchableOpacity>
+        <View style={[styles.modal, styles[size], overrides]} {...rest}>
+          {header && (
+            <ModalHeader onClose={onClose} closeable={closeable}>
+              {header}
+            </ModalHeader>
+          )}
+          {body && <ModalBody>{body}</ModalBody>}
+          {footer && <ModalFooter>{footer}</ModalFooter>}
         </View>
       </View>
     </RNModal>
   );
-};
-
-Modal.defaultProps = {
-  header: null,
-  body: null,
-  footer: null,
-  size: 'medium',
-  animationType: 'fade',
 };
 
 export default Modal;

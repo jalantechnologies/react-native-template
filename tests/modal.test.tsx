@@ -2,13 +2,13 @@ import { render, fireEvent } from '@testing-library/react-native';
 import React from 'react';
 import { Text } from 'react-native';
 
-import Modal from './modal';
+import Modal from '../src/components/modal/Modal';
 
 describe('Modal Component', () => {
   test('renders when visible', () => {
     const { getByText } = render(
       <Modal
-        isVisible={true}
+        isOpen={true}
         onClose={() => {}}
         header={<Text>Header</Text>}
         body={<Text>Body</Text>}
@@ -23,7 +23,7 @@ describe('Modal Component', () => {
   test('does not render when not visible', () => {
     const { queryByText } = render(
       <Modal
-        isVisible={false}
+        isOpen={false}
         onClose={() => {}}
         header={<Text>Header</Text>}
         body={<Text>Body</Text>}
@@ -37,7 +37,9 @@ describe('Modal Component', () => {
 
   test('calls onClose when close button is pressed', () => {
     const onClose = jest.fn();
-    const { getByText } = render(<Modal isVisible={true} onClose={onClose} />);
+    const { getByText } = render(
+      <Modal isOpen={true} onClose={onClose} header={<Text>Header</Text>} />,
+    );
     fireEvent.press(getByText('X'));
     expect(onClose).toHaveBeenCalled();
   });

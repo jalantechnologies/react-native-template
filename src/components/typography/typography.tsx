@@ -1,36 +1,30 @@
-import { useTheme } from '@react-navigation/native';
-import React from 'react';
-import { Text, TextProps } from 'react-native';
+import React, { PropsWithChildren } from 'react';
+import { Text } from 'react-native';
 
-import { styles } from './typography.styles';
+// Currently, it only defines the API and logic without styling
 
-interface TypographyProps extends TextProps {
-  variant?: 'h1' | 'h2' | 'h3' | 'body' | 'caption';
-  style?: object;
+type TypographyVariant = 'h1' | 'h2' | 'h3' | 'body' | 'caption';
+
+// TODO: Apply styles from the global theme once NativeWind is integrated
+type TypographyColor = 'primary' | 'secondary' | 'muted';
+
+interface TypographyProps {
+  variant?: TypographyVariant;
+  color?: TypographyColor;
 }
 
 /**
- * Typography Component
- * Provides consistent typography styles across the application.
+ * Typography Component - Ensures consistent text styles across the app.
+ *
+ * Example usage:
+ * <Typography variant="h1" color="primary">Hello World</Typography>
  */
-const Typography: React.FC<React.PropsWithChildren<TypographyProps>> = ({
-  variant,
-  style,
+const Typography: React.FC<PropsWithChildren<TypographyProps>> = ({
+  variant = 'body',
+  color = 'primary',
   children,
-  ...rest
 }) => {
-  const { colors } = useTheme();
-
-  return (
-    <Text style={[styles[variant || 'body'], { color: colors.text }, style]} {...rest}>
-      {children}
-    </Text>
-  );
-};
-
-Typography.defaultProps = {
-  variant: 'body',
-  style: {},
+  return <Text>{children}</Text>;
 };
 
 export default Typography;

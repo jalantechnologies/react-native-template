@@ -15,15 +15,16 @@ When cloning the app and using it for projects, a few things need to be updated 
 
 ## Setup Environment
 
-- Install Node v22.13.1:
+- Install Node v22:
     - For macOS: `brew install node@22`
     - For Linux:
         - Download and install Node Version
           Manager: `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh`
         - Open a new terminal tab and run: `nvm install 22`
     - For Windows:
-        - Go to the official [Node.js](https://nodejs.org/download/release/v22.13.1/) website.
-        - Click on `node-v22.13.1-win-x64.zip` and let it download.
+        - Download and install Node Version Manager (`nvm-windows`) - `nvm-setup.exe` 
+          from https://github.com/coreybutler/nvm-windows/releases/tag/1.2.2
+        - Open a new command prompt and run: `nvm install 22`
 
 - Install Watchman: Follow the [official documentation](https://facebook.github.io/watchman/docs/install).
 

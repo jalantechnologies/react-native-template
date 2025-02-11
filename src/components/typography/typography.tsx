@@ -1,12 +1,18 @@
 import React, { PropsWithChildren } from 'react';
 import { Text } from 'react-native';
 
-// Currently, it only defines the API and logic without styling
+// API and logic only; styling will be integrated with NativeWind later
 
-type TypographyVariant = 'h1' | 'h2' | 'h3' | 'body' | 'caption';
+type TypographyVariant =
+  | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' 
+  | 'body1' | 'body2'
+  | 'caption' 
+  | 'subtitle1' | 'subtitle2'
+  | 'button'
+  | 'overline' 
+  | 'lead' | 'muted' | 'code' | 'quote'; 
 
-// TODO: Apply styles from the global theme once NativeWind is integrated
-type TypographyColor = 'primary' | 'secondary' | 'muted';
+type TypographyColor = 'default' | 'primary' | 'secondary' | 'muted' | 'success' | 'error' | 'warning' | 'info';
 
 interface TypographyProps {
   variant?: TypographyVariant;
@@ -18,13 +24,15 @@ interface TypographyProps {
  *
  * Example usage:
  * <Typography variant="h1" color="primary">Hello World</Typography>
+ *
+ * TODO: Integrate NativeWind for styling once available.
  */
 const Typography: React.FC<PropsWithChildren<TypographyProps>> = ({
-  variant = 'body',
-  color = 'primary',
+  variant = 'body1',
+  color = 'default',
   children,
 }) => {
-  return <Text>{children}</Text>;
+  return <Text>{children}</Text>; 
 };
 
 export default Typography;

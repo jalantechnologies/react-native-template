@@ -1,46 +1,55 @@
-import { render, fireEvent } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, Button } from 'react-native';
 
-import Modal from '../src/components/modal/Modal';
+import { Modal, ModalHeader, ModalBody, ModalFooter } from '../src/components/modal';
 
+// Ensure the Modal component and its subcomponents render correctly
 describe('Modal Component', () => {
-  test('renders when visible', () => {
+  test('renders correctly when visible', () => {
     const { getByText } = render(
-      <Modal
-        isOpen={true}
-        onClose={() => {}}
-        header={<Text>Header</Text>}
-        body={<Text>Body</Text>}
-        footer={<Text>Footer</Text>}
-      />,
+      <Modal isVisible={true} onClose={() => {}}>
+        <Text>Modal Content</Text>
+      </Modal>,
     );
-    expect(getByText('Header')).toBeTruthy();
-    expect(getByText('Body')).toBeTruthy();
-    expect(getByText('Footer')).toBeTruthy();
+    expect(getByText('Modal Content')).toBeTruthy();
   });
 
   test('does not render when not visible', () => {
     const { queryByText } = render(
-      <Modal
-        isOpen={false}
-        onClose={() => {}}
-        header={<Text>Header</Text>}
-        body={<Text>Body</Text>}
-        footer={<Text>Footer</Text>}
-      />,
+      <Modal isVisible={false} onClose={() => {}}>
+        <Text>Hidden Content</Text>
+      </Modal>,
     );
-    expect(queryByText('Header')).toBeNull();
-    expect(queryByText('Body')).toBeNull();
-    expect(queryByText('Footer')).toBeNull();
+    expect(queryByText('Hidden Content')).toBeNull();
   });
 
-  test('calls onClose when close button is pressed', () => {
-    const onClose = jest.fn();
+  test('renders ModalHeader with title', () => {
     const { getByText } = render(
-      <Modal isOpen={true} onClose={onClose} header={<Text>Header</Text>} />,
+      <ModalHeader>
+        <Text>Modal Title</Text>
+      </ModalHeader>,
     );
-    fireEvent.press(getByText('X'));
-    expect(onClose).toHaveBeenCalled();
+    expect(getByText('Modal Title')).toBeTruthy();
+  });
+
+  test('renders ModalBody with content', () => {
+    const { getByText } = render(
+      <ModalBody>
+        <Text>Body Content</Text>
+      </ModalBody>,
+    );
+    expect(getByText('Body Content')).toBeTruthy();
+  });
+
+  test('renders ModalFooter with buttons', () => {
+    const { getByText } = render(
+      <ModalFooter>
+        <Button title="Confirm" onPress={() => {}} />
+        <Button title="Cancel" onPress={() => {}} />
+      </ModalFooter>,
+    );
+    expect(getByText('Confirm')).toBeTruthy();
+    expect(getByText('Cancel')).toBeTruthy();
   });
 });

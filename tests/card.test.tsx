@@ -1,5 +1,7 @@
-import React from 'react';
 import { render } from '@testing-library/react-native';
+import React from 'react';
+import { Text } from 'react-native';
+
 import {
   Card,
   CardHeader,
@@ -8,7 +10,6 @@ import {
   CardContent,
   CardFooter,
 } from '../src/components/card';
-import { Text } from 'react-native';
 
 // Ensure the Card component and its subcomponents render correctly
 describe('Card Component', () => {

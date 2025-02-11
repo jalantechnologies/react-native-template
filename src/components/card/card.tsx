@@ -4,7 +4,7 @@ import { View } from 'react-native';
 // TODO: Once NativeWind is integrated, add `className` prop to allow Tailwind styling
 // Currently, this is a logic-only implementation. Styling will come later.
 interface CardProps {
-  elevated?: boolean; 
+  elevated?: boolean;
   className?: string; // Placeholder for future NativeWind classes
 }
 /**

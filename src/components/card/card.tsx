@@ -1,34 +1,34 @@
 import React, { PropsWithChildren } from 'react';
 import { View } from 'react-native';
 
-// TODO: Once NativeWind is integrated, add `className` prop to allow Tailwind styling
-// Currently, this is a logic-only implementation. Styling will come later.
-interface CardProps {
-  elevated?: boolean;
-  className?: string; // Placeholder for future NativeWind classes
-}
-/**
- * Card component that acts as a container.
- */
-const Card: React.FC<PropsWithChildren<CardProps>> = ({ elevated = false, children }) => {
-  return <View>{children}</View>; // No styling yet, NativeWind will be added later
-};
-
-export default Card;
+import type { CardProps } from './types';
 
 /**
+ * Card Component - A container for displaying grouped content.
+ *
  * Example usage:
+ * ```tsx
  * <Card>
  *   <CardHeader>
  *     <CardTitle>Project Name</CardTitle>
- *     <CardDescription>Describe the project</CardDescription>
+ *     <CardDescription>Short project description</CardDescription>
  *   </CardHeader>
  *   <CardContent>
  *     <Text>Project details go here</Text>
  *   </CardContent>
  *   <CardFooter>
- *     <Button>Save</Button>
- *     <Button variant="outline">Cancel</Button>
+ *     <Button title="Save" />
+ *     <Button title="Cancel" />
  *   </CardFooter>
  * </Card>
+ * ```
  */
+const Card: React.FC<PropsWithChildren<CardProps>> = ({
+  // size = 'medium',
+  // elevated = false, // TODO: Will be used once NativeWind is integrated
+  children,
+}) => {
+  return <View>{children}</View>;
+};
+
+export default Card;

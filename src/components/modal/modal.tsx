@@ -1,10 +1,7 @@
 import React, { PropsWithChildren } from 'react';
-import { View, Modal as RNModal, ModalProps as RNModalProps } from 'react-native';
+import { View, Modal as RNModal } from 'react-native';
 
-interface ModalProps extends RNModalProps {
-  isVisible: boolean;
-  onClose: () => void;
-}
+import { ModalProps } from './types';
 
 const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
   isVisible,

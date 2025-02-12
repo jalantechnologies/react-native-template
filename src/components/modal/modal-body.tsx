@@ -1,7 +1,9 @@
 import React, { PropsWithChildren } from 'react';
 import { View } from 'react-native';
 
-const ModalBody: React.FC<PropsWithChildren<{}>> = ({ children }) => {
+import { ModalBodyProps } from './types';
+
+const ModalBody: React.FC<PropsWithChildren<ModalBodyProps>> = ({ children }) => {
   return <View>{children}</View>;
 };
 

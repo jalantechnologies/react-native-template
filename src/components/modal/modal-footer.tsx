@@ -1,7 +1,9 @@
 import React, { PropsWithChildren } from 'react';
 import { View } from 'react-native';
 
-const ModalFooter: React.FC<PropsWithChildren<{}>> = ({ children }) => {
+import { ModalFooterProps } from './types';
+
+const ModalFooter: React.FC<PropsWithChildren<ModalFooterProps>> = ({ children }) => {
   return <View>{children}</View>;
 };
 

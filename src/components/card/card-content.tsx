@@ -1,14 +1,12 @@
 import React, { PropsWithChildren } from 'react';
 import { View } from 'react-native';
 
-interface CardProps {
-  elevated?: boolean; // Controls shadow (will map to NativeWind later)
-  className?: string; // Placeholder for future NativeWind classes
-}
+import type { CardContentProps } from './types';
+
 /**
- * Card component that acts as a container.
+ * CardContent Component - Holds the main content of the Card.
  */
-const CardContent: React.FC<PropsWithChildren<{}>> = ({ children }) => {
+const CardContent: React.FC<PropsWithChildren<CardContentProps>> = ({ children }) => {
   return <View>{children}</View>;
 };
 

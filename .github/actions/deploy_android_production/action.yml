@@ -29,7 +29,7 @@ runs:
     - name: Set up NODE
       uses: actions/setup-node@v3
       with:
-        node-version: 16.16.0
+        node-version: 22.13.1
 
     - name: Cache node modules
       uses: actions/cache@v2

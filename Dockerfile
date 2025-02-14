@@ -1,4 +1,4 @@
-FROM node:22-bullseye
+FROM node:16-buster
 
 WORKDIR /app
 

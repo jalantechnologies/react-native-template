@@ -1183,10 +1183,12 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@datadog/mobile-react-native@^2.3.3":
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/@datadog/mobile-react-native/-/mobile-react-native-2.3.3.tgz#77dc1b60d6e296e7da7e6573cd1175d8c8cf3c9d"
-  integrity sha512-LK2fHW4uleT0UYwp8LRqrghu0CWfQ59rOXtj48vw4qjNd9YPoygyMORhPQbvBucxPjJxKKjI1I5QjQOJBrkPrA==
+"@datadog/mobile-react-native@^2.6.1":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@datadog/mobile-react-native/-/mobile-react-native-2.6.1.tgz#ae17b48857d27e3184e11a5f42555bbedfa77747"
+  integrity sha512-MB7B0z1JfMhWBSHShKqqtA7lKUm7pSMO7Gb2IrejFm5a5CC4YTgMkPYaTCltqtPeaLwHC/xWOt/aR7TzJCRVLg==
+  dependencies:
+    big-integer "^1.6.52"
 
 "@egjs/hammerjs@^2.0.17":
   version "2.0.17"
@@ -3455,6 +3457,11 @@ base64-js@^1.1.2, base64-js@^1.3.1:
   version "1.5.1"
   resolved "https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
+
+big-integer@^1.6.52:
+  version "1.6.52"
+  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.52.tgz#60a887f3047614a8e1bffe5d7173490a97dc8c85"
+  integrity sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==
 
 bl@^4.1.0:
   version "4.1.0"

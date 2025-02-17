@@ -32,8 +32,9 @@ When cloning the app and using it for projects, a few things need to be updated 
   ```
     - For Linux:
     ```sh
-  curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
-  sudo apt-get install -y nodejs
+    curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+    nvm install 22
+    nvm use 22
   ```
     - For Windows:
       - Download and install [nvm-windows](https://github.com/coreybutler/nvm-windows/releases)
@@ -62,6 +63,7 @@ When cloning the app and using it for projects, a few things need to be updated 
 - **Windows:**
   ```sh
   choco install openjdk17
+  ```
 
 ### Set Up Environment Variables for Java
 After installation, configure `JAVA_HOME`:
@@ -74,11 +76,6 @@ After installation, configure `JAVA_HOME`:
   - Go to **System Properties > Advanced > Environment Variables**
   - Add a new variable: `JAVA_HOME = C:\Program Files\OpenJDK\jdk-17`
   - Add `%JAVA_HOME%\bin` to the `Path` variable.
-
-### Install Yarn
-```sh
-npm install -g yarn
-```
 
 ## Setup Project
 
@@ -251,7 +248,7 @@ to `console,datadog`.
 
 # Running Application
 ```sh
-yarn start
+yarn start  # To start the metro bundler in a dedicated terminal window
 yarn android # Run on Android Emulator
 yarn ios     # Run on iOS Simulator (macOS only)
 ```

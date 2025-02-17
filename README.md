@@ -133,13 +133,27 @@ For more details, go to [React Native Environment Setup](https://reactnative.dev
 ## Prerequisite
 
 - Install [Xcode](https://developer.apple.com/xcode/)
-- Install Ruby & CocoaPods:
-  ```sh
-  brew install rbenv ruby-build
-  rbenv install 3.1.2
-  rbenv global 3.1.2
-  gem install cocoapods
-  ```
+- Install `ruby`:  
+    - For macOS:  
+      ```sh
+      brew install rbenv ruby-build
+      rbenv install 3.2.2
+      rbenv global 3.2.2
+      ```
+    - For Linux:  
+      ```sh
+      sudo apt install rbenv
+      rbenv install 3.2.2
+      rbenv global 3.2.2
+      ```
+
+- Install CocoaPods:  
+    - Run the following commands:  
+      ```sh
+      sudo gem install activesupport -v 7.1.2
+      sudo gem install cocoapods
+      ```
+      
 - Install required pods:
   ```sh
   cd ios && pod install

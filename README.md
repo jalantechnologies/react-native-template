@@ -77,6 +77,17 @@ After installation, configure `JAVA_HOME`:
   - Add a new variable: `JAVA_HOME = C:\Program Files\OpenJDK\jdk-17`
   - Add `%JAVA_HOME%\bin` to the `Path` variable.
 
+### Install Yarn
+
+The installation method for Yarn depends on how Node.js is set up on your system. To ensure compatibility, refer to the [official Yarn installation guide](https://yarnpkg.com/getting-started/install).
+
+If you installed Node.js using **NVM** (recommended), you can enable Corepack to use the bundled Yarn:
+
+```sh
+corepack enable
+yarn -v # Verify installation
+```
+
 ## Setup Project
 
 - Update `name` and `displayName` in `app.json`.
@@ -248,7 +259,7 @@ to `console,datadog`.
 
 # Running Application
 ```sh
-yarn start  # To start the metro bundler in a dedicated terminal window
+yarn start  # To start the metro bundler, in a dedicated terminal window
 yarn android # Run on Android Emulator
 yarn ios     # Run on iOS Simulator (macOS only)
 ```

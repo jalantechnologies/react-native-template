@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Image, Text, StyleProp, ViewStyle } from 'react-native';
+
 import { AVATAR_SIZE, DEFAULT_AVATAR_SHAPE } from './constants';
-import type { AvatarProps, AvatarSize, AvatarShape } from './types';
+import type { AvatarProps } from './types';
 
 const Avatar = ({
   src,

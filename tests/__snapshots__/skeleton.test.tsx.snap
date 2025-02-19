@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Skeleton Component renders correctly with default props 1`] = `
+<View
+  collapsable={false}
+  style={
+    {
+      "backgroundColor": "#e0e0e0",
+      "borderRadius": 4,
+      "height": 20,
+      "opacity": 0.5,
+      "width": 100,
+    }
+  }
+/>
+`;

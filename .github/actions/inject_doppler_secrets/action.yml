@@ -9,6 +9,12 @@ inputs:
     description: "Directory where the .env file should be created"
     default: "."
     required: false
+  project:
+    description: "Doppler project name"
+    required: true
+  environment:
+    description: "Doppler environment to fetch secrets"
+    required: true
 
 runs:
   using: "composite"
@@ -19,8 +25,10 @@ runs:
     - name: Inject Doppler secrets into environment
       shell: bash
       run: |
-        # Export Doppler secrets to a temporary file
-        doppler secrets download --format=env --no-file > .doppler_env
+        echo "Fetching Doppler secrets for environment: ${{ inputs.environment }}"
+
+        # Download secrets for the specified environment
+        doppler secrets download --format=env --no-file --project=${{ inputs.project }} --config=${{ inputs.environment }} > .doppler_env
         
         # Update the existing .env file inside working directory with values from Doppler secrets
         if [ -f ${{ inputs.working_directory }}/.env ]; then
@@ -34,6 +42,7 @@ runs:
         else
           mv .doppler_env ${{ inputs.working_directory }}/.env
         fi
+
         # Clean up the temporary file
         rm -f .doppler_env
       env:

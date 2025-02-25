@@ -9,41 +9,85 @@ This is a boilerplate repository for React Native projects.
 - It is highly recommended to switch to dual boot (run Linux on a Windows machine) and set up the project in a Linux
   environment instead.
 
-# Setup
+  ## Table of Contents
+
+- [Environment Setup](#environment-setup)
+- [Android Setup](#android-setup)
+- [iOS Setup](#ios-setup)
+- [Setup Datadog](#setup-datadog)
+- [Setup Logger](#setup-logger)
+- [Deployment for Android app on Production](#setup-deployment-for-android-app-on-production)
+- [Running Application](#running-application)
+
+# Environment Setup
 
 When cloning the app and using it for projects, a few things need to be updated as outlined below:
 
 ## Setup Environment
 
-- Install Node v16:
-    - For macOS: `brew install node16`
+
+- Install Node v22:
+    - For macOS: 
+    ```sh
+  brew install node@22
+  ```
     - For Linux:
-        - Download and install Node Version
-          Manager: `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh`
-        - Open a new terminal tab and run: `nvm install v16`
+    ```sh
+    curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+    nvm install 22
+    nvm use 22
+  ```
     - For Windows:
-        - Go to the official [Node.js](https://nodejs.org/download/release/v16.20.2/) website.
-        - Click on `node-v16.20.2-win-x64.zip` and let it download.
+      - Download and install [nvm-windows](https://github.com/coreybutler/nvm-windows/releases)
+  - Open a new terminal and run:
+    ```sh
+    nvm install 22
+    nvm use 22
+    ```
 
-- Install Watchman: Follow the [official documentation](https://facebook.github.io/watchman/docs/install).
+### Install Watchman
+- **macOS (Recommended):**
+  ```sh
+  brew install watchman
+  ```
+- **Linux & Windows:** Follow the [official documentation](https://facebook.github.io/watchman/docs/install).
 
-- Download and install JDK 11:
-    - For macOS:
-        - `brew tap homebrew/cask-versions`
-        - `brew install --cask zulu11`
-        - `brew info --cask zulu11` - Get the path to where cask was installed to double-click the installer.
-    - For Linux:
-        - `sudo add-apt-repository ppa:openjdk-r/ppa`
-        - `sudo apt-get update`
-        - `sudo apt-get install openjdk-11-jdk`
-    - For Windows:
-        - `choco install -y nodejs-lts microsoft-openjdk11`
+- Download and install JDK 17:
+   - **macOS:**
+  ```sh
+  brew install openjdk@17
+  ```
+- **Linux:**
+  ```sh
+  sudo apt install openjdk-17-jdk
+  ```
+- **Windows:**
+  ```sh
+  choco install openjdk17
+  ```
 
-**Note:** After you install the JDK, update your `JAVA_HOME` environment variable. If you used the above steps, the JDK
-will likely be at `/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home`. Once confirmed, add the following line
-to your `.bashrc` or `.bash_profile` or `.zshrc` (as per your shell):
+### Set Up Environment Variables for Java
+After installation, configure `JAVA_HOME`:
+- **macOS/Linux:** Add this to your `~/.zshrc` or `~/.bashrc`:
+  ```sh
+  export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+  export PATH="$JAVA_HOME/bin:$PATH"
+  ```
+- **Windows:**
+  - Go to **System Properties > Advanced > Environment Variables**
+  - Add a new variable: `JAVA_HOME = C:\Program Files\OpenJDK\jdk-17`
+  - Add `%JAVA_HOME%\bin` to the `Path` variable.
 
-- `export PATH="/Library/Java/JavaVirtualMachines/zulu-11.jdk/Contents/Home/bin:$PATH"`
+### Install Yarn
+
+The installation method for Yarn depends on how Node.js is set up on your system. To ensure compatibility, refer to the [official Yarn installation guide](https://yarnpkg.com/getting-started/install).
+
+If you installed Node.js using **NVM** (recommended), you can enable Corepack to use the bundled Yarn:
+
+```sh
+corepack enable
+yarn -v # Verify installation
+```
 
 ## Setup Project
 
@@ -57,23 +101,91 @@ to your `.bashrc` or `.bash_profile` or `.zshrc` (as per your shell):
 - Update the project name in:
     - `.github/workflows/preview_on_pr_update.yml`
     - `.github/workflows/production_on_push.yml`
+ 
 
-# Setup Android App
+# Android Setup
+
+## Prerequisites
+- Install [Android Studio](https://developer.android.com/studio)
+- Install Android SDK & Emulator:
+  - Open **Android Studio > Preferences > Appearance & Behavior > System Settings > Android SDK**
+  - Install the latest **SDK tools** and **Emulator**
+- Set Up Environment Variables:
+  ```sh
+  export ANDROID_HOME=$HOME/Library/Android/sdk
+  export PATH=$PATH:$ANDROID_HOME/emulator
+  export PATH=$PATH:$ANDROID_HOME/platform-tools
+  ```
+
+For more details, go to [React Native Environment Setup](https://reactnative.dev/docs/environment-setup?platform=android&os=macos&guide=native).
+
+## Update Android Project
+
+- Go to the `android` folder.
+- Update `rootProject.name` in `settings.gradle`.
+- Update the `namespace` and `applicationId` in `app/build.gradle`.
+- Update the folder/directory names `app/src/debug/java/com/boilerplate`, `app/src/main/java/com/boilerplate`,
+  and `app/src/release/java/com/boilerplate` according to your project name.
+- Update the package name in `app/src/debug/java/com/boilerplate/ReactNativeFlipper.java`
+  and `app/src/release/java/com/boilerplate/ReactNativeFlipper.java`.
+- Update the package name and method `getMainComponentName()`
+  in `app/src/main/java/com/boilerplate/ReactNativeFlipper.java`.
+- Update the package name in `app/src/main/java/com/boilerplate/MainApplication.java`
+  and `app/src/main/java/com/boilerplate/SplashActivity.java`.
+- Update `app_name` in `app/src/main/res/values/strings.xml`.
+- For Android icon updates, use [EasyAppIcon](https://easyappicon.com) or similar websites that create a folder with all
+  sizes of the icon, then update the folders in `android/app/src/main/res` accordingly.
+
+
+# iOS Setup
 
 ## Prerequisite
 
-- Download Android Studio (Required to set up the Android emulator). You'll also get the Android SDK when you set up
-  Android Studio.
-- You also need to set up the `ANDROID_HOME` environment variable along with the emulator in your PATH variables.
-  Confirm your Android SDK location is `/Library/Android/sdk` and add the following lines to your `.bashrc`
-  or `.bash_profile` or `.zshrc` (as per your shell):
-    ```sh
-    export ANDROID_HOME=$HOME/Library/Android/sdk
-    export PATH=$PATH:$ANDROID_HOME/emulator
-    export PATH=$PATH:$ANDROID_HOME/platform-tools
-    ```
+- Install [Xcode](https://developer.apple.com/xcode/)
+- Install `ruby`:  
+    - For macOS:  
+      ```sh
+      brew install rbenv ruby-build
+      rbenv install 3.2.2
+      rbenv global 3.2.2
+      ```
+    - For Linux:  
+      ```sh
+      sudo apt install rbenv
+      rbenv install 3.2.2
+      rbenv global 3.2.2
+      ```
 
-For more details, go to [React Native Environment Setup](https://reactnative.dev/docs/environment-setup?platform=android&os=macos&guide=native).
+- Install CocoaPods:  
+    - Run the following commands:  
+      ```sh
+      sudo gem install activesupport -v 7.1.2
+      sudo gem install cocoapods
+      ```
+      
+- Install required pods:
+  ```sh
+  cd ios && pod install
+  ```
+
+For more details, go to [React Native Environment Setup](https://reactnative.dev/docs/environment-setup?platform=ios&os=macos&guide=native).
+
+## Update iOS Project
+
+- Go to the `ios` folder.
+- Rename folders `Boilerplate....` according to your project name.
+- Delete the `project.pbxproj` file in the `Boilerplate.xcodeproj` folder.
+- Delete the `Boilerplate.xcscheme` file in the `Boilerplate.xcodeproj/xcshareddata/xcschemes` folder.
+- Update `FileRef location` in `Boilerplate.xcworkspace/contents.xcworkspacedata`
+- Update `self.moduleName` in `Boilerplate/AppDelegate.mm`
+- Update `CFBundleDisplayName` in `Boilerplate/Info.plist`
+- Update `label` in `Boilerplate/LaunchScreen.storyboard`
+- Update `interface` and `implementation` in `BoilerplateTests/BoilerplateTests.m`
+- Update `target` in `Podfile` (main and Tests)
+- Delete `Podfile.lock` file
+- Install `pod`.
+    - run `pod install` command (in `ios/` folder)
+
 
 ## Setup Datadog
 
@@ -96,22 +208,6 @@ variables: `DD_CLIENT_TOKEN`, `DD_ENVIRONMENT_NAME`, and `DD_APPLICATION_ID`. Yo
 your Datadog account. To use both the console and Datadog loggers simultaneously, set the `LOGGER` environment variable
 to `console,datadog`.
 
-## Update Android Project
-
-- Go to the `android` folder.
-- Update `rootProject.name` in `settings.gradle`.
-- Update the `namespace` and `applicationId` in `app/build.gradle`.
-- Update the folder/directory names `app/src/debug/java/com/boilerplate`, `app/src/main/java/com/boilerplate`,
-  and `app/src/release/java/com/boilerplate` according to your project name.
-- Update the package name in `app/src/debug/java/com/boilerplate/ReactNativeFlipper.java`
-  and `app/src/release/java/com/boilerplate/ReactNativeFlipper.java`.
-- Update the package name and method `getMainComponentName()`
-  in `app/src/main/java/com/boilerplate/ReactNativeFlipper.java`.
-- Update the package name in `app/src/main/java/com/boilerplate/MainApplication.java`
-  and `app/src/main/java/com/boilerplate/SplashActivity.java`.
-- Update `app_name` in `app/src/main/res/values/strings.xml`.
-- For Android icon updates, use [EasyAppIcon](https://easyappicon.com) or similar websites that create a folder with all
-  sizes of the icon, then update the folders in `android/app/src/main/res` accordingly.
 
 # Setup Deployment for Android App on Production
 
@@ -161,49 +257,15 @@ to `console,datadog`.
    - **KEY_ALIAS**: The key store alias.
    - **KEY_PASSWORD**: The private key password.
 
-# Setup iOS App
 
-## Prerequisite
+# Running Application
+```sh
+yarn start  # To start the metro bundler, in a dedicated terminal window
+yarn android # Run on Android Emulator
+yarn ios     # Run on iOS Simulator (macOS only)
+```
 
-- Download and install Xcode. Installing Xcode will also install the iOS Simulator and all the necessary tools to build
-  your iOS app.
-- Install `ruby`:
-    - For macOS: `brew install rbenv ruby-build`
-    - For Linux: `sudo apt install rbenv`
-- Install CocoaPods:
-    - Go to the `ios/` folder and run the commands:
-        - `sudo gem install activesupport -v 6.1.7.6`
-        - `sudo gem install cocoapods`
-- Install an iOS Simulator in Xcode, open Xcode > Settings and select the Platforms tab. Select a simulator with the
-  corresponding version of iOS you wish to use.
-
-For more details, go to [React Native Environment Setup](https://reactnative.dev/docs/environment-setup?platform=ios&os=macos&guide=native).
-
-## Update iOS Project
-
-- Go to the `ios` folder.
-- Rename folders `Boilerplate....` according to your project name.
-- Delete the `project.pbxproj` file in the `Boilerplate.xcodeproj` folder.
-- Delete the `Boilerplate.xcscheme` file in the `Boilerplate.xcodeproj/xcshareddata/xcschemes` folder.
-- Update `FileRef location` in `Boilerplate.xcworkspace/contents.xcworkspacedata`
-- Update `self.moduleName` in `Boilerplate/AppDelegate.mm`
-- Update `CFBundleDisplayName` in `Boilerplate/Info.plist`
-- Update `label` in `Boilerplate/LaunchScreen.storyboard`
-- Update `interface` and `implementation` in `BoilerplateTests/BoilerplateTests.m`
-- Update `target` in `Podfile` (main and Tests)
-- Delete `Podfile.lock` file
-- Install `pod`.
-    - run `pod install` command (in `ios/` folder)
-
-# Running the project
-
-Assuming you have all requirements installed, you can run the project by running:
-
-- `yarn start` to start the metro bundler, in a dedicated terminal window
-- `yarn ios` or `yarn android` to run the application on any of these platform
-
-# Using Localhost Backend Endpoint on Android
-
+# Using Localhost Backend on Android
 To use the localhost backend endpoint on Android, you need to follow one of these steps:
 
 - Expose your local backend using ngrok or any other similar software.
@@ -211,7 +273,6 @@ To use the localhost backend endpoint on Android, you need to follow one of thes
     ```
     adb -s <emulator_device_id> reverse tcp:<localhost_port> tcp:<localhost_port>
     ```
-
 Then, update the `API_BASE_URL` in your `.env` file accordingly.
 
 ## Troubleshooting guides

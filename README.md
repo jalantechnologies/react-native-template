@@ -25,6 +25,7 @@ When cloning the app and using it for projects, a few things need to be updated 
 
 ## Setup Environment
 
+
 - Install Node v22:
     - For macOS: 
     ```sh

@@ -34,6 +34,27 @@ platform :android do
     )
   end
 
+  desc "Sync version from package.json to Android and iOS"
+    lane :sync_versions do
+      package_json_path = "../package.json"
+      package_json = JSON.parse(File.read(package_json_path))
+      version = package_json["version"]
+
+      if version.nil? || version.empty?
+        UI.user_error!("Error: Version not found in package.json")
+      end
+
+      # Convert version for Android versionCode
+      major, minor, patch = version.split('.').map(&:to_i)
+      version_code = (major * 10000) + (minor * 100) + patch
+
+      ###  UPDATE ANDROID VERSION ###
+      increment_version_name(version_name: version)
+      increment_version_code(version_code: version_code)
+
+      UI.success(" [Android] Synced version to #{version} (versionCode: #{version_code})")
+    end
+
   desc "Deploy a new version to the Google Play"
   lane :deploy_android_production do
 

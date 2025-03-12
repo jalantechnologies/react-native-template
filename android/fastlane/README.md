@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Fetches the latest version code from the Play Console and increments it by 1
 
+### android sync_versions
+
+```sh
+[bundle exec] fastlane android sync_versions
+```
+
+Sync version from package.json to Android and iOS
+
 ### android deploy_android_production
 
 ```sh

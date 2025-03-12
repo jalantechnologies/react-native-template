@@ -35,25 +35,47 @@ platform :android do
   end
 
   desc "Sync version from package.json to Android and iOS"
-    lane :sync_versions do
-      package_json_path = "../package.json"
-      package_json = JSON.parse(File.read(package_json_path))
-      version = package_json["version"]
+lane :sync_versions do
+  require 'json'
 
-      if version.nil? || version.empty?
-        UI.user_error!("Error: Version not found in package.json")
-      end
+  # Read package.json
+  package_json_path = File.expand_path("../../package.json", __dir__)
 
-      # Convert version for Android versionCode
-      major, minor, patch = version.split('.').map(&:to_i)
-      version_code = (major * 10000) + (minor * 100) + patch
+  if !File.exist?(package_json_path)
+    UI.user_error!(" Error: package.json not found at #{package_json_path}")
+  end
 
-      ###  UPDATE ANDROID VERSION ###
-      increment_version_name(version_name: version)
-      increment_version_code(version_code: version_code)
+  package_json = JSON.parse(File.read(package_json_path))
+  version = package_json["version"]
 
-      UI.success(" [Android] Synced version to #{version} (versionCode: #{version_code})")
-    end
+  if version.nil? || version.empty?
+    UI.user_error!(" Error: Version not found in package.json")
+  end
+
+  # Android Version Update
+  begin
+    major, minor, patch = version.split('.').map(&:to_i)
+    version_code = (major * 10000) + (minor * 100) + patch
+
+    # Update Android versionCode
+    increment_version_code(version_code: version_code)
+    UI.success(" [Android] Synced version to #{version} (versionCode: #{version_code})")
+  rescue => e
+    UI.error(" [Android] Failed to update versionCode: #{e.message}")
+  end
+
+  # Update Android versionName in build.gradle
+  gradle_file = File.expand_path("../app/build.gradle", __dir__)
+
+  if File.exist?(gradle_file)
+    gradle_content = File.read(gradle_file)
+    new_gradle_content = gradle_content.gsub(/versionName\s*=\s*"[\d.]+"?/, "versionName = \"#{version}\"")
+    File.write(gradle_file, new_gradle_content)
+    UI.success(" [Android] Synced versionName to #{version} (versionCode: #{version_code})")
+  else
+    UI.error(" Error: build.gradle not found at #{gradle_file}")
+  end
+end
 
   desc "Deploy a new version to the Google Play"
   lane :deploy_android_production do

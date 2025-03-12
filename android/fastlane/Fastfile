@@ -75,6 +75,33 @@ lane :sync_versions do
   else
     UI.error(" Error: build.gradle not found at #{gradle_file}")
   end
+
+   # iOS Version Update
+   begin
+    ios_plist_path = File.expand_path("../../ios/Boilerplate/Info.plist", __dir__)
+
+    if File.exist?(ios_plist_path)
+      # Update CFBundleShortVersionString (versionName)
+      set_info_plist_value(
+        path: ios_plist_path,
+        key: "CFBundleShortVersionString",
+        value: version
+      )
+
+      # Update CFBundleVersion (build number)
+      set_info_plist_value(
+        path: ios_plist_path,
+        key: "CFBundleVersion",
+        value: version_code.to_s
+      )
+
+      UI.success(" [iOS] Synced version to #{version} (build number: #{version_code})")
+    else
+      UI.error(" [iOS] Info.plist not found at #{ios_plist_path}")
+    end
+  rescue => e
+    UI.error(" [iOS] Failed to update version: #{e.message}")
+  end
 end
 
   desc "Deploy a new version to the Google Play"

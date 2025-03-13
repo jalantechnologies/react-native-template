@@ -9,11 +9,11 @@ inputs:
     description: "Directory where the .env file should be created"
     default: "."
     required: false
-  project:
-    description: "Doppler project name"
+  doppler_project:
+    description: "Doppler project name (e.g., backend, frontend)"
     required: true
-  environment:
-    description: "Doppler environment to fetch secrets"
+  doppler_environment:
+    description: "Doppler environment (e.g., production, staging)"
     required: true
 
 runs:
@@ -25,12 +25,14 @@ runs:
     - name: Inject Doppler secrets into environment
       shell: bash
       run: |
-        echo "Fetching Doppler secrets for environment: ${{ inputs.environment }}"
+        echo "Fetching Doppler secrets for project: ${{ inputs.doppler_project }}, environment: ${{ inputs.doppler_environment }}"
 
-        # Download secrets for the specified environment
-        doppler secrets download --format=env --no-file --project=${{ inputs.project }} --config=${{ inputs.environment }} > .doppler_env
+        # Download secrets for the specified environment and project
+        doppler secrets download --format=env --no-file \
+          --project=${{ inputs.doppler_project }} \
+          --config=${{ inputs.doppler_environment }} > .doppler_env
         
-        # Update the existing .env file inside working directory with values from Doppler secrets
+        # Update the existing .env file with values from Doppler secrets
         if [ -f ${{ inputs.working_directory }}/.env ]; then
           while IFS='=' read -r key value; do
             if grep -q "^$key=" ${{ inputs.working_directory }}/.env; then
@@ -45,10 +47,11 @@ runs:
 
         # Clean up the temporary file
         rm -f .doppler_env
+
       env:
         DOPPLER_TOKEN: ${{ inputs.doppler_token }}
 
-    - name: Verify .env file (safe verification)
+    - name: Verify .env file (Safe Verification)
       shell: bash
       run: |
         echo "Keys in .env:"

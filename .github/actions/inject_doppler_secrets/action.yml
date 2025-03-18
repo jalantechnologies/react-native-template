@@ -1,0 +1,55 @@
+name: "Inject Doppler Secrets"
+description: "Fetch and inject Doppler secrets into the environment for a specified directory."
+
+inputs:
+  doppler_token:
+    description: "Doppler service token for fetching secrets"
+    required: true
+  working_directory:
+    description: "Directory where the .env file should be created"
+    default: "."
+    required: false
+  doppler_project:
+    description: "Doppler project name (e.g., backend, frontend)"
+    required: true
+  doppler_environment:
+    description: "Doppler environment (e.g., production, staging)"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Doppler CLI
+      uses: dopplerhq/cli-action@v3
+
+    - name: Inject Doppler secrets into environment
+      shell: bash
+      run: |
+        echo "Fetching Doppler secrets for project: ${{ inputs.doppler_project }}, environment: ${{ inputs.doppler_environment }}"
+        # Download secrets for the specified environment and project
+        doppler secrets download --format=env --no-file \
+          --project=${{ inputs.doppler_project }} \
+          --config=${{ inputs.doppler_environment }} > .doppler_env
+        
+        # Update the existing .env file with values from Doppler secrets
+        if [ -f ${{ inputs.working_directory }}/.env ]; then
+          while IFS='=' read -r key value; do
+            if grep -q "^$key=" ${{ inputs.working_directory }}/.env; then
+              sed -i "s|^$key=.*|$key=$value|" ${{ inputs.working_directory }}/.env
+            else
+              echo "$key=$value" >> ${{ inputs.working_directory }}/.env
+            fi
+          done < .doppler_env
+        else
+          mv .doppler_env ${{ inputs.working_directory }}/.env
+        fi
+        # Clean up the temporary file
+        rm -f .doppler_env
+      env:
+        DOPPLER_TOKEN: ${{ inputs.doppler_token }}
+
+    - name: Verify .env file (Safe Verification)
+      shell: bash
+      run: |
+        echo "Keys in .env:"
+        grep -o '^[^=]*' ${{ inputs.working_directory }}/.env

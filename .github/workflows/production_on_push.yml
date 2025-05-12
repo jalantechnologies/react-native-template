@@ -45,6 +45,12 @@ jobs:
 
           echo "##[set-output name=branch_hash;]$(echo $BRANCH_HASH)"
 
+      - name: Inject Doppler secrets
+        uses: ./app/.github/actions/inject_doppler_secrets
+        with:
+          doppler_token: ${{ secrets.DOPPLER_PRODUCTION_TOKEN }}
+          working_directory: app
+
       - name: Build application
         id: build
         uses: ./app/.github/actions/build
@@ -88,6 +94,12 @@ jobs:
         with:
           path: app
 
+      - name: Inject Doppler secrets
+        uses: ./app/.github/actions/inject_doppler_secrets
+        with:
+          doppler_token: ${{ secrets.DOPPLER_PRODUCTION_TOKEN }}
+          working_directory: app
+          
       - name: Run check
         uses: ./app/.github/actions/check
         with:

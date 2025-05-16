@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Button } from 'react-native';
 
 import Modal from './modal';
+import ModalBody from './modal-body';
 import ModalFooter from './modal-footer';
 import ModalHeader from './modal-header';
 import { ConfirmationModalProps } from './types';
@@ -26,12 +27,20 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   return (
     <Modal isVisible={isVisible} onClose={onCancel}>
       <ModalHeader title="Confirmation" onClose={onCancel} />
-      <View>
-        <Text>{message}</Text>
-      </View>
+      <ModalBody>
+        <View>
+          <Text>{message}</Text>
+        </View>
+      </ModalBody>
       <ModalFooter>
-        <Button title="Confirm" onPress={onConfirm} />
-        <Button title="Cancel" onPress={onCancel} />
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flex: 1, marginRight: 8 }}>
+            <Button title="Confirm" onPress={onConfirm} />
+          </View>
+          <View style={{ flex: 1, marginLeft: 8 }}>
+            <Button title="Cancel" onPress={onCancel} />
+          </View>
+        </View>
       </ModalFooter>
     </Modal>
   );

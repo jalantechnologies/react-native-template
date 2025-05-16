@@ -7,7 +7,6 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  ModalClose,
   ConfirmationModal,
 } from '../src/components/modal';
 
@@ -15,7 +14,7 @@ import {
 describe('Modal Component', () => {
   test('renders correctly when visible', () => {
     const { getByText } = render(
-      <Modal isVisible={true} onClose={() => {}}>
+      <Modal isVisible={true} onClose={() => { }}>
         <Text>Modal Content</Text>
       </Modal>,
     );
@@ -24,7 +23,7 @@ describe('Modal Component', () => {
 
   test('does not render when not visible', () => {
     const { queryByText } = render(
-      <Modal isVisible={false} onClose={() => {}}>
+      <Modal isVisible={false} onClose={() => { }}>
         <Text>Hidden Content</Text>
       </Modal>,
     );
@@ -32,7 +31,7 @@ describe('Modal Component', () => {
   });
 
   test('renders ModalHeader with title', () => {
-    const { getByText } = render(<ModalHeader title="Modal Title" onClose={() => {}} />);
+    const { getByText } = render(<ModalHeader title="Modal Title" onClose={() => { }} />);
     expect(getByText('Modal Title')).toBeTruthy();
   });
 
@@ -54,19 +53,13 @@ describe('Modal Component', () => {
     expect(getByText('Modal Footer Content')).toBeTruthy();
   });
 
-  test('ModalClose button triggers onClose', () => {
-    const mockOnClose = jest.fn();
-    const { getByText } = render(<ModalClose onClose={mockOnClose} />);
-    fireEvent.press(getByText('✕'));
-    expect(mockOnClose).toHaveBeenCalled();
-  });
-
   test('renders ConfirmationModal with message and buttons', () => {
     const { getByText } = render(
       <ConfirmationModal
         isVisible={true}
-        onConfirm={() => {}}
-        onCancel={() => {}}
+        onConfirm={() => { }}
+        onClose={() => { }}
+        onCancel={() => { }}
         message="Are you sure?"
       />,
     );
@@ -77,7 +70,7 @@ describe('Modal Component', () => {
 
   test('Modal renders any child content freely', () => {
     const { getByText } = render(
-      <Modal isVisible={true} onClose={() => {}}>
+      <Modal isVisible={true} onClose={() => { }}>
         <Text>Custom Content</Text>
       </Modal>,
     );
@@ -86,7 +79,7 @@ describe('Modal Component', () => {
 
   test('Modal supports different sizes', () => {
     const { getByTestId } = render(
-      <Modal isVisible={true} onClose={() => {}}>
+      <Modal isVisible={true} onClose={() => { }}>
         <Text testID="modal-content">Sized Modal</Text>
       </Modal>,
     );
@@ -112,7 +105,7 @@ describe('Modal Component', () => {
 
   test('Modal works without Header, Body, or Footer', () => {
     const { getByText } = render(
-      <Modal isVisible={true} onClose={() => {}}>
+      <Modal isVisible={true} onClose={() => { }}>
         <Text>Minimal Modal</Text>
       </Modal>,
     );

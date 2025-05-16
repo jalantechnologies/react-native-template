@@ -29,7 +29,7 @@ const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
 };
 
 Modal.defaultProps = {
-  onRequestClose: () => { },
+  onRequestClose: () => {},
 };
 
 export default Modal;

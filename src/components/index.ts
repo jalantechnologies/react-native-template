@@ -12,3 +12,4 @@ export { default as ParagraphMedium } from './typography/paragraph-medium';
 export { default as ParagraphSmall } from './typography/paragraph-small';
 export { default as FormControl } from './form-control/form-control';
 export { default as Button } from './button/button';
+export { default as Modal } from './modal/modal';

@@ -1,28 +1,29 @@
 PODS:
   - boost (1.76.0)
   - CocoaAsyncSocket (7.6.5)
-  - DatadogCore (2.7.1):
-    - DatadogInternal (= 2.7.1)
-  - DatadogCrashReporting (2.7.1):
-    - DatadogInternal (= 2.7.1)
-    - PLCrashReporter (~> 1.11.1)
-  - DatadogInternal (2.7.1)
-  - DatadogLogs (2.7.1):
-    - DatadogInternal (= 2.7.1)
-  - DatadogRUM (2.7.1):
-    - DatadogInternal (= 2.7.1)
-  - DatadogSDKReactNative (2.3.3):
-    - DatadogCore (~> 2.7.1)
-    - DatadogCrashReporting (~> 2.7.1)
-    - DatadogLogs (~> 2.7.1)
-    - DatadogRUM (~> 2.7.1)
-    - DatadogTrace (~> 2.7.1)
-    - DatadogWebViewTracking (~> 2.7.1)
+  - DatadogCore (2.22.1):
+    - DatadogInternal (= 2.22.1)
+  - DatadogCrashReporting (2.22.1):
+    - DatadogInternal (= 2.22.1)
+    - PLCrashReporter (~> 1.11.2)
+  - DatadogInternal (2.22.1)
+  - DatadogLogs (2.22.1):
+    - DatadogInternal (= 2.22.1)
+  - DatadogRUM (2.22.1):
+    - DatadogInternal (= 2.22.1)
+  - DatadogSDKReactNative (2.6.1):
+    - DatadogCore (~> 2.22.0)
+    - DatadogCrashReporting (~> 2.22.0)
+    - DatadogLogs (~> 2.22.0)
+    - DatadogRUM (~> 2.22.0)
+    - DatadogTrace (~> 2.22.0)
+    - DatadogWebViewTracking (~> 2.22.0)
     - React-Core
-  - DatadogTrace (2.7.1):
-    - DatadogInternal (= 2.7.1)
-  - DatadogWebViewTracking (2.7.1):
-    - DatadogInternal (= 2.7.1)
+  - DatadogTrace (2.22.1):
+    - DatadogInternal (= 2.22.1)
+    - OpenTelemetrySwiftApi (= 1.6.0)
+  - DatadogWebViewTracking (2.22.1):
+    - DatadogInternal (= 2.22.1)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.72.1)
   - FBReactNativeSpec (0.72.1):
@@ -100,7 +101,8 @@ PODS:
     - MMKVCore (~> 1.3.5)
   - MMKVCore (1.3.5)
   - OpenSSL-Universal (1.1.1100)
-  - PLCrashReporter (1.11.2)
+  - OpenTelemetrySwiftApi (1.6.0)
+  - PLCrashReporter (1.11.3)
   - RCT-Folly (2021.07.22.00):
     - boost
     - DoubleConversion
@@ -666,6 +668,7 @@ SPEC REPOS:
     - MMKV
     - MMKVCore
     - OpenSSL-Universal
+    - OpenTelemetrySwiftApi
     - PLCrashReporter
     - SocketRocket
     - YogaKit
@@ -772,16 +775,16 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  boost: 57d2868c099736d80fcd648bf211b4431e51a558
+  boost: 7dcd2de282d72e344012f7d6564d024930a6a440
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
-  DatadogCore: 4a4cdf7beca3aa12b7095bebd926acea1a865a99
-  DatadogCrashReporting: f8b4ea638acaf58b68bbc51cb62a2d876f763241
-  DatadogInternal: b9217da25018284c087a2ed4b9bb3b0f26c767c0
-  DatadogLogs: 3b4132eefa67f196bb3ab2d603c1a2acd1292615
-  DatadogRUM: 8845815ba89f5ab8ceee765ee268f7de36f3e35d
-  DatadogSDKReactNative: e16fa2ec1cdbeed35b20ff43a93fb993bcc23430
-  DatadogTrace: a63da746c609bd4c683bca61a94429889e33b11e
-  DatadogWebViewTracking: 713f862ddd89173e0a3f5342cefa23def40f0f48
+  DatadogCore: 256ddd8b85b5897b12d4c4a302bd4425f102d0b2
+  DatadogCrashReporting: 1407cd7d4907f5d3b1d34e17bb1bcc7915d7ef59
+  DatadogInternal: a8c76be038445b4f96b5080891784ad5f17b37d2
+  DatadogLogs: 3d1be9c7a049c00c740d2488a1b89f0d6977b689
+  DatadogRUM: a9bd417aadfe4fff9829f6f0083465c7f829e0aa
+  DatadogSDKReactNative: 262a791c94a78e6f97eb74cd70e65f15627ed4ed
+  DatadogTrace: ea16b3b5ffb193f27e7740836bc703c10cbec40a
+  DatadogWebViewTracking: e6a738f963df959526000cb76b232df3852c958b
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 55cd4593d570bd9e5e227488d637ce6a9581ce51
   FBReactNativeSpec: 799b0e1a1561699cd0e424e24fe5624da38402f0
@@ -800,7 +803,8 @@ SPEC CHECKSUMS:
   MMKV: 506311d0494023c2f7e0b62cc1f31b7370fa3cfb
   MMKVCore: 9e2e5fd529b64a9fe15f1a7afb3d73b2e27b4db9
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
-  PLCrashReporter: 499c53b0104f95c302d94fd723ebb03c56d9bac8
+  OpenTelemetrySwiftApi: 657da8071c2908caecce11548e006f779924ff9c
+  PLCrashReporter: 97cef386c199b54662e744d1a62c19f7bfe08e90
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: c52ee8fb2b35c1b54031dd8e92d88ad4dba8f2ce
   RCTTypeSafety: 75fa444becadf0ebfa0a456b8c64560c7c89c7df
@@ -848,4 +852,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 6702b9aed0f948dbde3115be9c158c6a7dff103a
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

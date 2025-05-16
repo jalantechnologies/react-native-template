@@ -34,6 +34,76 @@ platform :android do
     )
   end
 
+  desc "Sync version from package.json to Android and iOS"
+lane :sync_versions do
+  require 'json'
+
+  # Read package.json
+  package_json_path = File.expand_path("../../package.json", __dir__)
+
+  if !File.exist?(package_json_path)
+    UI.user_error!(" Error: package.json not found at #{package_json_path}")
+  end
+
+  package_json = JSON.parse(File.read(package_json_path))
+  version = package_json["version"]
+
+  if version.nil? || version.empty?
+    UI.user_error!(" Error: Version not found in package.json")
+  end
+
+  # Android Version Update
+  begin
+    major, minor, patch = version.split('.').map(&:to_i)
+    version_code = (major * 10000) + (minor * 100) + patch
+
+    # Update Android versionCode
+    increment_version_code(version_code: version_code)
+    UI.success(" [Android] Synced version to #{version} (versionCode: #{version_code})")
+  rescue => e
+    UI.error(" [Android] Failed to update versionCode: #{e.message}")
+  end
+
+  # Update Android versionName in build.gradle
+  gradle_file = File.expand_path("../app/build.gradle", __dir__)
+
+  if File.exist?(gradle_file)
+    gradle_content = File.read(gradle_file)
+    new_gradle_content = gradle_content.gsub(/versionName\s*=\s*"[\d.]+"?/, "versionName = \"#{version}\"")
+    File.write(gradle_file, new_gradle_content)
+    UI.success(" [Android] Synced versionName to #{version} (versionCode: #{version_code})")
+  else
+    UI.error(" Error: build.gradle not found at #{gradle_file}")
+  end
+
+   # iOS Version Update
+   begin
+    ios_plist_path = File.expand_path("../../ios/Boilerplate/Info.plist", __dir__)
+
+    if File.exist?(ios_plist_path)
+      # Update CFBundleShortVersionString (versionName)
+      set_info_plist_value(
+        path: ios_plist_path,
+        key: "CFBundleShortVersionString",
+        value: version
+      )
+
+      # Update CFBundleVersion (build number)
+      set_info_plist_value(
+        path: ios_plist_path,
+        key: "CFBundleVersion",
+        value: version_code.to_s
+      )
+
+      UI.success(" [iOS] Synced version to #{version} (build number: #{version_code})")
+    else
+      UI.error(" [iOS] Info.plist not found at #{ios_plist_path}")
+    end
+  rescue => e
+    UI.error(" [iOS] Failed to update version: #{e.message}")
+  end
+end
+
   desc "Deploy a new version to the Google Play"
   lane :deploy_android_production do
 

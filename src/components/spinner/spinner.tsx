@@ -1,9 +1,13 @@
 import React from 'react';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
 
-const Spinner: React.FC = () => (
+interface SpinnerProps {
+  size: 'small' | 'large';
+}
+
+const Spinner: React.FC<SpinnerProps> = ({ size = 'small' }) => (
   <View style={styles.container}>
-    <ActivityIndicator size="small" color="#000" />
+    <ActivityIndicator size={size} color="#000" />
   </View>
 );
 

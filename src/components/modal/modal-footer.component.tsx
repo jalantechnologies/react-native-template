@@ -2,7 +2,7 @@ import { Nullable } from 'boilerplate-react-native/src/types';
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 
-import { styles } from './modal.styles';
+import { useModalStyles } from './modal.styles';
 
 interface ModalFooterProps {
   onCancel?: Nullable<() => void>;
@@ -20,27 +20,31 @@ const ModalFooter: React.FC<ModalFooterProps> = ({
   confirmText = 'Confirm',
   isConfirmDisabled = false,
   children,
-}) => (
-  <View style={styles.footerContainer}>
-    {onCancel && (
-      <TouchableOpacity style={styles.button} onPress={onCancel}>
-        <Text style={styles.cancelText}>{cancelText}</Text>
-      </TouchableOpacity>
-    )}
-    {onConfirm && (
-      <TouchableOpacity
-        style={[styles.button, isConfirmDisabled && styles.disabledButton]}
-        onPress={onConfirm}
-        disabled={isConfirmDisabled}
-      >
-        <Text style={[styles.confirmText, isConfirmDisabled && styles.disabledText]}>
-          {confirmText}
-        </Text>
-      </TouchableOpacity>
-    )}
-    {children}
-  </View>
-);
+}) => {
+  const styles = useModalStyles();
+
+  return (
+    <View style={styles.footerContainer}>
+      {onCancel && (
+        <TouchableOpacity style={styles.button} onPress={onCancel}>
+          <Text style={styles.cancelText}>{cancelText}</Text>
+        </TouchableOpacity>
+      )}
+      {onConfirm && (
+        <TouchableOpacity
+          style={[styles.button, isConfirmDisabled && styles.disabledButton]}
+          onPress={onConfirm}
+          disabled={isConfirmDisabled}
+        >
+          <Text style={[styles.confirmText, isConfirmDisabled && styles.disabledText]}>
+            {confirmText}
+          </Text>
+        </TouchableOpacity>
+      )}
+      {children}
+    </View>
+  );
+};
 
 ModalFooter.defaultProps = {
   onCancel: null,

@@ -1,8 +1,8 @@
+import { Nullable } from 'boilerplate-react-native/src/types';
 import React from 'react';
 import { View, TouchableOpacity, Text } from 'react-native';
 
 import { styles } from './modal.styles';
-import { Nullable } from 'boilerplate-react-native/src/types';
 
 interface ModalFooterProps {
   onCancel?: Nullable<() => void>;

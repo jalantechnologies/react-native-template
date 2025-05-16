@@ -10,3 +10,4 @@ export { default as HeadingSmall } from './typography/heading-small';
 export { default as LabelLarge } from './typography/label-large';
 export { default as ParagraphMedium } from './typography/paragraph-medium';
 export { default as ParagraphSmall } from './typography/paragraph-small';
+export { default as FormControl } from './form-control/form-control';

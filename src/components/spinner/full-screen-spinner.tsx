@@ -1,21 +1,13 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 
 import Spinner from './spinner';
+import { styles } from './spinner.styles';
 
 const FullScreenSpinner: React.FC = () => (
-  <View style={styles.container}>
+  <View style={styles.fullScreenContainer}>
     <Spinner size="large" />
   </View>
 );
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default FullScreenSpinner;

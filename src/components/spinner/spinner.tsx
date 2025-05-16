@@ -1,8 +1,9 @@
 import React from 'react';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
+import { styles } from './spinner.styles';
 interface SpinnerProps {
-  size: 'small' | 'large';
+  size?: 'small' | 'large';
 }
 
 const Spinner: React.FC<SpinnerProps> = ({ size = 'small' }) => (
@@ -11,11 +12,8 @@ const Spinner: React.FC<SpinnerProps> = ({ size = 'small' }) => (
   </View>
 );
 
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+Spinner.defaultProps = {
+  size: 'small',
+};
 
 export default Spinner;

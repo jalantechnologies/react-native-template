@@ -1,3 +1,4 @@
+import appTheme from 'boilerplate-react-native/src/app-theme';
 import { ButtonKind, ButtonSize } from 'boilerplate-react-native/src/types/button';
 import React from 'react';
 import {
@@ -11,7 +12,6 @@ import {
 } from 'react-native';
 
 import { styles } from './button.styles';
-
 interface ButtonProps {
   disabled?: boolean;
   endEnhancer?: React.ReactElement | string;
@@ -28,25 +28,30 @@ const kindStyles: Record<
   { base: ViewStyle; disabled: ViewStyle; enabled: ViewStyle; text: TextStyle }
 > = {
   [ButtonKind.PRIMARY]: {
-    base: { backgroundColor: '#007bff', borderRadius: 6 },
+    base: { backgroundColor: appTheme.colors.primary, borderRadius: 8 },
     enabled: { opacity: 1 },
     disabled: { opacity: 0.5 },
     text: { color: '#fff' },
   },
   [ButtonKind.SECONDARY]: {
-    base: { backgroundColor: '#e0e0e0', borderRadius: 6 },
+    base: { backgroundColor: appTheme.colors.secondary, borderRadius: 8 },
     enabled: { opacity: 1 },
     disabled: { opacity: 0.5 },
-    text: { color: '#333' },
+    text: { color: '#fff' },
   },
   [ButtonKind.TERTIARY]: {
-    base: { backgroundColor: 'transparent', borderRadius: 6 },
+    base: {
+      backgroundColor: appTheme.colors.background,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: appTheme.colors.primary,
+    },
     enabled: { opacity: 1 },
     disabled: { opacity: 0.5 },
-    text: { color: '#007bff' },
+    text: { color: appTheme.colors.primary },
   },
   [ButtonKind.DANGER]: {
-    base: { backgroundColor: '#dc3545', borderRadius: 6 },
+    base: { backgroundColor: appTheme.components.Button.variants.danger.bg, borderRadius: 8 },
     enabled: { opacity: 1 },
     disabled: { opacity: 0.5 },
     text: { color: '#fff' },

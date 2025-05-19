@@ -12,10 +12,17 @@ interface FormControlProps {
 const FormControl: React.FC<FormControlProps> = ({ children, error, label }) => {
   const styles = useFormControlStyles();
 
+  const inputContainerStyle = [
+    styles.inputContainer,
+    error ? { borderColor: styles.error.color } : {},
+  ];
+
+  const labelStyle = [styles.label, error ? { color: styles.error.color } : {}];
+
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
-      <View style={styles.inputContainer}>{children}</View>
+      <Text style={labelStyle}>{label}</Text>
+      <View style={inputContainerStyle}>{children}</View>
       {error && <Text style={styles.error}>{error}</Text>}
     </View>
   );

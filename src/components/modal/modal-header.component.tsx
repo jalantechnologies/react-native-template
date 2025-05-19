@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, TextStyle } from 'react-native';
 
 import { useModalStyles } from './modal.styles';
 
 interface ModalHeaderProps {
   title: string;
   onClose?: () => void;
-  textAlign?: 'left' | 'center' | 'right';
+  textAlign?: TextStyle['textAlign'];
 }
 
 const ModalHeader: React.FC<ModalHeaderProps> = ({ title, onClose, textAlign }) => {

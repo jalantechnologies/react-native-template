@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-import { useFormControlStyles } from './form-vontrol.styles';
+import { useFormControlStyles } from './form-control.styles';
 
 interface FormControlProps {
   error?: string;

@@ -13,13 +13,11 @@ const FormControl: React.FC<FormControlProps> = ({ children, error, label }) => 
   const styles = useFormControlStyles();
 
   return (
-    <>
-      <View style={styles.container}>
-        <Text style={styles.label}>{label}</Text>
-        <View style={styles.inputContainer}>{children}</View>
-        {error && <Text style={styles.error}>{error}</Text>}
-      </View>
-    </>
+    <View style={styles.container}>
+      <Text style={styles.label}>{label}</Text>
+      <View style={styles.inputContainer}>{children}</View>
+      {error && <Text style={styles.error}>{error}</Text>}
+    </View>
   );
 };
 

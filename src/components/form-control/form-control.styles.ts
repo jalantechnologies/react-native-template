@@ -7,8 +7,8 @@ export const useFormControlStyles = () => {
   return StyleSheet.create({
     container: {
       flexDirection: 'column',
-      gap: theme.space['3'],
-      marginBottom: theme.space['4'],
+      gap: theme.space['1'],
+      marginBottom: theme.space['1'],
     },
     label: {
       minHeight: 24,
@@ -23,7 +23,7 @@ export const useFormControlStyles = () => {
       fontSize: theme.fontSizes.xs,
       fontWeight: '500',
       letterSpacing: 0.5,
-      marginTop: theme.space['1'],
+      marginTop: theme.space['0.5'],
     },
   });
 };

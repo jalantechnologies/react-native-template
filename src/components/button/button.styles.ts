@@ -1,56 +1,121 @@
-import appTheme from 'boilerplate-react-native/src/app-theme';
-import { StyleSheet } from 'react-native';
+import { ButtonKind, ButtonSize } from 'boilerplate-react-native/src/types/button';
+import { useTheme } from 'native-base';
+import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
 
-export const styles = StyleSheet.create({
-  activityIndicator: {
-    marginHorizontal: appTheme.space['1'],
-  },
-  button: {
-    alignItems: 'center',
-    borderRadius: appTheme.radii.md,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: appTheme.space['2'],
-    justifyContent: 'center',
-    minHeight: 40,
-    width: '100%',
-  },
-  compact: {
-    padding: appTheme.space['2'],
-  },
-  danger: {
-    backgroundColor: appTheme.colors.danger[600],
-    borderColor: appTheme.colors.danger[600],
-  },
-  default: {
-    padding: appTheme.space['3'],
-  },
-  enhancer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    minWidth: 24,
-  },
-  horizontalStack: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: appTheme.space['2'],
-  },
-  large: {
-    padding: appTheme.space['4'],
-  },
-  mini: {
-    padding: appTheme.space['1'],
-  },
-  primary: {
-    backgroundColor: appTheme.colors.primary,
-    borderColor: appTheme.colors.primary,
-  },
-  secondary: {
-    backgroundColor: appTheme.colors.secondary,
-    borderColor: appTheme.colors.secondary,
-  },
-  tertiary: {
-    backgroundColor: appTheme.colors.tertiary,
-    borderColor: appTheme.colors.tertiary,
-  },
-});
+export const useButtonStyles = () => {
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    activityIndicator: {
+      marginHorizontal: theme.space['1'],
+    },
+    button: {
+      alignItems: 'center',
+      borderRadius: theme.radii.md,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: theme.space['2'],
+      justifyContent: 'center',
+      minHeight: 40,
+      width: '100%',
+    },
+    compact: {
+      padding: theme.space['2'],
+    },
+    danger: {
+      backgroundColor: theme.colors.danger['900'],
+      borderColor: theme.colors.danger['600'],
+    },
+    default: {
+      padding: theme.space['3'],
+    },
+    enhancer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      minWidth: 24,
+    },
+    horizontalStack: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: theme.space['2'],
+    },
+    large: {
+      padding: theme.space['4'],
+    },
+    mini: {
+      padding: theme.space['1'],
+    },
+    primary: {
+      backgroundColor: theme.colors.primary['900'],
+      borderColor: theme.colors.primary['600'],
+    },
+    secondary: {
+      backgroundColor: theme.colors.secondary['900'],
+      borderColor: theme.colors.secondary['600'],
+    },
+    tertiary: {
+      backgroundColor: theme.colors.tertiary['900'],
+      borderColor: theme.colors.tertiary['600'],
+    },
+  });
+};
+
+export const useKindStyles = () => {
+  const appTheme = useTheme();
+  return {
+    [ButtonKind.PRIMARY]: StyleSheet.create({
+      base: { backgroundColor: appTheme.colors.primary['900'], borderRadius: appTheme.radii.md },
+      enabled: { opacity: 1 },
+      disabled: { opacity: 0.5 },
+      text: { color: appTheme.colors.lightText['900'] },
+    }),
+    [ButtonKind.SECONDARY]: StyleSheet.create({
+      base: { backgroundColor: appTheme.colors.secondary['900'], borderRadius: appTheme.radii.md },
+      enabled: { opacity: 1 },
+      disabled: { opacity: 0.5 },
+      text: { color: appTheme.colors.lightText['900'] },
+    }),
+    [ButtonKind.TERTIARY]: StyleSheet.create({
+      base: {
+        backgroundColor: appTheme.colors.tertiary['900'],
+        borderRadius: appTheme.radii.md,
+        borderWidth: 1,
+        borderColor: appTheme.colors.primary['900'],
+      },
+      enabled: { opacity: 1 },
+      disabled: { opacity: 0.5 },
+      text: { color: appTheme.colors.primary['900'] },
+    }),
+    [ButtonKind.DANGER]: StyleSheet.create({
+      base: { backgroundColor: appTheme.colors.danger['900'], borderRadius: 8 },
+      enabled: { opacity: 1 },
+      disabled: { opacity: 0.5 },
+      text: { color: appTheme.colors.lightText['900'] },
+    }),
+  } as Record<
+    ButtonKind,
+    { base: ViewStyle; disabled: ViewStyle; enabled: ViewStyle; text: TextStyle }
+  >;
+};
+
+export const useSizeStyles = () => {
+  const appTheme = useTheme();
+  return {
+    [ButtonSize.COMPACT]: StyleSheet.create({
+      container: { padding: appTheme.space[1] },
+      text: { fontSize: appTheme.fontSizes.sm },
+    }),
+    [ButtonSize.DEFAULT]: StyleSheet.create({
+      container: { padding: appTheme.space[2] },
+      text: { fontSize: appTheme.fontSizes.md },
+    }),
+    [ButtonSize.LARGE]: StyleSheet.create({
+      container: { padding: appTheme.space[3] },
+      text: { fontSize: appTheme.fontSizes.lg },
+    }),
+    [ButtonSize.MINI]: StyleSheet.create({
+      container: { padding: appTheme.space['0.5'] },
+      text: { fontSize: appTheme.fontSizes.xs },
+    }),
+  } as Record<ButtonSize, { container: ViewStyle; text: TextStyle }>;
+};

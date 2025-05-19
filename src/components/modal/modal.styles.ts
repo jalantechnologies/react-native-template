@@ -17,7 +17,7 @@ export const useModalStyles = () => {
       backgroundColor: theme.colors.secondary['600'],
       borderRadius: theme.radii.md,
       padding: theme.space[6],
-      shadowColor: theme.colors.tertiary['900'] || '#000',
+      shadowColor: theme.colors.tertiary['900'],
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.25,
       shadowRadius: 4,

@@ -95,3 +95,44 @@ export const usePasswordInputStyles = () => {
     },
   });
 };
+
+export const useTextAreaInputStyles = () => {
+  const theme = useTheme();
+
+  const spacing = theme.space;
+  const colors = theme.colors;
+
+  return StyleSheet.create({
+    container: {
+      width: '100%',
+      marginBottom: spacing[4],
+    },
+    label: {
+      marginBottom: spacing[1],
+      color: colors.coolGray[800],
+      fontSize: theme.fontSizes.sm,
+      fontWeight: '500',
+    },
+    textArea: {
+      backgroundColor: colors.white,
+      borderRadius: theme.radii.md,
+      paddingHorizontal: spacing[3],
+      paddingVertical: spacing[2],
+      fontSize: theme.fontSizes.md,
+      minHeight: 80,
+    },
+    defaultBorder: {
+      borderColor: colors.coolGray[200],
+      borderWidth: 1,
+    },
+    errorBorder: {
+      borderColor: colors.danger[600],
+      borderWidth: 1,
+    },
+    errorText: {
+      color: colors.danger[600],
+      fontSize: theme.fontSizes.xs,
+      marginTop: spacing[1],
+    },
+  });
+};

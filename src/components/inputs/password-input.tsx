@@ -1,7 +1,8 @@
 import { Icon } from 'native-base';
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, Text, TextInputProps } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, TextInputProps } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 import { usePasswordInputStyles } from './input.styles';
 
 interface PasswordInputProps extends TextInputProps {

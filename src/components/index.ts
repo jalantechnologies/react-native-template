@@ -24,4 +24,6 @@ export { default as CardActionArea } from './card/card-action-area';
 export { default as CardActions } from './card/card-action';
 export { default as Avatar } from './avatar/avatar';
 export { default as Tag } from './tag/tag';
-export { default as Input } from './inputs/input';
+export { Input } from './inputs';
+export { PasswordInput } from './inputs';
+export { TextAreaInput } from './inputs';

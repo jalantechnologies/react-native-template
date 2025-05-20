@@ -54,3 +54,44 @@ export const useInputStyles = () => {
     },
   });
 };
+
+export const usePasswordInputStyles = () => {
+  const theme = useTheme();
+
+  const spacing = theme.space;
+  const colors = theme.colors;
+
+  return StyleSheet.create({
+    container: {
+      width: '100%',
+      marginBottom: spacing[4],
+    },
+    inputWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: colors.coolGray[200],
+      borderRadius: theme.radii.md,
+      paddingHorizontal: spacing[3],
+      backgroundColor: colors.white,
+    },
+    input: {
+      flex: 1,
+      height: 48,
+      fontSize: theme.fontSizes.md,
+      color: colors.coolGray[800],
+    },
+    iconButton: {
+      padding: spacing[2],
+    },
+    inputError: {
+      borderColor: colors.danger[600],
+    },
+    errorText: {
+      color: colors.danger[600],
+      fontSize: theme.fontSizes.xs,
+      marginTop: spacing[1],
+      marginLeft: spacing[1],
+    },
+  });
+};

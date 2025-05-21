@@ -60,7 +60,7 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
           </View>
         ) : null}
         <Text style={[kindStyle.text, sizeStyle.text]}>{children}</Text>
-        {isLoading && kind === ButtonKind.PRIMARY ? (
+        {isLoading ? (
           <ActivityIndicator color={kindStyle.text.color} style={styles.activityIndicator} />
         ) : null}
         {endEnhancer ? (

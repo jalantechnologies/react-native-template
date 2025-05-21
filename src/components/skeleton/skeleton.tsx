@@ -1,4 +1,4 @@
-import { Box, Skeleton, VStack } from 'native-base';
+import { Skeleton, VStack } from 'native-base';
 import React, { PropsWithChildren } from 'react';
 
 export enum SkeletonVariant {

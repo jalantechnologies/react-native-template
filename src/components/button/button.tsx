@@ -1,5 +1,5 @@
 import { ButtonKind, ButtonSize } from 'boilerplate-react-native/src/types/button';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -17,10 +17,9 @@ interface ButtonProps {
   onClick?: (event: GestureResponderEvent) => void;
   size?: ButtonSize;
   startEnhancer?: React.ReactElement | string;
-  children: React.ReactNode;
 }
 
-const Button: React.FC<ButtonProps> = ({
+const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   children,
   disabled = false,
   endEnhancer = undefined,
@@ -37,8 +36,6 @@ const Button: React.FC<ButtonProps> = ({
   const sizeStyle = sizeStyles[size];
 
   const styles = useButtonStyles();
-
-  console.log(`Kind styles: ${JSON.stringify(kindStyle)}, kind: ${kind}`);
 
   return (
     <TouchableOpacity

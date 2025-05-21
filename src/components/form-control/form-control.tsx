@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { View, Text } from 'react-native';
 
 import { useFormControlStyles } from './form-control.styles';
@@ -6,10 +6,9 @@ import { useFormControlStyles } from './form-control.styles';
 interface FormControlProps {
   error?: string;
   label: string;
-  children: React.ReactNode;
 }
 
-const FormControl: React.FC<FormControlProps> = ({ children, error, label }) => {
+const FormControl: React.FC<PropsWithChildren<FormControlProps>> = ({ children, error, label }) => {
   const styles = useFormControlStyles();
 
   const inputContainerStyle = [
@@ -17,11 +16,9 @@ const FormControl: React.FC<FormControlProps> = ({ children, error, label }) => 
     error ? { borderColor: styles.error.color } : {},
   ];
 
-  const labelStyle = [styles.label, error ? { color: styles.error.color } : {}];
-
   return (
     <View style={styles.container}>
-      <Text style={labelStyle}>{label}</Text>
+      <Text style={styles.label}>{label}</Text>
       <View style={inputContainerStyle}>{children}</View>
       {error && <Text style={styles.error}>{error}</Text>}
     </View>

@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { View, TextInput, Text, TextInputProps } from 'react-native';
+import { View, TextInput, Text, TextInputProps, TextStyle } from 'react-native';
 
 import { useInputStyles } from './input.styles';
 
@@ -11,7 +11,7 @@ interface InputProps extends TextInputProps {
   index?: number;
   startEnhancer?: React.ReactElement | string;
   testId?: string;
-  textAlign?: 'left' | 'center' | 'right';
+  textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
   type?: string;
 }
 

@@ -8,7 +8,6 @@ import { usePasswordInputStyles } from './input.styles';
 interface PasswordInputProps extends TextInputProps {
   error?: string;
   name: string;
-  placeholder: string;
   testId?: string;
 }
 

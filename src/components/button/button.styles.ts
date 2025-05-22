@@ -46,16 +46,16 @@ export const useButtonStyles = () => {
       padding: theme.space['1'],
     },
     primary: {
-      backgroundColor: theme.colors.primary['900'],
-      borderColor: theme.colors.primary['600'],
+      backgroundColor: theme.colors.primary as unknown as string,
+      borderColor: theme.colors.primary as unknown as string,
     },
     secondary: {
-      backgroundColor: theme.colors.secondary['900'],
-      borderColor: theme.colors.secondary['600'],
+      backgroundColor: theme.colors.secondary as unknown as string,
+      borderColor: theme.colors.secondary as unknown as string,
     },
     tertiary: {
-      backgroundColor: theme.colors.tertiary['900'],
-      borderColor: theme.colors.tertiary['600'],
+      backgroundColor: theme.colors.tertiary as unknown as string,
+      borderColor: theme.colors.tertiary as unknown as string,
     },
   });
 };
@@ -64,33 +64,39 @@ export const useKindStyles = () => {
   const appTheme = useTheme();
   return {
     [ButtonKind.PRIMARY]: StyleSheet.create({
-      base: { backgroundColor: appTheme.colors.primary['900'], borderRadius: appTheme.radii.md },
-      enabled: { opacity: 1 },
-      disabled: { opacity: 0.5 },
-      text: { color: appTheme.colors.lightText['900'] },
-    }),
-    [ButtonKind.SECONDARY]: StyleSheet.create({
-      base: { backgroundColor: appTheme.colors.secondary['900'], borderRadius: appTheme.radii.md },
-      enabled: { opacity: 1 },
-      disabled: { opacity: 0.5 },
-      text: { color: appTheme.colors.lightText['900'] },
-    }),
-    [ButtonKind.TERTIARY]: StyleSheet.create({
       base: {
-        backgroundColor: appTheme.colors.tertiary['900'],
+        backgroundColor: appTheme.colors.primary as unknown as string,
         borderRadius: appTheme.radii.md,
-        borderWidth: 1,
-        borderColor: appTheme.colors.primary['900'],
       },
       enabled: { opacity: 1 },
       disabled: { opacity: 0.5 },
-      text: { color: appTheme.colors.primary['900'] },
+      text: { color: appTheme.colors.lightText },
+    }),
+    [ButtonKind.SECONDARY]: StyleSheet.create({
+      base: {
+        backgroundColor: appTheme.colors.secondary as unknown as string,
+        borderRadius: appTheme.radii.md,
+      },
+      enabled: { opacity: 1 },
+      disabled: { opacity: 0.5 },
+      text: { color: appTheme.colors.lightText },
+    }),
+    [ButtonKind.TERTIARY]: StyleSheet.create({
+      base: {
+        backgroundColor: appTheme.colors.tertiary as unknown as string,
+        borderRadius: appTheme.radii.md,
+        borderWidth: 1,
+        borderColor: appTheme.colors.primary as unknown as string,
+      },
+      enabled: { opacity: 1 },
+      disabled: { opacity: 0.5 },
+      text: { color: appTheme.colors.primary as unknown as string },
     }),
     [ButtonKind.DANGER]: StyleSheet.create({
       base: { backgroundColor: appTheme.colors.danger['900'], borderRadius: 8 },
       enabled: { opacity: 1 },
       disabled: { opacity: 0.5 },
-      text: { color: appTheme.colors.lightText['900'] },
+      text: { color: appTheme.colors.lightText },
     }),
   } as Record<
     ButtonKind,

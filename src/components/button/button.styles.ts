@@ -74,19 +74,16 @@ export const useKindStyles = () => {
     }),
     [ButtonKind.SECONDARY]: StyleSheet.create({
       base: {
-        backgroundColor: appTheme.colors.secondary as unknown as string,
         borderRadius: appTheme.radii.md,
+        borderColor: appTheme.colors.primary as unknown as string,
       },
       enabled: { opacity: 1 },
       disabled: { opacity: 0.5 },
-      text: { color: appTheme.colors.lightText },
+      text: { color: appTheme.colors.primary as unknown as string },
     }),
     [ButtonKind.TERTIARY]: StyleSheet.create({
       base: {
-        backgroundColor: appTheme.colors.tertiary as unknown as string,
-        borderRadius: appTheme.radii.md,
-        borderWidth: 1,
-        borderColor: appTheme.colors.primary as unknown as string,
+        borderWidth: 0,
       },
       enabled: { opacity: 1 },
       disabled: { opacity: 0.5 },

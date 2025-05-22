@@ -1,6 +1,6 @@
 import { Box, Text, Image } from 'native-base';
 import React, { useState } from 'react';
-import { StyleSheet, StyleProp, ViewStyle, TextStyle, ImageStyle } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
 
 import { useAvatarStyles } from './avatar.styles';
 

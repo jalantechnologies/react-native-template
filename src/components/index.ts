@@ -23,3 +23,4 @@ export { default as CardMedia } from './card/card-media';
 export { default as CardActionArea } from './card/card-action-area';
 export { default as CardActions } from './card/card-action';
 export { default as Avatar } from './avatar/avatar';
+export { default as Tag } from './tag/tag';

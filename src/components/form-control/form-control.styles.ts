@@ -14,14 +14,14 @@ export const useFormControlStyles = () => {
     label: {
       minHeight: 24,
       fontWeight: '500',
-      color: theme.colors.primary['900'],
+      color: theme.colors.primary['500'],
     },
     inputContainer: {
       position: 'relative',
       borderWidth: theme.radii.xs,
     },
     error: {
-      color: theme.colors.danger[600],
+      color: theme.colors.danger['500'],
       fontSize: theme.fontSizes.xs,
       fontWeight: '500',
       letterSpacing: 0.5,

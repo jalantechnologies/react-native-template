@@ -45,16 +45,16 @@ export const useButtonStyles = () => {
       padding: theme.space['1'],
     },
     primary: {
-      backgroundColor: theme.colors.primary as unknown as string,
-      borderColor: theme.colors.primary as unknown as string,
+      backgroundColor: theme.colors.primary['500'],
+      borderColor: theme.colors.primary['500'],
     },
     secondary: {
-      backgroundColor: theme.colors.secondary as unknown as string,
-      borderColor: theme.colors.secondary as unknown as string,
+      backgroundColor: theme.colors.secondary['500'],
+      borderColor: theme.colors.secondary['500'],
     },
     tertiary: {
-      backgroundColor: theme.colors.tertiary as unknown as string,
-      borderColor: theme.colors.tertiary as unknown as string,
+      backgroundColor: theme.colors.tertiary['500'],
+      borderColor: theme.colors.tertiary['500'],
     },
   });
 };
@@ -64,7 +64,7 @@ export const useKindStyles = () => {
   return {
     [ButtonKind.PRIMARY]: StyleSheet.create({
       base: {
-        backgroundColor: appTheme.colors.primary as unknown as string,
+        backgroundColor: appTheme.colors.primary['500'],
         borderRadius: appTheme.radii.md,
       },
       enabled: { opacity: 1 },
@@ -74,11 +74,11 @@ export const useKindStyles = () => {
     [ButtonKind.SECONDARY]: StyleSheet.create({
       base: {
         borderRadius: appTheme.radii.md,
-        borderColor: appTheme.colors.primary as unknown as string,
+        borderColor: appTheme.colors.primary['500'],
       },
       enabled: { opacity: 1 },
       disabled: { opacity: 0.5 },
-      text: { color: appTheme.colors.primary as unknown as string },
+      text: { color: appTheme.colors.primary['500'] },
     }),
     [ButtonKind.TERTIARY]: StyleSheet.create({
       base: {
@@ -86,7 +86,7 @@ export const useKindStyles = () => {
       },
       enabled: { opacity: 1 },
       disabled: { opacity: 0.5 },
-      text: { color: appTheme.colors.primary as unknown as string },
+      text: { color: appTheme.colors.primary['500'] },
     }),
     [ButtonKind.DANGER]: StyleSheet.create({
       base: { backgroundColor: appTheme.colors.danger['900'], borderRadius: 8 },

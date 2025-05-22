@@ -54,7 +54,7 @@ const AuthenticatedStack = () => {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: getTabBarIcon(route.name),
-        tabBarActiveTintColor: colors.violet[900],
+        tabBarActiveTintColor: colors.primary[500],
         tabBarInactiveTintColor: colors.muted[400],
       })}
     >

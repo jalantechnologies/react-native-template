@@ -1,19 +1,9 @@
+import { AvatarShape, AvatarSize } from 'boilerplate-react-native/src/types';
 import { Box, Text, Image } from 'native-base';
 import React, { useState } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 
 import { useAvatarStyles } from './avatar.styles';
-
-export enum AvatarSize {
-  small = 'small',
-  medium = 'medium',
-  large = 'large',
-}
-export enum AvatarShape {
-  circle = 'circle',
-  square = 'square',
-}
-
 export interface AvatarProps {
   src?: string;
   alt?: string;

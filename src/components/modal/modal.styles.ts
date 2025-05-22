@@ -43,7 +43,7 @@ export const useModalStyles = () => {
     },
     headerCloseText: {
       fontSize: theme.fontSizes['2xl'],
-      color: theme.colors.lightText,
+      color: theme.colors.darkText,
     },
     footerContainer: {
       flexDirection: 'row',

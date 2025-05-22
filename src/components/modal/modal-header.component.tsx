@@ -1,5 +1,10 @@
+import { ButtonKind } from 'boilerplate-react-native/src/types/button';
+import { Icon } from 'native-base';
 import React from 'react';
-import { View, Text, TouchableOpacity, TextStyle } from 'react-native';
+import { View, Text, TextStyle } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+import Button from '../button/button';
 
 import { useModalStyles } from './modal.styles';
 
@@ -16,9 +21,9 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({ title, onClose, textAlign }) 
     <View style={styles.headerContainer}>
       <Text style={[styles.headerTitle, { textAlign }]}>{title}</Text>
       {onClose && (
-        <TouchableOpacity onPress={onClose} style={styles.headerCloseButton}>
-          <Text style={styles.headerCloseText}>×</Text>
-        </TouchableOpacity>
+        <Button kind={ButtonKind.TERTIARY}>
+          <Icon as={<MaterialIcons name="close" />} size="md" />
+        </Button>
       )}
     </View>
   );

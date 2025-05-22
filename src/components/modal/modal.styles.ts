@@ -24,7 +24,7 @@ export const useModalStyles = () => {
     },
     modalBody: {
       paddingVertical: theme.space[4],
-      color: theme.colors.primary as unknown as string,
+      color: theme.colors.primary['500'],
     },
     headerContainer: {
       flexDirection: 'row',
@@ -35,7 +35,7 @@ export const useModalStyles = () => {
     headerTitle: {
       fontSize: theme.fontSizes.lg,
       fontWeight: 'bold',
-      color: theme.colors.primary as unknown as string,
+      color: theme.colors.primary['500'],
       flex: 1,
     },
     headerCloseButton: {
@@ -61,7 +61,7 @@ export const useModalStyles = () => {
       opacity: 0.5,
     },
     disabledText: {
-      color: theme.colors.tertiary as unknown as string,
+      color: theme.colors.tertiary['500'],
     },
   });
 };

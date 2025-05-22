@@ -18,7 +18,7 @@ export const useCardStyles = () => {
           borderWidth: 1,
           borderColor: colors.secondary['200'],
         } as ViewStyle,
-        elevated: {
+        filled: {
           shadowColor: colors.primary['900'],
           shadowOffset: { width: 0, height: 6 },
           shadowOpacity: 0.18,

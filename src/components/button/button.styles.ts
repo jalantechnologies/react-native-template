@@ -17,7 +17,6 @@ export const useButtonStyles = () => {
       gap: theme.space['2'],
       justifyContent: 'center',
       minHeight: 40,
-      width: '100%',
     },
     compact: {
       padding: theme.space['2'],

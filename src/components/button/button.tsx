@@ -6,9 +6,11 @@ import {
   ActivityIndicator,
   View,
   GestureResponderEvent,
+  DimensionValue,
 } from 'react-native';
 
 import { useButtonStyles, useKindStyles, useSizeStyles } from './button.styles';
+
 interface ButtonProps {
   disabled?: boolean;
   endEnhancer?: React.ReactElement | string;
@@ -17,6 +19,7 @@ interface ButtonProps {
   onClick?: (event: GestureResponderEvent) => void;
   size?: ButtonSize;
   startEnhancer?: React.ReactElement | string;
+  width?: DimensionValue;
 }
 
 const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
@@ -28,6 +31,7 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   onClick = undefined,
   size = ButtonSize.DEFAULT,
   startEnhancer = undefined,
+  width = undefined,
 }) => {
   const kindStyles = useKindStyles();
   const sizeStyles = useSizeStyles();
@@ -44,6 +48,7 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
         kindStyle.base,
         disabled || isLoading ? kindStyle.disabled : kindStyle.enabled,
         sizeStyle.container,
+        width ? { width } : {},
       ]}
       disabled={disabled || isLoading}
       onPress={onClick}
@@ -85,6 +90,7 @@ Button.defaultProps = {
   onClick: undefined,
   size: ButtonSize.DEFAULT,
   startEnhancer: undefined,
+  width: undefined,
 };
 
 export default Button;

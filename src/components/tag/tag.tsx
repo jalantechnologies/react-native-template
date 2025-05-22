@@ -7,7 +7,7 @@ import { useTagStyles } from './tag.styles';
 
 export enum TagVariant {
   OUTLINED = 'outlined',
-  ELEVATED = 'elevated',
+  FILLED = 'filled',
 }
 
 export interface TagProps {
@@ -19,15 +19,15 @@ export interface TagProps {
 
 export const Tag: React.FC<TagProps> = ({
   label,
-  variant = TagVariant.ELEVATED,
+  variant = TagVariant.FILLED,
   onDeleted,
   onClick,
 }) => {
   const styles = useTagStyles();
 
-  const variantStyle = variant === TagVariant.OUTLINED ? styles.outlined : styles.elevated;
+  const variantStyle = variant === TagVariant.OUTLINED ? styles.outlined : styles.filled;
   const textStyle =
-    variant === TagVariant.OUTLINED ? styles.outlinedTextColor : styles.elevatedTextColor;
+    variant === TagVariant.OUTLINED ? styles.outlinedTextColor : styles.filledTextColor;
 
   const Container = onClick ? Pressable : Box;
   const containerProps = onClick ? { onPress: onClick } : {};
@@ -45,7 +45,7 @@ export const Tag: React.FC<TagProps> = ({
 };
 
 Tag.defaultProps = {
-  variant: TagVariant.ELEVATED,
+  variant: TagVariant.FILLED,
   onDeleted: undefined,
   onClick: undefined,
 };

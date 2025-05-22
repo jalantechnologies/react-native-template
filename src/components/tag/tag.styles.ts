@@ -19,7 +19,7 @@ export const useTagStyles = () => {
       fontSize: fontSizes.lg,
       color: colors.secondary['100'],
     },
-    elevatedTextColor: {
+    filledTextColor: {
       color: colors.secondary['100'],
     },
     outlinedTextColor: {
@@ -28,7 +28,7 @@ export const useTagStyles = () => {
     iconWrapper: {
       marginLeft: space['0.5'],
     },
-    elevated: {
+    filled: {
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.2,

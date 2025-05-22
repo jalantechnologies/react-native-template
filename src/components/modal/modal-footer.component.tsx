@@ -1,6 +1,9 @@
 import { Nullable } from 'boilerplate-react-native/src/types';
+import { ButtonKind } from 'boilerplate-react-native/src/types/button';
 import React from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View } from 'react-native';
+
+import Button from '../button/button';
 
 import { useModalStyles } from './modal.styles';
 
@@ -24,22 +27,20 @@ const ModalFooter: React.FC<ModalFooterProps> = ({
   const styles = useModalStyles();
 
   return (
-    <View style={styles.footerContainer}>
+    <View style={[styles.footerContainer]}>
       {onCancel && (
-        <TouchableOpacity style={styles.button} onPress={onCancel}>
-          <Text style={styles.cancelText}>{cancelText}</Text>
-        </TouchableOpacity>
+        <View style={styles.button}>
+          <Button kind={ButtonKind.SECONDARY} onClick={onCancel}>
+            {cancelText}
+          </Button>
+        </View>
       )}
       {onConfirm && (
-        <TouchableOpacity
-          style={[styles.button, isConfirmDisabled && styles.disabledButton]}
-          onPress={onConfirm}
-          disabled={isConfirmDisabled}
-        >
-          <Text style={[styles.confirmText, isConfirmDisabled && styles.disabledText]}>
+        <View style={styles.button}>
+          <Button onClick={onConfirm} kind={ButtonKind.PRIMARY} disabled={isConfirmDisabled}>
             {confirmText}
-          </Text>
-        </TouchableOpacity>
+          </Button>
+        </View>
       )}
       {children}
     </View>

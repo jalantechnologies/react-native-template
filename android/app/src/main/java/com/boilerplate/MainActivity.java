@@ -1,4 +1,4 @@
-package com.jalantechnologies.boilerplate;
+package com.bettrsw.boilerplate;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

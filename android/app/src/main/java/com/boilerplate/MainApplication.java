@@ -1,4 +1,4 @@
-package com.jalantechnologies.boilerplate;
+package com.bettrsw.boilerplate;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

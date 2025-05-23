@@ -1,1 +1,1 @@
-package_name("com.bettrsw.app") # e.g. com.krausefx.app
+package_name("com.bettrsw.boilerplate") # e.g. com.krausefx.app

@@ -1,4 +1,3 @@
-// tag.styles.ts
 import { useTheme } from 'native-base';
 import { StyleSheet } from 'react-native';
 

@@ -44,13 +44,13 @@ const OTPForm: React.FC<OTPFormProps> = ({
 
   return (
     <VStack space={10}>
-      <Box>
-        <Container>
-          <Heading size="lg">Enter OTP</Heading>
-          <Heading mt="1" size="xs">
-            We have the sent the OTP code to {countryCode} {getMaskedPhoneNumber()}
-          </Heading>
-        </Container>
+      <Container>
+        <Heading size="lg">Enter OTP</Heading>
+        <Heading mt="1" size="xs">
+          We have the sent the OTP code to {countryCode} {getMaskedPhoneNumber()}
+        </Heading>
+      </Container>
+      <Box mt={3}>
         <FormControl>
           <Center>
             <OTPInput

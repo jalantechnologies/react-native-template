@@ -1,5 +1,5 @@
-import { FormControl, Input } from 'boilerplate-react-native/src/components';
-import { Button, Container, Heading, VStack } from 'native-base';
+import { Button, FormControl, Input } from 'boilerplate-react-native/src/components';
+import { Container, Heading, VStack } from 'native-base';
 import React from 'react';
 
 import { AsyncError } from '../../../types';
@@ -39,7 +39,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
           placeholder="Last Name"
         />
       </FormControl>
-      <Button onPress={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
+      <Button onClick={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
         Create Account
       </Button>
     </VStack>

@@ -1,11 +1,9 @@
+import { Button, FormControl, Input } from 'boilerplate-react-native/src/components';
 import {
   VStack,
   Container,
   Heading,
-  FormControl,
   HStack,
-  Input,
-  Button,
   useDisclose,
   Text,
   Pressable,
@@ -13,6 +11,7 @@ import {
   ScrollView,
   Link,
   Center,
+  Box,
 } from 'native-base';
 import React from 'react';
 
@@ -91,24 +90,20 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
             Enter your number to continue
           </Heading>
         </Container>
-        <FormControl
-          isRequired={true}
-          isInvalid={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
-        >
-          <FormControl.Label>Phone Number</FormControl.Label>
-          <HStack space={2}>
+        <FormControl label={'Phone Number'} error={formik.errors.phoneNumber}>
+          <HStack space={2} width="100%">
             {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange)}
-            <Input
-              value={formik.values.phoneNumber}
-              onChangeText={formik.handleChange('phoneNumber')}
-              keyboardType="numeric"
-              flex={3}
-              placeholder="XXXXXXXXXX"
-            />
+            <Box flex={3} justifyContent="center">
+              <Input
+                value={formik.values.phoneNumber}
+                onChangeText={formik.handleChange('phoneNumber')}
+                keyboardType="numeric"
+                placeholder="XXXXXXXXXX"
+              />
+            </Box>
           </HStack>
-          <FormControl.ErrorMessage>{formik.errors.phoneNumber}</FormControl.ErrorMessage>
         </FormControl>
-        <Button mt="2" onPress={() => formik.handleSubmit()} isLoading={isSendOTPLoading}>
+        <Button onClick={() => formik.handleSubmit()} isLoading={isSendOTPLoading}>
           Send OTP
         </Button>
       </VStack>

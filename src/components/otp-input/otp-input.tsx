@@ -1,8 +1,9 @@
-import { HStack, Input } from 'native-base';
+import { Box, HStack } from 'native-base';
 import React, { useRef } from 'react';
 import { TextInput } from 'react-native';
 
 import { KeyboardKeys } from '../../constants';
+import { Input } from '../inputs';
 
 interface OTPInputProps {
   length: number;
@@ -30,20 +31,21 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
   };
 
   return (
-    <HStack space={2}>
+    <HStack space={2} width="100%">
       {Array(length)
         .fill('')
         .map((_, index) => (
-          <Input
-            ref={el => (inputsRef.current[index] = el)}
-            value={otp[index]}
-            onChangeText={text => handleChange(text, index)}
-            onKeyPress={e => handleKeyPress(e, index)}
-            keyboardType="numeric"
-            maxLength={1}
-            variant={'otp'}
-            key={index}
-          />
+          <Box flex={1} key={index}>
+            <Input
+              handleInputRef={el => (inputsRef.current[index] = el)}
+              value={otp[index]}
+              onChangeText={text => handleChange(text, index)}
+              onKeyPress={e => handleKeyPress(e, index)}
+              keyboardType="numeric"
+              maxLength={1}
+              textAlign="center"
+            />
+          </Box>
         ))}
     </HStack>
   );

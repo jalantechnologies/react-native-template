@@ -15,8 +15,9 @@ const Brand: React.FC<Props> = ({ height, width }: Props) => {
       width={`${width}px`}
       justifyContent="center"
       alignItems="center"
+      backgroundColor={'primary.500'}
     >
-      <Heading>Jalan Technologies</Heading>
+      <Heading color={'white'}>Better Software</Heading>
     </Box>
   );
 };

@@ -5,7 +5,7 @@ import { useFormControlStyles } from './form-control.styles';
 
 interface FormControlProps {
   error?: string;
-  label: string;
+  label?: string;
 }
 
 const FormControl: React.FC<PropsWithChildren<FormControlProps>> = ({ children, error, label }) => {
@@ -13,12 +13,12 @@ const FormControl: React.FC<PropsWithChildren<FormControlProps>> = ({ children, 
 
   const inputContainerStyle = [
     styles.inputContainer,
-    error ? { borderColor: styles.error.color } : {},
+    error ? { borderColor: styles.error.color, borderWidth: 1 } : {},
   ];
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      {label && <Text style={styles.label}>{label}</Text>}
       <View style={inputContainerStyle}>{children}</View>
       {error && <Text style={styles.error}>{error}</Text>}
     </View>
@@ -27,6 +27,7 @@ const FormControl: React.FC<PropsWithChildren<FormControlProps>> = ({ children, 
 
 FormControl.defaultProps = {
   error: undefined,
+  label: undefined,
 };
 
 export default FormControl;

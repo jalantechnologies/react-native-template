@@ -1,17 +1,7 @@
-import {
-  Box,
-  Button,
-  Center,
-  Container,
-  FormControl,
-  Heading,
-  Link,
-  Text,
-  VStack,
-} from 'native-base';
+import { Box, Button, Center, Container, Heading, Link, Text, VStack } from 'native-base';
 import React from 'react';
 
-import { OTPInput } from '../../../components';
+import { FormControl, OTPInput } from '../../../components';
 import { AuthOptions } from '../../../constants';
 import { AsyncError } from '../../../types';
 
@@ -61,7 +51,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
             We have the sent the OTP code to {countryCode} {getMaskedPhoneNumber()}
           </Heading>
         </Container>
-        <FormControl py={5}>
+        <FormControl>
           <Center>
             <OTPInput
               length={AuthOptions.OTPLength}

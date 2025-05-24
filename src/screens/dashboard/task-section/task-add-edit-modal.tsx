@@ -1,6 +1,14 @@
-import { Box, Button, FormControl, Heading, Icon, Input, Modal, VStack } from 'native-base';
+import {
+  Button,
+  FormControl,
+  Input,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from 'boilerplate-react-native/src/components';
+import { VStack } from 'native-base';
 import React from 'react';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { TaskModal, TaskOperation } from '../../../constants';
 import { AsyncError, Nullable, Task } from '../../../types';
@@ -73,47 +81,33 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isModalOpen} avoidKeyboard={true} onClose={handleModalClose} key={taskOperation}>
-      <Modal.Content>
-        <Modal.Header>
-          <Box flexDirection={'row'} justifyContent={'space-between'}>
-            <Heading>{modalHeading()}</Heading>
-            <Icon size={6} as={<MaterialIcons name="close" />} onPress={handleModalClose} />
-          </Box>
-        </Modal.Header>
+    <Modal isModalOpen={isModalOpen} onRequestClose={handleModalClose} key={taskOperation}>
+      <ModalHeader title={modalHeading()} onClose={handleModalClose} />
 
+      <ModalBody>
         <VStack space={4} p={4}>
-          <FormControl
-            isRequired={true}
-            isInvalid={formik.touched.title && Boolean(formik.errors.title)}
-          >
-            <FormControl.Label>Title</FormControl.Label>
+          <FormControl label="Title" error={formik.errors.title}>
             <Input
               onChangeText={formik.handleChange('title')}
               value={formik.values.title}
               placeholder="Title"
             />
-            <FormControl.ErrorMessage>{formik.errors.title}</FormControl.ErrorMessage>
           </FormControl>
 
-          <FormControl
-            isRequired={true}
-            isInvalid={formik.touched.description && Boolean(formik.errors.description)}
-          >
-            <FormControl.Label>Description</FormControl.Label>
+          <FormControl label="Description" error={formik.errors.description}>
             <Input
               onChangeText={formik.handleChange('description')}
               value={formik.values.description}
               placeholder="Description"
             />
-            <FormControl.ErrorMessage>{formik.errors.description}</FormControl.ErrorMessage>
           </FormControl>
-
-          <Button isLoading={isLoading()} mt={4} onPress={() => formik.handleSubmit()}>
-            {buttonText()}
-          </Button>
         </VStack>
-      </Modal.Content>
+      </ModalBody>
+      <ModalFooter>
+        <Button isLoading={isLoading()} onClick={() => formik.handleSubmit()}>
+          {buttonText()}
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 };

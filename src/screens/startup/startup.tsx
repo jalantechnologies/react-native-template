@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
 
 import { ApplicationScreenProps } from '../../../@types/navigation';
-import { Brand } from '../../components';
+import { Brand, Spinner } from '../../components';
 
 const Startup: React.FC<ApplicationScreenProps> = ({ navigation }: ApplicationScreenProps) => {
   const init = async () => {
@@ -25,7 +25,7 @@ const Startup: React.FC<ApplicationScreenProps> = ({ navigation }: ApplicationSc
   return (
     <View>
       <Brand />
-      <ActivityIndicator size="large" />
+      <Spinner size="large" />
     </View>
   );
 };

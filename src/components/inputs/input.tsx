@@ -12,7 +12,7 @@ export interface InputProps extends Omit<TextInputProps, 'style | multiline'> {
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
 }
 
-const Input = forwardRef<TextInput, InputProps>(
+const Input = forwardRef<TextInput | null, InputProps>(
   (
     { disabled, endEnhancer, handleInputRef, startEnhancer, testId, textAlign = 'left', ...props },
     ref,
@@ -42,6 +42,8 @@ const Input = forwardRef<TextInput, InputProps>(
               }
               if (typeof ref === 'function') {
                 ref(input);
+              } else if (ref && typeof ref === 'object') {
+                ref.current = input;
               }
             }}
             editable={!disabled}

@@ -1,10 +1,11 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Spinner, useTheme } from 'native-base';
+import { useTheme } from 'native-base';
 import React, { useEffect } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { AuthenticatedStackParamsList, AuthenticatedTabParamsList } from '../../@types/navigation';
+import { Spinner } from '../components';
 import { useAccountContext, useAuthContext } from '../contexts';
 import { Dashboard, RegistrationScreen } from '../screens';
 
@@ -42,7 +43,7 @@ const AuthenticatedStack = () => {
   }, []);
 
   if (isAccountLoading) {
-    return <Spinner flex={1} color={'primary'} size={'lg'} />;
+    return <Spinner size={'large'} />;
   }
 
   return isNewUser ? (

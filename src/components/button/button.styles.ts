@@ -12,7 +12,6 @@ export const useButtonStyles = () => {
     button: {
       alignItems: 'center',
       borderRadius: theme.radii.md,
-      borderWidth: 1,
       flexDirection: 'row',
       gap: theme.space['2'],
       justifyContent: 'center',
@@ -22,7 +21,7 @@ export const useButtonStyles = () => {
       padding: theme.space['2'],
     },
     danger: {
-      backgroundColor: theme.colors.danger['900'],
+      backgroundColor: theme.colors.danger['700'],
       borderColor: theme.colors.danger['600'],
     },
     default: {
@@ -89,7 +88,7 @@ export const useKindStyles = () => {
       text: { color: appTheme.colors.primary['500'] },
     }),
     [ButtonKind.DANGER]: StyleSheet.create({
-      base: { backgroundColor: appTheme.colors.danger['900'], borderRadius: 8 },
+      base: { backgroundColor: appTheme.colors.danger['700'], borderRadius: 8 },
       enabled: { opacity: 1 },
       disabled: { opacity: 0.5 },
       text: { color: appTheme.colors.lightText },

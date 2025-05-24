@@ -1,7 +1,13 @@
-import { Box, Button, Heading, Icon, Modal, Text } from 'native-base';
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from 'boilerplate-react-native/src/components';
+import { ButtonKind } from 'boilerplate-react-native/src/types/button';
+import { Box, Text } from 'native-base';
 import React from 'react';
-import { useWindowDimensions } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 interface AccountDeleteModalProps {
   handleDeleteAccountPress: () => void;
@@ -16,37 +22,31 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const { height } = useWindowDimensions();
-
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
 
   return (
-    <Modal _backdrop={{ height }} isOpen={isModalOpen} onClose={handleModalClose}>
-      <Modal.Content>
-        <Modal.Header>
-          <Box flexDirection={'row'} justifyContent={'space-between'}>
-            <Heading>Delete Account</Heading>
-            <Icon size={6} as={<MaterialIcons name="close" />} onPress={handleModalClose} />
-          </Box>
-        </Modal.Header>
-        <Modal.Body>
-          <Text>Are you sure you want to delete your account?</Text>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant={'subtle'} onPress={handleModalClose}>
+    <Modal isModalOpen={isModalOpen} onRequestClose={handleModalClose}>
+      <ModalHeader title="Delete Account" onClose={handleModalClose} />
+      <ModalBody>
+        <Text>Are you sure you want to delete your account?</Text>
+      </ModalBody>
+      <ModalFooter>
+        <Box flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
+          <Button onClick={handleModalClose} kind={ButtonKind.TERTIARY} width="48%">
             Cancel
           </Button>
           <Button
             isLoading={isDeleteAccountLoading}
-            onPress={handleDeleteAccountPress}
-            variant={'danger'}
+            onClick={handleDeleteAccountPress}
+            kind={ButtonKind.DANGER}
+            width="48%"
           >
             Delete
           </Button>
-        </Modal.Footer>
-      </Modal.Content>
+        </Box>
+      </ModalFooter>
     </Modal>
   );
 };

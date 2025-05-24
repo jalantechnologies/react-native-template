@@ -1,4 +1,5 @@
-import { Button, FormControl, Input, KeyboardAvoidingView, Toast, VStack } from 'native-base';
+import { Button, FormControl, Input } from 'boilerplate-react-native/src/components';
+import { KeyboardAvoidingView, Toast, VStack } from 'native-base';
 import React from 'react';
 import { Platform } from 'react-native';
 
@@ -41,18 +42,15 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
         justifyContent={'space-between'}
       >
         <VStack space={4}>
-          <FormControl isInvalid={formik.touched.firstName && Boolean(formik.errors.firstName)}>
-            <FormControl.Label>First Name</FormControl.Label>
+          <FormControl error={formik.errors.firstName} label={'First Name'}>
             <Input
               onChangeText={formik.handleChange('firstName')}
               placeholder={'First Name'}
               value={formik.values.firstName}
             />
-            <FormControl.ErrorMessage>{formik.errors.firstName}</FormControl.ErrorMessage>
           </FormControl>
 
-          <FormControl isInvalid={formik.touched.lastName && Boolean(formik.errors.lastName)}>
-            <FormControl.Label>Last Name</FormControl.Label>
+          <FormControl error={formik.errors.lastName} label={'Last Name'}>
             <Input
               onChangeText={formik.handleChange('lastName')}
               placeholder={'Last Name'}
@@ -60,13 +58,12 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
             />
           </FormControl>
 
-          <FormControl isDisabled isReadOnly>
-            <FormControl.Label>Phone Number</FormControl.Label>
-            <Input value={formik.values.phoneNumber} />
+          <FormControl label={'Phone Number'}>
+            <Input value={formik.values.phoneNumber} editable={false} disabled={true} />
           </FormControl>
         </VStack>
 
-        <Button onPress={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
+        <Button onClick={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
           Save Changes
         </Button>
       </KeyboardAvoidingView>

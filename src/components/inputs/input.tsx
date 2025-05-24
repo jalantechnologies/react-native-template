@@ -8,7 +8,6 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
   endEnhancer?: React.ReactElement | string;
   error?: string;
   handleInputRef?: (ref: TextInput) => void;
-  isPassword?: boolean;
   label?: string;
   startEnhancer?: React.ReactElement | string;
   testId?: string;
@@ -25,7 +24,6 @@ const Input = forwardRef<TextInput, InputProps>(
       startEnhancer,
       testId,
       textAlign = 'left',
-      isPassword,
       label,
       multiline,
       numberOfLines,
@@ -68,7 +66,6 @@ const Input = forwardRef<TextInput, InputProps>(
               textAlign && { textAlign },
               multiline && numberOfLines ? styles.multiline : {},
             ]}
-            secureTextEntry={isPassword}
             autoCorrect={false}
             autoCapitalize="none"
           />
@@ -92,7 +89,6 @@ Input.defaultProps = {
   endEnhancer: undefined,
   testId: undefined,
   textAlign: 'left',
-  isPassword: false,
   label: undefined,
 };
 

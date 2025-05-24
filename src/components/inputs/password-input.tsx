@@ -29,7 +29,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
       <View style={styles.inputWrapper}>
         <Input
           placeholder={placeholder}
-          isPassword={!isPasswordVisible}
+          secureTextEntry={!isPasswordVisible}
           autoCapitalize="none"
           autoCorrect={false}
           testID={testID}

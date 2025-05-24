@@ -21,7 +21,12 @@ const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
   const styles = useModalStyles();
 
   return (
-    <RNModal visible={isModalOpen} transparent animationType="fade" onRequestClose={onRequestClose}>
+    <RNModal
+      visible={isModalOpen}
+      transparent
+      animationType="slide"
+      onRequestClose={onRequestClose}
+    >
       <TouchableWithoutFeedback onPress={onRequestClose}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>

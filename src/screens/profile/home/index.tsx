@@ -1,5 +1,7 @@
-import { Divider, Toast, VStack } from 'native-base';
+import { Button } from 'boilerplate-react-native/src/components';
+import { Box, Divider, Icon, Toast, VStack } from 'native-base';
 import React, { useState } from 'react';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
 import { useAccountContext, useAuthContext } from '../../../contexts';
@@ -49,14 +51,15 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
   return (
     <ProfileLayout>
       <VStack w={'100%'} space={4} divider={<Divider />}>
-        <ProfileInfoSection accountDetails={accountDetails} />
-        <ProfileAction onPress={handleEditProfilePress} title={'Edit Profile'} icon={'edit'} />
+        <ProfileInfoSection
+          accountDetails={accountDetails}
+          handleEditProfilePress={handleEditProfilePress}
+        />
         <ProfileAction
           title={'Delete Account'}
           icon={'delete'}
           onPress={() => setIsAccountDeleteModalOpen(true)}
         />
-        <ProfileAction title={'Log Out'} icon={'logout'} onPress={logout} />
       </VStack>
 
       <AccountDeleteModal
@@ -65,6 +68,15 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
         isModalOpen={isAccountDeleteModalOpen}
         setIsModalOpen={setIsAccountDeleteModalOpen}
       />
+
+      <Box w="50%" alignSelf="center" position="absolute" bottom={4}>
+        <Button
+          onClick={logout}
+          startEnhancer={<Icon as={<MaterialIcons name="logout" />} color={'secondary.50'} />}
+        >
+          Logout
+        </Button>
+      </Box>
     </ProfileLayout>
   );
 };

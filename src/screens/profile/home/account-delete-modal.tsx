@@ -6,8 +6,9 @@ import {
   ModalHeader,
 } from 'boilerplate-react-native/src/components';
 import { ButtonKind } from 'boilerplate-react-native/src/types/button';
-import { Box, Text } from 'native-base';
+import { Box, Icon, Text } from 'native-base';
 import React from 'react';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 interface AccountDeleteModalProps {
   handleDeleteAccountPress: () => void;
@@ -30,7 +31,10 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
     <Modal isModalOpen={isModalOpen} onRequestClose={handleModalClose}>
       <ModalHeader title="Delete Account" onClose={handleModalClose} />
       <ModalBody>
-        <Text>Are you sure you want to delete your account?</Text>
+        <Box alignItems="center">
+          <Icon as={<MaterialIcons name="delete" />} size={6} color="danger.600" mb={4} />
+          <Text textAlign={'center'}>Are you sure you want to delete your account?</Text>
+        </Box>
       </ModalBody>
       <ModalFooter>
         <Box flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
@@ -42,6 +46,7 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
             onClick={handleDeleteAccountPress}
             kind={ButtonKind.DANGER}
             width="48%"
+            startEnhancer={<Icon as={<MaterialIcons name="delete" />} color={'secondary.50'} />}
           >
             Delete
           </Button>

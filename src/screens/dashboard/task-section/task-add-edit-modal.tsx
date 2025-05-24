@@ -86,7 +86,7 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
 
       <ModalBody>
         <VStack space={4} p={4}>
-          <FormControl label="Title" error={formik.errors.title}>
+          <FormControl label="Title" error={formik.touched.title ? formik.errors.title : ''}>
             <Input
               onChangeText={formik.handleChange('title')}
               value={formik.values.title}
@@ -94,7 +94,10 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
             />
           </FormControl>
 
-          <FormControl label="Description" error={formik.errors.description}>
+          <FormControl
+            label="Description"
+            error={formik.touched.description ? formik.errors.description : ''}
+          >
             <Input
               onChangeText={formik.handleChange('description')}
               value={formik.values.description}

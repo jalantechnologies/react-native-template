@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { View } from 'react-native';
 
 import { ApplicationScreenProps } from '../../../@types/navigation';
-import { Brand, FullScreenSpinner, Spinner } from '../../components';
+import { Brand } from '../../components';
 
 const Startup: React.FC<ApplicationScreenProps> = ({ navigation }: ApplicationScreenProps) => {
   const init = async () => {

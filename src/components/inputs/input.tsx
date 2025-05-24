@@ -8,7 +8,6 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
   endEnhancer?: React.ReactElement | string;
   error?: string;
   handleInputRef?: (ref: TextInput) => void;
-  index?: number;
   isPassword?: boolean;
   label?: string;
   startEnhancer?: React.ReactElement | string;
@@ -89,7 +88,6 @@ Input.defaultProps = {
   disabled: false,
   error: undefined,
   handleInputRef: undefined,
-  index: 0,
   startEnhancer: undefined,
   endEnhancer: undefined,
   testId: undefined,

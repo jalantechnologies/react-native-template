@@ -9,10 +9,11 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
   error?: string;
   handleInputRef?: (ref: TextInput) => void;
   index?: number;
+  isPassword?: boolean;
+  label?: string;
   startEnhancer?: React.ReactElement | string;
   testId?: string;
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
-  isPassword?: boolean;
 }
 
 const Input = forwardRef<TextInput, InputProps>(
@@ -26,6 +27,9 @@ const Input = forwardRef<TextInput, InputProps>(
       testId,
       textAlign = 'left',
       isPassword,
+      label,
+      multiline,
+      numberOfLines,
       ...props
     },
     ref,
@@ -34,6 +38,7 @@ const Input = forwardRef<TextInput, InputProps>(
 
     return (
       <>
+        {label && label.length > 0 ? <Text style={styles.label}>{label}</Text> : null}
         <View
           style={[
             styles.container,
@@ -58,7 +63,12 @@ const Input = forwardRef<TextInput, InputProps>(
               }
             }}
             editable={!disabled}
-            style={[styles.input, disabled && styles.disabled, textAlign && { textAlign }]}
+            style={[
+              styles.input,
+              disabled && styles.disabled,
+              textAlign && { textAlign },
+              multiline && numberOfLines ? styles.multiline : {},
+            ]}
             secureTextEntry={isPassword}
             autoCorrect={false}
             autoCapitalize="none"
@@ -77,15 +87,15 @@ const Input = forwardRef<TextInput, InputProps>(
 
 Input.defaultProps = {
   disabled: false,
-  error: '',
+  error: undefined,
   handleInputRef: undefined,
   index: 0,
-  startEnhancer: '',
-  endEnhancer: '',
+  startEnhancer: undefined,
+  endEnhancer: undefined,
   testId: undefined,
   textAlign: 'left',
   isPassword: false,
-  name: '',
+  label: undefined,
 };
 
 export default Input;

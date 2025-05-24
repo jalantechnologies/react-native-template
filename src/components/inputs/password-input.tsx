@@ -8,7 +8,13 @@ import { usePasswordInputStyles } from './input.styles';
 
 interface PasswordInputProps extends Omit<InputProps, 'isPassword'> {}
 
-const PasswordInput: React.FC<PasswordInputProps> = ({ error, placeholder, testID, ...props }) => {
+const PasswordInput: React.FC<PasswordInputProps> = ({
+  placeholder,
+  testID,
+  error,
+  label,
+  ...props
+}) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -19,7 +25,8 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ error, placeholder, testI
 
   return (
     <View style={styles.container}>
-      <View style={[styles.inputWrapper, error ? styles.inputError : {}]}>
+      {label && label.length > 0 ? <Text style={styles.label}>{label}</Text> : null}
+      <View style={styles.inputWrapper}>
         <Input
           placeholder={placeholder}
           isPassword={!isPasswordVisible}

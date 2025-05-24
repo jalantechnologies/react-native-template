@@ -18,6 +18,15 @@ export const useInputStyles = () => {
       borderWidth: 1,
       borderColor: colors.coolGray[200],
     },
+    multiline: {
+      height: 88,
+    },
+    label: {
+      marginBottom: spacing[1],
+      color: colors.coolGray[800],
+      fontSize: theme.fontSizes.sm,
+      fontWeight: '500',
+    },
     input: {
       flex: 1,
       fontSize: theme.fontSizes.md,
@@ -65,11 +74,17 @@ export const usePasswordInputStyles = () => {
     container: {
       width: '100%',
       marginBottom: spacing[4],
+      paddingHorizontal: spacing[3],
+    },
+    label: {
+      marginBottom: spacing[1],
+      color: colors.coolGray[800],
+      fontSize: theme.fontSizes.sm,
+      fontWeight: '500',
     },
     inputWrapper: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingHorizontal: spacing[3],
       backgroundColor: 'transparent',
       position: 'relative',
     },
@@ -110,12 +125,6 @@ export const useTextAreaInputStyles = () => {
     container: {
       width: '100%',
       marginBottom: spacing[4],
-    },
-    label: {
-      marginBottom: spacing[1],
-      color: colors.coolGray[800],
-      fontSize: theme.fontSizes.sm,
-      fontWeight: '500',
     },
     textArea: {
       backgroundColor: colors.white,

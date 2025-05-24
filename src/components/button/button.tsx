@@ -1,13 +1,8 @@
 import { ButtonKind, ButtonSize } from 'boilerplate-react-native/src/types/button';
 import React, { PropsWithChildren } from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  ActivityIndicator,
-  View,
-  GestureResponderEvent,
-  DimensionValue,
-} from 'react-native';
+import { TouchableOpacity, Text, View, GestureResponderEvent, DimensionValue } from 'react-native';
+
+import Spinner from '../spinner/spinner';
 
 import { useButtonStyles, useKindStyles, useSizeStyles } from './button.styles';
 
@@ -65,9 +60,7 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
           </View>
         ) : null}
         <Text style={[kindStyle.text, sizeStyle.text]}>{children}</Text>
-        {isLoading ? (
-          <ActivityIndicator color={kindStyle.text.color} style={styles.activityIndicator} />
-        ) : null}
+        {isLoading ? <Spinner /> : null}
         {endEnhancer ? (
           <View style={styles.enhancer}>
             {typeof endEnhancer === 'string' ? (

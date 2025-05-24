@@ -6,7 +6,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Input, { InputProps } from './input';
 import { usePasswordInputStyles } from './input.styles';
 
-interface PasswordInputProps extends Omit<InputProps, 'isPassword'> { }
+interface PasswordInputProps extends Omit<InputProps, 'isPassword'> {}
 
 const PasswordInput: React.FC<PasswordInputProps> = ({
   placeholder,

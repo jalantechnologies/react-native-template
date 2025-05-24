@@ -17,7 +17,7 @@ const Brand: React.FC<Props> = ({ height, width }: Props) => {
       alignItems="center"
       backgroundColor={'primary.500'}
     >
-      <Heading color={'white'}>Better Software</Heading>
+      <Heading color={'secondary.50'}>Better Software</Heading>
     </Box>
   );
 };

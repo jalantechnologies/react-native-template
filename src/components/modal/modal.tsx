@@ -1,5 +1,10 @@
 import React, { PropsWithChildren } from 'react';
-import { Modal as RNModal, View, TouchableWithoutFeedback } from 'react-native';
+import {
+  Modal as RNModal,
+  View,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+} from 'react-native';
 
 import { useModalStyles } from './modal.styles';
 
@@ -20,7 +25,9 @@ const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
       <TouchableWithoutFeedback onPress={onRequestClose}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>
-            <View style={styles.modalContent}>{children}</View>
+            <KeyboardAvoidingView behavior={'position'} style={styles.modalKeyboardAvoidingView}>
+              <View style={styles.modalContent}>{children}</View>
+            </KeyboardAvoidingView>
           </TouchableWithoutFeedback>
         </View>
       </TouchableWithoutFeedback>
@@ -29,7 +36,7 @@ const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
 };
 
 Modal.defaultProps = {
-  onRequestClose: () => {},
+  onRequestClose: () => { },
 };
 
 export default Modal;

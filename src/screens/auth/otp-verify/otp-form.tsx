@@ -1,7 +1,7 @@
-import { Box, Button, Center, Container, Heading, Link, Text, VStack } from 'native-base';
+import { Box, Center, Container, Heading, Link, Text, VStack } from 'native-base';
 import React from 'react';
 
-import { FormControl, OTPInput } from '../../../components';
+import { Button, FormControl, OTPInput } from '../../../components';
 import { AuthOptions } from '../../../constants';
 import { AsyncError } from '../../../types';
 
@@ -70,10 +70,9 @@ const OTPForm: React.FC<OTPFormProps> = ({
         </Link>
       </Container>
       <Button
-        isLoadingText="Verifying OTP"
         isLoading={isVerifyOTPLoading}
-        onPress={() => formik.handleSubmit()}
-        isDisabled={!(formik.isValid && formik.dirty)}
+        onClick={() => formik.handleSubmit()}
+        disabled={!(formik.isValid && formik.dirty)}
       >
         Verify OTP
       </Button>

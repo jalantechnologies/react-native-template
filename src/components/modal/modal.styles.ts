@@ -12,7 +12,7 @@ export const useModalStyles = () => {
       backgroundColor: 'rgba(0,0,0,0.5)',
     },
     modalContent: {
-      width: '90%',
+      width: '100%',
       maxWidth: 400,
       borderRadius: theme.radii.md,
       padding: theme.space[2],
@@ -22,6 +22,10 @@ export const useModalStyles = () => {
       elevation: 5,
       borderWidth: 0,
       backgroundColor: theme.colors.white,
+    },
+    modalKeyboardAvoidingView: {
+      width: '90%',
+      maxWidth: 400,
     },
     modalBody: {
       paddingVertical: theme.space[4],

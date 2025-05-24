@@ -4,7 +4,10 @@ import React, { PropsWithChildren } from 'react';
 
 import { HeadingSmallStyles as styles } from './typography.styles';
 
-const HeadingSmall: React.FC<PropsWithChildren<TypographyProps>> = ({ children, color }) => (
+const HeadingSmall: React.FC<PropsWithChildren<TypographyProps>> = ({
+  children,
+  color = 'primary.500',
+}) => (
   <Text style={styles.heading} color={color}>
     {children}
   </Text>

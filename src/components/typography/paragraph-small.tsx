@@ -4,7 +4,10 @@ import React, { PropsWithChildren } from 'react';
 
 import { ParagraphSmallStyles as styles } from './typography.styles';
 
-const ParagraphSmall: React.FC<PropsWithChildren<TypographyProps>> = ({ children, color }) => (
+const ParagraphSmall: React.FC<PropsWithChildren<TypographyProps>> = ({
+  children,
+  color = 'primary.500',
+}) => (
   <Text style={styles.paragraph} color={color}>
     {children}
   </Text>

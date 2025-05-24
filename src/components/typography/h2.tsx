@@ -4,7 +4,7 @@ import React, { PropsWithChildren } from 'react';
 
 import { H2Styles as styles } from './typography.styles';
 
-const H2: React.FC<PropsWithChildren<TypographyProps>> = ({ children, color }) => (
+const H2: React.FC<PropsWithChildren<TypographyProps>> = ({ children, color = 'primary.500' }) => (
   <Text color={color} style={styles.h2}>
     {children}
   </Text>

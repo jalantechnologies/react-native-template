@@ -1,23 +1,14 @@
 import { Icon } from 'native-base';
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, TextInputProps } from 'react-native';
+import { View, TouchableOpacity, Text } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
+import Input, { InputProps } from './input';
 import { usePasswordInputStyles } from './input.styles';
 
-interface PasswordInputProps extends Omit<TextInputProps, 'style'> {
-  error?: string;
-  name: string;
-  testId?: string;
-}
+interface PasswordInputProps extends Omit<InputProps, 'isPassword'> {}
 
-const PasswordInput: React.FC<PasswordInputProps> = ({
-  error,
-  name,
-  placeholder,
-  testID,
-  ...props
-}) => {
+const PasswordInput: React.FC<PasswordInputProps> = ({ error, placeholder, testID, ...props }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -29,14 +20,12 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   return (
     <View style={styles.container}>
       <View style={[styles.inputWrapper, error ? styles.inputError : {}]}>
-        <TextInput
-          style={[styles.input]}
+        <Input
           placeholder={placeholder}
-          secureTextEntry={!isPasswordVisible}
+          isPassword={!isPasswordVisible}
           autoCapitalize="none"
           autoCorrect={false}
           testID={testID}
-          accessibilityLabel={name}
           {...props}
         />
         <TouchableOpacity
@@ -46,7 +35,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         >
           <Icon
             as={
-              <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={6} />
+              <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={16} />
             }
           />
         </TouchableOpacity>
@@ -54,11 +43,6 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
   );
-};
-
-PasswordInput.defaultProps = {
-  error: '',
-  testId: '',
 };
 
 export default PasswordInput;

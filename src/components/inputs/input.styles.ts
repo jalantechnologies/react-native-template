@@ -69,11 +69,9 @@ export const usePasswordInputStyles = () => {
     inputWrapper: {
       flexDirection: 'row',
       alignItems: 'center',
-      borderWidth: 1,
-      borderColor: colors.coolGray[200],
-      borderRadius: theme.radii.md,
       paddingHorizontal: spacing[3],
-      backgroundColor: colors.white,
+      backgroundColor: 'transparent',
+      position: 'relative',
     },
     input: {
       flex: 1,
@@ -83,6 +81,12 @@ export const usePasswordInputStyles = () => {
     },
     iconButton: {
       padding: spacing[2],
+      position: 'absolute',
+      right: 8,
+      top: '50%',
+      transform: [{ translateY: -16 }],
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     inputError: {
       borderColor: colors.danger[600],

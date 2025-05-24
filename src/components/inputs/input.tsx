@@ -3,7 +3,7 @@ import { View, TextInput, Text, TextInputProps, TextStyle } from 'react-native';
 
 import { useInputStyles } from './input.styles';
 
-interface InputProps extends Omit<TextInputProps, 'style'> {
+export interface InputProps extends Omit<TextInputProps, 'style'> {
   disabled?: boolean;
   endEnhancer?: React.ReactElement | string;
   error?: string;
@@ -13,7 +13,6 @@ interface InputProps extends Omit<TextInputProps, 'style'> {
   testId?: string;
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
   isPassword?: boolean;
-  name?: string;
 }
 
 const Input = forwardRef<TextInput, InputProps>(
@@ -27,7 +26,6 @@ const Input = forwardRef<TextInput, InputProps>(
       testId,
       textAlign = 'left',
       isPassword,
-      name,
       ...props
     },
     ref,
@@ -64,7 +62,6 @@ const Input = forwardRef<TextInput, InputProps>(
             secureTextEntry={isPassword}
             autoCorrect={false}
             autoCapitalize="none"
-            accessibilityLabel={name}
           />
           {endEnhancer && (
             <View style={styles.enhancer}>

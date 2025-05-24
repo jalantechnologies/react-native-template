@@ -6,7 +6,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Input, { InputProps } from './input';
 import { usePasswordInputStyles } from './input.styles';
 
-interface PasswordInputProps extends Omit<InputProps, 'isPassword'> {}
+interface PasswordInputProps extends Omit<InputProps, 'isPassword'> { }
 
 const PasswordInput: React.FC<PasswordInputProps> = ({
   placeholder,
@@ -24,7 +24,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   const styles = usePasswordInputStyles();
 
   return (
-    <View style={styles.container}>
+    <>
       {label && label.length > 0 ? <Text style={styles.label}>{label}</Text> : null}
       <View style={styles.inputWrapper}>
         <Input
@@ -48,7 +48,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
         </TouchableOpacity>
       </View>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
-    </View>
+    </>
   );
 };
 

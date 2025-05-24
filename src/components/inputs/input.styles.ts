@@ -71,11 +71,6 @@ export const usePasswordInputStyles = () => {
   const colors = theme.colors;
 
   return StyleSheet.create({
-    container: {
-      width: '100%',
-      marginBottom: spacing[4],
-      paddingHorizontal: spacing[3],
-    },
     label: {
       marginBottom: spacing[1],
       color: colors.coolGray[800],

@@ -90,7 +90,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
             Enter your number to continue
           </Heading>
         </Container>
-        <FormControl label={'Phone Number'} error={formik.errors.phoneNumber}>
+        <FormControl label={'Phone Number'}>
           <HStack space={2} width="100%">
             {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange)}
             <Box flex={3} justifyContent="center">
@@ -99,6 +99,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
                 onChangeText={formik.handleChange('phoneNumber')}
                 keyboardType="numeric"
                 placeholder="XXXXXXXXXX"
+                error={formik.errors.phoneNumber}
               />
             </Box>
           </HStack>

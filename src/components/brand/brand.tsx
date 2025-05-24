@@ -2,6 +2,8 @@ import { Box, Heading } from 'native-base';
 import React from 'react';
 import { DimensionValue } from 'react-native';
 
+import Spinner from '../spinner/spinner';
+
 type Props = {
   height?: DimensionValue;
   width?: DimensionValue;
@@ -11,20 +13,21 @@ const Brand: React.FC<Props> = ({ height, width }: Props) => {
   return (
     <Box
       testID="brand-img-wrapper"
-      height={`${height}px`}
-      width={`${width}px`}
+      height={height ? `${height}px` : '100%'}
+      width={width ? `${width}px` : '100%'}
       justifyContent="center"
       alignItems="center"
       backgroundColor={'primary.500'}
     >
       <Heading color={'secondary.50'}>Better Software</Heading>
+      <Spinner size="large" color="secondary.50" />
     </Box>
   );
 };
 
 Brand.defaultProps = {
-  height: 400,
-  width: 400,
+  height: undefined,
+  width: undefined,
 };
 
 export default Brand;

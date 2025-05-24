@@ -21,6 +21,6 @@ test('App renders correctly', () => {
   const wrapper = screen.getByTestId('brand-img-wrapper');
 
   expect(wrapper.props.style).toBeInstanceOf(Object);
-  expect(wrapper.props.style.height).toBe(400);
-  expect(wrapper.props.style.width).toBe(400);
+  expect(wrapper.props.style.height).toBe('100%');
+  expect(wrapper.props.style.width).toBe('100%');
 });

@@ -1,10 +1,13 @@
+import { TypographyProps } from 'boilerplate-react-native/src/types/typography';
+import { Text } from 'native-base';
 import React, { PropsWithChildren } from 'react';
-import { Text } from 'react-native';
 
 import { ParagraphMediumStyles as styles } from './typography.styles';
 
-const ParagraphMedium: React.FC<PropsWithChildren> = ({ children }) => (
-  <Text style={styles.paragraph}>{children}</Text>
+const ParagraphMedium: React.FC<PropsWithChildren<TypographyProps>> = ({ children, color }) => (
+  <Text style={styles.paragraph} color={color}>
+    {children}
+  </Text>
 );
 
 export default ParagraphMedium;

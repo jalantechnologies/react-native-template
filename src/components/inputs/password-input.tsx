@@ -5,7 +5,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { usePasswordInputStyles } from './input.styles';
 
-interface PasswordInputProps extends TextInputProps {
+interface PasswordInputProps extends Omit<TextInputProps, 'style'> {
   error?: string;
   name: string;
   testId?: string;
@@ -16,7 +16,6 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   name,
   placeholder,
   testID,
-  style,
   ...props
 }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -31,7 +30,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
     <View style={styles.container}>
       <View style={[styles.inputWrapper, error ? styles.inputError : {}]}>
         <TextInput
-          style={[styles.input, style]}
+          style={[styles.input]}
           placeholder={placeholder}
           secureTextEntry={!isPasswordVisible}
           autoCapitalize="none"

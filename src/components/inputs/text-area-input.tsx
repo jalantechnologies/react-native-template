@@ -4,7 +4,7 @@ import { TextInput, TextInputProps, TextStyle, View } from 'react-native';
 
 import { useTextAreaInputStyles } from './input.styles';
 
-interface TextAreaInputProps extends TextInputProps {
+interface TextAreaInputProps extends Omit<TextInputProps, 'style'> {
   label?: string;
   error?: string;
   style?: TextStyle | TextStyle[];

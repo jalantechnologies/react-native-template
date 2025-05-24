@@ -3,7 +3,7 @@ import { View, TextInput, Text, TextInputProps, TextStyle } from 'react-native';
 
 import { useInputStyles } from './input.styles';
 
-interface InputProps extends TextInputProps {
+interface InputProps extends Omit<TextInputProps, 'style'> {
   disabled?: boolean;
   endEnhancer?: React.ReactElement | string;
   error?: string;
@@ -12,7 +12,8 @@ interface InputProps extends TextInputProps {
   startEnhancer?: React.ReactElement | string;
   testId?: string;
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
-  type?: string;
+  isPassword?: boolean;
+  name?: string;
 }
 
 const Input = forwardRef<TextInput, InputProps>(
@@ -25,8 +26,8 @@ const Input = forwardRef<TextInput, InputProps>(
       startEnhancer,
       testId,
       textAlign = 'left',
-      type,
-      style,
+      isPassword,
+      name,
       ...props
     },
     ref,
@@ -59,10 +60,11 @@ const Input = forwardRef<TextInput, InputProps>(
               }
             }}
             editable={!disabled}
-            style={[styles.input, disabled && styles.disabled, textAlign && { textAlign }, style]}
-            secureTextEntry={type === 'password'}
+            style={[styles.input, disabled && styles.disabled, textAlign && { textAlign }]}
+            secureTextEntry={isPassword}
             autoCorrect={false}
             autoCapitalize="none"
+            accessibilityLabel={name}
           />
           {endEnhancer && (
             <View style={styles.enhancer}>
@@ -85,7 +87,8 @@ Input.defaultProps = {
   endEnhancer: '',
   testId: undefined,
   textAlign: 'left',
-  type: 'text',
+  isPassword: false,
+  name: '',
 };
 
 export default Input;

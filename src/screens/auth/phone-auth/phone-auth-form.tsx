@@ -1,4 +1,5 @@
 import { FormControl, Input, Button } from 'boilerplate-react-native/src/components';
+import { ButtonKind } from 'boilerplate-react-native/src/types/button';
 import {
   VStack,
   Container,
@@ -150,6 +151,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
           disabled={!isChecked}
           isLoading={isSendOTPLoading}
           onClick={() => formik.handleSubmit()}
+          kind={ButtonKind.PRIMARY}
         >
           Send OTP
         </Button>

@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { AuthenticatedStackParamsList, AuthenticatedTabParamsList } from '../../@types/navigation';
-import { Spinner } from '../components';
+import { FullScreenSpinner } from '../components';
 import { useAccountContext, useAuthContext } from '../contexts';
 import { Dashboard, RegistrationScreen } from '../screens';
 
@@ -43,7 +43,7 @@ const AuthenticatedStack = () => {
   }, []);
 
   if (isAccountLoading) {
-    return <Spinner size={'large'} />;
+    return <FullScreenSpinner />;
   }
 
   return isNewUser ? (

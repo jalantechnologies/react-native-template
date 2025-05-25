@@ -32,13 +32,12 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
       <ModalHeader title="Delete Account" onClose={handleModalClose} />
       <ModalBody>
         <Box alignItems="center">
-          <Icon as={<MaterialIcons name="delete" />} size={6} color="danger.600" mb={4} />
           <Text textAlign={'center'}>Are you sure you want to delete your account?</Text>
         </Box>
       </ModalBody>
       <ModalFooter>
         <Box flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
-          <Button onClick={handleModalClose} kind={ButtonKind.TERTIARY} width="48%">
+          <Button onClick={handleModalClose} kind={ButtonKind.SECONDARY} width="48%">
             Cancel
           </Button>
           <Button

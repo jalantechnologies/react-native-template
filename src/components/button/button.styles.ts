@@ -35,7 +35,7 @@ export const useButtonStyles = () => {
     horizontalStack: {
       alignItems: 'center',
       flexDirection: 'row',
-      gap: theme.space['2'],
+      gap: theme.space['1'],
     },
     large: {
       padding: theme.space['4'],
@@ -74,6 +74,7 @@ export const useKindStyles = () => {
       base: {
         borderRadius: appTheme.radii.md,
         borderColor: appTheme.colors.primary['500'],
+        borderWidth: 1,
       },
       enabled: { opacity: 1 },
       disabled: { opacity: 0.5 },

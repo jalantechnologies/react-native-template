@@ -14,9 +14,9 @@ import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 interface TaskDeleteModalProps {
-    handleModalClose: () => void;
-    isModalOpen: boolean;
-    task: Task;
+  handleModalClose: () => void;
+  isModalOpen: boolean;
+  task: Task;
 }
 
 const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({

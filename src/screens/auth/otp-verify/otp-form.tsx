@@ -88,7 +88,6 @@ const OTPForm: React.FC<OTPFormProps> = ({
           <Box flex={1} />
         </VStack>
 
-
         <Button
           isLoading={isVerifyOTPLoading}
           onClick={() => formik.handleSubmit()}

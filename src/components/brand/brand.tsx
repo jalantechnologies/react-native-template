@@ -1,6 +1,6 @@
 import { Box, Heading } from 'native-base';
 import React from 'react';
-import { DimensionValue } from 'react-native';
+import { DimensionValue, Image } from 'react-native';
 
 import Spinner from '../spinner/spinner';
 
@@ -17,12 +17,19 @@ const Brand: React.FC<Props> = ({ height, width }: Props) => {
       width={width ? `${width}px` : '100%'}
       justifyContent="center"
       alignItems="center"
-      backgroundColor={'primary.500'}
+      backgroundColor={'secondary.50'}
     >
-      <Heading color={'secondary.50'} mb={4}>
+      <Image
+        source={require('../../../assets/img/logo.png')}
+        alt="Brand Logo"
+        resizeMode="contain"
+        width={100}
+        height={100}
+      />
+      <Heading color={'primary.500'} my={4}>
         Better Software
       </Heading>
-      <Spinner size="large" color="secondary.50" />
+      <Spinner size="large" color="primary.500" />
     </Box>
   );
 };

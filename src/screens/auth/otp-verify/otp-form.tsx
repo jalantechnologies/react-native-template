@@ -58,7 +58,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={64}
     >
-      <Box flex={1} px={4}>
+      <Box flex={1} px={4} pb={4}>
         <VStack space={10} flex={1}>
           <Container>
             <Heading size="lg">Enter OTP</Heading>
@@ -88,16 +88,15 @@ const OTPForm: React.FC<OTPFormProps> = ({
           <Box flex={1} />
         </VStack>
 
-        <Box pb={6}>
-          <Button
-            isLoading={isVerifyOTPLoading}
-            onClick={() => formik.handleSubmit()}
-            disabled={!(formik.isValid && formik.dirty)}
-            width="100%"
-          >
-            Verify OTP
-          </Button>
-        </Box>
+
+        <Button
+          isLoading={isVerifyOTPLoading}
+          onClick={() => formik.handleSubmit()}
+          disabled={!(formik.isValid && formik.dirty)}
+          width="100%"
+        >
+          Verify OTP
+        </Button>
       </Box>
     </KeyboardAvoidingView>
   );

@@ -94,7 +94,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
       keyboardVerticalOffset={60}
     >
       <Box flex={1} px={4} pb={4}>
-        <VStack space={6} flex={1}>
+        <VStack space={6} flex={1} mb={8}>
           <Container>
             <Heading size="lg">Welcome</Heading>
             <Heading mt="1" size="xs">

@@ -6,9 +6,7 @@ import { useInputStyles } from './input.styles';
 export interface InputProps extends Omit<TextInputProps, 'style'> {
   disabled?: boolean;
   endEnhancer?: React.ReactElement | string;
-  error?: string;
   handleInputRef?: (ref: TextInput) => void;
-  label?: string;
   startEnhancer?: React.ReactElement | string;
   testId?: string;
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
@@ -19,14 +17,12 @@ const Input = forwardRef<TextInput, InputProps>(
     {
       disabled,
       endEnhancer,
-      error,
       handleInputRef,
       startEnhancer,
       testId,
       textAlign = 'left',
-      label,
-      multiline,
       numberOfLines,
+      multiline,
       ...props
     },
     ref,
@@ -35,11 +31,10 @@ const Input = forwardRef<TextInput, InputProps>(
 
     return (
       <>
-        {label && label.length > 0 ? <Text style={styles.label}>{label}</Text> : null}
         <View
           style={[
             styles.container,
-            error ? styles.errorBorder : styles.defaultBorder,
+            styles.defaultBorder,
             disabled ? styles.disabledBackground : styles.enabledBackground,
           ]}
           testID={testId}
@@ -75,7 +70,6 @@ const Input = forwardRef<TextInput, InputProps>(
             </View>
           )}
         </View>
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
       </>
     );
   },
@@ -83,13 +77,11 @@ const Input = forwardRef<TextInput, InputProps>(
 
 Input.defaultProps = {
   disabled: false,
-  error: undefined,
   handleInputRef: undefined,
   startEnhancer: undefined,
   endEnhancer: undefined,
   testId: undefined,
   textAlign: 'left',
-  label: undefined,
 };
 
 export default Input;

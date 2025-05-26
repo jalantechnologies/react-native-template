@@ -21,12 +21,6 @@ export const useInputStyles = () => {
     multiline: {
       height: 88,
     },
-    label: {
-      marginBottom: spacing[1],
-      color: colors.coolGray[800],
-      fontSize: theme.fontSizes.sm,
-      fontWeight: '500',
-    },
     input: {
       flex: 1,
       fontSize: theme.fontSizes.md,
@@ -38,10 +32,6 @@ export const useInputStyles = () => {
       marginHorizontal: spacing[1],
       justifyContent: 'center',
       alignItems: 'center',
-    },
-    errorBorder: {
-      borderWidth: 1,
-      borderColor: colors.danger[600],
     },
     defaultBorder: {
       borderWidth: 1,
@@ -55,11 +45,6 @@ export const useInputStyles = () => {
     },
     disabled: {
       color: colors.coolGray[400],
-    },
-    errorText: {
-      color: colors.danger[600],
-      fontSize: theme.fontSizes.xs,
-      marginTop: spacing[1],
     },
   });
 };

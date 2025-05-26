@@ -1,6 +1,6 @@
 import { Icon } from 'native-base';
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Input, { InputProps } from './input';
@@ -8,13 +8,7 @@ import { usePasswordInputStyles } from './input.styles';
 
 interface PasswordInputProps extends InputProps {}
 
-const PasswordInput: React.FC<PasswordInputProps> = ({
-  placeholder,
-  testID,
-  error,
-  label,
-  ...props
-}) => {
+const PasswordInput: React.FC<PasswordInputProps> = ({ placeholder, testID, ...props }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -25,7 +19,6 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
 
   return (
     <>
-      {label && label.length > 0 ? <Text style={styles.label}>{label}</Text> : null}
       <View style={styles.inputWrapper}>
         <Input
           placeholder={placeholder}
@@ -33,7 +26,6 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
           autoCapitalize="none"
           autoCorrect={false}
           testID={testID}
-          error={error}
           {...props}
         />
         <TouchableOpacity
@@ -48,7 +40,6 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
           />
         </TouchableOpacity>
       </View>
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </>
   );
 };

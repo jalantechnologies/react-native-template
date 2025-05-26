@@ -3,7 +3,7 @@ import { View, TextInput, Text, TextInputProps, TextStyle } from 'react-native';
 
 import { useInputStyles } from './input.styles';
 
-export interface InputProps extends Omit<TextInputProps, 'style'> {
+export interface InputProps extends Omit<TextInputProps, 'style | multiline'> {
   disabled?: boolean;
   endEnhancer?: React.ReactElement | string;
   handleInputRef?: (ref: TextInput) => void;
@@ -14,17 +14,7 @@ export interface InputProps extends Omit<TextInputProps, 'style'> {
 
 const Input = forwardRef<TextInput, InputProps>(
   (
-    {
-      disabled,
-      endEnhancer,
-      handleInputRef,
-      startEnhancer,
-      testId,
-      textAlign = 'left',
-      numberOfLines,
-      multiline,
-      ...props
-    },
+    { disabled, endEnhancer, handleInputRef, startEnhancer, testId, textAlign = 'left', ...props },
     ref,
   ) => {
     const styles = useInputStyles();
@@ -55,12 +45,7 @@ const Input = forwardRef<TextInput, InputProps>(
               }
             }}
             editable={!disabled}
-            style={[
-              styles.input,
-              disabled && styles.disabled,
-              textAlign && { textAlign },
-              multiline && numberOfLines ? styles.multiline : {},
-            ]}
+            style={[styles.input, disabled && styles.disabled, textAlign && { textAlign }]}
             autoCorrect={false}
             autoCapitalize="none"
           />

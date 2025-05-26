@@ -18,9 +18,6 @@ export const useInputStyles = () => {
       borderWidth: 1,
       borderColor: colors.coolGray[200],
     },
-    multiline: {
-      height: 88,
-    },
     input: {
       flex: 1,
       fontSize: theme.fontSizes.md,
@@ -103,29 +100,38 @@ export const useTextAreaInputStyles = () => {
 
   return StyleSheet.create({
     container: {
-      width: '100%',
-      marginBottom: spacing[4],
-    },
-    textArea: {
-      backgroundColor: colors.white,
+      flexDirection: 'row',
+      alignItems: 'center',
       borderRadius: theme.radii.md,
       paddingHorizontal: spacing[3],
       paddingVertical: spacing[2],
+      minHeight: 44,
+      borderWidth: 1,
+      borderColor: colors.coolGray[200],
+    },
+    input: {
+      flex: 1,
       fontSize: theme.fontSizes.md,
-      minHeight: 80,
+      color: colors.coolGray[800],
+      padding: 0,
+      margin: 0,
+      minHeight: 76,
+    },
+    enhancer: {
+      marginHorizontal: spacing[1],
     },
     defaultBorder: {
+      borderWidth: 1,
       borderColor: colors.coolGray[200],
-      borderWidth: 1,
     },
-    errorBorder: {
-      borderColor: colors.danger[600],
-      borderWidth: 1,
+    disabledBackground: {
+      backgroundColor: colors.coolGray[100],
     },
-    errorText: {
-      color: colors.danger[600],
-      fontSize: theme.fontSizes.xs,
-      marginTop: spacing[1],
+    enabledBackground: {
+      backgroundColor: 'transparent',
+    },
+    disabled: {
+      color: colors.coolGray[400],
     },
   });
 };

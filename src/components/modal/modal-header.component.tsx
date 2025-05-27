@@ -1,8 +1,8 @@
+import Close from 'boilerplate-react-native/assets/icons/close.svg';
 import { ButtonKind } from 'boilerplate-react-native/src/types/button';
-import { Icon } from 'native-base';
+import { useTheme } from 'native-base';
 import React from 'react';
 import { View, Text, TextStyle } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Button from '../button/button';
 
@@ -17,12 +17,14 @@ interface ModalHeaderProps {
 const ModalHeader: React.FC<ModalHeaderProps> = ({ title, onClose, textAlign }) => {
   const styles = useModalStyles();
 
+  const theme = useTheme();
+
   return (
     <View style={styles.headerContainer}>
       <Text style={[styles.headerTitle, { textAlign }]}>{title}</Text>
       {onClose && (
         <Button kind={ButtonKind.TERTIARY} onClick={onClose}>
-          <Icon as={<MaterialIcons name="close" />} size="md" />
+          <Close fill={theme.colors.primary['500']} />
         </Button>
       )}
     </View>

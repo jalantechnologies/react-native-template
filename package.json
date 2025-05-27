@@ -15,10 +15,10 @@
     "test": "jest",
     "type-check": "tsc",
     "test:report": "jest --collectCoverage --coverageDirectory=\"./coverage\" --ci --reporters=default --reporters=jest-junit --coverage",
-    "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install && cd .."
+    "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=0 bundle exec pod install && cd .."
   },
   "dependencies": {
-    "@datadog/mobile-react-native": "^2.8.0",
+    "@datadog/mobile-react-native": "^2.6.1",
     "@react-native-masked-view/masked-view": "^0.2.9",
     "@react-navigation/bottom-tabs": "^6.5.8",
     "@react-navigation/drawer": "^6.6.15",

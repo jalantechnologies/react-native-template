@@ -1,18 +1,20 @@
+import AddIcon from 'boilerplate-react-native/assets/icons/add.svg';
 import { Button } from 'boilerplate-react-native/src/components';
-import { HStack, Heading, Icon } from 'native-base';
+import { HStack, Heading, useTheme } from 'native-base';
 import React from 'react';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 interface TaskHeaderProps {
   onHeaderButtonPress: () => void;
 }
 
 const TaskHeader: React.FC<TaskHeaderProps> = ({ onHeaderButtonPress }) => {
+  const theme = useTheme();
+
   return (
     <HStack justifyContent="space-between" alignItems="center" px={4} py={2}>
       <Heading size="lg">Tasks</Heading>
       <Button
-        startEnhancer={<Icon as={<MaterialIcons name="add" />} color="white" size="sm" />}
+        startEnhancer={<AddIcon width={16} height={16} fill={theme.colors.secondary[50]} />}
         onClick={onHeaderButtonPress}
       >
         Add Task

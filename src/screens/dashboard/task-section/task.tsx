@@ -1,3 +1,5 @@
+import DeleteIcon from 'boilerplate-react-native/assets/icons/delete.svg';
+import EditIcon from 'boilerplate-react-native/assets/icons/edit.svg';
 import {
   Button,
   Card,
@@ -7,10 +9,9 @@ import {
 } from 'boilerplate-react-native/src/components';
 import { Task } from 'boilerplate-react-native/src/types';
 import { ButtonKind } from 'boilerplate-react-native/src/types/button';
-import { Icon, Text } from 'native-base';
+import { Text, useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import TaskDeleteModal from './task-delete-modal';
 import { useTaskStyles } from './task.style';
@@ -22,6 +23,8 @@ interface TaskProps {
 
 const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
   const { description, title } = task;
+
+  const theme = useTheme();
 
   const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
 
@@ -46,7 +49,7 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
           <View style={styles.container}>
             <Button
               kind={ButtonKind.TERTIARY}
-              startEnhancer={<Icon as={<MaterialIcons name="edit" />} />}
+              startEnhancer={<EditIcon width={16} height={16} fill={theme.colors.primary[500]} />}
               onClick={() => handleEditTask(task)}
             >
               Edit
@@ -54,7 +57,7 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
 
             <Button
               kind={ButtonKind.TERTIARY}
-              startEnhancer={<Icon as={<MaterialIcons name="delete" />} color={'danger.600'} />}
+              startEnhancer={<DeleteIcon width={16} height={16} fill={theme.colors.danger[600]} />}
               onClick={handleDeleteTask}
             >
               <Text color={'danger.600'}> Delete</Text>

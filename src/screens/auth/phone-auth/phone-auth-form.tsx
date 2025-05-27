@@ -14,17 +14,18 @@ import {
   Box,
   Checkbox,
   KeyboardAvoidingView,
-  Icon,
 } from 'native-base';
 import React, { useState } from 'react';
 import { Platform } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError } from '../../../types';
 
 import usePhoneAuthForm from './phone-auth-form-hook';
 import { usePhoneAuthFormStyles } from './phone-auth-form.styles';
+
+import CheckIcon from 'boilerplate-react-native/assets/icons/check.svg';
+import { useThemeColor } from 'boilerplate-react-native/src/utils/use-theme-color';
 
 interface PhoneAuthFormProps {
   onSuccess: () => void;
@@ -72,6 +73,8 @@ const renderCountrySelectMenu = (
 );
 
 const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => {
+  const themeColor = useThemeColor('primary.500')
+
   const styles = usePhoneAuthFormStyles();
   const { formik, isSendOTPLoading } = usePhoneAuthForm({
     onSendOTPSuccess: onSuccess,
@@ -131,7 +134,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
               onChange={setIsChecked}
               accessibilityLabel="Agree to privacy policy"
               value="agreePrivacyPolicy"
-              icon={<Icon as={MaterialIcons} name="check" />}
+              icon={<CheckIcon width={12} height={12} color={themeColor} />}
               aria-label="Privacy Policy Checkbox"
             />
             <Text fontSize="sm" flexShrink={1}>

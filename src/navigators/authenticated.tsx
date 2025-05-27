@@ -1,13 +1,15 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
+import HomeIcon from 'boilerplate-react-native/assets/icons/home.svg';
+import PersonIcon from 'boilerplate-react-native/assets/icons/person.svg';
 import { useTheme } from 'native-base';
 import React, { useEffect } from 'react';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { AuthenticatedStackParamsList, AuthenticatedTabParamsList } from '../../@types/navigation';
 import { FullScreenSpinner } from '../components';
 import { useAccountContext, useAuthContext } from '../contexts';
 import { Dashboard, RegistrationScreen } from '../screens';
+import { useThemeColor } from '../utils/use-theme-color';
 
 import ProfileStack from './profile';
 
@@ -16,18 +18,23 @@ const Tab = createBottomTabNavigator<AuthenticatedTabParamsList>();
 
 const getTabBarIcon = (routeName: string) => {
   return ({ color, size }: { color: string; size: number }) => {
-    let iconName: string;
+    const themeColor = useThemeColor(color);
+
+    let icon;
+
     switch (routeName) {
       case 'Home':
-        iconName = 'home';
+        icon = <HomeIcon width={size} height={size} fill={themeColor} />;
         break;
       case 'Profile':
-        iconName = 'person';
+        icon = <PersonIcon width={size} height={size} fill={themeColor} />;
         break;
       default:
-        iconName = 'home';
+        icon = <HomeIcon width={size} height={size} fill={themeColor} />;
+        break;
     }
-    return <Icon name={iconName} color={color} size={size} />;
+
+    return icon;
   };
 };
 

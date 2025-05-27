@@ -1,8 +1,8 @@
+import EditIcon from 'boilerplate-react-native/assets/icons/edit.svg';
 import { Avatar, Button } from 'boilerplate-react-native/src/components';
 import { ButtonKind, ButtonSize } from 'boilerplate-react-native/src/types/button';
-import { Box, Heading, Icon, Text } from 'native-base';
+import { Box, Heading, Text, useTheme } from 'native-base';
 import React from 'react';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { Account, Nullable } from '../../../types';
 
@@ -15,6 +15,8 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({
   accountDetails,
   handleEditProfilePress,
 }) => {
+  const theme = useTheme();
+
   return (
     <>
       <Box alignItems="center">
@@ -34,7 +36,7 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({
             kind={ButtonKind.TERTIARY}
             size={ButtonSize.COMPACT}
           >
-            <Icon as={<MaterialIcons name="edit" />} color="primary" />
+            <EditIcon width={20} height={20} fill={theme.colors.primary['500']} />
           </Button>
         </Box>
         <Text>{accountDetails?.phoneNumber.getFormattedPhoneNumber()}</Text>

@@ -1,3 +1,4 @@
+import DeleteIcon from 'boilerplate-react-native/assets/icons/delete.svg';
 import {
   Button,
   Modal,
@@ -9,9 +10,8 @@ import { useTaskContext } from 'boilerplate-react-native/src/contexts';
 import { AsyncError, Task } from 'boilerplate-react-native/src/types';
 import { ButtonKind } from 'boilerplate-react-native/src/types/button';
 import { t } from 'i18next';
-import { Box, Icon, Text, Toast } from 'native-base';
+import { Box, Text, Toast, useTheme } from 'native-base';
 import React from 'react';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 interface TaskDeleteModalProps {
   handleModalClose: () => void;
@@ -24,6 +24,8 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
   handleModalClose,
   isModalOpen,
 }) => {
+  const theme = useTheme();
+
   const { deleteTask, isDeleteTaskLoading } = useTaskContext();
 
   const onTaskOperationComplete = (desc: string) => {
@@ -69,7 +71,7 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
             onClick={handleDeleteTask}
             kind={ButtonKind.DANGER}
             width="48%"
-            startEnhancer={<Icon as={<MaterialIcons name="delete" />} color={'secondary.50'} />}
+            startEnhancer={<DeleteIcon width={16} height={16} fill={theme.colors.secondary[50]} />}
           >
             Delete
           </Button>

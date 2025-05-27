@@ -1,4 +1,5 @@
-import { Box, Heading } from 'native-base';
+import { SpinnerSize } from 'boilerplate-react-native/src/types/spinner';
+import { VStack } from 'native-base';
 import React from 'react';
 import { DimensionValue, Image } from 'react-native';
 
@@ -11,13 +12,14 @@ type Props = {
 
 const Brand: React.FC<Props> = ({ height, width }: Props) => {
   return (
-    <Box
+    <VStack
       testID="brand-img-wrapper"
       height={height ? `${height}px` : '100%'}
       width={width ? `${width}px` : '100%'}
       justifyContent="center"
       alignItems="center"
       backgroundColor={'secondary.50'}
+      space={4}
     >
       <Image
         source={require('../../../assets/img/logo.png')}
@@ -26,11 +28,8 @@ const Brand: React.FC<Props> = ({ height, width }: Props) => {
         width={100}
         height={100}
       />
-      <Heading color={'primary.500'} my={4}>
-        Better Software
-      </Heading>
-      <Spinner size="large" color="primary.500" />
-    </Box>
+      <Spinner size={SpinnerSize.LARGE} />
+    </VStack>
   );
 };
 

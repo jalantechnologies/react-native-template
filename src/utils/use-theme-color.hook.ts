@@ -5,7 +5,7 @@ export const useThemeColor = (color: string): string => {
   const theme = useTheme();
 
   return useMemo(() => {
-    const [colorKey, shade] = color.split('.');
+    const [colorKey, shade = '500'] = color.split('.');
     const themeColor = theme.colors[colorKey as keyof ITheme['colors']];
 
     if (!themeColor) {

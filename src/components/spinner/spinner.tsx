@@ -1,29 +1,31 @@
-import { useTheme } from 'native-base';
+import { SpinnerSize, SpinnerTypes } from 'boilerplate-react-native/src/types/spinner';
+import { useThemeColor } from 'boilerplate-react-native/src/utils';
 import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 import { styles } from './spinner.styles';
+
 interface SpinnerProps {
-  size?: 'small' | 'large';
-  color?: string;
+  size?: SpinnerSize;
+  type?: SpinnerTypes;
 }
 
-const Spinner: React.FC<SpinnerProps> = ({ size = 'small', color }) => {
-  const { colors } = useTheme();
-
-  const [colorName, hue = '500'] = color?.split('.') ?? [];
-  const spinnerColor = color && (colors as any)[colorName]?.[hue];
+const Spinner: React.FC<SpinnerProps> = ({
+  size = SpinnerSize.SMALL,
+  type = SpinnerTypes.PRIMARY,
+}) => {
+  const color = useThemeColor(type);
 
   return (
     <View style={styles.container}>
-      <ActivityIndicator size={size} color={spinnerColor} />
+      <ActivityIndicator size={size} color={color} />
     </View>
   );
 };
 
 Spinner.defaultProps = {
-  size: 'small',
-  color: 'primary.500',
+  size: SpinnerSize.SMALL,
+  type: SpinnerTypes.PRIMARY,
 };
 
 export default Spinner;

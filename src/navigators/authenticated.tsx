@@ -9,7 +9,7 @@ import { AuthenticatedStackParamsList, AuthenticatedTabParamsList } from '../../
 import { FullScreenSpinner } from '../components';
 import { useAccountContext, useAuthContext } from '../contexts';
 import { Dashboard, RegistrationScreen } from '../screens';
-import { useThemeColor } from '../utils/use-theme-color';
+import { useThemeColor } from '../utils';
 
 import ProfileStack from './profile';
 

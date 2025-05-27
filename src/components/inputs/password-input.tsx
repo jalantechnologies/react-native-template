@@ -1,14 +1,17 @@
-import { Icon } from 'native-base';
+import VisibilityOffIcon from 'boilerplate-react-native/assets/icons/visibility-off.svg';
+import VisibilityIcon from 'boilerplate-react-native/assets/icons/visibility.svg';
 import React, { useState } from 'react';
 import { View, TouchableOpacity } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Input, { InputProps } from './input';
 import { usePasswordInputStyles } from './input.styles';
+import { useTheme } from 'native-base';
 
-interface PasswordInputProps extends InputProps {}
+interface PasswordInputProps extends InputProps { }
 
 const PasswordInput: React.FC<PasswordInputProps> = ({ placeholder, testID, ...props }) => {
+  const theme = useTheme();
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -33,11 +36,11 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ placeholder, testID, ...p
           style={styles.iconButton}
           testID={`${testID}-toggle-visibility`}
         >
-          <Icon
-            as={
-              <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={16} />
-            }
-          />
+          {isPasswordVisible ? (
+            <VisibilityIcon width={16} height={16} fill={theme.colors.primary[500]} />
+          ) : (
+            <VisibilityOffIcon width={16} height={16} fill={theme.colors.primary[500]} />
+          )}
         </TouchableOpacity>
       </View>
     </>

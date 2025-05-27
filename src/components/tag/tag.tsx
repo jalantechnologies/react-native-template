@@ -1,9 +1,9 @@
 // Tag.tsx
+import Close from 'boilerplate-react-native/assets/icons/close.svg';
 import { Box, Text, Pressable } from 'native-base';
 import React from 'react';
 
 import { useTagStyles } from './tag.styles';
-import Close from 'boilerplate-react-native/assets/icons/close.svg';
 
 export enum TagVariant {
   OUTLINED = 'outlined',

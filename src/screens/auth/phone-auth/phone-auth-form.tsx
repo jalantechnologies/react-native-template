@@ -1,5 +1,7 @@
+import CheckIcon from 'boilerplate-react-native/assets/icons/check.svg';
 import { FormControl, Input, Button } from 'boilerplate-react-native/src/components';
 import { ButtonKind } from 'boilerplate-react-native/src/types/button';
+import { useThemeColor } from 'boilerplate-react-native/src/utils/use-theme-color';
 import {
   VStack,
   Container,
@@ -23,9 +25,6 @@ import { AsyncError } from '../../../types';
 
 import usePhoneAuthForm from './phone-auth-form-hook';
 import { usePhoneAuthFormStyles } from './phone-auth-form.styles';
-
-import CheckIcon from 'boilerplate-react-native/assets/icons/check.svg';
-import { useThemeColor } from 'boilerplate-react-native/src/utils/use-theme-color';
 
 interface PhoneAuthFormProps {
   onSuccess: () => void;
@@ -73,7 +72,7 @@ const renderCountrySelectMenu = (
 );
 
 const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => {
-  const themeColor = useThemeColor('primary.500')
+  const themeColor = useThemeColor('primary.500');
 
   const styles = usePhoneAuthFormStyles();
   const { formik, isSendOTPLoading } = usePhoneAuthForm({

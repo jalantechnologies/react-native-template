@@ -2,8 +2,6 @@ import { Box, Heading, ScrollView, KeyboardAvoidingView } from 'native-base';
 import React, { PropsWithChildren } from 'react';
 import { Keyboard, Platform, TouchableWithoutFeedback } from 'react-native';
 
-import ChangeApiUrlButton from './change-api-url/change-api-url';
-
 interface AuthLayoutProps {
   primaryTitle: string;
   secondaryTitle: string;

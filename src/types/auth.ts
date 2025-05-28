@@ -18,6 +18,14 @@ export class PhoneNumber {
   }
 
   getFormattedPhoneNumber(): string {
-    return `${this.countryCode} ${this.phoneNumber}`;
+    let formattedPhoneNumber;
+
+    const cleaned = this.phoneNumber.replace(/\D/g, '');
+    if (cleaned.length !== 10) {
+      formattedPhoneNumber = this.phoneNumber;
+    }
+    formattedPhoneNumber = `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+
+    return `${this.countryCode} ${formattedPhoneNumber}`;
   }
 }

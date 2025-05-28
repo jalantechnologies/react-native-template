@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
 import Config from 'react-native-config';
+import { MMKV } from 'react-native-mmkv';
 
 import { APIResponse, APIError } from '../types';
 
@@ -8,10 +9,18 @@ export class APIService {
   environment: string | undefined;
 
   constructor() {
-    this.service = axios.create({
-      baseURL: Config.API_BASE_URL,
-    });
     this.environment = Config.ENVIRONMENT;
+
+    let apiBaseUrl = Config.API_BASE_URL as string;
+
+    if (this.environment !== 'production') {
+      const localStorage = new MMKV();
+      apiBaseUrl = localStorage.getString('apiBaseUrl') || apiBaseUrl;
+    }
+
+    this.service = axios.create({
+      baseURL: apiBaseUrl,
+    });
 
     this.service.interceptors.response.use(
       (response): AxiosResponse => response,

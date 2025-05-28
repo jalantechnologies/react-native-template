@@ -51,8 +51,6 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
     navigation.navigate('EditProfile');
   };
 
-
-
   return (
     <ProfileLayout>
       <VStack w={'100%'} space={4} divider={<Divider />}>

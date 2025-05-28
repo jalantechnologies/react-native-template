@@ -13,7 +13,6 @@ import { Box, Toast } from 'native-base';
 import React, { useState } from 'react';
 import Config from 'react-native-config';
 
-
 interface ChangeApiUrlModalProps {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;

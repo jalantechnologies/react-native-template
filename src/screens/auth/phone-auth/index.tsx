@@ -20,7 +20,7 @@ const PhoneAuth: React.FC = () => {
   };
 
   return (
-    <AuthLayout primaryTitle="Better" secondaryTitle="Software">
+    <AuthLayout primaryTitle="Better." secondaryTitle="">
       <PhoneAuthForm onSuccess={onSuccess} onError={onError} />
     </AuthLayout>
   );

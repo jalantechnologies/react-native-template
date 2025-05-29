@@ -54,16 +54,11 @@ const ChangeApiUrlModal: React.FC<ChangeApiUrlModalProps> = ({ isModalOpen, setI
           />
         </FormControl>
       </ModalBody>
-      <ModalFooter>
-        <Box flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
-          <Button onClick={handleModalClose} kind={ButtonKind.SECONDARY} width="48%">
-            Cancel
-          </Button>
-          <Button kind={ButtonKind.PRIMARY} width="48%" onClick={handleSaveChanges}>
-            Save Changes
-          </Button>
-        </Box>
-      </ModalFooter>
+      <ModalFooter
+        onCancel={handleModalClose}
+        onConfirm={handleSaveChanges}
+        confirmText="Save Changes"
+      />
     </Modal>
   );
 };

@@ -1,6 +1,6 @@
 export enum SpinnerTypes {
   PRIMARY = 'primary',
-  SECONDARY = 'secondary',
+  SECONDARY = 'secondary.50',
   TERTIARY = 'tertiary',
 }
 

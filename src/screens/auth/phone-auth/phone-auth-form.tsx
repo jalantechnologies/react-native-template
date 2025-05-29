@@ -15,10 +15,8 @@ import {
   Link,
   Box,
   Checkbox,
-  KeyboardAvoidingView,
 } from 'native-base';
 import React, { useState } from 'react';
-import { Platform } from 'react-native';
 
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError } from '../../../types';
@@ -90,75 +88,66 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
   };
 
   return (
-    <KeyboardAvoidingView
-      flex={1}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={60}
-    >
-      <Box flex={1} px={4} pb={4}>
-        <VStack space={6} flex={1} mb={8}>
-          <Container>
-            <Heading size="lg">Welcome</Heading>
-            <Heading mt="1" size="xs">
-              Enter your number to continue
-            </Heading>
-          </Container>
-          <FormControl label={'Phone Number'}>
-            <HStack space={2} width="100%">
-              {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange)}
-              <Box
-                flex={3}
-                justifyContent="center"
-                style={[
-                  styles.inputBox,
-                  formik.touched.phoneNumber && formik.errors.phoneNumber ? styles.errorStyle : {},
-                ]}
-              >
-                <Input
-                  value={formik.values.phoneNumber}
-                  onChangeText={formik.handleChange('phoneNumber')}
-                  keyboardType="numeric"
-                  placeholder="XXXXXXXXXX"
-                />
-              </Box>
-            </HStack>
-            {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
-              <Text style={styles.errorText}>{formik.errors.phoneNumber}</Text>
-            ) : null}
-          </FormControl>
-
-          <HStack alignItems="center" space={2} mt={2}>
-            <Checkbox
-              isChecked={isChecked}
-              onChange={setIsChecked}
-              accessibilityLabel="Agree to privacy policy"
-              value="agreePrivacyPolicy"
-              icon={<CheckIcon width={12} height={12} color={themeColor} />}
-              aria-label="Privacy Policy Checkbox"
-            />
-            <Text fontSize="sm" flexShrink={1}>
-              By continuing, you agree to our{' '}
-              <Link
-                _text={{ color: 'primary.500', underline: true }}
-                href="https://jalantechnologies.github.io/boilerplate-react-native/"
-                isExternal
-              >
-                Privacy Policy
-              </Link>
-            </Text>
+    <Box flex={1} pb={4}>
+      <VStack space={6} flex={1} mb={8}>
+        <Container>
+          <Heading size="lg">Login</Heading>
+        </Container>
+        <FormControl label={'Mobile Number'}>
+          <HStack space={2} width="100%">
+            {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange)}
+            <Box
+              flex={3}
+              justifyContent="center"
+              style={[
+                styles.inputBox,
+                formik.touched.phoneNumber && formik.errors.phoneNumber ? styles.errorStyle : {},
+              ]}
+            >
+              <Input
+                value={formik.values.phoneNumber}
+                onChangeText={formik.handleChange('phoneNumber')}
+                keyboardType="numeric"
+                placeholder="XXXXXXXXXX"
+              />
+            </Box>
           </HStack>
-        </VStack>
+          {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
+            <Text style={styles.errorText}>{formik.errors.phoneNumber}</Text>
+          ) : null}
+        </FormControl>
 
-        <Button
-          disabled={!isChecked}
-          isLoading={isSendOTPLoading}
-          onClick={() => formik.handleSubmit()}
-          kind={ButtonKind.PRIMARY}
-        >
-          Send OTP
-        </Button>
-      </Box>
-    </KeyboardAvoidingView>
+        <HStack alignItems="center" space={2} mt={2}>
+          <Checkbox
+            isChecked={isChecked}
+            onChange={setIsChecked}
+            accessibilityLabel="Agree to privacy policy"
+            value="agreePrivacyPolicy"
+            icon={<CheckIcon width={12} height={12} color={themeColor} />}
+            aria-label="Privacy Policy Checkbox"
+          />
+          <Text fontSize="sm" alignSelf={'center'} lineHeight={16}>
+            By continuing, you agree to our
+            <Link
+              _text={{ color: 'primary.500', underline: true, marginLeft: 1 }}
+              href="https://jalantechnologies.github.io/boilerplate-react-native/"
+              isExternal
+            >
+              Privacy Policy
+            </Link>
+          </Text>
+        </HStack>
+      </VStack>
+
+      <Button
+        disabled={!isChecked}
+        isLoading={isSendOTPLoading}
+        onClick={() => formik.handleSubmit()}
+        kind={ButtonKind.PRIMARY}
+      >
+        Send OTP
+      </Button>
+    </Box>
   );
 };
 

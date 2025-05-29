@@ -32,7 +32,7 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   };
 
   return (
-    <AuthLayout primaryTitle="OTP" secondaryTitle="Verification">
+    <AuthLayout primaryTitle="Better." secondaryTitle="">
       <OTPForm
         countryCode={countryCode}
         isResendEnabled={isResendEnabled}

@@ -12,7 +12,6 @@ export interface InputProps extends Omit<TextInputProps, 'style | multiline'> {
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
 }
 
-
 const Input = forwardRef<TextInput, InputProps>(
   (
     { disabled, endEnhancer, handleInputRef, startEnhancer, testId, textAlign = 'left', ...props },

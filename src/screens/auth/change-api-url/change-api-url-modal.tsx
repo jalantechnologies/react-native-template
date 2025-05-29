@@ -1,5 +1,4 @@
 import {
-  Button,
   FormControl,
   Input,
   Modal,
@@ -7,9 +6,8 @@ import {
   ModalFooter,
   ModalHeader,
 } from 'boilerplate-react-native/src/components';
-import { ButtonKind } from 'boilerplate-react-native/src/types/button';
 import { useLocalStorage } from 'boilerplate-react-native/src/utils';
-import { Box, Toast } from 'native-base';
+import { Toast } from 'native-base';
 import React, { useState } from 'react';
 import Config from 'react-native-config';
 

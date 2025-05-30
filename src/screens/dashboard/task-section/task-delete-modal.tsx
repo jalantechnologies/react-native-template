@@ -1,11 +1,5 @@
 import DeleteIcon from 'boilerplate-react-native/assets/icons/delete.svg';
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-} from 'boilerplate-react-native/src/components';
+import { Button, Modal } from 'boilerplate-react-native/src/components';
 import { useTaskContext } from 'boilerplate-react-native/src/contexts';
 import { AsyncError, Task } from 'boilerplate-react-native/src/types';
 import { ButtonKind } from 'boilerplate-react-native/src/types/button';
@@ -55,13 +49,13 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
 
   return (
     <Modal isModalOpen={isModalOpen} onRequestClose={handleModalClose}>
-      <ModalHeader title="Delete Task" onClose={handleModalClose} />
-      <ModalBody>
+      <Modal.Header title="Delete Task" onClose={handleModalClose} />
+      <Modal.Body>
         <Box alignItems="center">
           <Text textAlign={'center'}>Are you sure you want to delete this task?</Text>
         </Box>
-      </ModalBody>
-      <ModalFooter>
+      </Modal.Body>
+      <Modal.Footer>
         <Box flex={1} mr={2}>
           <Button onClick={handleModalClose} kind={ButtonKind.SECONDARY}>
             Cancel
@@ -77,7 +71,7 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
             Delete
           </Button>
         </Box>
-      </ModalFooter>
+      </Modal.Footer>
     </Modal>
   );
 };

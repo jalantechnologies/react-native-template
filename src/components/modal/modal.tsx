@@ -6,6 +6,9 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 
+import ModalBody from './modal-body.component';
+import ModalFooter from './modal-footer.component';
+import ModalHeader from './modal-header.component';
 import { useModalStyles } from './modal.styles';
 
 export interface ModalProps {
@@ -13,7 +16,7 @@ export interface ModalProps {
   onRequestClose?: () => void;
 }
 
-const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
+const ModalComponent: React.FC<PropsWithChildren<ModalProps>> = ({
   children,
   isModalOpen,
   onRequestClose,
@@ -40,8 +43,14 @@ const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
   );
 };
 
-Modal.defaultProps = {
+ModalComponent.defaultProps = {
   onRequestClose: () => {},
+};
+
+const Modal = ModalComponent as typeof ModalComponent & {
+  Header: typeof ModalHeader;
+  Body: typeof ModalBody;
+  Footer: typeof ModalFooter;
 };
 
 export default Modal;

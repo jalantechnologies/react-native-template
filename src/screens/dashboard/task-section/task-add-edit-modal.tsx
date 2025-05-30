@@ -1,12 +1,4 @@
-import {
-  Button,
-  FormControl,
-  Input,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-} from 'boilerplate-react-native/src/components';
+import { Button, FormControl, Input, Modal } from 'boilerplate-react-native/src/components';
 import { VStack } from 'native-base';
 import React from 'react';
 
@@ -82,9 +74,8 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
 
   return (
     <Modal isModalOpen={isModalOpen} onRequestClose={handleModalClose} key={taskOperation}>
-      <ModalHeader title={modalHeading()} onClose={handleModalClose} />
-
-      <ModalBody>
+      <Modal.Header title={modalHeading()} onClose={handleModalClose} />
+      <Modal.Body>
         <VStack space={4} p={4}>
           <FormControl label="Title" error={formik.touched.title ? formik.errors.title : ''}>
             <Input
@@ -93,7 +84,6 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
               placeholder="Title"
             />
           </FormControl>
-
           <FormControl
             label="Description"
             error={formik.touched.description ? formik.errors.description : ''}
@@ -105,12 +95,12 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
             />
           </FormControl>
         </VStack>
-      </ModalBody>
-      <ModalFooter>
+      </Modal.Body>
+      <Modal.Footer>
         <Button isLoading={isLoading()} onClick={() => formik.handleSubmit()}>
           {buttonText()}
         </Button>
-      </ModalFooter>
+      </Modal.Footer>
     </Modal>
   );
 };

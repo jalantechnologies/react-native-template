@@ -18,30 +18,28 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({
   const theme = useTheme();
 
   return (
-    <>
-      <Box alignItems="center">
-        <Box>
-          <Avatar initials={accountDetails?.displayName().slice(0, 2).toUpperCase()} />
-        </Box>
-        <Box
-          borderRadius="full"
-          p={1}
-          flexDirection="row"
-          alignItems="center"
-          justifyContent={'center'}
-        >
-          <Heading mr={2}>{accountDetails?.displayName()}</Heading>
-          <Button
-            onClick={handleEditProfilePress}
-            kind={ButtonKind.TERTIARY}
-            size={ButtonSize.COMPACT}
-          >
-            <EditIcon width={20} height={20} fill={theme.colors.primary['500']} />
-          </Button>
-        </Box>
-        <Text>{accountDetails?.phoneNumber.getFormattedPhoneNumber()}</Text>
+    <Box alignItems="center">
+      <Box>
+        <Avatar initials={accountDetails?.displayName().slice(0, 2).toUpperCase()} />
       </Box>
-    </>
+      <Box
+        borderRadius="full"
+        p={1}
+        flexDirection="row"
+        alignItems="center"
+        justifyContent={'center'}
+      >
+        <Heading mr={2}>{accountDetails?.displayName()}</Heading>
+        <Button
+          onClick={handleEditProfilePress}
+          kind={ButtonKind.TERTIARY}
+          size={ButtonSize.COMPACT}
+        >
+          <EditIcon width={20} height={20} fill={theme.colors.primary['500']} />
+        </Button>
+      </Box>
+      <Text>{accountDetails?.phoneNumber.getFormattedPhoneNumber()}</Text>
+    </Box>
   );
 };
 

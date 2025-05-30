@@ -49,4 +49,8 @@ const Modal = ModalComponent as typeof ModalComponent & {
   Footer: typeof ModalFooter;
 };
 
+Modal.Body = ModalBody;
+Modal.Header = ModalHeader;
+Modal.Footer = ModalFooter;
+
 export default Modal;

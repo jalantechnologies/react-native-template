@@ -20,7 +20,6 @@ import React, { useState } from 'react';
 
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError, PhoneNumber } from '../../../types';
-import { AsyncError } from '../../../types';
 import ChangeApiUrlButton from '../change-api-url/change-api-url';
 
 import usePhoneAuthForm from './phone-auth-form-hook';

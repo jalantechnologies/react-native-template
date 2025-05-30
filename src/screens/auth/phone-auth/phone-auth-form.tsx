@@ -19,7 +19,7 @@ import {
 import React, { useState } from 'react';
 
 import { CountrySelectOptions } from '../../../constants';
-import { AsyncError } from '../../../types';
+import { AsyncError, PhoneNumber } from '../../../types';
 
 import usePhoneAuthForm from './phone-auth-form-hook';
 import { usePhoneAuthFormStyles } from './phone-auth-form.styles';
@@ -87,6 +87,16 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
     formik.setFieldValue('country', country);
   };
 
+  const phoneNumber = new PhoneNumber({
+    countryCode: formik.values.countryCode.replace('+', ''),
+    phoneNumber: formik.values.phoneNumber,
+  });
+
+  const phoneNumberPlaceholder = new PhoneNumber({
+    countryCode: formik.values.countryCode.replace('+', ''),
+    phoneNumber: '9999999999',
+  }).getFormattedWithoutCountryCode();
+
   return (
     <Box flex={1} pb={4}>
       <VStack space={6} flex={1} mb={8}>
@@ -105,10 +115,10 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
               ]}
             >
               <Input
-                value={formik.values.phoneNumber}
+                value={phoneNumber.getFormattedWithoutCountryCode()}
                 onChangeText={formik.handleChange('phoneNumber')}
                 keyboardType="numeric"
-                placeholder="XXXXXXXXXX"
+                placeholder={phoneNumberPlaceholder}
               />
             </Box>
           </HStack>

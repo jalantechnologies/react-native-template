@@ -1,3 +1,5 @@
+import { PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
+
 export class AccessToken {
   accountId: string;
   token: string;
@@ -12,20 +14,30 @@ export class PhoneNumber {
   countryCode: string;
   phoneNumber: string;
 
-  constructor(json: any) {
-    this.countryCode = json.countryCode as string;
-    this.phoneNumber = json.phoneNumber as string;
+  constructor(json: { countryCode: string; phoneNumber: string }) {
+    this.countryCode = json.countryCode;
+    this.phoneNumber = json.phoneNumber;
   }
 
   getFormattedPhoneNumber(): string {
-    let formattedPhoneNumber;
-
-    const cleaned = this.phoneNumber.replace(/\D/g, '');
-    if (cleaned.length !== 10) {
-      formattedPhoneNumber = this.phoneNumber;
+    const phoneUtil = PhoneNumberUtil.getInstance();
+    try {
+      const fullNumber = `+${this.countryCode}${this.phoneNumber}`;
+      const parsed = phoneUtil.parse(fullNumber, '');
+      return phoneUtil.format(parsed, PhoneNumberFormat.INTERNATIONAL);
+    } catch (e) {
+      return `+${this.countryCode}${this.phoneNumber}`;
     }
-    formattedPhoneNumber = `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+  }
 
-    return `${this.countryCode} ${formattedPhoneNumber}`;
+  getFormattedWithoutCountryCode(): string {
+    const phoneUtil = PhoneNumberUtil.getInstance();
+    try {
+      const fullNumber = `+${this.countryCode}${this.phoneNumber}`;
+      const parsed = phoneUtil.parse(fullNumber, '');
+      return phoneUtil.format(parsed, PhoneNumberFormat.NATIONAL);
+    } catch (e) {
+      return this.phoneNumber;
+    }
   }
 }

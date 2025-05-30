@@ -14,7 +14,13 @@ const Spinner: React.FC<SpinnerProps> = ({
   size = SpinnerSize.SMALL,
   type = SpinnerTypes.PRIMARY,
 }) => {
-  const color = useThemeColor(type);
+  const typeToColorMap = new Map<SpinnerTypes, string>([
+    [SpinnerTypes.PRIMARY, 'primary'],
+    [SpinnerTypes.SECONDARY, 'secondary.50'],
+    [SpinnerTypes.TERTIARY, 'tertiary'],
+  ]);
+
+  const color = useThemeColor(typeToColorMap.get(type) as string);
 
   return (
     <View style={styles.container}>

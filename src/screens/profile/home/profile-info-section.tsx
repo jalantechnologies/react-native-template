@@ -20,7 +20,7 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({
   return (
     <Box alignItems="center">
       <Box>
-        <Avatar initials={accountDetails?.displayName().slice(0, 2).toUpperCase()} />
+        <Avatar initials={accountDetails?.initials()} />
       </Box>
       <Box
         borderRadius="full"

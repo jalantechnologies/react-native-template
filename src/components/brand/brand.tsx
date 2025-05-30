@@ -25,16 +25,19 @@ const Brand: React.FC<Props> = ({ height, width }) => {
   const { colors } = useTheme();
 
   useEffect(() => {
+    /**
+     * Animates the company logo and brand text in a simple intro sequence:
+     * 1. The logo slides down from above the viewport to the vertical center over ANIM_DURATION_IN_MS = 500 ms.
+     * 2. A PAUSE_DURATION_IN_MS = 1000 ms pause occurs with the logo fully visible.
+     * 3. The logo fades out while the brand text ("Better.") fades in over FADE_DURATION_IN_MS = 300 ms.
+     */
     Animated.sequence([
-      // Move logo to center
       Animated.timing(translateY, {
         toValue: SCREEN_HEIGHT / 2 - LOGO_SIZE / 2,
         duration: ANIM_DURATION_IN_MS,
         useNativeDriver: true,
       }),
-      // Pause
       Animated.delay(PAUSE_DURATION_IN_MS),
-      // Fade out logo and fade in text simultaneously
       Animated.parallel([
         Animated.timing(logoOpacity, {
           toValue: 0,

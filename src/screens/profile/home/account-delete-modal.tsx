@@ -24,7 +24,7 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
   };
 
   return (
-    <Modal isModalOpen={isModalOpen} onRequestClose={handleModalClose}>
+    <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose}>
       <Modal.Header title="Delete Account" onClose={handleModalClose} />
       <Modal.Body>
         <Box alignItems="center">

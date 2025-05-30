@@ -73,7 +73,7 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
   };
 
   return (
-    <Modal isModalOpen={isModalOpen} onRequestClose={handleModalClose} key={taskOperation}>
+    <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose} key={taskOperation}>
       <Modal.Header title={modalHeading()} onClose={handleModalClose} />
       <Modal.Body>
         <VStack space={4} p={4}>

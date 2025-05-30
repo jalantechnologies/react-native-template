@@ -13,13 +13,13 @@ import { useModalStyles } from './modal.styles';
 
 export interface ModalProps {
   isModalOpen: boolean;
-  onRequestClose?: () => void;
+  handleModalClose: () => void;
 }
 
 const ModalComponent: React.FC<PropsWithChildren<ModalProps>> = ({
   children,
   isModalOpen,
-  onRequestClose,
+  handleModalClose,
 }) => {
   const styles = useModalStyles();
 
@@ -28,9 +28,9 @@ const ModalComponent: React.FC<PropsWithChildren<ModalProps>> = ({
       visible={isModalOpen}
       transparent
       animationType="slide"
-      onRequestClose={onRequestClose}
+      onRequestClose={handleModalClose}
     >
-      <TouchableWithoutFeedback onPress={onRequestClose}>
+      <TouchableWithoutFeedback onPress={handleModalClose}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback>
             <KeyboardAvoidingView behavior={'position'} style={styles.modalKeyboardAvoidingView}>
@@ -41,10 +41,6 @@ const ModalComponent: React.FC<PropsWithChildren<ModalProps>> = ({
       </TouchableWithoutFeedback>
     </RNModal>
   );
-};
-
-ModalComponent.defaultProps = {
-  onRequestClose: () => {},
 };
 
 const Modal = ModalComponent as typeof ModalComponent & {

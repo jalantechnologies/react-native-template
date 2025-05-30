@@ -5,18 +5,12 @@ import { Toast } from 'native-base';
 import React, { useState } from 'react';
 import Config from 'react-native-config';
 
-const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, onRequestClose }) => {
+const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose }) => {
   const localStorage = useLocalStorage();
 
   const [apiBaseUrl, setApiBaseUrl] = useState(
     localStorage.getFromStorage('apiBaseUrl') || (Config.API_BASE_URL as string),
   );
-
-  const handleModalClose = () => {
-    if (onRequestClose) {
-      onRequestClose();
-    }
-  };
 
   const handleSaveChanges = () => {
     if (!apiBaseUrl) {
@@ -27,11 +21,14 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, onRequestClose }
     }
 
     localStorage.setToStorage('apiBaseUrl', apiBaseUrl);
-    handleModalClose();
+
+    if (handleModalClose) {
+      handleModalClose();
+    }
   };
 
   return (
-    <Modal isModalOpen={isModalOpen} onRequestClose={handleModalClose}>
+    <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose}>
       <Modal.Header title="Change Base API URL" onClose={handleModalClose} />
       <Modal.Body>
         <FormControl label="New Base API URL">

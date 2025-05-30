@@ -48,7 +48,7 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
   };
 
   return (
-    <Modal isModalOpen={isModalOpen} onRequestClose={handleModalClose}>
+    <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose}>
       <Modal.Header title="Delete Task" onClose={handleModalClose} />
       <Modal.Body>
         <Box alignItems="center">

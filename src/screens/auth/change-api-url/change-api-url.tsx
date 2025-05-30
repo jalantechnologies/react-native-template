@@ -28,7 +28,7 @@ const ChangeApiUrlButton = () => {
           </Button>
         </View>
         <ChangeApiUrlModal
-          onRequestClose={() => setIsChangeAPIUrlModalOpen(false)}
+          handleModalClose={() => setIsChangeAPIUrlModalOpen(false)}
           isModalOpen={isChangeAPIUrlModalOpen}
         />
       </>

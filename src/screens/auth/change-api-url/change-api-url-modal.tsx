@@ -48,7 +48,7 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, onRequestClose }
         onConfirm={handleSaveChanges}
         confirmText="Save Changes"
       />
-    </Modal >
+    </Modal>
   );
 };
 

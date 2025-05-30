@@ -62,15 +62,16 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
         </Box>
       </ModalBody>
       <ModalFooter>
-        <Box flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
-          <Button onClick={handleModalClose} kind={ButtonKind.SECONDARY} width="48%">
+        <Box flex={1} mr={2}>
+          <Button onClick={handleModalClose} kind={ButtonKind.SECONDARY}>
             Cancel
           </Button>
+        </Box>
+        <Box flex={1} ml={2}>
           <Button
             isLoading={isDeleteTaskLoading}
             onClick={handleDeleteTask}
             kind={ButtonKind.DANGER}
-            width="48%"
             startEnhancer={<DeleteIcon width={16} height={16} fill={theme.colors.secondary[50]} />}
           >
             Delete

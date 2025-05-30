@@ -38,15 +38,16 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
         </Box>
       </ModalBody>
       <ModalFooter>
-        <Box flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
-          <Button onClick={handleModalClose} kind={ButtonKind.SECONDARY} width="48%">
+        <Box flex={1} mr={2}>
+          <Button onClick={handleModalClose} kind={ButtonKind.SECONDARY}>
             Cancel
           </Button>
+        </Box>
+        <Box flex={1} ml={2}>
           <Button
             isLoading={isDeleteAccountLoading}
             onClick={handleDeleteAccountPress}
             kind={ButtonKind.DANGER}
-            width="48%"
             startEnhancer={
               <DeleteIcon width={20} height={20} fill={theme.colors.secondary['50']} />
             }

@@ -2,16 +2,24 @@ import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } f
 import Config from 'react-native-config';
 
 import { APIResponse, APIError } from '../types';
+import { LocalStorageService } from '../utils';
 
 export class APIService {
   service: AxiosInstance;
   environment: string | undefined;
 
   constructor() {
-    this.service = axios.create({
-      baseURL: Config.API_BASE_URL,
-    });
     this.environment = Config.ENVIRONMENT;
+
+    let apiBaseUrl = Config.API_BASE_URL as string;
+
+    if (this.environment !== 'production') {
+      apiBaseUrl = LocalStorageService.getFromStorage('apiBaseUrl') || apiBaseUrl;
+    }
+
+    this.service = axios.create({
+      baseURL: apiBaseUrl,
+    });
 
     this.service.interceptors.response.use(
       (response): AxiosResponse => response,

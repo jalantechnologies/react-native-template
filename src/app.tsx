@@ -11,7 +11,7 @@ import { AccountContextProvider, AuthContextProvider, TaskContextProvider } from
 import Logger from './logger/logger';
 import ApplicationNavigator from './navigators/application';
 import './translations';
-import DatadogConfig from './services/datadog';
+import DatadogConfig, { onDataDogSDKInitialized } from './services/datadog';
 
 const App = () => {
   Logger.initializeLoggers();
@@ -23,7 +23,7 @@ const App = () => {
         onError={(e, stack) => Logger.error(`App Error: ${e} ${stack}`)}
         FallbackComponent={ErrorComponent}
       >
-        <DatadogProvider configuration={DatadogConfig}>
+        <DatadogProvider configuration={DatadogConfig} onInitialization={onDataDogSDKInitialized}>
           <SafeAreaProvider initialMetrics={initialWindowMetrics}>
             <AuthContextProvider>
               <AccountContextProvider>

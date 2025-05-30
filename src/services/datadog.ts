@@ -1,4 +1,10 @@
 import { DatadogProviderConfiguration } from '@datadog/mobile-react-native';
+import {
+  ImagePrivacyLevel,
+  SessionReplay,
+  TextAndInputPrivacyLevel,
+  TouchPrivacyLevel,
+} from '@datadog/mobile-react-native-session-replay';
 import Config from 'react-native-config';
 
 const DatadogConfig = new DatadogProviderConfiguration(
@@ -21,5 +27,14 @@ DatadogConfig.nativeCrashReportEnabled = true;
 
 // Optional: sample RUM sessions (here, 100% of session will be sent to Datadog. Default = 100%)
 // DatadogConfig.sampleRate = 100
+
+export const onDataDogSDKInitialized = async () => {
+  await SessionReplay.enable({
+    replaySampleRate: 20,
+    textAndInputPrivacyLevel: TextAndInputPrivacyLevel.MASK_SENSITIVE_INPUTS,
+    imagePrivacyLevel: ImagePrivacyLevel.MASK_NONE,
+    touchPrivacyLevel: TouchPrivacyLevel.SHOW,
+  });
+};
 
 export default DatadogConfig;

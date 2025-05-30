@@ -1,3 +1,4 @@
+import { DdRumReactNavigationTracking } from '@datadog/mobile-react-navigation';
 import { useFlipper } from '@react-navigation/devtools';
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -18,9 +19,13 @@ const ApplicationNavigator = () => {
 
   useFlipper(navigationRef);
 
+  const onNavigationReady = () => {
+    DdRumReactNavigationTracking.startTrackingViews(navigationRef.current);
+  };
+
   return (
     <Box safeAreaTop flex={1}>
-      <NavigationContainer ref={navigationRef}>
+      <NavigationContainer ref={navigationRef} onReady={onNavigationReady}>
         <StatusBar />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Startup" component={Startup} />

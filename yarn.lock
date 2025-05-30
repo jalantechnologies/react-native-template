@@ -1317,12 +1317,22 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@datadog/mobile-react-native@^2.6.1":
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/@datadog/mobile-react-native/-/mobile-react-native-2.6.1.tgz#ae17b48857d27e3184e11a5f42555bbedfa77747"
-  integrity sha512-MB7B0z1JfMhWBSHShKqqtA7lKUm7pSMO7Gb2IrejFm5a5CC4YTgMkPYaTCltqtPeaLwHC/xWOt/aR7TzJCRVLg==
+"@datadog/mobile-react-native-session-replay@^2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@datadog/mobile-react-native-session-replay/-/mobile-react-native-session-replay-2.8.0.tgz#b0344d9a0a6fcf88c3574f116c5f2c04d5019fbb"
+  integrity sha512-pckGgWgrmY5ZgBMuX3qkI9TJUblLHUmq7V/+ZJP7vlFU/NdENwv2WfLhpQwzXJaLhoVnjmoJD6w9xvtQvONpmQ==
+
+"@datadog/mobile-react-native@^2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@datadog/mobile-react-native/-/mobile-react-native-2.8.0.tgz#bac327937940dcd4c04cad1275f4266f00dbe83c"
+  integrity sha512-qhsweLPh4YAbMBdNWZS77r59vYoHwXlm6cL5cr3ev5hK11vSqChmx1TB+fU6vT2CX3xSHJY6PKUkGtxedTpJjQ==
   dependencies:
     big-integer "^1.6.52"
+
+"@datadog/mobile-react-navigation@^2.8.0":
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/@datadog/mobile-react-navigation/-/mobile-react-navigation-2.8.0.tgz#9f409e3a141ade060e864357038263b432583cb1"
+  integrity sha512-NO3JEMsffawN5UmNc9WTO+0fgnY3r1PxdHKEwa7bUQK+HwnPI+wI34NsebItwBhGHHPzEfYdScUFD/83+YssMA==
 
 "@egjs/hammerjs@^2.0.17":
   version "2.0.17"

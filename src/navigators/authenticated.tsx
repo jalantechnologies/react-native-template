@@ -1,3 +1,4 @@
+import { DdSdkReactNative } from '@datadog/mobile-react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeIcon from 'boilerplate-react-native/assets/icons/home.svg';
@@ -39,7 +40,7 @@ const getTabBarIcon = (routeName: string) => {
 };
 
 const AuthenticatedStack = () => {
-  const { isNewUser, isAccountLoading, getAccountDetails } = useAccountContext();
+  const { isNewUser, isAccountLoading, getAccountDetails, accountDetails } = useAccountContext();
   const { logout } = useAuthContext();
   const { colors } = useTheme();
 
@@ -48,6 +49,15 @@ const AuthenticatedStack = () => {
       logout();
     });
   }, []);
+
+  useEffect(() => {
+    if (!isAccountLoading && accountDetails) {
+      DdSdkReactNative.setUserInfo({
+        id: accountDetails.id,
+        name: accountDetails.displayName(),
+      });
+    }
+  }, [isAccountLoading, accountDetails]);
 
   if (isAccountLoading) {
     return <FullScreenSpinner />;

@@ -1,8 +1,8 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
 import Config from 'react-native-config';
-import { MMKV } from 'react-native-mmkv';
 
 import { APIResponse, APIError } from '../types';
+import { LocalStorageService } from '../utils';
 
 export class APIService {
   service: AxiosInstance;
@@ -14,8 +14,7 @@ export class APIService {
     let apiBaseUrl = Config.API_BASE_URL as string;
 
     if (this.environment !== 'production') {
-      const localStorage = new MMKV();
-      apiBaseUrl = localStorage.getString('apiBaseUrl') || apiBaseUrl;
+      apiBaseUrl = LocalStorageService.getFromStorage('apiBaseUrl') || apiBaseUrl;
     }
 
     this.service = axios.create({

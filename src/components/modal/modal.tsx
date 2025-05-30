@@ -8,7 +8,7 @@ import {
 
 import { useModalStyles } from './modal.styles';
 
-interface ModalProps {
+export interface ModalProps {
   isModalOpen: boolean;
   onRequestClose?: () => void;
 }

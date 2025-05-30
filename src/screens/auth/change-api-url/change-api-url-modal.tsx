@@ -6,17 +6,13 @@ import {
   ModalFooter,
   ModalHeader,
 } from 'boilerplate-react-native/src/components';
+import { ModalProps } from 'boilerplate-react-native/src/components/modal/modal';
 import { useLocalStorage } from 'boilerplate-react-native/src/utils';
 import { Toast } from 'native-base';
 import React, { useState } from 'react';
 import Config from 'react-native-config';
 
-interface ChangeApiUrlModalProps {
-  isModalOpen: boolean;
-  setIsModalOpen: (isOpen: boolean) => void;
-}
-
-const ChangeApiUrlModal: React.FC<ChangeApiUrlModalProps> = ({ isModalOpen, setIsModalOpen }) => {
+const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, onRequestClose }) => {
   const localStorage = useLocalStorage();
 
   const [apiBaseUrl, setApiBaseUrl] = useState(
@@ -24,7 +20,9 @@ const ChangeApiUrlModal: React.FC<ChangeApiUrlModalProps> = ({ isModalOpen, setI
   );
 
   const handleModalClose = () => {
-    setIsModalOpen(false);
+    if (onRequestClose) {
+      onRequestClose();
+    }
   };
 
   const handleSaveChanges = () => {

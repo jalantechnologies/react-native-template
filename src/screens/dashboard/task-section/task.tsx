@@ -1,12 +1,6 @@
 import DeleteIcon from 'boilerplate-react-native/assets/icons/delete.svg';
 import EditIcon from 'boilerplate-react-native/assets/icons/edit.svg';
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-} from 'boilerplate-react-native/src/components';
+import { Button, Card } from 'boilerplate-react-native/src/components';
 import { Task } from 'boilerplate-react-native/src/types';
 import { ButtonKind } from 'boilerplate-react-native/src/types/button';
 import { Text, useTheme } from 'native-base';
@@ -41,11 +35,11 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
   return (
     <>
       <Card>
-        <CardHeader title={title} />
-        <CardContent>
+        <Card.Header title={title} />
+        <Card.Content>
           <Text>{description}</Text>
-        </CardContent>
-        <CardActions>
+        </Card.Content>
+        <Card.Actions>
           <View style={styles.container}>
             <Button
               kind={ButtonKind.TERTIARY}
@@ -63,7 +57,7 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
               <Text color={'danger.600'}> Delete</Text>
             </Button>
           </View>
-        </CardActions>
+        </Card.Actions>
       </Card>
       <TaskDeleteModal
         task={task}

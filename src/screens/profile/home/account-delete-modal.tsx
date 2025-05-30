@@ -1,11 +1,5 @@
 import DeleteIcon from 'boilerplate-react-native/assets/icons/delete.svg';
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-} from 'boilerplate-react-native/src/components';
+import { Button, Modal } from 'boilerplate-react-native/src/components';
 import { ButtonKind } from 'boilerplate-react-native/src/types/button';
 import { Box, Text, useTheme } from 'native-base';
 import React from 'react';
@@ -31,13 +25,13 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
 
   return (
     <Modal isModalOpen={isModalOpen} onRequestClose={handleModalClose}>
-      <ModalHeader title="Delete Account" onClose={handleModalClose} />
-      <ModalBody>
+      <Modal.Header title="Delete Account" onClose={handleModalClose} />
+      <Modal.Body>
         <Box alignItems="center">
           <Text textAlign={'center'}>Are you sure you want to delete your account?</Text>
         </Box>
-      </ModalBody>
-      <ModalFooter>
+      </Modal.Body>
+      <Modal.Footer>
         <Box flex={1} mr={2}>
           <Button onClick={handleModalClose} kind={ButtonKind.SECONDARY}>
             Cancel
@@ -55,7 +49,7 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
             Delete
           </Button>
         </Box>
-      </ModalFooter>
+      </Modal.Footer>
     </Modal>
   );
 };

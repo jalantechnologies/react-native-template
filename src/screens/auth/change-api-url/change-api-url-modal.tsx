@@ -1,11 +1,4 @@
-import {
-  FormControl,
-  Input,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-} from 'boilerplate-react-native/src/components';
+import { FormControl, Input, Modal } from 'boilerplate-react-native/src/components';
 import { ModalProps } from 'boilerplate-react-native/src/components/modal/modal';
 import { useLocalStorage } from 'boilerplate-react-native/src/utils';
 import { Toast } from 'native-base';
@@ -39,8 +32,8 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, onRequestClose }
 
   return (
     <Modal isModalOpen={isModalOpen} onRequestClose={handleModalClose}>
-      <ModalHeader title="Change Base API URL" onClose={handleModalClose} />
-      <ModalBody>
+      <Modal.Header title="Change Base API URL" onClose={handleModalClose} />
+      <Modal.Body>
         <FormControl label="New Base API URL">
           <Input
             value={apiBaseUrl}
@@ -49,8 +42,8 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, onRequestClose }
             }}
           />
         </FormControl>
-      </ModalBody>
-      <ModalFooter
+      </Modal.Body>
+      <Modal.Footer
         onCancel={handleModalClose}
         onConfirm={handleSaveChanges}
         confirmText="Save Changes"

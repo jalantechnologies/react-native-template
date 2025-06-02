@@ -21,7 +21,7 @@ jobs:
         python-version: '3.x'
 
     - name: Fetch main branch
-      run: git fetch origin main
+      run: git fetch origin main:main
 
     - name: Run version comparison script
       run: python3 .github/scripts/check-version.py

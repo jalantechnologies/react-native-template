@@ -9,12 +9,25 @@ def get_pr_version():
 
 def get_main_version():
     try:
-        result = subprocess.run(['git', 'show', 'main:package.json'], capture_output=True, text=True, check=True)
+        result = subprocess.run(
+            ['git', 'show', 'main:package.json'],
+            capture_output=True,
+            text=True,
+            check=True
+        )
         main_pkg_json = json.loads(result.stdout)
         return main_pkg_json['version']
-    except Exception as e:
-        print(f"Error fetching main branch package.json: {e}")
+    except subprocess.CalledProcessError:
+        print("❌ ERROR: Cannot access 'main:package.json'.")
+        print("💡 Did you fetch full history in GitHub Actions? Set fetch-depth: 0 in checkout step.")
         sys.exit(1)
+    except json.JSONDecodeError:
+        print("❌ ERROR: Unable to parse JSON from main:package.json.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
+        sys.exit(1)
+
 
 def version_tuple(v):
     return tuple(map(int, (v.split("."))))

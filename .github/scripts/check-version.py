@@ -10,7 +10,7 @@ def get_pr_version():
 def get_main_version():
     try:
         result = subprocess.run(
-            ['git', 'show', 'main:package.json'],
+            ['git', 'show', 'origin/main:package.json'],
             capture_output=True,
             text=True,
             check=True

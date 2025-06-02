@@ -18,14 +18,13 @@ def get_main_version():
         main_pkg_json = json.loads(result.stdout)
         return main_pkg_json['version']
     except subprocess.CalledProcessError:
-        print("❌ ERROR: Cannot access 'main:package.json'.")
-        print("💡 Did you fetch full history in GitHub Actions? Set fetch-depth: 0 in checkout step.")
+        print("ERROR: Cannot access 'main:package.json'.")
         sys.exit(1)
     except json.JSONDecodeError:
-        print("❌ ERROR: Unable to parse JSON from main:package.json.")
+        print("ERROR: Unable to parse JSON from main:package.json.")
         sys.exit(1)
     except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        print(f"Unexpected error: {e}")
         sys.exit(1)
 
 

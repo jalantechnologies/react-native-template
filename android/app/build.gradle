@@ -109,7 +109,7 @@ android {
             dimension "version"
             applicationId "com.bettrsw.boilerplate"
         }
-        test {
+        dev {
             dimension "version"
 
             // Read BUILD_HASH from local.properties

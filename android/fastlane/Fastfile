@@ -125,5 +125,25 @@ end
       json_key: ENV["ANDROID_JSON_KEY_FILE"],
       skip_upload_apk: true,
     )
+  end 
+
+  desc "Deploy PR build to Firebase App Distribution"
+  lane :pr_deploy do |options|
+    pr_number = options[:pr_number]
+    pr_title = options[:pr_title]
+
+    gradle(
+      task: "assemble",
+      build_type: "Debug"
+    )
+
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID"],
+      testers: "shivam.jangid@bettrhq.com", 
+      release_notes: "PR ##{pr_number}: #{pr_title} - Build uploaded on #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}",
+      firebase_cli_token: ENV["FIREBASE_CLI_TOKEN"],
+      apk_path: "android/app/build/outputs/apk/debug/app-debug.apk"
+    )
   end
+
 end

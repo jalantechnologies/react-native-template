@@ -75,6 +75,8 @@ jobs:
           curl -sL https://firebase.tools | bash
           sudo apt-get update
           sudo apt-get install -y jq
+          which firebase
+          firebase --version
 
       - name: Cleanup Firebase App Distribution Releases
         env:

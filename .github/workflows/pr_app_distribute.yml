@@ -33,11 +33,14 @@ jobs:
         with:
           ruby-version: '3.1'
 
-      - name: Install Fastlane
-        run: gem install fastlane
+      - name: Install bundler
+        run: gem install bundler
 
-      - name: Install fastlane plugins
-        run: fastlane install_plugins
+      - name: Install gems and fastlane plugins
+        working-directory: android
+        run: |
+          bundle install
+          bundle exec fastlane install_plugins
 
       - name: Set up environment
         run: |
@@ -45,9 +48,8 @@ jobs:
           echo "FIREBASE_APP_ID=1:715635897715:android:0be885c6b27f7c99de0106" >> $GITHUB_ENV
 
       - name: Build & Deploy to Firebase App Distribution
-        run: |
-          cd android
-          fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" pr_title:"${{ github.event.pull_request.title }}"
+        working-directory: android
+        run: bundle exec fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" pr_title:"${{ github.event.pull_request.title }}"
 
       - name: Comment on PR
         uses: actions/github-script@v7

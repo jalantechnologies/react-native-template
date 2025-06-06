@@ -142,7 +142,7 @@ end
       testers: "shivam.jangid@bettrhq.com", 
       release_notes: "PR ##{pr_number}: #{pr_title} - Build uploaded on #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}",
       firebase_cli_token: ENV["FIREBASE_CLI_TOKEN"],
-      apk_path: "android/app/build/outputs/apk/debug/app-debug.apk"
+      apk_path: "app/build/outputs/apk/debug/app-debug.apk"
     )
   end
 

@@ -77,6 +77,13 @@ jobs:
           sudo apt-get install -y jq
           which firebase
           firebase --version
+          
+      - name: Check firebase version
+        run: |
+          which firebase
+          firebase --version
+
+          
 
       - name: Cleanup Firebase App Distribution Releases
         env:

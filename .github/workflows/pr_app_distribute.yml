@@ -36,6 +36,9 @@ jobs:
       - name: Install Fastlane
         run: gem install fastlane
 
+      - name: Install fastlane plugins
+        run: fastlane install_plugins
+
       - name: Set up environment
         run: |
           echo "FIREBASE_CLI_TOKEN=${{ secrets.FIREBASE_CLI_TOKEN }}" >> $GITHUB_ENV

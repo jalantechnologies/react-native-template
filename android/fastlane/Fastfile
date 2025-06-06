@@ -138,7 +138,7 @@ end
       properties: {
         "org.gradle.jvmargs" => "-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
       },
-      options: "--no-parallel --max-workers=2 --stacktrace"
+      flags: ["--no-parallel", "--max-workers=2", "--stacktrace"]
     )
 
     firebase_app_distribution(

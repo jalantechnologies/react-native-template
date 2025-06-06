@@ -7,6 +7,7 @@ import { StyleSheet, View } from 'react-native';
 import Config from 'react-native-config';
 
 import ChangeApiUrlModal from './change-api-url-modal';
+import { useChangeApiUrlStyles } from './change-api-url.styles';
 
 const ChangeApiUrlButton = () => {
   const isNonProdEnv = Config.ENVIRONMENT !== 'production';
@@ -14,6 +15,7 @@ const ChangeApiUrlButton = () => {
   const { colors } = useTheme();
 
   const [isChangeAPIUrlModalOpen, setIsChangeAPIUrlModalOpen] = useState(false);
+  const dynamicStyles = useChangeApiUrlStyles();
 
   if (!isNonProdEnv) {
     return null;
@@ -22,8 +24,14 @@ const ChangeApiUrlButton = () => {
   return (
     isNonProdEnv && (
       <>
-        <View style={styles.buttonContainer}>
-          <Button onClick={() => setIsChangeAPIUrlModalOpen(true)} kind={ButtonKind.TERTIARY}>
+        <View style={[styles.fabContainer, dynamicStyles.fabContainer]}>
+          <Button
+            onClick={() => setIsChangeAPIUrlModalOpen(true)}
+            kind={ButtonKind.TERTIARY}
+            accessibilityLabel="Change API URL"
+            accessibilityHint="Opens modal to change the API base URL"
+            style={styles.fabButton}
+          >
             <GearIcon width={24} height={24} fill={colors.secondary[900]} />
           </Button>
         </View>
@@ -37,11 +45,25 @@ const ChangeApiUrlButton = () => {
 };
 
 const styles = StyleSheet.create({
-  buttonContainer: {
+  fabContainer: {
     position: 'absolute',
-    bottom: -28,
-    right: -28,
+    bottom: -10,
+    right: -20,
+    width: 50,
+    height: 50,
+    borderRadius: 28,
     zIndex: 1000,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fabButton: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 0,
+    margin: 0,
   },
 });
 

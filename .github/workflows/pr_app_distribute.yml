@@ -33,7 +33,7 @@ jobs:
       - name: Build & Deploy to Firebase App Distribution
         run: |
           cd android
-          fastlane pr_deploy pr_number=${{ github.event.pull_request.number }} pr_title="${{ github.event.pull_request.title }}"
+          fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" pr_title:"${{ github.event.pull_request.title }}"
 
       - name: Comment on PR
         uses: actions/github-script@v7

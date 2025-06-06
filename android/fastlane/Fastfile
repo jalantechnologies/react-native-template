@@ -134,7 +134,11 @@ end
 
     gradle(
       task: "assemble",
-      build_type: "Debug"
+      build_type: "Debug",
+      properties: {
+        "org.gradle.jvmargs" => "-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
+      },
+      options: "--no-parallel --max-workers=2 --stacktrace"
     )
 
     firebase_app_distribution(

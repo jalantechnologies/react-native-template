@@ -2,17 +2,13 @@ import React, { useState } from 'react';
 import {
   Platform,
   View,
-  StyleSheet,
   Text,
   TouchableOpacity,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-export interface DatePickerProps {
-  date: Date;
-  onDateChange: (newDate: Date) => void;
-  mode?: 'date' | 'time' | 'datetime';
-}
+import { DatePickerProps } from './date-picker.types';
+import { styles } from './date-picker.styles';
 
 export const DatePicker: React.FC<DatePickerProps> = ({
   date,
@@ -53,19 +49,3 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: 8,
-  },
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 6,
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 16,
-  },
-});

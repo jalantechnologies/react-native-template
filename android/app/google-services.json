@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "752081205061",
+    "project_id": "notifications-demo-app-cb35f",
+    "storage_bucket": "notifications-demo-app-cb35f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752081205061:android:e5157f41b1c0447021f02c",
+        "android_client_info": {
+          "package_name": "com.bettrsw.boilerplate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZ0rAGD0IkFSss1HqjdgWKYGPmHjd6fs4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

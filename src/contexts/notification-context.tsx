@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
+import Logger from '../logger/logger';
 import {
   NotificationSettings,
   NotificationType,
@@ -60,7 +61,7 @@ export const NotificationContextProvider: React.FC<{ children: React.ReactNode }
         setSettings(JSON.parse(savedSettings));
       }
     } catch (error) {
-      console.error('Failed to load notification settings:', error);
+      Logger.error('Failed to load notification settings: ' + error);
     } finally {
       setIsLoading(false);
     }
@@ -75,8 +76,8 @@ export const NotificationContextProvider: React.FC<{ children: React.ReactNode }
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
       setSettings(newSettings);
     } catch (error) {
-      console.error('Failed to save notification settings:', error);
-      throw error; // Re-throw to let callers handle the error
+      Logger.error('Failed to save notification settings: ' + error);
+      throw error;
     }
   };
 

@@ -69,6 +69,14 @@ jobs:
         with:
           ruby-version: '3.0'
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.13.1'
+
+      - name: Install Dependencies
+        run: yarn install
+
       - name: Install CocoaPods
         run: |
           cd ios

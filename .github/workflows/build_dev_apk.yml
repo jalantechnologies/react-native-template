@@ -82,7 +82,13 @@ jobs:
           cd ios
           gem install bundler
           bundle install
-          pod install
+          
+      - name: Clean and Install Pods
+        working-directory: ios
+        run: |
+          rm -rf Pods
+          rm -f Podfile.lock
+          pod install --repo-update
 
       - name: Build Production IPA
         run: |

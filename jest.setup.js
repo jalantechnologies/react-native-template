@@ -24,3 +24,16 @@ jest.mock('react-i18next', () => ({
     init: jest.fn(),
   },
 }));
+
+jest.mock('@notifee/react-native', () => ({
+  __esModule: true,
+  default: {
+    displayNotification: jest.fn(),
+    createChannel: jest.fn(),
+    requestPermission: jest.fn().mockResolvedValue({ authorizationStatus: 1 }),
+    onForegroundEvent: jest.fn(),
+    onBackgroundEvent: jest.fn(),
+    cancelNotification: jest.fn(),
+    cancelAllNotifications: jest.fn(),
+  },
+}));

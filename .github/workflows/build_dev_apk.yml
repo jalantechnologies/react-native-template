@@ -82,7 +82,7 @@ jobs:
           cd ios
           gem install bundler
           bundle install
-          pod install --repo-update
+          pod install
 
       - name: Build Production IPA
         run: |

@@ -28,7 +28,6 @@
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/stack": "^6.3.17",
     "axios": "^1.4.0",
-    "dayjs": "^1.11.13",
     "formik": "^2.4.6",
     "google-libphonenumber": "^3.2.41",
     "i18next": "^23.2.3",

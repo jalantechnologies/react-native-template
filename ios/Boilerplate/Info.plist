@@ -55,6 +55,13 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<key>UIBackgroundModes</key>
+	<array>
+  		<string>background-processing</string>
+  		<string>remote-notification</string>
+	</array>
+
+	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 </dict>
 </plist>

@@ -1,4 +1,4 @@
-name: Build Dev APK
+name: Build Android & iOS Dual Flavors
 
 on:
   pull_request:
@@ -6,8 +6,10 @@ on:
       - main
 
 jobs:
-  build:
+  android:
     runs-on: ubuntu-latest
+    env:
+      BUILD_HASH: pr${{ github.event.pull_request.number }}
 
     steps:
       - name: Checkout Code
@@ -19,10 +21,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Write local.properties with build hash
-        run: |
-          echo "BUILD_HASH=pr${{ github.event.pull_request.number }}" > android/local.properties
-
+      - name: Write local.properties with BUILD_HASH
+        run: echo "BUILD_HASH=${BUILD_HASH}" > android/local.properties
 
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
@@ -30,17 +30,77 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22.13.1'
+          node-version: '22'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: yarn install
+
+      - name: Build Production APK
+        run: ./gradlew assembleProductionDebug
+        working-directory: android
 
       - name: Build Dev APK
         run: ./gradlew assembleDevDebug
         working-directory: android
 
+      - name: Upload Production APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-production-apk
+          path: android/app/build/outputs/apk/production/debug/app-production-debug.apk
+
       - name: Upload Dev APK
         uses: actions/upload-artifact@v4
         with:
-          name: dev-apk
+          name: android-dev-apk
           path: android/app/build/outputs/apk/dev/debug/app-dev-debug.apk
+
+  ios:
+    runs-on: macos-latest
+    env:
+      BUILD_HASH: pr${{ github.event.pull_request.number }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Ruby & Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          gem install bundler
+          bundle install
+          pod install
+
+      - name: Build Production IPA
+        run: |
+          cd ios
+          bundle exec fastlane gym \
+            --scheme "Boilerplate" \
+            --export_method "development" \
+            --output_name "YourApp-Prod.ipa"
+
+      - name: Build Dev IPA with BUILD_HASH
+        run: |
+          cd ios
+          bundle exec fastlane gym \
+            --scheme "YourApp" \
+            --export_method "development" \
+            --output_name "YourApp-Dev-${BUILD_HASH}.ipa" \
+            --xcargs "BUILD_HASH=${BUILD_HASH}"
+
+      - name: Upload Production IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-production-ipa
+          path: ios/YourApp-Prod.ipa
+
+      - name: Upload Dev IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-dev-ipa
+          path: ios/YourApp-Dev-${{ env.BUILD_HASH }}.ipa

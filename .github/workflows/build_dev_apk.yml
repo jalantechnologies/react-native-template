@@ -30,7 +30,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: '22.13.1'
 
       - name: Install Dependencies
         run: yarn install
@@ -82,15 +82,19 @@ jobs:
           bundle exec fastlane gym \
             --scheme "Boilerplate" \
             --export_method "development" \
-            --output_name "YourApp-Prod.ipa"
+            --output_name "Boilerplate-Prod.ipa"
+
+      - name: List Xcode Schemes
+        run: |
+          xcodebuild -list -workspace ios/YourApp.xcworkspace
 
       - name: Build Dev IPA with BUILD_HASH
         run: |
           cd ios
           bundle exec fastlane gym \
-            --scheme "YourApp" \
+            --scheme "Boilerplate" \
             --export_method "development" \
-            --output_name "YourApp-Dev-${BUILD_HASH}.ipa" \
+            --output_name "Boilerplate-Dev-${BUILD_HASH}.ipa" \
             --xcargs "BUILD_HASH=${BUILD_HASH}"
 
       - name: Upload Production IPA

@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { DatadogProvider } from '@datadog/mobile-react-native';
 import { NativeBaseProvider } from 'native-base';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback} from 'react';
 import ErrorBoundary from 'react-native-error-boundary';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 

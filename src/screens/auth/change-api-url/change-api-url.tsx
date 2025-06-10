@@ -39,11 +39,7 @@ const ChangeApiUrlButton = () => {
           accessibilityHint="Opens modal to change the API base URL"
           style={styles.fabButton}
         >
-          <GearIcon 
-            width={24} 
-            height={24} 
-            fill={dynamicStyles.gearIcon.color} 
-          />
+          <GearIcon width={24} height={24} fill={dynamicStyles.gearIcon.color} />
         </Button>
       </View>
       <ChangeApiUrlModal

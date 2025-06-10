@@ -466,7 +466,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate.$(BUILD_HASH);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bettrsw.boilerplate.$(BUILD_HASH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Boilerplate.app/Boilerplate";
 			};

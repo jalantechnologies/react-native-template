@@ -21,12 +21,12 @@ const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
             <Box pt={'10%'} px={'10%'} fontWeight={'bold'} alignSelf={'flex-start'}>
               <Heading size="3xl" color={'secondary.50'}>
                 {primaryTitle}
-                <ChangeApiUrlButton />
               </Heading>
               <Heading size="3xl" color={'secondary.50'}>
                 {secondaryTitle}
               </Heading>
             </Box>
+            <ChangeApiUrlButton />
             <Box py="8" px="10%" w="100%" flex={1} bg={'white'} roundedTop={36}>
               {children}
             </Box>

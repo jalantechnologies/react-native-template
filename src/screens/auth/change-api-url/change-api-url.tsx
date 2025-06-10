@@ -7,40 +7,50 @@ import { StyleSheet, View } from 'react-native';
 import Config from 'react-native-config';
 
 import ChangeApiUrlModal from './change-api-url-modal';
-import { useChangeApiUrlStyles } from './change-api-url.styles';
 
 const ChangeApiUrlButton = () => {
   const isNonProdEnv = Config.ENVIRONMENT !== 'production';
-
   const { colors } = useTheme();
-
   const [isChangeAPIUrlModalOpen, setIsChangeAPIUrlModalOpen] = useState(false);
-  const dynamicStyles = useChangeApiUrlStyles();
+
+  // Create dynamic styles using theme colors
+  const dynamicStyles = StyleSheet.create({
+    fabContainer: {
+      backgroundColor: colors.primary[100],
+      borderWidth: 1,
+      borderColor: colors.primary[300],
+    },
+    gearIcon: {
+      color: colors.primary[700],
+    },
+  });
 
   if (!isNonProdEnv) {
     return null;
   }
 
   return (
-    isNonProdEnv && (
-      <>
-        <View style={[styles.fabContainer, dynamicStyles.fabContainer]}>
-          <Button
-            onClick={() => setIsChangeAPIUrlModalOpen(true)}
-            kind={ButtonKind.TERTIARY}
-            accessibilityLabel="Change API URL"
-            accessibilityHint="Opens modal to change the API base URL"
-            style={styles.fabButton}
-          >
-            <GearIcon width={24} height={24} fill={colors.secondary[900]} />
-          </Button>
-        </View>
-        <ChangeApiUrlModal
-          handleModalClose={() => setIsChangeAPIUrlModalOpen(false)}
-          isModalOpen={isChangeAPIUrlModalOpen}
-        />
-      </>
-    )
+    <>
+      <View style={[styles.fabContainer, dynamicStyles.fabContainer]}>
+        <Button
+          onClick={() => setIsChangeAPIUrlModalOpen(true)}
+          kind={ButtonKind.TERTIARY}
+          accessibilityLabel="Change API URL"
+          accessibilityHint="Opens modal to change the API base URL"
+          style={styles.fabButton}
+        >
+          <GearIcon 
+            width={24} 
+            height={24} 
+            fill={dynamicStyles.gearIcon.color} 
+          />
+        </Button>
+      </View>
+      <ChangeApiUrlModal
+        handleModalClose={() => setIsChangeAPIUrlModalOpen(false)}
+        isModalOpen={isChangeAPIUrlModalOpen}
+      />
+    </>
   );
 };
 

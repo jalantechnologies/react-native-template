@@ -11,7 +11,7 @@ import {
 import { Alert } from 'react-native';
 
 export class FirebaseMessagingService {
-  private messaging: any;
+  private readonly messaging: any;
 
   constructor() {
     const app = getApp();

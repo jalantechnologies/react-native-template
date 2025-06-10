@@ -45,6 +45,9 @@ target 'Boilerplate' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'DatadogCore', '~> 2.27.0'  # Explicitly match the dependency
+  pod 'DatadogSDKReactNative', :path => '../node_modules/@datadog/mobile-react-native'
+
   target 'BoilerplateTests' do
     inherit! :complete
     # Pods for testing

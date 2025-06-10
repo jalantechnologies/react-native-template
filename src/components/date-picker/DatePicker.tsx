@@ -42,7 +42,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         <DateTimePicker
           value={date}
           mode={mode === 'datetime' ? 'date' : mode}
-          display={Platform.OS === 'ios' ? 'spinner' : 'spinner'}
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={onChange}
         />
       )}

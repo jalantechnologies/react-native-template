@@ -22,7 +22,6 @@ export class NotificationService {
       this.setupBackgroundEventHandlers();
 
       this.isInitialized = true;
-      console.log('Notifee initialized successfully');
     } catch (error) {
       console.error('Failed to initialize Notifee:', error);
     }
@@ -58,8 +57,6 @@ export class NotificationService {
       sound: 'default',
       vibration: true,
     });
-
-    console.log('Notification channels created');
   };
 
   private readonly setupBackgroundEventHandlers = (): void => {
@@ -70,14 +67,11 @@ export class NotificationService {
 
         switch (type) {
           case EventType.DISMISSED:
-            console.log('Background: User dismissed notification', notification?.id);
             break;
           case EventType.PRESS:
-            console.log('Background: User pressed notification', notification?.id);
             await this.handleNotificationPress(notification);
             break;
           case EventType.ACTION_PRESS:
-            console.log('Background: User pressed action', pressAction?.id);
             await this.handleActionPress(pressAction?.id, notification);
             break;
         }
@@ -91,13 +85,9 @@ export class NotificationService {
     return notifee.onForegroundEvent(({ type, detail }) => {
       switch (type) {
         case EventType.DISMISSED:
-          console.log('User dismissed notification', detail.notification);
           break;
         case EventType.PRESS:
-          console.log('User pressed notification', detail.notification);
-          // Handle navigation based on notification data
           if (detail.notification?.data) {
-            console.log('Notification data:', detail.notification.data);
             // Add your navigation logic here
           }
           break;
@@ -109,8 +99,6 @@ export class NotificationService {
   readonly handleForegroundNotification = async (remoteMessage: any): Promise<void> => {
     try {
       if (remoteMessage.notification) {
-        console.log('Foreground notification:', remoteMessage.notification);
-
         // Display notification even in foreground for better UX
         await this.displayLocalNotification(
           remoteMessage.notification.title ?? 'New Message',
@@ -127,22 +115,16 @@ export class NotificationService {
   private readonly handleNotificationPress = async (notification: any): Promise<void> => {
     try {
       if (notification?.data) {
-        console.log('Handling notification press with data:', notification.data);
-
         // Add your navigation logic here based on notification data
-        const { type, params } = notification.data;
+        const { type } = notification.data;
 
         switch (type) {
           case 'message':
             // Navigate to chat screen
-            console.log('Navigate to chat:', params);
             break;
           case 'task':
             // Navigate to task screen
-            console.log('Navigate to task:', params);
             break;
-          default:
-            console.log('Default notification press handling');
         }
       }
     } catch (error) {
@@ -156,19 +138,13 @@ export class NotificationService {
     _notification: any,
   ): Promise<void> => {
     try {
-      console.log('Action pressed:', actionId);
-
       switch (actionId) {
         case 'reply':
-          console.log('Reply action pressed');
           // Handle reply action
           break;
         case 'mark-read':
-          console.log('Mark as read action pressed');
           // Handle mark as read action
           break;
-        default:
-          console.log('Unknown action pressed:', actionId);
       }
     } catch (error) {
       console.error('Error handling action press:', error);
@@ -262,7 +238,6 @@ export class NotificationService {
   readonly cancelAllNotifications = async (): Promise<void> => {
     try {
       await notifee.cancelAllNotifications();
-      console.log('All notifications cancelled');
     } catch (error) {
       console.error('Error cancelling notifications:', error);
     }
@@ -272,7 +247,6 @@ export class NotificationService {
   readonly cancelNotification = async (notificationId: string): Promise<void> => {
     try {
       await notifee.cancelNotification(notificationId);
-      console.log('Notification cancelled:', notificationId);
     } catch (error) {
       console.error('Error cancelling notification:', error);
     }

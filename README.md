@@ -288,3 +288,65 @@ To fix this, follow these steps:
     You will again see a warning prompt saying "Running "Android Emulator" will harm your computer"
     Click on open
     ```
+
+
+# 🔧 Firebase Configuration
+
+To ensure Firebase works correctly with your app, follow the steps below to match the app's identifiers with the ones registered in Firebase.
+
+---
+
+## ✅ Android Setup
+
+### 1. Verify Package Name
+
+- Open your `google-services.json` file.
+- Locate the `package_name` field:
+  ```json
+  "package_name": "com.example.yourapp"
+  ```
+- This should **exactly match** the `applicationId` in your `android/app/build.gradle`:
+  ```groovy
+  defaultConfig {
+      applicationId "com.example.yourapp"
+      ...
+  }
+  ```
+
+### 2. Update Package References in Kotlin Source Files
+
+Ensure your package name is consistent in the following files:
+```
+android/app/src/main/java/com/yourappname/MainActivity.kt
+android/app/src/main/java/com/yourappname/MainApplication.kt
+```
+
+Update the `package` declaration at the top of each file if the directory or application ID was changed:
+```kotlin
+package com.example.yourapp
+```
+
+---
+
+## ✅ iOS Setup
+
+### 1. Verify Bundle Identifier
+
+- Open `GoogleService-Info.plist`.
+- Look for the following entry:
+  ```xml
+  <key>BUNDLE_ID</key>
+  <string>com.example.yourapp</string>
+  ```
+
+### 2. Match with AppDelegate Configuration
+
+- Open `ios/YourProjectName/AppDelegate.h` (or `.swift` if you're using Swift).
+- Ensure the `self.moduleName` or relevant entry matches the `BUNDLE_ID`:
+  ```objc
+  self.moduleName = @"com.example.yourapp";
+  ```
+
+---
+
+By keeping your `package_name` (Android) and `BUNDLE_ID` (iOS) consistent across Firebase and your codebase, you ensure smooth integration of Firebase services such as notifications, analytics, and authentication.

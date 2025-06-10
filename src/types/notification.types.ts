@@ -1,10 +1,4 @@
-export type NotificationType =
-  | 'message' // Chat and direct messages
-  | 'task' // Task assignments and reminders
-  | 'alert' // System alerts and important notices
-  | 'update' // App updates and news
-  | 'reminder' // General reminders
-  | 'social'; // Social interactions (likes, mentions, etc.)
+export type NotificationType = 'message';
 
 export interface NotificationPreference {
   enabled: boolean;
@@ -19,9 +13,9 @@ export interface NotificationSettings {
   preferences: Record<NotificationType, NotificationPreference>;
 }
 
-export interface NotificationPayload {
+export interface NotificationPayload<T = unknown> {
   type: NotificationType;
   title: string;
   body: string;
-  data?: any;
+  data?: T;
 }

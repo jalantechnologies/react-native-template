@@ -78,27 +78,30 @@ jobs:
         run: yarn install
 
       - name: Install CocoaPods
+        working-directory: ios
         run: |
-          cd ios
           gem install bundler
           bundle install
-
-      - name: Patch Boost Podspec
+    
+      - name: Patch Boost Podspec with Custom Source
+        working-directory: node_modules/react-native/third-party-podspecs
         run: |
-          BOOST_PODSPEC="node_modules/react-native/third-party-podspecs/boost.podspec"
-          # Use a GitHub-hosted archive instead of the broken checksum tarball
-          sed -i.bak 's|https://.*boost_1_76_0.tar.gz|https://github.com/boostorg/boost/archive/refs/tags/boost-1.76.0.tar.gz|' $BOOST_PODSPEC
-          # Replace the checksum with a blank (to skip validation)
-          sed -i '' '/checksum/d' $BOOST_PODSPEC || true
+          awk '
+          BEGIN { found=0 }
+          /spec.source/ { found=1; print "  spec.source = { :http => '\''https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.gz'\'', :sha256 => '\''7bd7ddceec1a1dfdcbdb3e609b60d01739c38390a5f956385a12f3122049f0ca'\'' }"; next }
+          found && /^\s*:sha256/ { next }
+          found && /\}/ { found=0; next }
+          { print }
+          ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
 
-      - name: Clean and Reinstall Pods (After Boost Override)
+      - name: Clean and install Pods
         working-directory: ios
         run: |
           pod cache clean --all
           rm -rf Pods
           rm -f Podfile.lock
           pod deintegrate
-          pod install --repo-update --clean-install
+          pod install --repo-update
 
       - name: Build Production IPA
         run: |

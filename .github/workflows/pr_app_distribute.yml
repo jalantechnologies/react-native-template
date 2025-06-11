@@ -48,7 +48,8 @@ jobs:
       - name: Build & Deploy to Firebase App Distribution
         working-directory: android
         run: bundle exec fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" pr_title:"${{ github.event.pull_request.title }}" project_number:"715635897715" app_id:"1:715635897715:android:0be885c6b27f7c99de0106"
-      
+        env:
+          GRADLE_OPTS: -Xmx4g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8
       - name: Comment on PR
         uses: actions/github-script@v7
         with:

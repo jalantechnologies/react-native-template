@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { DatadogProvider } from '@datadog/mobile-react-native';
 import { NativeBaseProvider } from 'native-base';
-import React, { useCallback} from 'react';
+import React, { useCallback } from 'react';
 import ErrorBoundary from 'react-native-error-boundary';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 
@@ -12,7 +12,6 @@ import Logger from './logger/logger';
 import ApplicationNavigator from './navigators/application';
 import './translations';
 import DatadogConfig, { onDataDogSDKInitialized } from './services/datadog';
-
 
 const App = () => {
   Logger.initializeLoggers();

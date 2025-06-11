@@ -9,4 +9,4 @@ export interface RadioButtonProps {
   kind?: 'primary' | 'error' | 'success';
   containerStyle?: StyleProp<ViewStyle>;
   labelStyle?: StyleProp<TextStyle>;
-};
+}

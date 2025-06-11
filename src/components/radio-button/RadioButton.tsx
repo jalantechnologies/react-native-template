@@ -1,11 +1,7 @@
 import React from 'react';
-
 import { View, Text, Pressable } from 'react-native';
-
 import { styles } from './radio-button.styles';
-
 import { RadioButtonProps } from './radio-button.types';
-
 
 const RadioButton: React.FC<RadioButtonProps> = ({
   value,
@@ -18,7 +14,9 @@ const RadioButton: React.FC<RadioButtonProps> = ({
   labelStyle,
 }) => {
   const getColors = (type: String) => {
-    if (disabled) return '#ccc';
+    if (disabled) {
+      return '#ccc';
+    }
     if (type === 'border') {
       switch (kind) {
         case 'error':
@@ -62,22 +60,14 @@ const RadioButton: React.FC<RadioButtonProps> = ({
     <Pressable
       onPress={handlePress}
       style={[styles.wrapper, containerStyle]}
-      accessibilityRole='radio'
+      accessibilityRole="radio"
       accessibilityState={{ selected, disabled }}
       accessibilityLabel={label || value}
     >
-      <View
-        style={[styles.outerCircle,outerCircleStyle]}
-      >
+      <View style={[styles.outerCircle, outerCircleStyle]}>
         {selected && <View style={[styles.innerCircle, { backgroundColor: innerColors }]} />}
       </View>
-      {label && (
-        <Text
-          style={[styles.label,textColorStyle,labelStyle]}
-        >
-          {label}
-        </Text>
-      )}
+      {label && <Text style={[styles.label, textColorStyle, labelStyle]}>{label}</Text>}
     </Pressable>
   );
 };

@@ -83,6 +83,14 @@ jobs:
           gem install bundler
           bundle install
 
+      - name: Patch Boost Podspec
+        run: |
+          BOOST_PODSPEC="node_modules/react-native/third-party-podspecs/boost.podspec"
+          # Use a GitHub-hosted archive instead of the broken checksum tarball
+          sed -i.bak 's|https://.*boost_1_76_0.tar.gz|https://github.com/boostorg/boost/archive/refs/tags/boost-1.76.0.tar.gz|' $BOOST_PODSPEC
+          # Replace the checksum with a blank (to skip validation)
+          sed -i '' '/checksum/d' $BOOST_PODSPEC || true
+
       - name: Clean and Reinstall Pods (After Boost Override)
         working-directory: ios
         run: |

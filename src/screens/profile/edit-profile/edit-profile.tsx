@@ -4,6 +4,8 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
+import Divider from '../../../components/divider';
+import { DividerOrientation } from '../../../components/divider/divider.styles';
 import { AsyncError } from '../../../types';
 import ProfileLayout from '../profile-layout';
 
@@ -62,6 +64,14 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
             <Input value={formik.values.phoneNumber} editable={false} disabled={true} />
           </FormControl>
         </VStack>
+
+        <Divider
+          orientation={DividerOrientation.Horizontal}
+          thickness={1}
+          color="neutral.300"
+          style={{ marginVertical: 16 }}
+          length="100%"
+        />
 
         <Button onClick={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
           Save Changes

@@ -1,6 +1,108 @@
 import { extendTheme } from 'native-base';
 
-const ICOLORHUES = {
+interface IColorHues {
+  [key: string]: {
+    [key: string]: string;
+  };
+  primary: {
+    '50': string;
+    '100': string;
+    '200': string;
+    '300': string;
+    '400': string;
+    '500': string;
+    '600': string;
+    '700': string;
+    '800': string;
+    '900': string;
+  };
+  secondary: {
+    '50': string;
+    '100': string;
+    '200': string;
+    '300': string;
+    '400': string;
+    '500': string;
+    '600': string;
+    '700': string;
+    '800': string;
+    '900': string;
+  };
+  tertiary: {
+    '50': string;
+    '100': string;
+    '200': string;
+    '300': string;
+    '400': string;
+    '500': string;
+    '600': string;
+    '700': string;
+    '800': string;
+    '900': string;
+  };
+  background: {
+    '50': string;
+    '100': string;
+    '200': string;
+    '300': string;
+    '400': string;
+    '500': string;
+    '600': string;
+    '700': string;
+    '800': string;
+    '900': string;
+  };
+  danger: {
+    '50': string;
+    '100': string;
+    '200': string;
+    '300': string;
+    '400': string;
+    '500': string;
+    '600': string;
+    '700': string;
+    '800': string;
+    '900': string;
+  };
+  warning: {
+    '50': string;
+    '100': string;
+    '200': string;
+    '300': string;
+    '400': string;
+    '500': string;
+    '600': string;
+    '700': string;
+    '800': string;
+    '900': string;
+  };
+  success: {
+    '50': string;
+    '100': string;
+    '200': string;
+    '300': string;
+    '400': string;
+    '500': string;
+    '600': string;
+    '700': string;
+    '800': string;
+    '900': string;
+  };
+  neutral: {
+    '50': string;
+    '100': string;
+    '200': string;
+    '300': string;
+    '400': string;
+    '500': string;
+    '600': string;
+    '700': string;
+    '800': string;
+    '900': string;
+  };
+}
+
+export const ICOLORHUES: IColorHues = {
   primary: {
     '50': '#E6F0FF',
     '100': '#CCE0FF',
@@ -26,28 +128,28 @@ const ICOLORHUES = {
     '900': '#171717',
   },
   tertiary: {
-    50: '#fdf2f8',
-    100: '#fce7f3',
-    200: '#fbcfe8',
-    300: '#f9a8d4',
-    400: '#f472b6',
-    500: '#ec4899',
-    600: '#db2777',
-    700: '#be185d',
-    800: '#9d174d',
-    900: '#831843',
+    '50': '#fdf2f8',
+    '100': '#fce7f3',
+    '200': '#fbcfe8',
+    '300': '#f9a8d4',
+    '400': '#f472b6',
+    '500': '#ec4899',
+    '600': '#db2777',
+    '700': '#be185d',
+    '800': '#9d174d',
+    '900': '#831843',
   },
   background: {
-    50: '#fff7fb',
-    100: '#fce4ec',
-    200: '#f8bbd0',
-    300: '#f48fb1',
-    400: '#f06292',
-    500: '#ec407a',
-    600: '#d81b60',
-    700: '#ad1457',
-    800: '#880e4f',
-    900: '#560027',
+    '50': '#fff7fb',
+    '100': '#fce4ec',
+    '200': '#f8bbd0',
+    '300': '#f48fb1',
+    '400': '#f06292',
+    '500': '#ec407a',
+    '600': '#d81b60',
+    '700': '#ad1457',
+    '800': '#880e4f',
+    '900': '#560027',
   },
   danger: {
     '50': '#FEECEC',
@@ -84,6 +186,18 @@ const ICOLORHUES = {
     '700': '#2B6E21',
     '800': '#1B4A14',
     '900': '#0C2607',
+  },
+  neutral: {
+    '50': '#F9FAFB',
+    '100': '#F3F4F6',
+    '200': '#E0E0E0',
+    '300': '#D1D5DB',
+    '400': '#9CA3AF',
+    '500': '#6B7280',
+    '600': '#4B5563',
+    '700': '#374151',
+    '800': '#1F2A44',
+    '900': '#111827',
   },
 };
 

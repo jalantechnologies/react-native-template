@@ -15,7 +15,12 @@ export const checkTheme = (): 'light' | 'dark' => {
   return theme === 'dark' ? 'light' : 'dark';
 };
 
-export const showAlertDialog = ({ type = AlertType.INFO, title, content, confirmText }: AlertOptions) => {
+export const showAlertDialog = ({
+  type = AlertType.INFO,
+  title,
+  content,
+  confirmText,
+}: AlertOptions) => {
   Dialog.show({
     type: alertTypeMap[type],
     title: title,

@@ -86,8 +86,10 @@ jobs:
       - name: Clean and Reinstall Pods
         working-directory: ios
         run: |
-          pod deintegrate
+          rm -rf Pods
+          rm -f Podfile.lock
           pod install --repo-update --clean-install
+
 
       - name: Build Production IPA
         run: |

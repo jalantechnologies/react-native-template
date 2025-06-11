@@ -110,6 +110,7 @@ jobs:
             --scheme "Boilerplate" \
             --export_method "development" \
             --output_name "Boilerplate-Prod.ipa"
+            --allowProvisioningUpdates
 
       - name: List Xcode Schemes
         run: |
@@ -128,10 +129,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-production-ipa
-          path: ios/YourApp-Prod.ipa
+          path: ios/Boilerplate-Prod.ipa
 
       - name: Upload Dev IPA
         uses: actions/upload-artifact@v4
         with:
           name: ios-dev-ipa
-          path: ios/YourApp-Dev-${{ env.BUILD_HASH }}.ipa
+          path: ios/Boilerplate-Dev-${{ env.BUILD_HASH }}.ipa

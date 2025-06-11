@@ -6,54 +6,54 @@ on:
       - main
 
 jobs:
-  android:
-    runs-on: ubuntu-latest
-    env:
-      BUILD_HASH: pr${{ github.event.pull_request.number }}
+  # android:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     BUILD_HASH: pr${{ github.event.pull_request.number }}
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
 
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+  #     - name: Set up JDK
+  #       uses: actions/setup-java@v3
+  #       with:
+  #         java-version: '17'
+  #         distribution: 'temurin'
 
-      - name: Write local.properties with BUILD_HASH
-        run: echo "BUILD_HASH=${BUILD_HASH}" > android/local.properties
+  #     - name: Write local.properties with BUILD_HASH
+  #       run: echo "BUILD_HASH=${BUILD_HASH}" > android/local.properties
 
-      - name: Set up Gradle
-        uses: gradle/gradle-build-action@v2
+  #     - name: Set up Gradle
+  #       uses: gradle/gradle-build-action@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22.13.1'
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '22.13.1'
 
-      - name: Install Dependencies
-        run: yarn install
+  #     - name: Install Dependencies
+  #       run: yarn install
 
-      - name: Build Production APK
-        run: ./gradlew assembleProductionDebug
-        working-directory: android
+  #     - name: Build Production APK
+  #       run: ./gradlew assembleProductionDebug
+  #       working-directory: android
 
-      - name: Build Dev APK
-        run: ./gradlew assembleDevDebug
-        working-directory: android
+  #     - name: Build Dev APK
+  #       run: ./gradlew assembleDevDebug
+  #       working-directory: android
 
-      - name: Upload Production APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-production-apk
-          path: android/app/build/outputs/apk/production/debug/app-production-debug.apk
+  #     - name: Upload Production APK
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: android-production-apk
+  #         path: android/app/build/outputs/apk/production/debug/app-production-debug.apk
 
-      - name: Upload Dev APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-dev-apk
-          path: android/app/build/outputs/apk/dev/debug/app-dev-debug.apk
+  #     - name: Upload Dev APK
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: android-dev-apk
+  #         path: android/app/build/outputs/apk/dev/debug/app-dev-debug.apk
 
   ios:
     runs-on: macos-latest
@@ -89,7 +89,7 @@ jobs:
           pod cache clean --all
           rm -rf Pods
           rm -f Podfile.lock
-          pod install --repo-update --verbose --sources=https://github.com/CocoaPods/Specs.git
+          pod install --repo-update
 
       - name: Build Production IPA
         run: |

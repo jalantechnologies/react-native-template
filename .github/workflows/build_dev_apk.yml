@@ -86,14 +86,8 @@ jobs:
       - name: Clean and Reinstall Pods
         working-directory: ios
         run: |
-          pod cache clean --all
-          rm -rf Pods
-          rm -f Podfile.lock
-          rm -rf ~/Library/Caches/CocoaPods
-          rm -rf ~/Library/Developer/Xcode/DerivedData/*
           pod deintegrate
-          pod install --repo-update
-
+          pod install --repo-update --clean-install
 
       - name: Build Production IPA
         run: |

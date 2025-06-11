@@ -1,5 +1,6 @@
-import { StyleSheet } from 'react-native';
 import { useTheme } from 'native-base';
+import { StyleSheet } from 'react-native';
+
 import { RadioButtonKind } from './radio-button.types';
 
 type RadioKind = 'primary' | 'success' | 'error';

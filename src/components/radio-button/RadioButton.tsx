@@ -27,7 +27,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({
   };
 
   const innerCircleStyle = {
-    backgroundColor: disabled ? '#9ca3af' : style.innerColor
+    backgroundColor: disabled ? '#9ca3af' : style.innerColor,
   };
 
   const labelColorStyle = {

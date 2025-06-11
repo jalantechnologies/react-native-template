@@ -1,27 +1,54 @@
 import { StyleSheet } from 'react-native';
-import { scale, moderateScale } from 'react-native-size-matters';
+import { useTheme } from 'native-base';
+import { RadioButtonKind } from './radio-button.types';
+
+type RadioKind = 'primary' | 'success' | 'error';
+
+interface RadioKindStyle {
+  borderColor: string;
+  innerColor: string;
+}
+
+export const useRadioKindStyles = (): Record<RadioKind, RadioKindStyle> => {
+  const theme = useTheme();
+
+  return {
+    [RadioButtonKind.PRIMARY]: {
+      borderColor: theme.colors.primary['500'],
+      innerColor: theme.colors.primary['600'],
+    },
+    [RadioButtonKind.SUCCESS]: {
+      borderColor: theme.colors.success?.['500'] || '#16a34a',
+      innerColor: theme.colors.success?.['600'] || '#1cca5b',
+    },
+    [RadioButtonKind.ERROR]: {
+      borderColor: theme.colors.danger?.['600'] || '#dc2626',
+      innerColor: theme.colors.danger?.['500'] || '#df3a3a',
+    },
+  };
+};
 
 export const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: moderateScale(10),
+    paddingVertical: 10,
   },
   outerCircle: {
-    height: scale(20),
-    width: scale(20),
-    borderRadius: scale(10),
+    height: 20,
+    width: 20,
+    borderRadius: 10,
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: scale(10),
+    marginRight: 10,
   },
   innerCircle: {
-    height: scale(11),
-    width: scale(11),
-    borderRadius: scale(5.5),
+    height: 11,
+    width: 11,
+    borderRadius: 5.5,
   },
   label: {
-    fontSize: moderateScale(16),
+    fontSize: 16,
   },
 });

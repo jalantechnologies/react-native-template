@@ -1,4 +1,8 @@
-import { StyleProp, TextStyle, ViewStyle } from 'react-native';
+export enum RadioButtonKind {
+  PRIMARY = 'primary',
+  ERROR = 'error',
+  SUCCESS = 'success',
+}
 
 export interface RadioButtonProps {
   value: string;
@@ -6,7 +10,5 @@ export interface RadioButtonProps {
   onPress: (value: string) => void;
   label?: string;
   disabled?: boolean;
-  kind?: 'primary' | 'error' | 'success';
-  containerStyle?: StyleProp<ViewStyle>;
-  labelStyle?: StyleProp<TextStyle>;
+  kind?: RadioButtonKind;
 }

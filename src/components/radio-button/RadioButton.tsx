@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 
-import { styles } from './radio-button.styles';
-import { RadioButtonProps } from './radio-button.types';
+import { styles, useRadioKindStyles } from './radio-button.styles';
+import { RadioButtonProps, RadioButtonKind } from './radio-button.types';
 
 const RadioButton: React.FC<RadioButtonProps> = ({
   value,
@@ -10,37 +10,10 @@ const RadioButton: React.FC<RadioButtonProps> = ({
   onPress,
   label,
   disabled = false,
-  kind = 'primary',
-  containerStyle,
-  labelStyle,
+  kind = RadioButtonKind.PRIMARY,
 }) => {
-  const getColors = (type: String) => {
-    if (disabled) {
-      return '#ccc';
-    }
-    if (type === 'border') {
-      switch (kind) {
-        case 'error':
-          return '#dc2626';
-        case 'success':
-          return '#16a34a';
-        default:
-          return '#0073e6';
-      }
-    } else if (type === 'inner') {
-      switch (kind) {
-        case 'error':
-          return '#df3a3a';
-        case 'success':
-          return '#1cca5b';
-        default:
-          return '#0080ff';
-      }
-    }
-  };
-
-  const borderColor = getColors('border');
-  const innerColors = getColors('inner');
+  const kindStyles = useRadioKindStyles();
+  const style = kindStyles[kind];
 
   const handlePress = () => {
     if (!disabled) {
@@ -49,26 +22,30 @@ const RadioButton: React.FC<RadioButtonProps> = ({
   };
 
   const outerCircleStyle = {
-    borderColor: selected && !disabled ? borderColor : '#d1d5db',
+    borderColor: selected && !disabled ? style.borderColor : '#d1d5db',
     backgroundColor: disabled ? '#f3f4f6' : '#fff',
   };
 
-  const textColorStyle = {
+  const innerCircleStyle = {
+    backgroundColor: disabled ? '#9ca3af' : style.innerColor
+  };
+
+  const labelColorStyle = {
     color: disabled ? '#9ca3af' : '#111',
   };
 
   return (
     <Pressable
       onPress={handlePress}
-      style={[styles.wrapper, containerStyle]}
+      style={styles.wrapper}
       accessibilityRole="radio"
       accessibilityState={{ selected, disabled }}
       accessibilityLabel={label || value}
     >
       <View style={[styles.outerCircle, outerCircleStyle]}>
-        {selected && <View style={[styles.innerCircle, { backgroundColor: innerColors }]} />}
+        {selected && <View style={[styles.innerCircle, innerCircleStyle]} />}
       </View>
-      {label && <Text style={[styles.label, textColorStyle, labelStyle]}>{label}</Text>}
+      {label && <Text style={[styles.label, labelColorStyle]}>{label}</Text>}
     </Pressable>
   );
 };

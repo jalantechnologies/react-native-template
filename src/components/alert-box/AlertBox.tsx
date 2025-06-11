@@ -1,5 +1,5 @@
-import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
 import { Appearance, ColorSchemeName } from 'react-native';
+import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
 
 import { AlertOptions, AlertType } from './alert.types';
 
@@ -15,12 +15,7 @@ export const checkTheme = (): 'light' | 'dark' => {
   return theme === 'dark' ? 'light' : 'dark';
 };
 
-export const showAlertDialog = ({
-  type = AlertType.INFO,
-  title,
-  content,
-  confirmText
-}: AlertOptions) => {
+export const showAlertDialog = ({ type = AlertType.INFO, title, content, confirmText }: AlertOptions) => {
   Dialog.show({
     type: alertTypeMap[type],
     title: title,
@@ -31,11 +26,7 @@ export const showAlertDialog = ({
   });
 };
 
-export const showAlertToast = ({
-  type = AlertType.INFO,
-  title,
-  content,
-}: AlertOptions) => {
+export const showAlertToast = ({ type = AlertType.INFO, title, content }: AlertOptions) => {
   Toast.show({
     type: alertTypeMap[type],
     title: title,
@@ -43,4 +34,3 @@ export const showAlertToast = ({
     autoClose: 2000,
   });
 };
-

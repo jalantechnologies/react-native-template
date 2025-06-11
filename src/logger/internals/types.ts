@@ -4,7 +4,7 @@ export default interface Logger {
   error(message: string): void;
   warn(message: string): void;
   critical(message: string): void;
-};
+}
 
 export enum LoggerTransport {
   Console = 'console',

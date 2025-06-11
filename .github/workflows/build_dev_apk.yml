@@ -83,13 +83,14 @@ jobs:
           gem install bundler
           bundle install
 
-      - name: Clean and Reinstall Pods
+      - name: Clean and Reinstall Pods (After Boost Override)
         working-directory: ios
         run: |
+          pod cache clean --all
           rm -rf Pods
           rm -f Podfile.lock
+          pod deintegrate
           pod install --repo-update --clean-install
-
 
       - name: Build Production IPA
         run: |

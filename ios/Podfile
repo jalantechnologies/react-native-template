@@ -30,7 +30,7 @@ target 'Boilerplate' do
 
   # Flags change depending on the env values.
   flags = get_default_flags()
-
+  pod 'boost', :http => 'https://dl.bintray.com/boostorg/release/1.76.0/source/boost_1_76_0.tar.gz'
   use_react_native!(
     :path => config[:reactNativePath],
     # Hermes is now enabled by default. Disable by setting this flag to false.

@@ -1,7 +1,11 @@
 import React from 'react';
+
 import { View, Text, Pressable } from 'react-native';
-import { RadioButtonProps } from './radio-button.types';
+
 import { styles } from './radio-button.styles';
+
+import { RadioButtonProps } from './radio-button.types';
+
 
 const RadioButton: React.FC<RadioButtonProps> = ({
   value,
@@ -15,7 +19,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({
 }) => {
   const getColors = (type: String) => {
     if (disabled) return '#ccc';
-    if (type === "border") {
+    if (type === 'border') {
       switch (kind) {
         case 'error':
           return '#dc2626';
@@ -24,7 +28,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({
         default:
           return '#0073e6';
       }
-    } else if (type === "inner") {
+    } else if (type === 'inner') {
       switch (kind) {
         case 'error':
           return '#df3a3a';
@@ -36,39 +40,40 @@ const RadioButton: React.FC<RadioButtonProps> = ({
     }
   };
 
-  const borderColor = getColors("border");
-  const innerColors = getColors("inner");
+  const borderColor = getColors('border');
+  const innerColors = getColors('inner');
 
   const handlePress = () => {
-    if (!disabled) onPress(value);
+    if (!disabled) {
+      onPress(value);
+    }
+  };
+
+  const outerCircleStyle = {
+    borderColor: selected && !disabled ? borderColor : '#d1d5db',
+    backgroundColor: disabled ? '#f3f4f6' : '#fff',
+  };
+
+  const textColorStyle = {
+    color: disabled ? '#9ca3af' : '#111',
   };
 
   return (
     <Pressable
       onPress={handlePress}
       style={[styles.wrapper, containerStyle]}
-      accessibilityRole="radio"
+      accessibilityRole='radio'
       accessibilityState={{ selected, disabled }}
       accessibilityLabel={label || value}
     >
       <View
-        style={[
-          styles.outerCircle,
-          {
-            borderColor: selected && !disabled ? borderColor : '#d1d5db',
-            backgroundColor: disabled ? '#f3f4f6' : '#fff',
-          },
-        ]}
+        style={[styles.outerCircle,outerCircleStyle]}
       >
         {selected && <View style={[styles.innerCircle, { backgroundColor: innerColors }]} />}
       </View>
       {label && (
         <Text
-          style={[
-            styles.label,
-            { color: disabled ? '#9ca3af' : '#111' },
-            labelStyle,
-          ]}
+          style={[styles.label,textColorStyle,labelStyle]}
         >
           {label}
         </Text>

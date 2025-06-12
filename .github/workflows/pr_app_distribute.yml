@@ -4,6 +4,11 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
 
+env:
+  FIREBASE_PROJECT_NUMBER: "715635897715"
+  FIREBASE_APP_ID: "1:715635897715:android:0be885c6b27f7c99de0106"
+  FIREBASE_PROJECT_ID: "react-native-boilerplate-14974"
+  FIREBASE_APP_PACKAGE: "android:com.bettrsw.boilerplate"
 jobs:
   build-and-deploy:
     if: github.event.action != 'closed'
@@ -50,8 +55,8 @@ jobs:
         run: bundle exec fastlane android pr_deploy \
           pr_number:"${{ github.event.pull_request.number }}" \
           pr_title:"${{ github.event.pull_request.title }}" \
-          project_number:"${{ secrets.FIREBASE_PROJECT_NUMBER }}" \
-          app_id:"${{ secrets.FIREBASE_APP_ID }}"
+          project_number:"${FIREBASE_PROJECT_NUMBER}" \
+          app_id:"${FIREBASE_APP_ID}"
         env:
           GRADLE_OPTS: -Xmx4g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8
       
@@ -60,7 +65,7 @@ jobs:
         with:
           script: |
             const prNumber = context.issue.number;
-            const releaseUrl = "https://console.firebase.google.com/project/react-native-boilerplate-14974/appdistribution/app/android:com.bettrsw.boilerplate/releases";
+            const releaseUrl = "https://console.firebase.google.com/project/${process.env.FIREBASE_PROJECT_ID}/appdistribution/app/${process.env.FIREBASE_APP_PACKAGE}/releases";
             github.rest.issues.createComment({
             issue_number: prNumber,
             owner: context.repo.owner,
@@ -97,5 +102,5 @@ jobs:
         run: |
           bundle exec fastlane android pr_cleanup \
           pr_number:"${{ github.event.pull_request.number }}" \
-          project_number:"${{ secrets.FIREBASE_PROJECT_NUMBER }}" \
-          app_id:"${{ secrets.FIREBASE_APP_ID }}"
+          project_number:"${FIREBASE_PROJECT_NUMBER}" \
+          app_id:"${FIREBASE_APP_ID}"

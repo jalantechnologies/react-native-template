@@ -1,62 +1,56 @@
-# CI/CD Pipeline (Android)
+# 📦 CI/CD Pipeline Overview
 
-This project uses **GitHub Actions** and **Fastlane** to manage CI/CD for the Android app. This includes:
+This repository uses GitHub Actions to automate the build, testing, and deployment of the Android app to:
 
-- 🚀 Automatic builds and deployment for pull requests
-- 🧹 Cleanup of test builds when PRs are closed
+- **Firebase App Distribution** for PR builds
 
----
-
-## 🔧 GitHub Secrets Required
-
-| Secret Name               | Purpose                                         |
-|--------------------------|-------------------------------------------------|
-| `GCP_JSON_BASE64`        | Firebase service account (base64-encoded)       |
-| `FIREBASE_PROJECT_NUMBER`| Firebase project number (e.g. `7156...`)        |
-| `FIREBASE_APP_ID`        | Firebase App ID (e.g. `1:xxx:android:yyy`)      |
-| `GPLAY_SERVICE_ACCOUNT_KEY_JSON`  | Play Store service account JSON                 |
-| `KEYSTORE_FILE`          | Android keystore file                          |
-| `KEYSTORE_PASSWORD`      | Password for the keystore                      |
-| `KEY_ALIAS`              | Keystore alias                                 |
-| `KEY_PASSWORD`           | Keystore alias password                        |
+CI/CD is powered by **Fastlane**, and secrets are configured via **GitHub Actions secrets**.
 
 ---
 
-## 🧪 PR Build & Firebase Deployment
+## 🔧 Environment Variables
 
-- Triggered when a pull request is opened or updated.
-- Builds a debug APK and uploads it to Firebase App Distribution.
-- Comments on the PR with a link to the release.
+The following environment variables are defined at the top of the workflow or injected via secrets:
 
-### Firebase-specific params:
-These are passed from the CI config and **must not be hardcoded**:
-
-- `FIREBASE_PROJECT_NUMBER`
-- `FIREBASE_APP_ID`
-
-
-
-## 🧹 Cleanup (on PR Close)
-
-When a PR is closed, we:
-
-- Search Firebase for matching test builds (based on PR number)
-- Delete those test builds via Firebase API
+| Name                      | Source                | Description                                                                 |
+|---------------------------|-----------------------|-----------------------------------------------------------------------------|
+| `FIREBASE_PROJECT_NUMBER` | GitHub Actions `env:` | Firebase project number (visible in GCP or Firebase settings)               |
+| `FIREBASE_APP_ID`         | GitHub Actions `env:` | Firebase Android App ID                                                     |
+| `FIREBASE_PROJECT_ID`     | GitHub Actions `env:` | Firebase project ID (used in Firebase Console URL)                          |
+| `FIREBASE_APP_PACKAGE`  | GitHub Actions `env:` | Android App identifier (e.g., `android:com.example.app`)                    |
+| `GCP_JSON_BASE64`         | GitHub Secret         | Base64-encoded GCP service account JSON file used by Firebase CLI/Fastlane |
+| `GPLAY_SERVICE_ACCOUNT_KEY_JSON`   | GitHub Secret         | Base64-encoded JSON for Google Play Service Account                         |
+| `KEYSTORE_FILE`           | GitHub Secret         | Base64-encoded Android keystore                                             |
+| `KEYSTORE_PASSWORD`       | GitHub Secret         | Android keystore password                                                   |
+| `KEY_ALIAS`               | GitHub Secret         | Android key alias                                                           |
+| `KEY_PASSWORD`            | GitHub Secret         | Android key password                                                        |
 
 ---
 
-## 📁 Workflow Files
+## 🚀 CI Workflow Summary
 
-- `.github/workflows/pr_app_distribute.yml` – Handles PR Firebase deploy + cleanup + Play Store
-- `Fastfile` – Contains Fastlane lanes:
-  - `pr_deploy_firebase`
-  - `pr_cleanup`
+### 1. PR Build & Deploy to Firebase
+
+- Triggered on PR open/sync/reopen
+- Builds the APK with Fastlane
+- Uploads the build to Firebase App Distribution
+- Comments on the PR with a Firebase release link
+
+### 2. Cleanup
+
+- Triggered when a PR is closed
+- Deletes the Firebase App Distribution release associated with that PR
 
 ---
 
-## 🤝 Contribution Guidelines
+## 🧪 Local Testing
 
-When modifying CI/CD setup:
-- Use environment variables or GitHub secrets for all sensitive/unique config
-- Do not hardcode `project_number`, `app_id`, or secrets
-- Update this README if pipeline changes
+You can test CI lanes locally using:
+
+```sh
+cd android
+bundle exec fastlane android pr_deploy \
+  pr_number:123 \
+  pr_title:"Fix login bug" \
+  project_number:"<FIREBASE_PROJECT_NUMBER>" \
+  app_id:"<FIREBASE_APP_ID>"

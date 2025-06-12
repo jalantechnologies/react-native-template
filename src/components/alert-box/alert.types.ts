@@ -1,13 +1,19 @@
 export enum AlertType {
-  SUCCESS = 'SUCCESS',
   DANGER = 'DANGER',
-  WARNING = 'WARNING',
   INFO = 'INFO',
+  SUCCESS = 'SUCCESS',
+  WARNING = 'WARNING',
 }
 
-export interface AlertOptions {
-  type?: AlertType;
+export interface AlertConfig {
+  confirmText: string;
+  message: string;
   title: string;
-  content: string;
-  confirmText?: string;
+  type: AlertType;
+  visible: boolean;
+}
+
+export interface AlertContextType {
+  hideAlert: () => void;
+  showAlert: (config: Omit<AlertConfig, 'visible'>) => void;
 }

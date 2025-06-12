@@ -1,2 +1,2 @@
-export * from './AlertBox';
-export * from './alert.types';
+export { AlertProvider, useAlert } from './AlertProvider';
+export { AlertType } from './alert.types';

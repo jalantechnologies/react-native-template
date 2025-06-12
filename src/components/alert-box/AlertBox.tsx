@@ -1,41 +1,68 @@
-import { Appearance, ColorSchemeName } from 'react-native';
-import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
+import { useTheme } from 'native-base';
+import React from 'react';
+import { Modal, View, Text, TouchableOpacity } from 'react-native';
 
-import { AlertOptions, AlertType } from './alert.types';
+import { AlertType } from './alert.types';
+import { AlertStyles } from './alert.styles';
 
-const alertTypeMap: Record<AlertType, ALERT_TYPE> = {
-  SUCCESS: ALERT_TYPE.SUCCESS,
-  DANGER: ALERT_TYPE.DANGER,
-  WARNING: ALERT_TYPE.WARNING,
-  INFO: ALERT_TYPE.INFO,
+interface Props {
+  confirmText: string;
+  message: string;
+  onClose: () => void;
+  type: AlertType;
+  title: string;
+}
+
+const SYMBOL = {
+  [AlertType.DANGER]: '╳',
+  [AlertType.INFO]: '💡',
+  [AlertType.SUCCESS]: '✔',
+  [AlertType.WARNING]: '⚠',
 };
 
-export const checkTheme = (): 'light' | 'dark' => {
-  const theme: ColorSchemeName = Appearance.getColorScheme();
-  return theme === 'dark' ? 'light' : 'dark';
-};
+export const AlertBox: React.FC<Props> = ({ 
+  type, 
+  title, 
+  message, 
+  onClose, 
+  confirmText 
+}) => {
+  const { colors } = useTheme();
+  const styles = AlertStyles();
+  const getAlertColor = () => {
+    switch (type) {
+      case AlertType.DANGER:
+        return colors.error[500];
+      case AlertType.SUCCESS:
+        return colors.success[500];
+      case AlertType.INFO:
+        return colors.info[500];
+      case AlertType.WARNING:
+        return colors.warning[500];
+      default:
+        return colors.gray[400];
+    }
+  };
+  const color = getAlertColor();
 
-export const showAlertDialog = ({
-  type = AlertType.INFO,
-  title,
-  content,
-  confirmText,
-}: AlertOptions) => {
-  Dialog.show({
-    type: alertTypeMap[type],
-    title: title,
-    textBody: content,
-    button: confirmText,
-    autoClose: confirmText ? false : 2000,
-    closeOnOverlayTap: confirmText ? false : true,
-  });
-};
-
-export const showAlertToast = ({ type = AlertType.INFO, title, content }: AlertOptions) => {
-  Toast.show({
-    type: alertTypeMap[type],
-    title: title,
-    textBody: content,
-    autoClose: 2000,
-  });
+  return (
+    <Modal transparent animationType="fade">
+      <View style={styles.overlay}>
+        <View style={styles.container}>
+          <View style={styles.iconContainer}>
+            <View style={[styles.iconWrapper, { backgroundColor: color }]}>
+              <View style={styles.unrotate}>
+                <Text style={styles.iconText}>{SYMBOL[type]}</Text>
+              </View>
+            </View>
+          </View>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.message}>{message}</Text>
+          <TouchableOpacity style={[styles.button, { backgroundColor: color }]} onPress={onClose}>
+            <Text style={styles.buttonText}>{confirmText}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
 };

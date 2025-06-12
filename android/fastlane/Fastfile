@@ -144,7 +144,7 @@ end
     access_token = Actions.sh("gcloud auth print-access-token", log: false).strip
     UI.message("✅ Access token fetched")
 
-    ENV["GRADLE_OPTS"] = "-Xmx4g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
+    ENV["GRADLE_OPTS"] = "-Xmx6g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"
 
     gradle(
       task: "assemble",

@@ -93,8 +93,4 @@ jobs:
 
       - name: Cleanup Firebase App Distribution for PR
         working-directory: android
-        run: |
-          bundle exec fastlane android pr_cleanup \
-          pr_number:"${{ github.event.pull_request.number }}" \
-          project_number:"${{ env.FIREBASE_PROJECT_NUMBER }}" \
-          app_id:"${{ env.FIREBASE_APP_ID }}
+        run: bundle exec fastlane android pr_cleanup pr_number:"${{ github.event.pull_request.number }}" project_number:"${{ env.FIREBASE_PROJECT_NUMBER }}" app_id:"${{ env.FIREBASE_APP_ID }}"

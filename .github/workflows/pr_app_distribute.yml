@@ -69,7 +69,9 @@ jobs:
         with:
           script: |
             const prNumber = context.issue.number;
-            const releaseUrl = "https://console.firebase.google.com/project/${process.env.FIREBASE_PROJECT_ID}/appdistribution/app/${process.env.FIREBASE_APP_PACKAGE}/releases";
+            const projectId = process.env.FIREBASE_PROJECT_ID;
+            const appPackage = process.env.FIREBASE_APP_PACKAGE;
+            const releaseUrl = "https://console.firebase.google.com/project/${projectId}/appdistribution/app/${appPackage}/releases";
             github.rest.issues.createComment({
             issue_number: prNumber,
             owner: context.repo.owner,

@@ -2,8 +2,8 @@ import { useTheme } from 'native-base';
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity } from 'react-native';
 
-import { AlertType } from './alert.types';
 import { AlertStyles } from './alert.styles';
+import { AlertType } from './alert.types';
 
 interface Props {
   confirmText: string;
@@ -20,13 +20,7 @@ const SYMBOL = {
   [AlertType.WARNING]: '⚠',
 };
 
-export const AlertBox: React.FC<Props> = ({ 
-  type, 
-  title, 
-  message, 
-  onClose, 
-  confirmText 
-}) => {
+export const AlertBox: React.FC<Props> = ({ type, title, message, onClose, confirmText }) => {
   const { colors } = useTheme();
   const styles = AlertStyles();
   const getAlertColor = () => {

@@ -152,8 +152,11 @@ end
       properties: {
         "org.gradle.daemon" => "false",
         "org.gradle.workers.max" => "2"
-      }
+     },
+      print_command: true,
+      print_command_output: true
     )
+
 
 
     # Upload the APK binary

@@ -5,10 +5,14 @@ import { Platform, View, Text, TouchableOpacity } from 'react-native';
 import { DatePickerStyles } from './date-picker.styles';
 import { DatePickerProps, DatePickerMode, PlatformType } from './date-picker.types';
 
-export const DatePicker: React.FC<DatePickerProps> = ({ date, onDateChange, mode = DatePickerMode.DATE }) => {
+export const DatePicker: React.FC<DatePickerProps> = ({
+  date,
+  onDateChange,
+  mode = DatePickerMode.DATE,
+}) => {
   const [show, setShow] = useState(false);
   const userLocale = useMemo(() => Intl.DateTimeFormat().resolvedOptions().locale, []);
-  const styles = DatePickerStyles()
+  const styles = DatePickerStyles();
   const onChange = (_: any, selectedDate?: Date) => {
     setShow(false);
     if (selectedDate) {

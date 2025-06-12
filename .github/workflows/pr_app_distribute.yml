@@ -57,13 +57,13 @@ jobs:
           echo "App ID: ${FIREBASE_APP_ID}"
           echo "Project Number: ${FIREBASE_PROJECT_NUMBER}"
 
-      # - name: Build & Deploy to Firebase App Distribution
-      #   working-directory: android
-      #   run: bundle exec fastlane android pr_deploy \
-      #     pr_number:"${{ github.event.pull_request.number }}" \
-      #     pr_title:"${{ github.event.pull_request.title }}" \
-      #     project_number:"${FIREBASE_PROJECT_NUMBER}" \
-      #     app_id:"${FIREBASE_APP_ID}"
+      - name: Build & Deploy to Firebase App Distribution
+        working-directory: android
+        run: bundle exec fastlane android pr_deploy \
+          pr_number:"${{ github.event.pull_request.number }}" \
+          pr_title:"${{ github.event.pull_request.title }}" \
+          project_number:"${{ env.FIREBASE_PROJECT_NUMBER }}" \
+          app_id:"${{ env.FIREBASE_APP_ID }}"
       
       - name: Comment on PR
         uses: actions/github-script@v7
@@ -107,5 +107,5 @@ jobs:
         run: |
           bundle exec fastlane android pr_cleanup \
           pr_number:"${{ github.event.pull_request.number }}" \
-          project_number:"${FIREBASE_PROJECT_NUMBER}" \
-          app_id:"${FIREBASE_APP_ID}"
+          project_number:"${{ env.FIREBASE_PROJECT_NUMBER }}" \
+          app_id:"${{ env.FIREBASE_APP_ID }}

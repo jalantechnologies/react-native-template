@@ -174,14 +174,13 @@ end
     request.body = apk_data
 
     response = http.request(request)
-
+    UI.message("Uploading to: #{upload_url}")
     if response.code.to_i != 200 && response.code.to_i != 201
       UI.user_error!("Failed to upload APK: #{response.code} - #{response.body}")
     end
 
     upload_response = JSON.parse(response.body)
     UI.message("✅ APK uploaded. Operation: #{upload_response['name']}")
-
 
     operation_name = upload_response["name"]
     operation_url = "https://firebaseappdistribution.googleapis.com/v1/#{operation_name}"

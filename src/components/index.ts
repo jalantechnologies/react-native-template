@@ -29,3 +29,4 @@ export { PasswordInput } from './inputs';
 export { TextAreaInput } from './inputs';
 export { default as Divider } from './divider/divider';
 export * from './divider';
+export * from './Switch';

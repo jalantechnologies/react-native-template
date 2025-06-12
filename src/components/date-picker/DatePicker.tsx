@@ -1,12 +1,14 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Platform, View, Text, TouchableOpacity } from 'react-native';
 
-import { styles } from './date-picker.styles';
-import { DatePickerProps } from './date-picker.types';
+import { DatePickerStyles } from './date-picker.styles';
+import { DatePickerProps, DatePickerMode, PlatformType } from './date-picker.types';
 
-export const DatePicker: React.FC<DatePickerProps> = ({ date, onDateChange, mode = 'date' }) => {
+export const DatePicker: React.FC<DatePickerProps> = ({ date, onDateChange, mode = DatePickerMode.DATE }) => {
   const [show, setShow] = useState(false);
+  const userLocale = useMemo(() => Intl.DateTimeFormat().resolvedOptions().locale, []);
+  const styles = DatePickerStyles()
   const onChange = (_: any, selectedDate?: Date) => {
     setShow(false);
     if (selectedDate) {
@@ -14,13 +16,24 @@ export const DatePicker: React.FC<DatePickerProps> = ({ date, onDateChange, mode
     }
   };
 
+  const mapToNativePickerMode = (mode: DatePickerMode): 'date' | 'time' => {
+    switch (mode) {
+      case DatePickerMode.TIME:
+        return 'time';
+      case DatePickerMode.DATETIME:
+      case DatePickerMode.DATE:
+      default:
+        return 'date';
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => setShow(true)} style={styles.button}>
         <Text style={styles.text}>
-          {mode === 'time'
+          {mode === DatePickerMode.TIME
             ? date.toLocaleTimeString()
-            : date.toLocaleDateString('en-US', {
+            : date.toLocaleDateString(userLocale, {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
@@ -31,8 +44,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({ date, onDateChange, mode
       {show && (
         <DateTimePicker
           value={date}
-          mode={mode === 'datetime' ? 'date' : mode}
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+          mode={mapToNativePickerMode(mode)}
+          display={Platform.OS === PlatformType.IOS ? 'spinner' : 'default'}
           onChange={onChange}
         />
       )}

@@ -1,17 +1,23 @@
+import { useTheme } from 'native-base';
 import { StyleSheet } from 'react-native';
 
-export const styles = StyleSheet.create({
-  container: {
-    marginVertical: 8,
-  },
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 6,
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 16,
-  },
-});
+export const DatePickerStyles = ()=>{
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    container: {
+        marginVertical: theme.space['8'],
+        marginHorizontal: theme.space['8'],
+      },
+      button: {
+        paddingVertical: theme.space['3'],
+        paddingHorizontal: theme.space['4'],
+        backgroundColor: theme.colors.gray[100],
+        borderRadius: theme.radii?.sm ?? 6,
+        alignItems: 'center',
+      },
+      text: {
+        fontSize: theme.fontSizes?.md ?? 16,
+      },
+  });
+} 

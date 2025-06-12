@@ -1,3 +1,4 @@
+import { useTheme } from 'native-base';
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 
@@ -5,13 +6,14 @@ import { styles, useRadioKindStyles } from './radio-button.styles';
 import { RadioButtonProps, RadioButtonKind } from './radio-button.types';
 
 const RadioButton: React.FC<RadioButtonProps> = ({
-  value,
-  selected,
-  onPress,
-  label,
   disabled = false,
   kind = RadioButtonKind.PRIMARY,
+  label,
+  onPress,
+  selected,
+  value,
 }) => {
+  const theme = useTheme();
   const kindStyles = useRadioKindStyles();
   const style = kindStyles[kind];
 
@@ -22,16 +24,16 @@ const RadioButton: React.FC<RadioButtonProps> = ({
   };
 
   const outerCircleStyle = {
-    borderColor: selected && !disabled ? style.borderColor : '#d1d5db',
-    backgroundColor: disabled ? '#f3f4f6' : '#fff',
+    borderColor: selected && !disabled ? style.borderColor : theme.colors.gray[300],
+    backgroundColor: disabled ? '#f3f4f6' : theme.colors.white,
   };
 
   const innerCircleStyle = {
-    backgroundColor: disabled ? '#9ca3af' : style.innerColor,
+    backgroundColor: disabled ? theme.colors.gray[400] : style.innerColor,
   };
 
   const labelColorStyle = {
-    color: disabled ? '#9ca3af' : '#111',
+    color: disabled ? theme.colors.gray[400] : theme.colors.gray[900],
   };
 
   return (

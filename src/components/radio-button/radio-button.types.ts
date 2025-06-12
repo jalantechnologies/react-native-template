@@ -1,14 +1,14 @@
 export enum RadioButtonKind {
-  PRIMARY = 'primary',
   ERROR = 'error',
+  PRIMARY = 'primary',
   SUCCESS = 'success',
 }
 
 export interface RadioButtonProps {
-  value: string;
-  selected: boolean;
-  onPress: (value: string) => void;
-  label?: string;
   disabled?: boolean;
   kind?: RadioButtonKind;
+  label?: string;
+  onPress: (value: string) => void;
+  selected: boolean;
+  value: string;
 }

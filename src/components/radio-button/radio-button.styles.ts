@@ -19,12 +19,12 @@ export const useRadioKindStyles = (): Record<RadioKind, RadioKindStyle> => {
       innerColor: theme.colors.primary['600'],
     },
     [RadioButtonKind.SUCCESS]: {
-      borderColor: theme.colors.success?.['500'] || '#16a34a',
-      innerColor: theme.colors.success?.['600'] || '#1cca5b',
+      borderColor: theme.colors.success['500'],
+      innerColor: theme.colors.success['600'],
     },
     [RadioButtonKind.ERROR]: {
-      borderColor: theme.colors.danger?.['600'] || '#dc2626',
-      innerColor: theme.colors.danger?.['500'] || '#df3a3a',
+      borderColor: theme.colors.danger['600'],
+      innerColor: theme.colors.danger['500'],
     },
   };
 };

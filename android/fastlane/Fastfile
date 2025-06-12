@@ -144,10 +144,17 @@ end
     access_token = Actions.sh("gcloud auth print-access-token", log: false).strip
     UI.message("✅ Access token fetched")
 
+    ENV["GRADLE_OPTS"] = "-Xmx4g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8"
+
     gradle(
       task: "assemble",
-      build_type: "Debug"
+      build_type: "Debug",
+      properties: {
+        "org.gradle.daemon" => "false",
+        "org.gradle.workers.max" => "2"
+      }
     )
+
 
     # Upload the APK binary
     upload_url = "https://firebaseappdistribution.googleapis.com/upload/v1/projects/#{project_number}/apps/#{app_id}/releases:upload"

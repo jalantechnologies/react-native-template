@@ -71,13 +71,14 @@ jobs:
             const prNumber = context.issue.number;
             const projectId = process.env.FIREBASE_PROJECT_ID;
             const appPackage = process.env.FIREBASE_APP_PACKAGE;
-            const releaseUrl = "https://console.firebase.google.com/project/${projectId}/appdistribution/app/${appPackage}/releases";
+            const releaseUrl = `https://console.firebase.google.com/project/${projectId}/appdistribution/app/${appPackage}/releases`;
             github.rest.issues.createComment({
-            issue_number: prNumber,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: `🚀 Deployed PR #${prNumber} to Firebase App Distribution.
-            [View Releases](${releaseUrl})`
+              issue_number: prNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 Deployed PR #${prNumber} to Firebase App Distribution.
+
+              🔗 [View Release in Firebase Console](${releaseUrl})`
             });
   cleanup:
     runs-on: ubuntu-latest

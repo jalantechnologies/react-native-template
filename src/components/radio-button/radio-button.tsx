@@ -2,8 +2,9 @@ import { useTheme } from 'native-base';
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 
-import { RadioStyles, useRadioKindStyles } from './radio-button.styles';
+
 import { RadioButtonProps, RadioButtonKind } from '../../types/radio-button';
+import { RadioStyles, useRadioKindStyles } from './radio-button.styles';
 
 const RadioButton: React.FC<RadioButtonProps> = ({
   disabled = false,

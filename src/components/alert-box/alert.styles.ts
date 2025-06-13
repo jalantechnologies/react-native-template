@@ -1,4 +1,4 @@
-import { Center, useColorMode, useTheme } from 'native-base';
+import { useColorMode, useTheme } from 'native-base';
 import { Dimensions, StyleSheet } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -52,7 +52,7 @@ export const AlertStyles = () => {
       fontWeight: 'bold',
     },
     title: {
-      fontSize: theme.fontSizes['xl'],
+      fontSize: theme.fontSizes.xl,
       fontWeight: 'bold',
       marginBottom: theme.space[2],
       color: theme.colors.gray[900],
@@ -61,7 +61,7 @@ export const AlertStyles = () => {
     message: {
       textAlign: 'center',
       marginBottom: theme.space[5],
-      fontSize: theme.fontSizes['md'],
+      fontSize: theme.fontSizes.md,
       color: theme.colors.gray[900],
     },
     button: {
@@ -70,7 +70,7 @@ export const AlertStyles = () => {
     buttonText: {
       color: theme.colors.white,
       fontWeight: 'bold',
-      fontSize: theme.fontSizes['md'],
+      fontSize: theme.fontSizes.md,
       paddingHorizontal: theme.space[4],
       paddingVertical: theme.space[1],
     },

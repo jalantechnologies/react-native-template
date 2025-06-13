@@ -1,4 +1,3 @@
-import notifee from '@notifee/react-native';
 import { getApp } from '@react-native-firebase/app';
 import {
   getMessaging,
@@ -8,7 +7,7 @@ import {
   getInitialNotification,
   setBackgroundMessageHandler,
 } from '@react-native-firebase/messaging';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 
 import Logger from '../logger/logger';
 
@@ -16,13 +15,10 @@ import Logger from '../logger/logger';
  * Manages Firebase Cloud Messaging integration for push notifications.
  *
  * This service handles all aspects of FCM setup:
- * - Permission requests using Notifee (more reliable than native requests)
+ * - Permission requests
  * - Token retrieval and management
  * - Background and foreground message handling
  * - Notification tap handling for different app states
- *
- * Implementation follows Firebase best practices for React Native:
- * https://firebase.google.com/docs/cloud-messaging/react-native/client
  */
 export class FirebaseMessagingService {
   private readonly messaging: any;
@@ -35,20 +31,23 @@ export class FirebaseMessagingService {
   /**
    * Requests notification permissions from the user.
    *
-   * We use Notifee's permission API instead of Firebase's native one because
-   * it provides more consistent behavior across iOS versions and better
-   * permission management options.
-   *
    * @return A promise that resolves when the permission flow is complete
    */
   readonly requestUserPermission = async (): Promise<void> => {
     try {
-      const settings = await notifee.requestPermission();
-      if (settings.authorizationStatus >= 1) {
-        Logger.info('Notification permission granted: ' + JSON.stringify(settings));
-        await this.getFcmToken();
+      if (Platform.OS === 'ios') {
+        const authStatus = await this.messaging.requestPermission();
+        const enabled = authStatus === 1 || authStatus === 2; //
+
+        if (enabled) {
+          Logger.info('Notification permission granted');
+          await this.getFcmToken();
+        } else {
+          Alert.alert('Push Notification permission denied');
+        }
       } else {
-        Alert.alert('Push Notification permission denied');
+        // On Android, permissions are granted at app install time
+        await this.getFcmToken();
       }
     } catch (error) {
       Logger.error('Error requesting notification permission: ' + error);
@@ -133,13 +132,6 @@ export class FirebaseMessagingService {
    *
    * This is where you should implement navigation logic to direct users
    * to the appropriate screen based on notification content.
-   *
-   * Example implementation:
-   * ```
-   * if (remoteMessage.data?.type === 'chat') {
-   *   navigate('ChatScreen', { conversationId: remoteMessage.data.conversationId });
-   * }
-   * ```
    */
   readonly setupNotificationOpenedHandler = (): void => {
     onNotificationOpenedApp(this.messaging, remoteMessage => {

@@ -1,119 +1,132 @@
-import notifee, { AndroidImportance, EventType, TriggerType } from '@notifee/react-native';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import { Platform } from 'react-native';
+import PushNotification from 'react-native-push-notification';
 
 import Logger from '../logger/logger';
+
 export class NotificationService {
   private isInitialized = false;
 
   initialize = async (): Promise<void> => {
     if (!this.isInitialized) {
-      await this.initializeNotifee();
+      await this.initializeNotifications();
     }
   };
 
-  private readonly initializeNotifee = async (): Promise<void> => {
+  private readonly initializeNotifications = async (): Promise<void> => {
     try {
-      await this.requestNotificationPermissions();
+      PushNotification.configure({
+        onNotification: this.onNotification,
+
+        onRegister: (token: { os: string; token: string }) => {
+          Logger.debug(`Push notification token: ${token.token}`);
+        },
+
+        onRegistrationError: (error: Error) => {
+          Logger.error(`Registration error: ${error.message}`);
+        },
+
+        permissions: {
+          alert: true,
+          badge: true,
+          sound: true,
+        },
+
+        popInitialNotification: true,
+        requestPermissions: true,
+      });
+
       await this.createNotificationChannels();
-      this.setupBackgroundEventHandlers();
       this.isInitialized = true;
     } catch (error) {
-      Logger.error(`Failed to initialize Notifee: ${error}`);
+      Logger.error(`Failed to initialize notifications: ${error}`);
     }
   };
 
-  private readonly requestNotificationPermissions = async (): Promise<void> => {
-    await notifee.requestPermission();
+  private readonly createDefaultChannel = (): Promise<void> => {
+    return new Promise<void>(resolve => {
+      PushNotification.createChannel(
+        {
+          channelId: 'default',
+          channelName: 'Default Notifications',
+          channelDescription: 'General app notifications',
+          playSound: true,
+          soundName: 'default',
+          importance: PushNotification.Importance.DEFAULT,
+          vibrate: true,
+        },
+        (success: boolean) => {
+          Logger.debug(`Default channel created: ${success}`);
+          resolve();
+        },
+      );
+    });
   };
 
-  /**
-   * Creates Android notification channels with different importance levels.
-   * High importance channels bypass Do Not Disturb mode and show heads-up notifications
-   * for critical communications like messages and urgent tasks.
-   */
+  private readonly createHighPriorityChannel = (): Promise<void> => {
+    return new Promise<void>(resolve => {
+      PushNotification.createChannel(
+        {
+          channelId: 'high-priority',
+          channelName: 'High Priority',
+          channelDescription: 'Urgent notifications that require immediate attention',
+          playSound: true,
+          soundName: 'default',
+          importance: PushNotification.Importance.HIGH,
+          vibrate: true,
+        },
+        (success: boolean) => {
+          Logger.debug(`High priority channel created: ${success}`);
+          resolve();
+        },
+      );
+    });
+  };
+
+  private readonly createMessagesChannel = (): Promise<void> => {
+    return new Promise<void>(resolve => {
+      PushNotification.createChannel(
+        {
+          channelId: 'messages',
+          channelName: 'Messages',
+          channelDescription: 'Chat and direct message notifications',
+          playSound: true,
+          soundName: 'default',
+          importance: PushNotification.Importance.HIGH,
+          vibrate: true,
+        },
+        (success: boolean) => {
+          Logger.debug(`Messages channel created: ${success}`);
+          resolve();
+        },
+      );
+    });
+  };
+
   private readonly createNotificationChannels = async (): Promise<void> => {
-    await notifee.createChannel({
-      id: 'default',
-      name: 'Default Notifications',
-      description: 'General app notifications',
-      importance: AndroidImportance.DEFAULT,
-      sound: 'default',
-      vibration: true,
-    });
-
-    await notifee.createChannel({
-      id: 'high-priority',
-      name: 'High Priority',
-      description: 'Urgent notifications that require immediate attention',
-      importance: AndroidImportance.HIGH,
-      sound: 'default',
-      vibration: true,
-    });
-
-    await notifee.createChannel({
-      id: 'messages',
-      name: 'Messages',
-      description: 'Chat and direct message notifications',
-      importance: AndroidImportance.HIGH,
-      sound: 'default',
-      vibration: true,
-    });
-  };
-
-  /**
-   * Sets up handlers for notification interactions when app is in background.
-   * Background events are processed differently than foreground events due to
-   * React Native's execution context limitations in background state.
-   */
-  private readonly setupBackgroundEventHandlers = (): void => {
-    notifee.onBackgroundEvent(async ({ type, detail }) => {
-      try {
-        const { notification, pressAction } = detail;
-
-        switch (type) {
-          case EventType.DISMISSED:
-            this.handleNotificationDismissal(notification);
-            break;
-          case EventType.PRESS:
-            await this.handleNotificationPress(notification);
-            break;
-          case EventType.ACTION_PRESS:
-            await this.handleActionPress(pressAction?.id);
-            break;
-        }
-      } catch (error) {
-        Logger.error(`Error handling background notification event: ${error}`);
-      }
-    });
-  };
-
-  readonly setupForegroundEventHandlers = () => {
-    return notifee.onForegroundEvent(({ type, detail }) => {
-      switch (type) {
-        case EventType.DISMISSED:
-          this.handleNotificationDismissal(detail.notification);
-          break;
-        case EventType.PRESS:
-          this.handleForegroundNotificationPress(detail.notification);
-          break;
-      }
-    });
-  };
-
-  private readonly handleNotificationDismissal = (notification: any): void => {
-    Logger.debug(`Notification dismissed: ${notification?.id}`);
-  };
-
-  private readonly handleForegroundNotificationPress = (notification: any): void => {
-    if (notification?.data) {
-      Logger.debug(`Foreground notification pressed: ${notification.data.type}`);
+    if (Platform.OS === 'android') {
+      await this.createDefaultChannel();
+      await this.createHighPriorityChannel();
+      await this.createMessagesChannel();
     }
   };
 
-  /**
-   * Displays notifications when app is in foreground.
-   * By default, Firebase notifications don't show when app is active,
-   * so we manually display them to maintain consistent UX across app states.
-   */
+  private readonly onNotification = (notification: any): void => {
+    Logger.debug(`Notification received: ${JSON.stringify(notification)}`);
+
+    if (notification.userInteraction) {
+      this.handleNotificationPress(notification);
+    }
+
+    if (Platform.OS === 'ios') {
+      notification.finish(PushNotificationIOS.FetchResult.NoData);
+    }
+  };
+
+  setupForegroundEventHandlers = () => {
+    return () => {};
+  };
+
   readonly handleForegroundNotification = async (remoteMessage: any): Promise<void> => {
     try {
       if (remoteMessage.notification) {
@@ -130,8 +143,10 @@ export class NotificationService {
 
   private readonly handleNotificationPress = async (notification: any): Promise<void> => {
     try {
-      if (notification?.data) {
-        const { type } = notification.data;
+      const data = Platform.OS === 'android' ? notification.data : notification.userInfo;
+
+      if (data) {
+        const type = data.type;
 
         switch (type) {
           case 'message':
@@ -149,23 +164,6 @@ export class NotificationService {
     }
   };
 
-  private readonly handleActionPress = async (actionId: string | undefined): Promise<void> => {
-    try {
-      switch (actionId) {
-        case 'reply':
-          Logger.debug('Processing reply action');
-          break;
-        case 'mark-read':
-          Logger.debug('Marking notification as read');
-          break;
-        default:
-          Logger.warn(`Unknown action pressed: ${actionId}`);
-      }
-    } catch (error) {
-      Logger.error(`Error handling action press: ${error}`);
-    }
-  };
-
   readonly displayNotification = async (title: string, body: string, data?: any): Promise<void> => {
     await this.displayLocalNotification(title, body, data);
   };
@@ -177,35 +175,24 @@ export class NotificationService {
     channelId: string = 'default',
   ): Promise<void> => {
     try {
-      await notifee.displayNotification({
+      PushNotification.localNotification({
+        channelId,
         title,
-        body,
-        data,
-        android: {
-          channelId,
-          importance: AndroidImportance.HIGH,
-          color: '#FF6B35',
-          pressAction: {
-            id: 'default',
-          },
-          vibrationPattern: this.getVibrationPattern(),
-        },
-        ios: {
-          sound: 'default',
-        },
+        message: body,
+        playSound: true,
+        soundName: 'default',
+        userInfo: data,
+        smallIcon: 'ic_notification',
+        largeIcon: '',
+        vibrate: true,
+        vibration: 300,
+        priority: 'high',
+        alertAction: 'view',
+        category: '',
       });
     } catch (error) {
       Logger.error(`Error displaying local notification: ${error}`);
     }
-  };
-
-  /**
-   * Returns vibration pattern optimized for user attention without being intrusive.
-   * Pattern: [delay, vibrate, pause, vibrate] in milliseconds.
-   * Based on Android Material Design guidelines for notification feedback.
-   */
-  private readonly getVibrationPattern = (): number[] => {
-    return [100, 300, 500, 300];
   };
 
   readonly scheduleNotification = async (
@@ -215,24 +202,22 @@ export class NotificationService {
     data?: any,
   ): Promise<void> => {
     try {
-      await notifee.createTriggerNotification(
-        {
-          title,
-          body,
-          data,
-          android: {
-            channelId: 'default',
-            importance: AndroidImportance.HIGH,
-          },
-          ios: {
-            sound: 'default',
-          },
-        },
-        {
-          type: TriggerType.TIMESTAMP,
-          timestamp,
-        },
-      );
+      PushNotification.localNotificationSchedule({
+        channelId: 'default',
+        title,
+        message: body,
+        date: new Date(timestamp),
+        playSound: true,
+        soundName: 'default',
+        userInfo: data,
+        smallIcon: 'ic_notification',
+        largeIcon: '',
+        vibrate: true,
+        vibration: 300,
+        priority: 'high',
+        alertAction: 'view',
+        category: '',
+      });
       Logger.debug(`Notification scheduled for timestamp: ${timestamp}`);
     } catch (error) {
       Logger.error(`Error scheduling notification: ${error}`);
@@ -241,7 +226,10 @@ export class NotificationService {
 
   readonly cancelAllNotifications = async (): Promise<void> => {
     try {
-      await notifee.cancelAllNotifications();
+      PushNotification.cancelAllLocalNotifications();
+      if (Platform.OS === 'ios') {
+        PushNotificationIOS.removeAllDeliveredNotifications();
+      }
       Logger.debug('All notifications cancelled');
     } catch (error) {
       Logger.error(`Error cancelling all notifications: ${error}`);
@@ -250,28 +238,33 @@ export class NotificationService {
 
   readonly cancelNotification = async (notificationId: string): Promise<void> => {
     try {
-      await notifee.cancelNotification(notificationId);
+      PushNotification.cancelLocalNotification(notificationId);
       Logger.debug(`Notification cancelled: ${notificationId}`);
     } catch (error) {
       Logger.error(`Error cancelling notification ${notificationId}: ${error}`);
     }
   };
 
-  /**
-   * @returns Current badge count, or 0 if unable to retrieve (Android compatibility)
-   */
   readonly getBadgeCount = async (): Promise<number> => {
-    try {
-      return await notifee.getBadgeCount();
-    } catch (error) {
-      Logger.error(`Error getting badge count: ${error}`);
-      return 0;
+    if (Platform.OS === 'ios') {
+      try {
+        const badgeCount = await new Promise<number>(resolve => {
+          PushNotificationIOS.getApplicationIconBadgeNumber(badge => {
+            resolve(badge);
+          });
+        });
+        return badgeCount;
+      } catch (error) {
+        Logger.error(`Error getting badge count: ${error}`);
+        return 0;
+      }
     }
+    return 0;
   };
 
   readonly setBadgeCount = async (count: number): Promise<void> => {
     try {
-      await notifee.setBadgeCount(count);
+      PushNotification.setApplicationIconBadgeNumber(count);
       Logger.debug(`Badge count set to: ${count}`);
     } catch (error) {
       Logger.error(`Error setting badge count: ${error}`);

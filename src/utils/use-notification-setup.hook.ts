@@ -11,7 +11,7 @@ export const useNotificationSetup = () => {
 
       await notificationService.initialize();
 
-      const unsubscribeNotifee = notificationService.setupForegroundEventHandlers();
+      const unsubscribeNotificationHandlers = notificationService.setupForegroundEventHandlers();
 
       const unsubscribeFirebase = await firebaseMessagingService.initialize(
         notificationService.displayNotification,
@@ -19,7 +19,7 @@ export const useNotificationSetup = () => {
 
       return () => {
         unsubscribeFirebase();
-        unsubscribeNotifee();
+        unsubscribeNotificationHandlers();
       };
     };
 

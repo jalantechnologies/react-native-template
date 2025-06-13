@@ -29,30 +29,30 @@ export const useRadioKindStyles = (): Record<RadioKind, RadioKindStyle> => {
   };
 };
 
-export const RadioStyles = ()=>{
-  const theme = useTheme()
+export const RadioStyles = () => {
+  const theme = useTheme();
   return StyleSheet.create({
-  wrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: theme.space[3],
-  },
-  outerCircle: {
-    height: theme.sizes[5],
-    width: theme.sizes[5],
-    borderRadius: theme.radii.full,
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: theme.space[2],
-  },
-  innerCircle: {
-    height: theme.sizes[3],
-    width: theme.sizes[3],
-    borderRadius: theme.radii.full,
-  },
-  label: {
-    fontSize: theme.fontSizes.md,
-  },
-});
-} 
+    wrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: theme.space[3],
+    },
+    outerCircle: {
+      height: theme.sizes[5],
+      width: theme.sizes[5],
+      borderRadius: theme.radii.full,
+      borderWidth: 2,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: theme.space[2],
+    },
+    innerCircle: {
+      height: theme.sizes[3],
+      width: theme.sizes[3],
+      borderRadius: theme.radii.full,
+    },
+    label: {
+      fontSize: theme.fontSizes.md,
+    },
+  });
+};

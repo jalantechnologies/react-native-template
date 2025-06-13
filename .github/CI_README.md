@@ -14,18 +14,18 @@ This ensures contributors and QA can quickly test PR builds without manually com
 
 These environment variables are used by the GitHub Actions workflows and Fastlane scripts to authenticate, configure builds, and upload to Firebase or Google Play.
 
-| Name                               | Source                | Description                                                                 |
-|------------------------------------|------------------------|-----------------------------------------------------------------------------|
-| `FIREBASE_PROJECT_NUMBER`          | GitHub Actions `env:`  | Unique numeric ID for the Firebase project. Used in Firebase API URLs.     |
-| `FIREBASE_APP_ID`                  | GitHub Actions `env:`  | Unique ID of the Firebase Android app. Required for distribution uploads.  |
-| `FIREBASE_PROJECT_ID`              | GitHub Actions `env:`  | Human-readable Firebase project ID, used in Firebase CLI commands.         |
-| `FIREBASE_APP_PACKAGE`             | GitHub Actions `env:`  | App's Android package name (e.g. `com.example.app`). Used in Play Console. |
-| `GCP_JSON_BASE64`                  | GitHub Secret          | Base64-encoded service account key. Used for Firebase and GCP auth.        |
-| `GPLAY_SERVICE_ACCOUNT_KEY_JSON`   | GitHub Secret          | Base64-encoded JSON for Google Play upload auth (internal testing/prod).   |
-| `KEYSTORE_FILE`                    | GitHub Secret          | Base64-encoded Android keystore used for signing release builds.           |
-| `KEYSTORE_PASSWORD`                | GitHub Secret          | Password for the keystore file.                                             |
-| `KEY_ALIAS`                        | GitHub Secret          | Key alias inside the keystore.                                              |
-| `KEY_PASSWORD`                     | GitHub Secret          | Password for the key alias.                                                 |
+| Name                            | Source                | Description                                                                                                                                         |
+|---------------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `FIREBASE_PROJECT_NUMBER`       | GitHub Actions `env:` | Firebase project number. Used in Firebase API endpoints for uploading and managing app distribution releases.                                      |
+| `FIREBASE_APP_ID`               | GitHub Actions `env:` | Unique Firebase Android App ID. Used in Firebase App Distribution API calls to associate the build with the correct app.                           |
+| `FIREBASE_PROJECT_ID`           | GitHub Actions `env:` | Firebase project ID. Used in Firebase CLI and Firebase Console URLs. Also helpful for identifying the correct project context in scripts.          |
+| `FIREBASE_APP_PACKAGE`          | GitHub Actions `env:` | Android app package name (e.g., `com.example.app`). Used during Gradle builds and as an identifier when uploading builds to Firebase.              |
+| `GCP_JSON_BASE64`               | GitHub Secret         | Base64-encoded GCP service account JSON. Decoded and written to `/tmp/gcp_key.json` to authenticate `gcloud` and Firebase App Distribution APIs.   |
+| `GPLAY_SERVICE_ACCOUNT_KEY_JSON` | GitHub Secret        | Base64-encoded JSON for Google Play Service Account. Used for uploading APKs/AABs to Google Play (used in Play Store lanes, if configured).        |
+| `KEYSTORE_FILE`                 | GitHub Secret         | Base64-encoded Android signing keystore file. Required for signing release builds. Decoded during build and used in Gradle signing config.        |
+| `KEYSTORE_PASSWORD`             | GitHub Secret         | Password for the keystore file. Used in Gradle signing config for authenticating the keystore.                                                     |
+| `KEY_ALIAS`                     | GitHub Secret         | Alias of the key inside the keystore. Used by Gradle to identify the correct signing key.                                                          |
+| `KEY_PASSWORD`                  | GitHub Secret         | Password for the key alias. Used by Gradle to sign the APK with the specified key.                                                                 |
 
 These variables are decoded and written to disk during the CI process so tools like Fastlane or the Firebase CLI can use them.
 

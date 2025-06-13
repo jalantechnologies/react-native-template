@@ -1,53 +1,74 @@
 # 📦 CI/CD Pipeline Overview
 
-This repository uses GitHub Actions to automate the build, testing, and deployment of the Android app to:
+This repository uses **GitHub Actions** combined with **Fastlane** to automate the build, testing, and deployment process for the Android app. The primary goals of this CI/CD setup are:
 
-- **Firebase App Distribution** for PR builds
+- 🚀 **Fast feedback** on pull requests by distributing builds via **Firebase App Distribution**
+- 🧹 **Automatic cleanup** of test builds when a PR is closed
+- 🔒 **Secure handling** of credentials using **GitHub Actions Secrets**
 
-CI/CD is powered by **Fastlane**, and secrets are configured via **GitHub Actions secrets**.
+This ensures contributors and QA can quickly test PR builds without manually compiling the app, and stale builds are cleaned up automatically.
 
 ---
 
 ## 🔧 Environment Variables
 
-The following environment variables are defined at the top of the workflow or injected via secrets:
+These environment variables are used by the GitHub Actions workflows and Fastlane scripts to authenticate, configure builds, and upload to Firebase or Google Play.
 
-| Name                      | Source                | Description                                                                 |
-|---------------------------|-----------------------|-----------------------------------------------------------------------------|
-| `FIREBASE_PROJECT_NUMBER` | GitHub Actions `env:` | Firebase project number (visible in GCP or Firebase settings)               |
-| `FIREBASE_APP_ID`         | GitHub Actions `env:` | Firebase Android App ID                                                     |
-| `FIREBASE_PROJECT_ID`     | GitHub Actions `env:` | Firebase project ID (used in Firebase Console URL)                          |
-| `FIREBASE_APP_PACKAGE`  | GitHub Actions `env:` | Android App identifier (e.g., `android:com.example.app`)                    |
-| `GCP_JSON_BASE64`         | GitHub Secret         | Base64-encoded GCP service account JSON file used by Firebase CLI/Fastlane |
-| `GPLAY_SERVICE_ACCOUNT_KEY_JSON`   | GitHub Secret         | Base64-encoded JSON for Google Play Service Account                         |
-| `KEYSTORE_FILE`           | GitHub Secret         | Base64-encoded Android keystore                                             |
-| `KEYSTORE_PASSWORD`       | GitHub Secret         | Android keystore password                                                   |
-| `KEY_ALIAS`               | GitHub Secret         | Android key alias                                                           |
-| `KEY_PASSWORD`            | GitHub Secret         | Android key password                                                        |
+| Name                               | Source                | Description                                                                 |
+|------------------------------------|------------------------|-----------------------------------------------------------------------------|
+| `FIREBASE_PROJECT_NUMBER`          | GitHub Actions `env:`  | Unique numeric ID for the Firebase project. Used in Firebase API URLs.     |
+| `FIREBASE_APP_ID`                  | GitHub Actions `env:`  | Unique ID of the Firebase Android app. Required for distribution uploads.  |
+| `FIREBASE_PROJECT_ID`              | GitHub Actions `env:`  | Human-readable Firebase project ID, used in Firebase CLI commands.         |
+| `FIREBASE_APP_PACKAGE`             | GitHub Actions `env:`  | App's Android package name (e.g. `com.example.app`). Used in Play Console. |
+| `GCP_JSON_BASE64`                  | GitHub Secret          | Base64-encoded service account key. Used for Firebase and GCP auth.        |
+| `GPLAY_SERVICE_ACCOUNT_KEY_JSON`   | GitHub Secret          | Base64-encoded JSON for Google Play upload auth (internal testing/prod).   |
+| `KEYSTORE_FILE`                    | GitHub Secret          | Base64-encoded Android keystore used for signing release builds.           |
+| `KEYSTORE_PASSWORD`                | GitHub Secret          | Password for the keystore file.                                             |
+| `KEY_ALIAS`                        | GitHub Secret          | Key alias inside the keystore.                                              |
+| `KEY_PASSWORD`                     | GitHub Secret          | Password for the key alias.                                                 |
+
+These variables are decoded and written to disk during the CI process so tools like Fastlane or the Firebase CLI can use them.
 
 ---
 
 ## 🚀 CI Workflow Summary
 
-### 1. PR Build & Deploy to Firebase
+### 1. 🔄 PR Build & Deploy to Firebase App Distribution
 
-- Triggered on PR open/sync/reopen
-- Builds the APK with Fastlane
-- Uploads the build to Firebase App Distribution
-- Comments on the PR with a Firebase release link
+**Why?**  
+To enable quick testing and feedback for each PR by distributing debug builds to Firebase testers.
 
-### 2. Cleanup
+**How?**
+- Triggered on PR open, reopen, or update (`pull_request` events)
+- Uses Fastlane’s `pr_deploy` lane to:
+  - Build the APK with Gradle (`assembleDebug`)
+  - Upload the APK to Firebase App Distribution via Firebase API
+  - Set release notes with the PR number and title
+  - Comment on the PR with the release details (URL, build info)
 
-- Triggered when a PR is closed
-- Deletes the Firebase App Distribution release associated with that PR
+---
+
+### 2. 🧹 Firebase Cleanup on PR Close
+
+**Why?**  
+To prevent clutter in Firebase App Distribution by automatically removing builds for closed PRs.
+
+**How?**
+- Triggered on PR close (`pull_request.closed`)
+- Uses Fastlane’s `pr_cleanup` lane to:
+  - Authenticate with Firebase using the same service account
+  - Fetch releases with matching PR identifiers in their release notes
+  - Call the Firebase App Distribution `batchDelete` API to remove them
 
 ---
 
 ## 🧪 Local Testing
 
-You can test CI lanes locally using:
+You can test CI/CD behavior locally using Fastlane to simulate the GitHub Actions environment.
 
-```sh
+### Deploy a PR build:
+
+```bash
 cd android
 bundle exec fastlane android pr_deploy \
   pr_number:123 \

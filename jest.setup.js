@@ -9,21 +9,6 @@ jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
 jest.mock('@datadog/mobile-react-native');
 
-// Mock AsyncStorage
-jest.mock('@react-native-async-storage/async-storage', () => ({
-  __esModule: true,
-  default: {
-    getItem: jest.fn().mockResolvedValue(null),
-    setItem: jest.fn().mockResolvedValue(),
-    removeItem: jest.fn().mockResolvedValue(),
-    clear: jest.fn().mockResolvedValue(),
-    getAllKeys: jest.fn().mockResolvedValue([]),
-    multiGet: jest.fn().mockResolvedValue([]),
-    multiSet: jest.fn().mockResolvedValue(),
-    multiRemove: jest.fn().mockResolvedValue(),
-  },
-}));
-
 // Mock MMKV
 jest.mock('react-native-mmkv', () => ({
   MMKV: jest.fn().mockImplementation(() => ({
@@ -101,55 +86,6 @@ jest.mock('react-i18next', () => ({
   },
 }));
 
-// Mock Notifee with virtual module
-jest.mock(
-  '@notifee/react-native',
-  () => ({
-    __esModule: true,
-    default: {
-      displayNotification: jest.fn().mockResolvedValue('mock-notification-id'),
-      createChannel: jest.fn().mockResolvedValue('mock-channel-id'),
-      requestPermission: jest.fn().mockResolvedValue({ authorizationStatus: 1 }),
-      onForegroundEvent: jest.fn().mockReturnValue(() => {}),
-      onBackgroundEvent: jest.fn().mockReturnValue(() => {}),
-      cancelNotification: jest.fn().mockResolvedValue(),
-      cancelAllNotifications: jest.fn().mockResolvedValue(),
-      getBadgeCount: jest.fn().mockResolvedValue(0),
-      setBadgeCount: jest.fn().mockResolvedValue(),
-      createTriggerNotification: jest.fn().mockResolvedValue('mock-trigger-notification-id'),
-    },
-    AndroidImportance: {
-      DEFAULT: 3,
-      HIGH: 4,
-      LOW: 2,
-      MIN: 1,
-      NONE: 0,
-    },
-    AuthorizationStatus: {
-      AUTHORIZED: 1,
-      DENIED: 0,
-      NOT_DETERMINED: -1,
-      PROVISIONAL: 2,
-    },
-    EventType: {
-      DISMISSED: 0,
-      PRESS: 1,
-      ACTION_PRESS: 2,
-      DELIVERED: 3,
-      APP_BLOCKED: 4,
-      CHANNEL_BLOCKED: 5,
-      CHANNEL_GROUP_BLOCKED: 6,
-      TRIGGER_NOTIFICATION_CREATED: 7,
-      UNKNOWN: -1,
-    },
-    TriggerType: {
-      TIMESTAMP: 0,
-      INTERVAL: 1,
-    },
-  }),
-  { virtual: true },
-);
-
 // Comprehensive mocks for Firebase modules
 jest.mock('@react-native-firebase/app', () => {
   const firebaseAppMock = {
@@ -205,20 +141,6 @@ jest.mock('@react-native-firebase/messaging', () => {
   };
 });
 
-// Mock LocalStorageService
-jest.mock(
-  './src/utils/localstorage.service',
-  () => ({
-    LocalStorageService: {
-      getFromStorage: jest.fn().mockReturnValue(null),
-      setToStorage: jest.fn(),
-      removeFromStorage: jest.fn(),
-      clearStorage: jest.fn(),
-    },
-  }),
-  { virtual: true },
-);
-
 // Mock services
 jest.mock(
   './src/services/firebase-messageing.service',
@@ -248,28 +170,6 @@ jest.mock(
       cancelNotification: jest.fn().mockResolvedValue(),
       getBadgeCount: jest.fn().mockResolvedValue(0),
       setBadgeCount: jest.fn().mockResolvedValue(),
-    })),
-  }),
-  { virtual: true },
-);
-
-// Mock hooks
-jest.mock(
-  './src/utils/use-notification-setup.hook',
-  () => ({
-    useNotificationSetup: jest.fn(),
-  }),
-  { virtual: true },
-);
-
-jest.mock(
-  './src/utils/use-local-storage.hook',
-  () => ({
-    useLocalStorage: jest.fn(() => ({
-      getFromStorage: jest.fn().mockReturnValue(null),
-      setToStorage: jest.fn(),
-      removeFromStorage: jest.fn(),
-      clearStorage: jest.fn(),
     })),
   }),
   { virtual: true },

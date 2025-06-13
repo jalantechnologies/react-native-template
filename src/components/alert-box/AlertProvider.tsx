@@ -1,7 +1,8 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
-import { AlertConfig, AlertContextType } from './alert.types';
-import { AlertBox } from './AlertBox';
+import { AlertConfig, AlertContextType } from '../../types/alert';
+
+import { AlertBox } from './alert-box';
 
 const AlertContext = createContext<AlertContextType | undefined>(undefined);
 

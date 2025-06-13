@@ -2,8 +2,9 @@ import { useTheme, Button } from 'native-base';
 import React from 'react';
 import { Modal, View, Text } from 'react-native';
 
+import { AlertType } from '../../types/alert';
+
 import { AlertStyles } from './alert.styles';
-import { AlertType } from './alert.types';
 
 interface Props {
   confirmText: string;

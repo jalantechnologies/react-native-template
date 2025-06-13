@@ -6,10 +6,10 @@
       "@types",
       "./node_modules/@types"
     ],
-    "baseUrl": "..",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"],
-      "types/*": ["./@types/*"]
+      "@/*": ["*"],
+      "types/*": ["../@types/*"]
     }
   }
 }

@@ -4,6 +4,8 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
+import Divider from '../../../components/divider';
+import { DividerOrientation } from '../../../components/divider/divider.styles';
 import { AsyncError } from '../../../types';
 import ProfileLayout from '../profile-layout';
 
@@ -63,9 +65,17 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
           </FormControl>
         </VStack>
 
-        <Button onClick={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
-          Save Changes
-        </Button>
+        <VStack space={4} mt={8}>
+          <Divider
+            orientation={DividerOrientation.Horizontal}
+            thickness={1}
+            style={{ marginVertical: 16 }}
+            length="100%"
+          />
+          <Button onClick={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
+            Save Changes
+          </Button>
+        </VStack>
       </KeyboardAvoidingView>
     </ProfileLayout>
   );

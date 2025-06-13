@@ -174,4 +174,14 @@ const appTheme = extendTheme({
   },
 });
 
+export const ALLOWED_DIVIDER_COLORS = {
+  primary: '200',
+  secondary: '200',
+  tertiary: '200',
+  background: '200',
+  danger: '200',
+  warning: '200',
+  success: '200',
+} as const;
+
 export default appTheme;

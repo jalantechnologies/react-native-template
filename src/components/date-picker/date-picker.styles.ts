@@ -13,11 +13,11 @@ export const DatePickerStyles = () => {
       paddingVertical: theme.space['3'],
       paddingHorizontal: theme.space['4'],
       backgroundColor: theme.colors.gray[100],
-      borderRadius: theme.radii?.sm ?? 6,
+      borderRadius: theme.radii.sm,
       alignItems: 'center',
     },
     text: {
-      fontSize: theme.fontSizes?.md ?? 16,
+      fontSize: theme.fontSizes.md,
     },
   });
 };

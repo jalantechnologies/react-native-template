@@ -2,8 +2,9 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useMemo, useState } from 'react';
 import { Platform, View, Text, TouchableOpacity } from 'react-native';
 
+import { DatePickerProps, DatePickerMode, PlatformType } from '../../types/date-picker';
+
 import { DatePickerStyles } from './date-picker.styles';
-import { DatePickerProps, DatePickerMode, PlatformType } from './date-picker.types';
 
 export const DatePicker: React.FC<DatePickerProps> = ({
   date,

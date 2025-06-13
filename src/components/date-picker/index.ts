@@ -1,2 +1,2 @@
 export { DatePicker } from './DatePicker';
-export * from './date-picker.types';
+export * from '../../types/date-picker';

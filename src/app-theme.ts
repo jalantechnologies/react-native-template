@@ -172,6 +172,36 @@ const appTheme = extendTheme({
       },
     },
   },
+  fontSizes: {
+    xs: 12,
+    sm: 14,
+    md: 16,
+    lg: 18,
+    xl: 20,
+    '2xl': 24,
+    '3xl': 30,
+  },
+
+  space: {
+    0: 0,
+    1: 4,
+    2: 8,
+    3: 12,
+    4: 16,
+    5: 20,
+    6: 24,
+    8: 32,
+    10: 40,
+  },
+
+  radii: {
+    none: 0,
+    sm: 6,
+    md: 8,
+    lg: 12,
+    xl: 16,
+    full: 9999,
+  },
 });
 
 export default appTheme;

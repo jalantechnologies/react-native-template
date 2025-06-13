@@ -38,8 +38,8 @@ const ChangeApiUrlButton = () => {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    paddingLeft: 280,
-    paddingTop: 55,
+    top: 55,
+    right: 30,
     position: 'absolute',
     zIndex: 1000,
   },

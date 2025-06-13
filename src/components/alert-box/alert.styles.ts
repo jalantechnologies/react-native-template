@@ -1,4 +1,4 @@
-import { useColorMode, useTheme } from 'native-base';
+import { Center, useColorMode, useTheme } from 'native-base';
 import { Dimensions, StyleSheet } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -15,9 +15,7 @@ export const AlertStyles = () => {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: isLight
-        ? 'rgba(0, 0, 0, 0.6)' // dark backdrop in light mode
-        : 'rgba(255, 255, 255, 0.1)',
+      backgroundColor: isLight ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.1)',
     },
     iconContainer: {
       position: 'absolute',
@@ -28,11 +26,11 @@ export const AlertStyles = () => {
     container: {
       width: '80%',
       backgroundColor: theme.colors.white,
-      borderRadius: 20,
+      borderRadius: theme.radii.lg,
       alignItems: 'center',
-      paddingTop: 50,
-      paddingBottom: 30,
-      paddingHorizontal: 20,
+      paddingTop: theme.space[12],
+      paddingBottom: theme.space[8],
+      paddingHorizontal: theme.space[5],
     },
     unrotate: {
       transform: [{ rotate: '-45deg' }],
@@ -45,35 +43,36 @@ export const AlertStyles = () => {
       transform: [{ rotate: '45deg' }],
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: 12,
-      marginBottom: 20,
+      borderRadius: theme.radii.md,
+      marginBottom: theme.space[5],
     },
     iconText: {
       color: theme.colors.white,
-      fontSize: 30,
+      fontSize: theme.fontSizes['3xl'],
       fontWeight: 'bold',
     },
     title: {
-      fontSize: 24,
+      fontSize: theme.fontSizes['xl'],
       fontWeight: 'bold',
-      marginBottom: 10,
+      marginBottom: theme.space[2],
       color: theme.colors.gray[900],
+      textAlign: 'center',
     },
     message: {
       textAlign: 'center',
-      marginBottom: 20,
-      fontSize: 16,
+      marginBottom: theme.space[5],
+      fontSize: theme.fontSizes['md'],
       color: theme.colors.gray[900],
     },
     button: {
-      paddingHorizontal: 30,
-      paddingVertical: 10,
-      borderRadius: 25,
+      borderRadius: theme.radii.full,
     },
     buttonText: {
       color: theme.colors.white,
       fontWeight: 'bold',
-      fontSize: 16,
+      fontSize: theme.fontSizes['md'],
+      paddingHorizontal: theme.space[4],
+      paddingVertical: theme.space[1],
     },
   });
 };

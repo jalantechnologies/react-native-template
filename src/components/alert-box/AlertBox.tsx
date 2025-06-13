@@ -1,6 +1,6 @@
-import { useTheme } from 'native-base';
+import { useTheme, Button } from 'native-base';
 import React from 'react';
-import { Modal, View, Text, TouchableOpacity } from 'react-native';
+import { Modal, View, Text } from 'react-native';
 
 import { AlertStyles } from './alert.styles';
 import { AlertType } from './alert.types';
@@ -14,15 +14,16 @@ interface Props {
 }
 
 const SYMBOL = {
-  [AlertType.DANGER]: '╳',
-  [AlertType.INFO]: '💡',
-  [AlertType.SUCCESS]: '✔',
-  [AlertType.WARNING]: '⚠',
+  [AlertType.DANGER]: '\u2718',
+  [AlertType.INFO]: '\u24D8',
+  [AlertType.SUCCESS]: '\u2714',
+  [AlertType.WARNING]: '\u26A0',
 };
 
 export const AlertBox: React.FC<Props> = ({ type, title, message, onClose, confirmText }) => {
   const { colors } = useTheme();
   const styles = AlertStyles();
+
   const getAlertColor = () => {
     switch (type) {
       case AlertType.DANGER:
@@ -37,26 +38,58 @@ export const AlertBox: React.FC<Props> = ({ type, title, message, onClose, confi
         return colors.gray[400];
     }
   };
-  const color = getAlertColor();
+
+  const alertColor = getAlertColor();
 
   return (
     <Modal transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <View style={styles.iconContainer}>
-            <View style={[styles.iconWrapper, { backgroundColor: color }]}>
-              <View style={styles.unrotate}>
-                <Text style={styles.iconText}>{SYMBOL[type]}</Text>
-              </View>
-            </View>
-          </View>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.message}>{message}</Text>
-          <TouchableOpacity style={[styles.button, { backgroundColor: color }]} onPress={onClose}>
-            <Text style={styles.buttonText}>{confirmText}</Text>
-          </TouchableOpacity>
+          <AlertIcon symbol={SYMBOL[type]} color={alertColor} />
+          <AlertContent title={title} message={message} />
+          <AlertActionButton label={confirmText} color={alertColor} onPress={onClose} />
         </View>
       </View>
     </Modal>
+  );
+};
+
+const AlertIcon = ({ symbol, color }: { symbol: string; color: string }) => {
+  const styles = AlertStyles();
+  return (
+    <View style={styles.iconContainer}>
+      <View style={[styles.iconWrapper, { backgroundColor: color }]}>
+        <View style={styles.unrotate}>
+          <Text style={styles.iconText}>{symbol}</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+const AlertContent = ({ title, message }: { title: string; message: string }) => {
+  const styles = AlertStyles();
+  return (
+    <View>
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.message}>{message}</Text>
+    </View>
+  );
+};
+
+const AlertActionButton = ({
+  label,
+  color,
+  onPress,
+}: {
+  label: string;
+  color: string;
+  onPress: () => void;
+}) => {
+  const styles = AlertStyles();
+  return (
+    <Button onPress={onPress} bgColor={color} _text={styles.buttonText} style={styles.button}>
+      {label}
+    </Button>
   );
 };

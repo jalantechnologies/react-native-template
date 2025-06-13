@@ -350,3 +350,8 @@ package com.example.yourapp
 ---
 
 By keeping your `package_name` (Android) and `BUNDLE_ID` (iOS) consistent across Firebase and your codebase, you ensure smooth integration of Firebase services such as notifications, analytics, and authentication.
+
+⚠️ Note
+
+If the app build identifier changes (e.g., you update the package name or bundle ID), you must create a new application in FCM with the updated identifier (package_name or BUNDLE_ID).
+

@@ -1,2 +1,2 @@
 export { default } from './RadioButton';
-export * from './radio-button.types';
+export * from '../../types/radio-button';

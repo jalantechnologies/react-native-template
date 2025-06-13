@@ -1,7 +1,7 @@
 import { useTheme } from 'native-base';
 import { StyleSheet } from 'react-native';
 
-import { RadioButtonKind } from './radio-button.types';
+import { RadioButtonKind } from '../../types/radio-button';
 
 type RadioKind = 'primary' | 'success' | 'error';
 
@@ -29,27 +29,30 @@ export const useRadioKindStyles = (): Record<RadioKind, RadioKindStyle> => {
   };
 };
 
-export const styles = StyleSheet.create({
+export const RadioStyles = ()=>{
+  const theme = useTheme()
+  return StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: theme.space[3],
   },
   outerCircle: {
-    height: 20,
-    width: 20,
-    borderRadius: 10,
+    height: theme.sizes[5],
+    width: theme.sizes[5],
+    borderRadius: theme.radii.full,
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+    marginRight: theme.space[2],
   },
   innerCircle: {
-    height: 11,
-    width: 11,
-    borderRadius: 5.5,
+    height: theme.sizes[3],
+    width: theme.sizes[3],
+    borderRadius: theme.radii.full,
   },
   label: {
-    fontSize: 16,
+    fontSize: theme.fontSizes.md,
   },
 });
+} 

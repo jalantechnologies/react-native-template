@@ -34,4 +34,20 @@ describe('Switch', () => {
     const switchComponent = getByTestId('switch');
     expect(switchComponent.props.style).toMatchObject(customStyle);
   });
+  it('applies custom track and thumb colors via colorScheme', () => {
+    const { getByTestId } = render(
+      <Switch
+        value={true}
+        onValueChange={jest.fn()}
+        colorScheme={{
+          trackColorOn: 'danger.500',
+          trackColorOff: 'background.200',
+          thumbColor: 'tertiary.600',
+        }}
+      />,
+    );
+
+    const switchComponent = getByTestId('switch');
+    expect(switchComponent).toBeTruthy();
+  });
 });

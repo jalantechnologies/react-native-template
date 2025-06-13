@@ -6,9 +6,8 @@ require 'time'
 require 'fastlane'
 include Fastlane
 
-
 def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_account_path:)
-  apk_path = File.expand_path("../app/build/outputs/apk/debug/app-debug.apk", __dir__)
+    apk_path = File.expand_path("../../app/build/outputs/apk/debug/app-debug.apk", __dir__)
 
     # Authenticate 
     sh("gcloud auth activate-service-account --key-file='#{service_account_path}'")

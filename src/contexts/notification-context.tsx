@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
 import Logger from '../logger/logger';
@@ -7,6 +6,7 @@ import {
   NotificationType,
   NotificationPreference,
 } from '../types/notification.types';
+import { useLocalStorage } from '../utils';
 
 const DEFAULT_NOTIFICATION_PREFERENCE: NotificationPreference = {
   enabled: true,
@@ -49,14 +49,15 @@ export const NotificationContextProvider: React.FC<{ children: React.ReactNode }
 }) => {
   const [settings, setSettings] = useState(DEFAULT_NOTIFICATION_SETTINGS);
   const [isLoading, setIsLoading] = useState(true);
+  const { getFromStorage, setToStorage } = useLocalStorage();
 
   useEffect(() => {
     loadSettingsFromStorage();
   }, []);
 
-  const loadSettingsFromStorage = async () => {
+  const loadSettingsFromStorage = () => {
     try {
-      const savedSettings = await AsyncStorage.getItem(STORAGE_KEY);
+      const savedSettings = getFromStorage(STORAGE_KEY);
       if (savedSettings) {
         setSettings(JSON.parse(savedSettings));
       }
@@ -68,12 +69,12 @@ export const NotificationContextProvider: React.FC<{ children: React.ReactNode }
   };
 
   /**
-   * Persists notification settings to AsyncStorage and updates local state.
+   * Persists notification settings to local storage and updates local state.
    * Both operations are atomic - if storage fails, local state remains unchanged.
    */
-  const saveSettings = async (newSettings: NotificationSettings) => {
+  const saveSettings = (newSettings: NotificationSettings) => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
+      setToStorage(STORAGE_KEY, JSON.stringify(newSettings));
       setSettings(newSettings);
     } catch (error) {
       Logger.error('Failed to save notification settings: ' + error);
@@ -83,12 +84,12 @@ export const NotificationContextProvider: React.FC<{ children: React.ReactNode }
 
   const updateMasterToggle = async (enabled: boolean) => {
     const updatedSettings = createUpdatedSettings({ masterToggle: enabled });
-    await saveSettings(updatedSettings);
+    saveSettings(updatedSettings);
   };
 
   const updateShowInForeground = async (enabled: boolean) => {
     const updatedSettings = createUpdatedSettings({ showInForeground: enabled });
-    await saveSettings(updatedSettings);
+    saveSettings(updatedSettings);
   };
 
   const updateTypePreference = async (
@@ -104,7 +105,7 @@ export const NotificationContextProvider: React.FC<{ children: React.ReactNode }
         },
       },
     });
-    await saveSettings(updatedSettings);
+    saveSettings(updatedSettings);
   };
 
   /**

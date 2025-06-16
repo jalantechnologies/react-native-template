@@ -4,12 +4,13 @@ export enum SliderOrientation {
 }
 
 export interface CustomSliderProps {
-  value?: number;
-  step?: number;
-  minimumTrackTintColor?: string;
-  maximumTrackTintColor?: string;
-  thumbTintColor?: string;
   lowerLimit?: number;
-  upperLimit?: number;
+  maximumTrackTintColor?: string;
+  minimumTrackTintColor?: string;
+  onValueChange?: (val: number) => void;
   orientation?: SliderOrientation;
+  step?: number;
+  thumbTintColor?: string;
+  upperLimit?: number;
+  value?: number;
 }

@@ -15,6 +15,7 @@ const Slider = ({
   lowerLimit = 0,
   upperLimit = 200,
   orientation = SliderOrientation.HORIZONTAL,
+  onValueChange,
 }: CustomSliderProps) => {
   const { colors, sizes } = useTheme();
 
@@ -72,6 +73,7 @@ const Slider = ({
 
         handlePosition.setValue(steppedPosition);
         setSliderValue(steppedValue);
+        onValueChange?.(steppedValue);
       },
       onPanResponderRelease: (event, gestureState) => {
         const delta = isVertical ? gestureState.dy : gestureState.dx;
@@ -86,6 +88,7 @@ const Slider = ({
         lastPosition.current = steppedPosition;
         handlePosition.setValue(steppedPosition);
         setSliderValue(steppedValue);
+        onValueChange?.(steppedValue);
       },
     }),
   ).current;

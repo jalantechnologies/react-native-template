@@ -66,12 +66,7 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
         </VStack>
 
         <VStack space={4} mt={8}>
-          <Divider
-            orientation={DividerOrientation.Horizontal}
-            thickness={1}
-            style={{ marginVertical: 16 }}
-            length="100%"
-          />
+          <Divider orientation={DividerOrientation.Horizontal} thickness={1} length="100%" />
           <Button onClick={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
             Save Changes
           </Button>

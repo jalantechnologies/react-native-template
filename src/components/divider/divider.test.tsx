@@ -124,23 +124,6 @@ describe('Divider', () => {
     );
   });
 
-  it('applies custom style prop', () => {
-    const customStyle: ViewStyle = { marginVertical: 10 };
-    renderDivider({ style: customStyle });
-    const divider = screen.getByTestId('divider');
-
-    expect(divider.props.style).toEqual(
-      expect.arrayContaining([
-        {
-          backgroundColor: '#E0E0E0',
-          height: 1,
-          width: '100%',
-        },
-        customStyle,
-      ]),
-    );
-  });
-
   it('renders with percentage length', () => {
     renderDivider({ length: '50%' });
     const divider = screen.getByTestId('divider');

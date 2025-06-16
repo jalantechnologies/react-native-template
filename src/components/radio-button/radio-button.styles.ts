@@ -41,7 +41,7 @@ export const RadioStyles = () => {
       height: theme.sizes[5],
       width: theme.sizes[5],
       borderRadius: theme.radii.full,
-      borderWidth: 2,
+      borderWidth: parseInt(theme.borderWidths[1], 10),
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: theme.space[2],

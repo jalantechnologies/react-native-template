@@ -27,7 +27,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({
 
   const outerCircleStyle = {
     borderColor: selected && !disabled ? btnKindStyle.borderColor : theme.colors.gray[300],
-    backgroundColor: disabled ? '#f3f4f6' : theme.colors.white,
+    backgroundColor: disabled ? theme.colors.secondary[100] : theme.colors.white,
   };
 
   const innerCircleStyle = {

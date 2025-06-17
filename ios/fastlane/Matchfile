@@ -1,1 +1,2 @@
 git_url "git@github.com:jalantechnologies/ios-certificates.git"
+app_identifier("com.bettrsw.boilerplate")

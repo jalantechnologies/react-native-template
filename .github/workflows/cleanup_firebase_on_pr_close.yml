@@ -7,7 +7,11 @@ on:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
-    if: github.event.action == 'closed'
+
+    env:
+      ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
+      ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -29,4 +33,3 @@ jobs:
       - name: Cleanup GCP key file
         if: always()
         run: rm -f /tmp/gcp_key.json
-  

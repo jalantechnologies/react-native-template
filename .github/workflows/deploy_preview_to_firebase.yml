@@ -8,6 +8,13 @@ jobs:
   build-and-deploy:
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
+    
+    env:
+      ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
+      ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
+      ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
+      ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
+
     steps:
       - uses: actions/checkout@v3
 
@@ -15,11 +22,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22.13.1'
-      
-      - name: Export .env variables to GITHUB_ENV
-        run: |
-          # Load .env key-value pairs into GitHub Actions environment
-          grep -v '^#' .env | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' >> $GITHUB_ENV
 
       - name: Install Yarn
         run: npm install -g yarn

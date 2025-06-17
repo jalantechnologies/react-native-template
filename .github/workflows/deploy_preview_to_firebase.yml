@@ -1,8 +1,8 @@
-name: Deploy PR Build to Firebase
+name: Preview Build - Firebase App Distribution
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened]
 
 jobs:
   build-and-deploy:
@@ -77,27 +77,3 @@ jobs:
 
               🔗 [View Release in Firebase Console](${releaseUrl})`
             });
-  cleanup:
-    runs-on: ubuntu-latest
-    if: github.event.action == 'closed'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1'
-
-      - uses: ./.github/actions/setup-fastlane
-
-      - name: Decode and save GCP service account key
-        run: echo "${{ secrets.ANDROID_GCP_JSON_BASE64 }}" | base64 --decode > /tmp/gcp_key.json
-
-      - name: Cleanup Firebase App Distribution for PR
-        working-directory: android
-        run: bundle exec fastlane android pr_cleanup pr_number:"${{ github.event.pull_request.number }}" project_number:"${{ env.ANDROID_FIREBASE_PROJECT_NUMBER }}" app_id:"${{ env.ANDROID_FIREBASE_APP_ID }}"
-
-      - name: Cleanup GCP key file
-        if: always()
-        run: rm -f /tmp/gcp_key.json

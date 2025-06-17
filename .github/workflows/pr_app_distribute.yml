@@ -4,11 +4,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
 
-env:
-  FIREBASE_PROJECT_NUMBER: "715635897715"
-  FIREBASE_APP_ID: "1:715635897715:android:0be885c6b27f7c99de0106"
-  FIREBASE_PROJECT_ID: "react-native-boilerplate-14974"
-  FIREBASE_APP_PACKAGE: "android:com.bettrsw.boilerplate"
 jobs:
   build-and-deploy:
     if: github.event.action != 'closed'
@@ -20,6 +15,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '22.13.1'
+      
+      - name: Load .env file
+        uses: dotenv-linter/load-dotenv@v1
+        with:
+          path: .env
 
       - name: Install Yarn
         run: npm install -g yarn

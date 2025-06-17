@@ -1,7 +1,9 @@
 name: Setup Fastlane Match
 
 on:
-  workflow_dispatch: # manual trigger
+  push:
+    branches:
+      - shivam/ios/preview-deployment
 
 jobs:
   setup-match:

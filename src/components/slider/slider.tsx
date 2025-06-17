@@ -1,14 +1,14 @@
 import { useTheme } from 'native-base';
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, PanResponder, Animated } from 'react-native';
+import { View, Text, PanResponder, Animated, Dimensions } from 'react-native';
 
 import { CustomSliderProps, SliderOrientation } from '../../types/slider';
 
-import { SliderStyles } from './slider.styles';
+import { useSliderStyles } from './slider.styles';
 
 const Slider = ({
   value = 0,
-  step = 0,
+  step = 1,
   minimumTrackTintColor,
   maximumTrackTintColor,
   thumbTintColor,
@@ -19,7 +19,10 @@ const Slider = ({
 }: CustomSliderProps) => {
   const { colors, sizes } = useTheme();
 
-  const trackLength = Number(sizes['48']);
+  const isVertical = orientation === SliderOrientation.VERTICAL;
+  const screenWidth = Dimensions.get('window').width;
+  const screenHeight = Dimensions.get('window').height;
+  const trackLength = isVertical ? screenHeight * 0.3 : screenWidth * 0.8;
   const handleSize = Number(sizes['5']);
   const trackThickness = Number(sizes['2']);
 
@@ -27,9 +30,8 @@ const Slider = ({
   const _maximumTrackColor = maximumTrackTintColor ?? colors.gray[300];
   const _thumbColor = thumbTintColor ?? colors.white;
   const _borderColor = minimumTrackTintColor ?? colors.primary[500];
-  const isVertical = orientation === SliderOrientation.VERTICAL;
 
-  const styles = SliderStyles();
+  const styles = useSliderStyles(isVertical);
 
   const calculatePositionFromValue = (val: number) =>
     ((val - lowerLimit) / (upperLimit - lowerLimit)) * (trackLength - handleSize);
@@ -62,7 +64,8 @@ const Slider = ({
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gestureState) => {
-        const delta = isVertical ? gestureState.dy : gestureState.dx;
+        const SENSITIVITY = 0.1;
+        const delta = (isVertical ? gestureState.dy : gestureState.dx) * SENSITIVITY;
         const newPos = Math.max(
           0,
           Math.min(lastPosition.current + delta, trackLength - handleSize),
@@ -76,7 +79,8 @@ const Slider = ({
         onValueChange?.(steppedValue);
       },
       onPanResponderRelease: (event, gestureState) => {
-        const delta = isVertical ? gestureState.dy : gestureState.dx;
+        const SENSITIVITY = 0.1;
+        const delta = (isVertical ? gestureState.dy : gestureState.dx) * SENSITIVITY;
         const newPos = Math.max(
           0,
           Math.min(lastPosition.current + delta, trackLength - handleSize),

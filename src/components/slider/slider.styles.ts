@@ -1,29 +1,33 @@
 import { useTheme } from 'native-base';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
-export const SliderStyles = () => {
-    const theme = useTheme();
+export const useSliderStyles = (isVertical: boolean) => {
+  const theme = useTheme();
+  const screenWidth = Dimensions.get('window').width;
+  const screenHeight = Dimensions.get('window').height;
 
   return StyleSheet.create({
     container: {
-      alignItems: 'center',
-      justifyContent: 'center',
       margin: theme.space[5],
+      flexDirection: isVertical ? 'row' : 'column',
+      gap: isVertical ? theme.space['3'] : 0,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     track: {
-      width: theme.sizes['48'],
+      width: isVertical ? screenHeight * 0.3 : screenWidth * 0.8,
       height: theme.sizes['2'],
       borderRadius: theme.radii.full,
       justifyContent: 'center',
     },
     horizontalTrack: {
-      width: theme.sizes['48'],
-      height: 8,
-      borderRadius: 5,
+      width: screenWidth * 0.8,
+      height: theme.sizes['2'],
+      borderRadius: theme.radii.full,
       justifyContent: 'center',
     },
     verticalTrack: {
-      height: 200,
+      height: screenHeight * 0.3,
       width: theme.sizes['2'],
       borderRadius: theme.radii.full,
       justifyContent: 'flex-start',
@@ -49,6 +53,8 @@ export const SliderStyles = () => {
       marginTop: theme.space[2],
       fontSize: theme.fontSizes.md,
       fontWeight: `${theme.fontWeights.bold}` as any,
+      minWidth: theme.sizes['10'],
+      textAlign: 'center',
     },
   });
 };

@@ -2,7 +2,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useMemo, useState } from 'react';
 import { Platform, View, Text, TouchableOpacity } from 'react-native';
 
-import { DatePickerProps, DatePickerMode, PlatformType } from '../../types/date-picker';
+import { DatePickerProps, DatePickerMode } from '../../types/date-picker';
 
 import { DatePickerStyles } from './date-picker.styles';
 
@@ -50,7 +50,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         <DateTimePicker
           value={date}
           mode={mapToNativePickerMode(mode)}
-          display={Platform.OS === PlatformType.IOS ? 'spinner' : 'default'}
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={onChange}
         />
       )}

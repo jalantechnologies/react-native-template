@@ -1,29 +1,42 @@
+import { useTheme } from 'native-base';
 import React from 'react';
 import { View } from 'react-native';
 
-import { useThemeColor } from '../../utils/use-theme-color.hook';
+import appTheme from '../../app-theme';
 
-import { ALLOWED_DIVIDER_COLORS, AllowedColor, AllowedShade } from './divider.colors';
-import { DividerOrientation, DividerDashStyle, useDividerStyles } from './divider.styles';
+import { DividerOrientation, DividerDashStyle, useDividerStyles, Shade } from './divider.styles';
 
 export interface DividerProps {
-  orientation?: DividerOrientation;
-  thickness?: number;
-  length?: number | string;
+  color?: keyof typeof appTheme.colors;
   dashStyle?: DividerDashStyle;
+  length?: number | string;
+  orientation?: DividerOrientation;
+  shade?: Shade;
   testID?: string;
+  thickness?: number;
 }
 
-const Divider: React.FC<DividerProps> = ({ orientation, thickness, length, dashStyle, testID }) => {
-  const color: AllowedColor = 'primary';
-  const shade: AllowedShade = ALLOWED_DIVIDER_COLORS[color];
-  const dividerColor = useThemeColor(`${color}.${shade}`);
+const Divider: React.FC<DividerProps> = ({
+  color,
+  dashStyle,
+  length,
+  orientation,
+  shade,
+  testID,
+  thickness,
+}) => {
+  const theme = useTheme();
+  const colors = theme.colors as typeof appTheme.colors;
+  const dividerColor =
+    color && shade && typeof colors[color] === 'object' && colors[color]?.[shade]
+      ? colors[color][shade as keyof (typeof colors)[typeof color]]
+      : colors.primary['200'];
 
   const styles = useDividerStyles({
-    orientation: orientation!,
-    thickness: thickness!,
+    orientation: orientation ?? DividerOrientation.Horizontal,
+    thickness: thickness ?? 1,
     length,
-    dashStyle: dashStyle!,
+    dashStyle: dashStyle ?? DividerDashStyle.Solid,
     dividerColor,
   });
 
@@ -31,11 +44,13 @@ const Divider: React.FC<DividerProps> = ({ orientation, thickness, length, dashS
 };
 
 Divider.defaultProps = {
-  orientation: DividerOrientation.Horizontal,
-  thickness: 1,
-  length: undefined,
+  color: 'primary',
   dashStyle: DividerDashStyle.Solid,
+  length: undefined,
+  orientation: DividerOrientation.Horizontal,
+  shade: '200',
   testID: 'divider',
+  thickness: 1,
 };
 
 export default Divider;

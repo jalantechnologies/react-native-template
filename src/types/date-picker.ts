@@ -4,7 +4,6 @@ export enum DatePickerMode {
   TIME = 'time',
 }
 
-
 export interface DatePickerProps {
   date: Date;
   mode?: DatePickerMode;

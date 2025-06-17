@@ -3,14 +3,12 @@ import { StyleSheet } from 'react-native';
 
 import { RadioButtonKind } from '../../types/radio-button';
 
-type RadioKind = 'primary' | 'success' | 'error';
-
 interface RadioKindStyle {
   borderColor: string;
   innerColor: string;
 }
 
-export const useRadioKindStyles = (): Record<RadioKind, RadioKindStyle> => {
+export const useRadioKindStyles = (): Record<RadioButtonKind, RadioKindStyle> => {
   const theme = useTheme();
 
   return {

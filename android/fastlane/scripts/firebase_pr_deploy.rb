@@ -1,15 +1,18 @@
 require_relative './firebase_distribution_service'
 
-##
-# Builds, uploads, and annotates a Firebase App Distribution release for a given PR.
+# Generates a preview build for a pull request and uploads it to Firebase App Distribution.
 #
-# This is intended to support preview builds for QA and review purposes.
+# This supports QA and review workflows by automating the process of building an APK,
+# uploading it to Firebase, and attaching metadata to identify it with a specific PR.
 #
-# @param pr_number [String] The pull request number
-# @param pr_title [String] The pull request title (for context in release notes)
+# Releases are tagged with PR metadata (number, title) so they can be surfaced contextually,
+# and later cleaned up automatically when the PR is closed or merged.
+#
+# @param pr_number [String] The pull request number (used in release notes and cleanup)
+# @param pr_title [String] The pull request title (used in release notes for context)
 # @param project_number [String] Firebase project number
 # @param app_id [String] Firebase app ID
-# @param service_account_path [String] Path to GCP service account JSON
+# @param service_account_path [String] Path to the GCP service account JSON key
 def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_account_path:)
   firebase = FirebaseDistributionService.new(
     project_number: project_number,

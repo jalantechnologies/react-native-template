@@ -128,24 +128,26 @@ end
   end
   desc "Deploy APK to Firebase App Distribution"
   lane :pr_deploy do |options|
+    # Load the deploy script.
     load './scripts/firebase_pr_deploy.rb'
     firebase_pr_deploy(
       pr_number: options[:pr_number],
       pr_title: options[:pr_title],
       project_number: options[:project_number],
       app_id: options[:app_id],
-      service_account_path: "/tmp/gcp_key.json"
+      service_account_path: "/tmp/gcp_key.json" # Path to GCP service account key
     )
   end
 
   desc "Clean up Firebase App Distribution releases for closed PR"
   lane :pr_cleanup do |options|
+    # Load the cleanup script
     load './scripts/firebase_pr_cleanup.rb'
     firebase_pr_cleanup(
       pr_number: options[:pr_number],
       project_number: options[:project_number],
       app_id: options[:app_id],
-      service_account_path: "/tmp/gcp_key.json"
+      service_account_path: "/tmp/gcp_key.json" # Path to GCP service account key
     )
   end
 end

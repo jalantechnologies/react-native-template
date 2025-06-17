@@ -57,6 +57,10 @@ jobs:
         working-directory: android
         run: bundle exec fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" pr_title:"${{ github.event.pull_request.title }}" project_number:"${{ env.ANDROID_FIREBASE_PROJECT_NUMBER }}" app_id:"${{ env.ANDROID_FIREBASE_APP_ID }}"
 
+      - name: Cleanup GCP key file
+        if: always()
+        run: rm -f /tmp/gcp_key.json
+
       - name: Comment on PR
         uses: actions/github-script@v7
         with:
@@ -93,3 +97,7 @@ jobs:
       - name: Cleanup Firebase App Distribution for PR
         working-directory: android
         run: bundle exec fastlane android pr_cleanup pr_number:"${{ github.event.pull_request.number }}" project_number:"${{ env.ANDROID_FIREBASE_PROJECT_NUMBER }}" app_id:"${{ env.ANDROID_FIREBASE_APP_ID }}"
+
+      - name: Cleanup GCP key file
+        if: always()
+        run: rm -f /tmp/gcp_key.json

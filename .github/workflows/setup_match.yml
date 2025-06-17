@@ -20,6 +20,13 @@ jobs:
       - name: Install Fastlane
         run: gem install fastlane
 
+      - name: Set up SSH for Match
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.MATCH_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
       - name: Setup signing - App Store
         run: |
           cd ios
@@ -27,7 +34,6 @@ jobs:
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           FASTLANE_USER: ${{ secrets.APPLE_ID }}
-          MATCH_REPOSITORY_URL: ${{ secrets.MATCH_REPOSITORY_URL }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
 
       - name: Setup signing - Development
@@ -37,5 +43,4 @@ jobs:
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           FASTLANE_USER: ${{ secrets.APPLE_ID }}
-          MATCH_REPOSITORY_URL: ${{ secrets.MATCH_REPOSITORY_URL }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}

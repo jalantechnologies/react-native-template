@@ -46,7 +46,6 @@ export class FirebaseMessagingService {
           Alert.alert('Push Notification permission denied');
         }
       } else {
-        // On Android, permissions are granted at app install time
         await this.getFcmToken();
       }
     } catch (error) {

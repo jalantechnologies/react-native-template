@@ -30,6 +30,9 @@ target 'Boilerplate' do
 
   # Flags change depending on the env values.
   flags = get_default_flags()
+  
+  pod 'Firebase/Core'
+  pod 'Firebase/Messaging'
 
   use_react_native!(
     :path => config[:reactNativePath],

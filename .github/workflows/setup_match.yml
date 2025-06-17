@@ -20,13 +20,6 @@ jobs:
       - name: Install Fastlane
         run: gem install fastlane
 
-      - name: Initialize Match
-        run: |
-          cd ios
-          fastlane match init <<< "git"
-        env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-
       - name: Setup signing - App Store
         run: |
           cd ios

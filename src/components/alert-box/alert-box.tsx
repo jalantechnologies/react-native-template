@@ -4,9 +4,9 @@ import { Modal, View } from 'react-native';
 
 import { AlertBoxProps, AlertType } from '../../types/alert';
 
-import { AlertIcon } from './alert-icon';
-import { AlertContent } from './alert-content';
 import { AlertActionButton } from './alert-action-button';
+import { AlertContent } from './alert-content';
+import { AlertIcon } from './alert-icon';
 import { useAlertStyles } from './alert.styles';
 
 const SYMBOL = {

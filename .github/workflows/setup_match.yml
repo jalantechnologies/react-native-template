@@ -36,14 +36,14 @@ jobs:
       - name: Setup signing - App Store
         run: |
           cd ios
-          fastlane match appstore --api_key_path:../auth_key.json
+          fastlane match appstore --api_key_path ../auth_key.json
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
 
       - name: Setup signing - Development
         run: |
           cd ios
-          fastlane match development --api_key_path:../auth_key.json
+          fastlane match development --api_key_path ../auth_key.json
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           MATCH_REPOSITORY_URL: ${{ secrets.MATCH_REPOSITORY_URL }}

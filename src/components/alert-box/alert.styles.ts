@@ -1,10 +1,10 @@
 import { useColorMode, useTheme } from 'native-base';
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, DimensionValue, StyleSheet } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const BOX_SIZE = SCREEN_WIDTH * 0.15;
 
-export const AlertStyles = () => {
+export const useAlertStyles = () => {
   const theme = useTheme();
   const { colorMode } = useColorMode();
 
@@ -24,9 +24,9 @@ export const AlertStyles = () => {
       zIndex: 1,
     },
     container: {
-      width: '80%',
+      width: theme.sizes['4/5'] as DimensionValue,
       backgroundColor: theme.colors.white,
-      borderRadius: theme.radii.lg,
+      borderRadius: theme.radii['3xl'],
       alignItems: 'center',
       paddingTop: theme.space[12],
       paddingBottom: theme.space[8],
@@ -65,14 +65,14 @@ export const AlertStyles = () => {
       color: theme.colors.gray[900],
     },
     button: {
-      borderRadius: theme.radii.full,
+      borderRadius: theme.radii['2xl'],
     },
     buttonText: {
       color: theme.colors.white,
       fontWeight: 'bold',
+      textAlign:'center',
       fontSize: theme.fontSizes.md,
-      paddingHorizontal: theme.space[4],
-      paddingVertical: theme.space[1],
+      minWidth: theme.sizes[4],
     },
   });
 };

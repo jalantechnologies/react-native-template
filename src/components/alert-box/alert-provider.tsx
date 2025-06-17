@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, PropsWithChildren } from 'react';
 
 import { AlertConfig, AlertContextType } from '../../types/alert';
 
@@ -6,7 +6,7 @@ import { AlertBox } from './alert-box';
 
 const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
-export const AlertProvider = ({ children }: { children: ReactNode }) => {
+export const AlertProvider = ({ children }: PropsWithChildren<{}>) => {
   const [alertConfig, setAlertConfig] = useState<AlertConfig | null>(null);
 
   const showAlert = (config: Omit<AlertConfig, 'visible'>) => {

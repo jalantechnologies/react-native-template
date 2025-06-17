@@ -1,2 +1,2 @@
-export { AlertProvider, useAlert } from './AlertProvider';
+export { AlertProvider, useAlert } from './alert-provider';
 export { AlertType } from '../../types/alert';

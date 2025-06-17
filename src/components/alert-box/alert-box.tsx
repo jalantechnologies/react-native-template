@@ -2,17 +2,12 @@ import { useTheme, Button } from 'native-base';
 import React from 'react';
 import { Modal, View, Text } from 'react-native';
 
-import { AlertType } from '../../types/alert';
+import { AlertBoxProps, AlertType } from '../../types/alert';
 
-import { AlertStyles } from './alert.styles';
-
-interface Props {
-  confirmText: string;
-  message: string;
-  onClose: () => void;
-  type: AlertType;
-  title: string;
-}
+import { useAlertStyles } from './alert.styles';
+import { AlertIcon } from './alert-icon';
+import { AlertContent } from './alert-content';
+import { AlertActionButton } from './alert-action-button';
 
 const SYMBOL = {
   [AlertType.DANGER]: '\u2718',
@@ -21,9 +16,15 @@ const SYMBOL = {
   [AlertType.WARNING]: '\u26A0',
 };
 
-export const AlertBox: React.FC<Props> = ({ type, title, message, onClose, confirmText }) => {
+export const AlertBox: React.FC<AlertBoxProps> = ({
+  type,
+  title,
+  message,
+  onClose,
+  confirmText,
+}) => {
   const { colors } = useTheme();
-  const styles = AlertStyles();
+  const styles = useAlertStyles();
 
   const getAlertColor = () => {
     switch (type) {
@@ -52,45 +53,5 @@ export const AlertBox: React.FC<Props> = ({ type, title, message, onClose, confi
         </View>
       </View>
     </Modal>
-  );
-};
-
-const AlertIcon = ({ symbol, color }: { symbol: string; color: string }) => {
-  const styles = AlertStyles();
-  return (
-    <View style={styles.iconContainer}>
-      <View style={[styles.iconWrapper, { backgroundColor: color }]}>
-        <View style={styles.unrotate}>
-          <Text style={styles.iconText}>{symbol}</Text>
-        </View>
-      </View>
-    </View>
-  );
-};
-
-const AlertContent = ({ title, message }: { title: string; message: string }) => {
-  const styles = AlertStyles();
-  return (
-    <View>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.message}>{message}</Text>
-    </View>
-  );
-};
-
-const AlertActionButton = ({
-  label,
-  color,
-  onPress,
-}: {
-  label: string;
-  color: string;
-  onPress: () => void;
-}) => {
-  const styles = AlertStyles();
-  return (
-    <Button onPress={onPress} bgColor={color} _text={styles.buttonText} style={styles.button}>
-      {label}
-    </Button>
   );
 };

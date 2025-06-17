@@ -1,13 +1,13 @@
-import { useTheme, Button } from 'native-base';
+import { useTheme } from 'native-base';
 import React from 'react';
-import { Modal, View, Text } from 'react-native';
+import { Modal, View } from 'react-native';
 
 import { AlertBoxProps, AlertType } from '../../types/alert';
 
-import { useAlertStyles } from './alert.styles';
 import { AlertIcon } from './alert-icon';
 import { AlertContent } from './alert-content';
 import { AlertActionButton } from './alert-action-button';
+import { useAlertStyles } from './alert.styles';
 
 const SYMBOL = {
   [AlertType.DANGER]: '\u2718',

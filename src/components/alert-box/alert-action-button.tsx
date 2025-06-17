@@ -1,7 +1,7 @@
-import React from 'react';
 import { Button } from 'native-base';
+import React from 'react';
 
-import { AlertActionButtonProps } from './../../types/alert';
+import { AlertActionButtonProps } from '../../types/alert';
 
 import { useAlertStyles } from './alert.styles';
 

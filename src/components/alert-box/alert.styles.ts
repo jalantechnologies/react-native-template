@@ -70,7 +70,7 @@ export const useAlertStyles = () => {
     buttonText: {
       color: theme.colors.white,
       fontWeight: 'bold',
-      textAlign:'center',
+      textAlign: 'center',
       fontSize: theme.fontSizes.md,
       minWidth: theme.sizes[4],
     },

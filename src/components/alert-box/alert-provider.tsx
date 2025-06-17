@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode, PropsWithChildren } from 'react';
+import React, { createContext, useState, useContext, PropsWithChildren } from 'react';
 
 import { AlertConfig, AlertContextType } from '../../types/alert';
 

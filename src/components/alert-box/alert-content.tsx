@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-import { AlertContentProps } from './../../types/alert';
+import { AlertContentProps } from '../../types/alert';
 
 import { useAlertStyles } from './alert.styles';
 

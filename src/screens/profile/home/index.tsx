@@ -1,8 +1,6 @@
 import DeleteIcon from 'boilerplate-react-native/assets/icons/delete.svg';
 import LogoutIcon from 'boilerplate-react-native/assets/icons/logout.svg';
 import { Button } from 'boilerplate-react-native/src/components';
-import Switch from 'boilerplate-react-native/src/components/Switch/Switch';
-import { HStack, useColorMode, Text } from 'native-base';
 import { Box, Divider, Toast, useTheme, VStack } from 'native-base';
 import React, { useState } from 'react';
 
@@ -14,9 +12,9 @@ import ProfileLayout from '../profile-layout';
 import AccountDeleteModal from './account-delete-modal';
 import ProfileAction from './profile-action';
 import ProfileInfoSection from './profile-info-section';
+
 const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
   const theme = useTheme();
-  const { colorMode, toggleColorMode } = useColorMode();
 
   const [isAccountDeleteModalOpen, setIsAccountDeleteModalOpen] = useState(false);
 
@@ -55,11 +53,6 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
 
   return (
     <ProfileLayout>
-      <HStack justifyContent="flex-end" alignItems="center" mb={4}>
-        <Text mr={2}>Dark Mode</Text>
-        <Switch value={colorMode === 'dark'} onValueChange={toggleColorMode} />
-      </HStack>
-
       <VStack w={'100%'} space={4} divider={<Divider />}>
         <ProfileInfoSection
           accountDetails={accountDetails}

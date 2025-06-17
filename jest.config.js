@@ -9,7 +9,7 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(jest-)?react-native|@react-native|@react-native-community|@react-navigation|@react-native-firebase)',
+    'node_modules/(?!(jest-)?react-native|@react-native|@react-native-community|@react-navigation)',
   ],
   collectCoverageFrom: [
     '<rootDir>/src/components/**/*.jsx',

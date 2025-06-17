@@ -16,10 +16,11 @@ jobs:
         with:
           node-version: '22.13.1'
       
-      - name: Load .env file
-        uses: dotenv-linter/load-dotenv@v1
-        with:
-          path: .env
+      - name: Export .env variables to GITHUB_ENV
+        run: |
+          # Load .env key-value pairs into GitHub Actions environment
+          grep -v '^#' .env | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' >> $GITHUB_ENV
+
 
       - name: Install Yarn
         run: npm install -g yarn

@@ -50,7 +50,7 @@ jobs:
         run: |
           cd ios
           rm -f Podfile.lock
-          pod install --repo-update
+          NO_FLIPPER=1 pod install --repo-update
 
       - name: Set up SSH for Match
         run: |

@@ -61,6 +61,18 @@ jobs:
         run: |
           rm -f Podfile.lock
           bundle exec pod install --repo-update
+      
+      - name: Patch Embed Pods Frameworks Script to Avoid Hanging
+        working-directory: ios
+        run: |
+          set -x
+          EMBED_SCRIPT="Pods/Target Support Files/Pods-Boilerplate/Pods-Boilerplate-frameworks.sh"
+          if [ -f "$EMBED_SCRIPT" ]; then
+            sed -i '' 's/if \[ -z "\$SCRIPT_OUTPUT_FILE_0" \]/if false/' "$EMBED_SCRIPT"
+            echo "✅ Patched Embed Frameworks script"
+          else
+            echo "⚠️ Embed script not found, skipping"
+          fi
 
       - name: Set up SSH for Match
         run: |
@@ -69,20 +81,10 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           echo "GIT_SSH_COMMAND=ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" >> $GITHUB_ENV
-
-      - name: Tail Xcode Build Log
-        run: |
-          mkdir -p ~/Library/Logs/gym/
-          touch ~/Library/Logs/gym/Boilerplate-Boilerplate.log
-          tail -n 200 -f ~/Library/Logs/gym/Boilerplate-Boilerplate.log
       
       - name: Check for Flipper in Podfile.lock
         run: |
           grep -i flipper ios/Podfile.lock && echo "❌ Flipper still present!" && exit 1 || echo "✅ Flipper not found"
-      
-      - name: Disable Embed Pods Frameworks script (CI workaround)
-        run: |
-          sed -i '' 's/if \[ -z "\$SCRIPT_OUTPUT_FILE_0" \]/if false/' ios/Pods/Target\ Support\ Files/Pods-Boilerplate/Pods-Boilerplate-frameworks.sh || echo "Patch failed (probably missing script)"
 
       - name: iOS PR Deploy to TestFlight
         working-directory: ios

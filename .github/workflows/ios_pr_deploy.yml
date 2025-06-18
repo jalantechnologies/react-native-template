@@ -68,3 +68,9 @@ jobs:
         run: |
           cd ios
           fastlane pr_deploy
+
+      - name: Dump Fastlane Xcodebuild Log on Failure
+        if: failure()
+        run: |
+          tail -n 100 ~/Library/Logs/gym/Boilerplate-Boilerplate.log || echo "No log found"
+

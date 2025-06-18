@@ -9,7 +9,9 @@ platform :ios do
 
   desc "Build and upload to TestFlight"
   lane :pr_deploy do
-    profile_path = match(type: "appstore", readonly: true)
+    match(type: "appstore", readonly: true)
+    profile_mapping = lane_context[SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING]
+    profile_path = profile_mapping["com.bettrsw.boilerplate"]
     update_project_provisioning(
         xcodeproj: "Boilerplate.xcodeproj",
         target_filter: "Boilerplate",

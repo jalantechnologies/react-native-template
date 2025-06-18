@@ -62,14 +62,27 @@ jobs:
           rm -f Podfile.lock
           bundle exec pod install --repo-update
       
-      - name: Patch Embed Pods Frameworks Script to Avoid Hanging
+      - name: Remove [CP] Embed Pods Frameworks build phase
         working-directory: ios
         run: |
-          set -x
+          gem install xcodeproj
+          ruby -e "
+          require 'xcodeproj';
+          project_path = 'Boilerplate.xcodeproj';
+          project = Xcodeproj::Project.open(project_path);
+          target = project.targets.find { |t| t.name == 'Boilerplate' };
+          target.build_phases.delete_if { |bp| bp.display_name.include?('[CP] Embed Pods Frameworks') };
+          project.save;
+          puts '✅ Removed [CP] Embed Pods Frameworks phase';
+          "
+
+      - name: Patch Embed Pods Frameworks to Set Dummy Output
+        working-directory: ios
+        run: |
           EMBED_SCRIPT="Pods/Target Support Files/Pods-Boilerplate/Pods-Boilerplate-frameworks.sh"
           if [ -f "$EMBED_SCRIPT" ]; then
-            sed -i '' 's/if \[ -z "\$SCRIPT_OUTPUT_FILE_0" \]/if false/' "$EMBED_SCRIPT"
-            echo "✅ Patched Embed Frameworks script"
+            echo 'export SCRIPT_OUTPUT_FILE_0=/tmp/dummy_output' >> "$EMBED_SCRIPT"
+            echo "✅ Added dummy output to avoid hang"
           else
             echo "⚠️ Embed script not found, skipping"
           fi

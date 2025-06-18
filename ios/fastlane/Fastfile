@@ -16,7 +16,7 @@ platform :ios do
         target_filter: "Boilerplate",
         build_configuration: "Release",
         profile: profile_path,
-        code_sign_identity: "Apple Distribution", 
+        code_signing_identity: "Apple Distribution", 
         build_settings: {
             "CODE_SIGN_STYLE" => "Manual"
         }

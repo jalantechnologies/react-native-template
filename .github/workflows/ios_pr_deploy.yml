@@ -33,10 +33,22 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Patch Boost Podspec with Custom Source
+        working-directory: node_modules/react-native/third-party-podspecs
+        run: |
+          awk '
+          /spec.source/ {
+          print "  spec.source = { :http => '\''https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.gz'\'', :sha256 => '\''7bd7ddceec1a1dfdcbdb3e609b60d01739c38390a5f956385a12f3122049f0ca'\'' }";
+          skip=1; next
+          }
+          skip && /\}/ { skip=0; next }
+          skip && /:sha256/ { next }
+          { print }
+          ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
+
       - name: Install CocoaPods Dependencies
         run: |
           cd ios
-          rm -rf "${HOME}/Library/Caches/CocoaPods"
           rm -f Podfile.lock
           pod install --repo-update
 

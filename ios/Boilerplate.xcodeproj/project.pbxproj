@@ -465,6 +465,9 @@
 					"-lc++",
 					"$(inherited)",
 				);
+				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Boilerplate.app/Boilerplate";
@@ -489,6 +492,9 @@
 					"-lc++",
 					"$(inherited)",
 				);
+				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Boilerplate.app/Boilerplate";
@@ -516,6 +522,9 @@
 					"-ObjC",
 					"-lc++",
 				);
+				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate;
 				PRODUCT_NAME = Boilerplate;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -544,6 +553,9 @@
 					"-ObjC",
 					"-lc++",
 				);
+				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Distribution";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate;
 				PRODUCT_NAME = Boilerplate;
 				SWIFT_VERSION = 5.0;

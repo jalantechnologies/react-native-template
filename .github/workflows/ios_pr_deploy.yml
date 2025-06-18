@@ -38,6 +38,11 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
+      - name: Remove Flipper dependencies (hard cleanup)
+        run: |
+          rm -rf node_modules/react-native-flipper ios/Pods/Flipper* || true
+          yarn install --check-files || true
+
       - name: Patch Boost Podspec with Custom Source
         working-directory: node_modules/react-native/third-party-podspecs
         run: |
@@ -50,11 +55,6 @@ jobs:
           skip && /:sha256/ { next }
           { print }
           ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
-
-      - name: Remove Flipper dependencies (hard cleanup)
-        run: |
-          rm -rf node_modules/react-native-flipper ios/Pods/Flipper* || true
-          yarn install --check-files || true
 
       - name: Install CocoaPods dependencies
         working-directory: ios

@@ -9,8 +9,7 @@ platform :ios do
 
   desc "Build and upload to TestFlight"
   lane :pr_deploy do
-    match(type: "appstore", readonly: true)
-    profile_path = lane_context[SharedValues::SIGH_PROFILE_PATH]
+    profile_path = match(type: "appstore", readonly: true)
     update_project_provisioning(
         xcodeproj: "Boilerplate.xcodeproj",
         target_filter: "Boilerplate",

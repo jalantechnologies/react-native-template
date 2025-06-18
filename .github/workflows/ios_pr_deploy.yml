@@ -21,6 +21,7 @@ jobs:
         run: gem install bundler
       
       - name: Install Ruby dependencies
+        working-directory: ios
         run: bundle install
       
       - name: Use Node.js 22.13.1
@@ -48,8 +49,8 @@ jobs:
           ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
 
       - name: Install CocoaPods dependencies
+        working-directory: ios
         run: |
-          cd ios
           rm -f Podfile.lock
           bundle exec pod install --repo-update
 
@@ -62,17 +63,15 @@ jobs:
           echo "GIT_SSH_COMMAND=ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" >> $GITHUB_ENV
 
       - name: iOS PR Deploy to TestFlight
+        working-directory: ios
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           FASTLANE_USER: ${{ secrets.APPLE_ID }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
         run: |
-          cd ios
           NO_FLIPPER=1 bundle exec fastlane ios pr_deploy
 
       - name: Print last 100 lines of Xcode log
         if: failure()
         run: |
           tail -n 100 ~/Library/Logs/gym/Boilerplate-Boilerplate.log || echo "Log not found"
-
-

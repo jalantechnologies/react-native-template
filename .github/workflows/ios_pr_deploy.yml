@@ -69,8 +69,9 @@ jobs:
           cd ios
           fastlane pr_deploy
 
-      - name: Dump Fastlane Xcodebuild Log on Failure
+      - name: Print last 100 lines of Xcode log
         if: failure()
         run: |
-          tail -n 100 ~/Library/Logs/gym/Boilerplate-Boilerplate.log || echo "No log found"
+          tail -n 100 ~/Library/Logs/gym/Boilerplate-Boilerplate.log || echo "Log not found"
+
 

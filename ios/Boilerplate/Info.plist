@@ -41,7 +41,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>This app needs location access to provide location-based features.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -55,13 +55,59 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 	<key>UIBackgroundModes</key>
 	<array>
-  		<string>background-processing</string>
-  		<string>remote-notification</string>
+		<string>background-processing</string>
+		<string>remote-notification</string>
+		<string>background-fetch</string>
 	</array>
 
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
+	
+	<key>FirebaseMessagingAutoInitEnabled</key>
+	<false/>
+	
+	<key>aps-environment</key>
+	<string>development</string>
+	
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			</array>
+		</dict>
+	</array>
+	
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.productivity</string>
+
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleDefault</string>
+	
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>AppIcon20x20</string>
+				<string>AppIcon29x29</string>
+				<string>AppIcon40x40</string>
+				<string>AppIcon60x60</string>
+			</array>
+			<key>UIPrerenderedIcon</key>
+			<false/>
+		</dict>
+	</dict>
+	
 </dict>
 </plist>

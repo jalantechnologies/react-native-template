@@ -1,7 +1,11 @@
 apply plugin: "com.android.application"
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 apply plugin: "com.facebook.react"
-apply plugin: 'com.google.gms.google-services'
+
+project.ext.envConfigFiles = [
+    debug: ".env",
+    release: ".env"
+]
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -77,11 +81,27 @@ android {
 
     namespace "com.bettrsw.boilerplate"
     defaultConfig {
-        applicationId "com.bettrsw.boilerplate"
+        applicationId project.env.get("PACKAGE_NAME")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 7
         versionName "1.5"
+
+        buildConfigField "String", "FIREBASE_PROJECT_ID", "\"${project.env.get("FIREBASE_PROJECT_ID") ?: ""}\""
+        buildConfigField "String", "FIREBASE_APP_ID", "\"${project.env.get("FIREBASE_APP_ID_ANDROID") ?: ""}\""
+        buildConfigField "String", "FIREBASE_API_KEY", "\"${project.env.get("FIREBASE_API_KEY_ANDROID") ?: ""}\""
+        buildConfigField "String", "FIREBASE_MESSAGING_SENDER_ID", "\"${project.env.get("FIREBASE_MESSAGING_SENDER_ID") ?: ""}\""
+        buildConfigField "String", "FIREBASE_PROJECT_NUMBER", "\"${project.env.get("FIREBASE_PROJECT_NUMBER") ?: ""}\""
+        buildConfigField "String", "FIREBASE_STORAGE_BUCKET", "\"${project.env.get("FIREBASE_STORAGE_BUCKET") ?: ""}\""
+
+        resValue "string", "firebase_project_id", project.env.get("FIREBASE_PROJECT_ID") ?: ""
+        resValue "string", "firebase_app_id", project.env.get("FIREBASE_APP_ID_ANDROID") ?: ""
+        resValue "string", "firebase_api_key", project.env.get("FIREBASE_API_KEY_ANDROID") ?: ""
+        resValue "string", "firebase_messaging_sender_id", project.env.get("FIREBASE_MESSAGING_SENDER_ID") ?: ""
+        resValue "string", "firebase_project_number", project.env.get("FIREBASE_PROJECT_NUMBER") ?: ""
+        resValue "string", "firebase_storage_bucket", project.env.get("FIREBASE_STORAGE_BUCKET") ?: ""
+        
+        resValue "string", "default_notification_channel_id", "fcm_fallback_notification_channel"
     }
     signingConfigs {
         debug {
@@ -94,6 +114,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            debuggable true
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
@@ -108,6 +129,11 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {

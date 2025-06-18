@@ -16,10 +16,10 @@ These environment variables are used by the GitHub Actions workflows and Fastlan
 
 | Name                            | Source                | Description                                                                                                                                         |
 |---------------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `ANDROID_FIREBASE_PROJECT_NUMBER`       | GitHub Actions `env:` | Firebase project number. Used in Firebase API endpoints for uploading and managing app distribution releases.                                      |
-| `ANDROID_FIREBASE_APP_ID`               | GitHub Actions `env:` | Unique Firebase Android App ID. Used in Firebase App Distribution API calls to associate the build with the correct app.                           |
-| `ANDROID_FIREBASE_PROJECT_ID`           | GitHub Actions `env:` | Firebase project ID. Used in Firebase CLI and Firebase Console URLs. Also helpful for identifying the correct project context in scripts.          |
-| `ANDROID_FIREBASE_APP_PACKAGE`          | GitHub Actions `env:` | Android app package name (e.g., `com.example.app`). Used during Gradle builds and as an identifier when uploading builds to Firebase.              |
+| `ANDROID_FIREBASE_PROJECT_NUMBER`       | GitHub Secret  | Firebase project number. Used in Firebase API endpoints for uploading and managing app distribution releases.                                      |
+| `ANDROID_FIREBASE_APP_ID`               | GitHub Secret | Unique Firebase Android App ID. Used in Firebase App Distribution API calls to associate the build with the correct app.                           |
+| `ANDROID_FIREBASE_PROJECT_ID`           | GitHub Secret | Firebase project ID. Used in Firebase CLI and Firebase Console URLs. Also helpful for identifying the correct project context in scripts.          |
+| `ANDROID_FIREBASE_APP_PACKAGE`          | GitHub Secret | Android app package name (e.g., `com.example.app`). Used during Gradle builds and as an identifier when uploading builds to Firebase.              |
 | `ANDROID_GCP_JSON_BASE64`               | GitHub Secret         | Base64-encoded GCP service account JSON. Decoded and written to `/tmp/gcp_key.json` to authenticate `gcloud` and Firebase App Distribution APIs.   |
 | `GPLAY_SERVICE_ACCOUNT_KEY_JSON` | GitHub Secret        | Base64-encoded JSON for Google Play Service Account. Used for uploading APKs/AABs to Google Play (used in Play Store lanes, if configured).        |
 | `KEYSTORE_FILE`                 | GitHub Secret         | Base64-encoded Android signing keystore file. Required for signing release builds. Decoded during build and used in Gradle signing config.        |

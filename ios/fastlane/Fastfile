@@ -14,14 +14,11 @@ platform :ios do
         xcodeproj: "Boilerplate.xcodeproj",
         target_filter: "Boilerplate", # your target name
         build_configuration: "Release",
-        signing_style: "manual",
+        profile: "match AppStore com.bettrsw.boilerplate",
         code_sign_identity: "Apple Distribution",     # or Apple Development
         build_settings: {
             "CODE_SIGN_STYLE" => "Manual"
-        },
-        profile_mapping: {
-            "Boilerplate" => "match AppStore com.bettrsw.boilerplate"
-        }  
+        }, 
     )
     build_app(
       scheme: "Boilerplate", 

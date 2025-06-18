@@ -76,6 +76,11 @@ jobs:
           touch ~/Library/Logs/gym/Boilerplate-Boilerplate.log
           tail -n 200 -f ~/Library/Logs/gym/Boilerplate-Boilerplate.log &
       
+      - name: Check for Flipper in Podfile.lock
+        run: |
+          grep -i flipper ios/Podfile.lock && echo "❌ Flipper still present!" && exit 1 || echo "✅ Flipper not found"
+
+      
       - name: Disable Embed Pods Frameworks script (CI workaround)
         run: |
           sed -i '' 's/if \[ -z "\$SCRIPT_OUTPUT_FILE_0" \]/if false/' ios/Pods/Target\ Support\ Files/Pods-Boilerplate/Pods-Boilerplate-frameworks.sh || echo "Patch failed (probably missing script)"

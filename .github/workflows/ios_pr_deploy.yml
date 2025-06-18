@@ -99,6 +99,13 @@ jobs:
         run: |
           grep -i flipper ios/Podfile.lock && echo "❌ Flipper still present!" && exit 1 || echo "✅ Flipper not found"
 
+      - name: Set up custom keychain for code signing
+        run: |
+          security create-keychain -p "" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security set-keychain-settings
+
       - name: iOS PR Deploy to TestFlight
         working-directory: ios
         env:

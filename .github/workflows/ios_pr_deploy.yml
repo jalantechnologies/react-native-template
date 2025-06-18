@@ -67,7 +67,7 @@ jobs:
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
         run: |
           cd ios
-          fastlane pr_deploy
+          NO_FLIPPER=1 bundle exec fastlane ios pr_deploy
 
       - name: Print last 100 lines of Xcode log
         if: failure()

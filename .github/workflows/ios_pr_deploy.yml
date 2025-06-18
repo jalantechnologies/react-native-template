@@ -28,11 +28,6 @@ jobs:
         with:
           node-version-file: .nvmrc
 
-      - name: Install Fastlane & CocoaPods
-        run: |
-          sudo gem install fastlane
-          sudo gem install cocoapods
-      
       - name: Install Yarn
         run: npm install -g yarn
 

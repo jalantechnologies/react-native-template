@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: macos-latest
+    env:
+      NO_FLIPPER: 1
 
     steps:
       - uses: actions/checkout@v3
@@ -67,9 +69,10 @@ jobs:
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           FASTLANE_USER: ${{ secrets.APPLE_ID }}
+          NO_FLIPPER: 1
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
         run: |
-          NO_FLIPPER=1 bundle exec fastlane ios pr_deploy
+          bundle exec fastlane ios pr_deploy
 
       - name: Print last 100 lines of Xcode log
         if: failure()

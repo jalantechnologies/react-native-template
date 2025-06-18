@@ -20,6 +20,14 @@ jobs:
       - name: Install Fastlane
         run: gem install fastlane
 
+      - name: Set up SSH for Match
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.MATCH_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          echo 'GIT_SSH_COMMAND=ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts' >> $GITHUB_ENV
+
       - name: iOS PR Deploy to TestFlight
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}

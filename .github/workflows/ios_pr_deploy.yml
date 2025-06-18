@@ -36,6 +36,7 @@ jobs:
       - name: Install CocoaPods Dependencies
         run: |
           cd ios
+          rm -rf "${HOME}/Library/Caches/CocoaPods"
           rm -f Podfile.lock
           pod install --repo-update
 

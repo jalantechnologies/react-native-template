@@ -10,7 +10,17 @@ platform :ios do
   desc "Build and upload to TestFlight"
   lane :pr_deploy do
     match(type: "appstore", readonly: true)
-    build_app(
+    update_project_provisioning(
+        xcodeproj: "Boilerplate.xcodeproj",
+        target_filter: "Boilerplate", # your target name
+        build_configuration: "Release",
+        profile: "match AppStore com.bettrsw.boilerplate", # or match Development
+        code_sign_identity: "Apple Development",     # or Apple Development
+        build_settings: {
+            "CODE_SIGN_STYLE" => "Manual"
+        }
+    )
+    uild_app(
       scheme: "Boilerplate", 
       export_method: "app-store"
     )
@@ -18,5 +28,6 @@ platform :ios do
       changelog: "PR Build",
       distribute_external: true,
     )
+
   end
 end

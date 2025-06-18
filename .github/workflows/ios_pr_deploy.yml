@@ -16,6 +16,12 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1
+
+      - name: Install Bundler
+        run: gem install bundler
+      
+      - name: Install Ruby dependencies
+        run: bundle install
       
       - name: Use Node.js 22.13.1
         uses: actions/setup-node@v4
@@ -46,11 +52,11 @@ jobs:
           { print }
           ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
 
-      - name: Install CocoaPods Dependencies
+      - name: Install CocoaPods dependencies
         run: |
           cd ios
           rm -f Podfile.lock
-          NO_FLIPPER=1 pod install --repo-update
+          bundle exec pod install --repo-update
 
       - name: Set up SSH for Match
         run: |

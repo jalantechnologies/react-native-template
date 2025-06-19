@@ -117,16 +117,6 @@ jobs:
           echo "FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD = '${FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD:-<empty>}'"
           echo "MATCH_PASSWORD = '${MATCH_PASSWORD:+set ✔}'"
 
-      - name: ✅ Verify signing identities and provisioning profiles
-        run: |
-          echo "🔍 Listing available code signing identities:"
-          security find-identity -v -p codesigning || echo "⚠️ No code signing identities found!"
-
-          echo "📱 Listing available provisioning profiles:"
-          ls ~/Library/MobileDevice/Provisioning\ Profiles || echo "⚠️ No provisioning profiles found!"
-
-          echo "✅ Keychain verification complete"
-
       - name: iOS PR Deploy to TestFlight
         working-directory: ios
         env:

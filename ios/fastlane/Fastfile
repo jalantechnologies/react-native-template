@@ -9,9 +9,15 @@ platform :ios do
 
   desc "Build and upload to TestFlight"
   lane :pr_deploy do
+    ENV["FASTLANE_PASSWORD"] = ENV["FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD"]
+
+    UI.message("✅ FASTLANE_PASSWORD is set: #{ENV['FASTLANE_PASSWORD'] ? '✔' : '❌'}")
+    UI.message("✅ FASTLANE_USER: #{ENV['FASTLANE_USER']}")
+    UI.message("✅ MATCH_PASSWORD is set: #{ENV['MATCH_PASSWORD'] ? '✔' : '❌'}")
+
     sync_code_signing(type: "appstore")
     match(type: "appstore", readonly: true)
-
+    
     build_app(
       scheme: "Boilerplate",
       export_method: "app-store"

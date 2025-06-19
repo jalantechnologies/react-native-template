@@ -135,11 +135,6 @@ jobs:
           security find-identity -v -p codesigning
           security list-keychains
 
-      - name: Decode App Store Connect API Key
-        working-directory: ios
-        run: |
-          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_B64 }}" | base64 --decode > ./auth_key.json
-
       - name: iOS PR Deploy to TestFlight
         working-directory: ios
         env:

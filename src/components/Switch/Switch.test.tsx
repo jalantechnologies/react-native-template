@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
+import { StyleSheet } from 'react-native';
 
 import { useThemeColor } from '../../utils/use-theme-color.hook';
 
@@ -38,7 +39,8 @@ describe('Switch', () => {
       <Switch value={false} onValueChange={jest.fn()} style={customStyle} />,
     );
     const switchComponent = getByTestId('switch');
-    expect(switchComponent.props.style).toMatchObject(customStyle);
+    const flatStyle = StyleSheet.flatten(switchComponent.props.style);
+    expect(flatStyle).toMatchObject(customStyle);
   });
 
   it('applies dynamic colors from useThemeColor based on colorMode', () => {
@@ -59,7 +61,10 @@ describe('Switch', () => {
 
     const switchComponent = getByTestId('switch');
 
-    expect(switchComponent.props.trackColor).toEqual({ true: 'blue', false: 'gray' });
+    expect(switchComponent.props.trackColor).toEqual({
+      true: 'blue',
+      false: 'gray',
+    });
     expect(switchComponent.props.thumbColor).toBe('white');
   });
 });

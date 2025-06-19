@@ -16,35 +16,35 @@ public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
       new DefaultReactNativeHost(this) {
-        @Override
-        public boolean getUseDeveloperSupport() {
-          return BuildConfig.DEBUG;
-        }
+    @Override
+    public boolean getUseDeveloperSupport() {
+      return BuildConfig.DEBUG;
+    }
 
-        @Override
-        protected List<ReactPackage> getPackages() {
-          @SuppressWarnings("UnnecessaryLocalVariable")
-          List<ReactPackage> packages = new PackageList(this).getPackages();
-          // Packages that cannot be autolinked yet can be added manually here, for example:
-          // packages.add(new MyReactNativePackage());
-          return packages;
-        }
+    @Override
+    protected List<ReactPackage> getPackages() {
+      @SuppressWarnings("UnnecessaryLocalVariable")
+      List<ReactPackage> packages = new PackageList(this).getPackages();
+      // Packages that cannot be autolinked yet can be added manually here, for example:
+      // packages.add(new MyReactNativePackage());
+      return packages;
+    }
 
-        @Override
-        protected String getJSMainModuleName() {
-          return "index";
-        }
+    @Override
+    protected String getJSMainModuleName() {
+      return "index";
+    }
 
-        @Override
-        protected boolean isNewArchEnabled() {
-          return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
-        }
+    @Override
+    protected boolean isNewArchEnabled() {
+      return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+    }
 
-        @Override
-        protected Boolean isHermesEnabled() {
-          return BuildConfig.IS_HERMES_ENABLED;
-        }
-      };
+    @Override
+    protected Boolean isHermesEnabled() {
+      return BuildConfig.IS_HERMES_ENABLED;
+    }
+  };
 
   @Override
   public ReactNativeHost getReactNativeHost() {
@@ -68,16 +68,26 @@ public class MainApplication extends Application implements ReactApplication {
   private void initializeFirebase() {
     if (FirebaseApp.getApps(this).isEmpty()) {
       try {
-        FirebaseOptions options = new FirebaseOptions.Builder()
+        FirebaseOptions.Builder optionsBuilder = new FirebaseOptions.Builder()
             .setProjectId(BuildConfig.FIREBASE_PROJECT_ID)
             .setApplicationId(BuildConfig.FIREBASE_APP_ID)
             .setApiKey(BuildConfig.FIREBASE_API_KEY)
-            .setGcmSenderId(BuildConfig.FIREBASE_MESSAGING_SENDER_ID)
-            .setStorageBucket(BuildConfig.FIREBASE_STORAGE_BUCKET)
-            .build();
+            .setGcmSenderId(BuildConfig.FIREBASE_PROJECT_NUMBER);
 
+        if (!BuildConfig.FIREBASE_STORAGE_BUCKET.isEmpty()) {
+          optionsBuilder.setStorageBucket(BuildConfig.FIREBASE_STORAGE_BUCKET);
+        }
+
+        if (!BuildConfig.FIREBASE_DATABASE_URL.isEmpty()) {
+          optionsBuilder.setDatabaseUrl(BuildConfig.FIREBASE_DATABASE_URL);
+        }
+
+        FirebaseOptions options = optionsBuilder.build();
         FirebaseApp.initializeApp(this, options);
+
+        android.util.Log.d("Firebase", "Firebase initialized successfully");
       } catch (Exception e) {
+        android.util.Log.e("Firebase", "Failed to initialize Firebase", e);
         e.printStackTrace();
       }
     }

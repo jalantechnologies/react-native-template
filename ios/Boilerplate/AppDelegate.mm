@@ -16,15 +16,14 @@
     self.initialProps = @{};
 
     return [super application:application didFinishLaunchingWithOptions:launchOptions];
-}
+}storageBucket
 
-- (void)configureFirebase 
+- (void)configureFirebase {
     if ([FIRApp defaultApp] == nil) {
-        NSString *projectId = [RNCConfig envFor:@"FIREBASE_PROJECT_ID"];
+        NSString *projectId = [RNCConfig envFor:@"ANDROID_FIREBASE_PROJECT_ID"];
         NSString *appId = [RNCConfig envFor:@"FIREBASE_APP_ID_IOS"];
         NSString *apiKey = [RNCConfig envFor:@"FIREBASE_API_KEY_IOS"];
-        NSString *messagingSenderId = [RNCConfig envFor:@"FIREBASE_MESSAGING_SENDER_ID"];
-        NSString *storageBucket = [RNCConfig envFor:@"FIREBASE_STORAGE_BUCKET"];
+        NSString *messagingSenderId = [RNCConfig envFor:@"ANDROID_FIREBASE_PROJECT_NUMBER"];
         
         NSLog(@"Configuring Firebase with Project ID: %@", projectId);
         
@@ -33,12 +32,13 @@
                                                               GCMSenderID:messagingSenderId];
             options.projectID = projectId;
             options.APIKey = apiKey;
-            options.storageBucket = storageBucket;
             
-            NSString *databaseURL = [RNCConfig envFor:@"FIREBASE_DATABASE_URL"];
-            if (databaseURL) {
-                options.databaseURL = databaseURL;
-
+            if (projectId && projectId.length > 0) {
+                options.storageBucket = [NSString stringWithFormat:@"%@.appspot.com", projectId];
+                options.bundleID = [NSString stringWithFormat:@"%@.firebaseapp.com", projectId];
+                options.databaseURL = [NSString stringWithFormat:@"https://%@-default-rtdb.firebaseio.com", projectId];
+            }
+            
             [FIRApp configureWithOptions:options];
             NSLog(@"Firebase configured successfully");
         } else {

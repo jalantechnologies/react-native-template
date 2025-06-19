@@ -81,25 +81,34 @@ android {
 
     namespace "com.bettrsw.boilerplate"
     defaultConfig {
-        applicationId project.env.get("PACKAGE_NAME")
+        applicationId project.env.get("ANDROID_FIREBASE_APP_PACKAGE")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 7
         versionName "1.5"
 
-        buildConfigField "String", "FIREBASE_PROJECT_ID", "\"${project.env.get("FIREBASE_PROJECT_ID") ?: ""}\""
-        buildConfigField "String", "FIREBASE_APP_ID", "\"${project.env.get("FIREBASE_APP_ID_ANDROID") ?: ""}\""
-        buildConfigField "String", "FIREBASE_API_KEY", "\"${project.env.get("FIREBASE_API_KEY_ANDROID") ?: ""}\""
-        buildConfigField "String", "FIREBASE_MESSAGING_SENDER_ID", "\"${project.env.get("FIREBASE_MESSAGING_SENDER_ID") ?: ""}\""
-        buildConfigField "String", "FIREBASE_PROJECT_NUMBER", "\"${project.env.get("FIREBASE_PROJECT_NUMBER") ?: ""}\""
-        buildConfigField "String", "FIREBASE_STORAGE_BUCKET", "\"${project.env.get("FIREBASE_STORAGE_BUCKET") ?: ""}\""
+        def projectId = project.env.get("ANDROID_FIREBASE_PROJECT_ID") ?: ""
+        def storageBucket = projectId ? "${projectId}.appspot.com" : ""
+        def authDomain = projectId ? "${projectId}.firebaseapp.com" : ""
+        def databaseURL = projectId ? "https://${projectId}-default-rtdb.firebaseio.com" : ""
 
-        resValue "string", "firebase_project_id", project.env.get("FIREBASE_PROJECT_ID") ?: ""
-        resValue "string", "firebase_app_id", project.env.get("FIREBASE_APP_ID_ANDROID") ?: ""
-        resValue "string", "firebase_api_key", project.env.get("FIREBASE_API_KEY_ANDROID") ?: ""
-        resValue "string", "firebase_messaging_sender_id", project.env.get("FIREBASE_MESSAGING_SENDER_ID") ?: ""
-        resValue "string", "firebase_project_number", project.env.get("FIREBASE_PROJECT_NUMBER") ?: ""
-        resValue "string", "firebase_storage_bucket", project.env.get("FIREBASE_STORAGE_BUCKET") ?: ""
+        buildConfigField "String", "FIREBASE_PROJECT_ID", "\"${projectId}\""
+        buildConfigField "String", "FIREBASE_APP_ID", "\"${project.env.get("ANDROID_FIREBASE_APP_ID") ?: ""}\""
+        buildConfigField "String", "FIREBASE_API_KEY", "\"${project.env.get("ANDROID_FIREBASE_API_KEY") ?: ""}\""
+        buildConfigField "String", "FIREBASE_MESSAGING_SENDER_ID", "\"${project.env.get("ANDROID_FIREBASE_PROJECT_NUMBER") ?: ""}\""
+        buildConfigField "String", "FIREBASE_PROJECT_NUMBER", "\"${project.env.get("ANDROID_FIREBASE_PROJECT_NUMBER") ?: ""}\""
+        buildConfigField "String", "FIREBASE_STORAGE_BUCKET", "\"${storageBucket}\""
+        buildConfigField "String", "FIREBASE_AUTH_DOMAIN", "\"${authDomain}\""
+        buildConfigField "String", "FIREBASE_DATABASE_URL", "\"${databaseURL}\""
+
+        resValue "string", "firebase_project_id", projectId
+        resValue "string", "firebase_app_id", project.env.get("ANDROID_FIREBASE_APP_ID") ?: ""
+        resValue "string", "firebase_api_key", project.env.get("ANDROID_FIREBASE_API_KEY") ?: ""
+        resValue "string", "firebase_messaging_sender_id", project.env.get("ANDROID_FIREBASE_PROJECT_NUMBER") ?: ""
+        resValue "string", "firebase_project_number", project.env.get("ANDROID_FIREBASE_PROJECT_NUMBER") ?: ""
+        resValue "string", "firebase_storage_bucket", storageBucket
+        resValue "string", "firebase_auth_domain", authDomain
+        resValue "string", "firebase_database_url", databaseURL
         
         resValue "string", "default_notification_channel_id", "fcm_fallback_notification_channel"
     }

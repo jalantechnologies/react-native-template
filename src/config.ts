@@ -8,17 +8,27 @@ export default class Config {
   static DD_APPLICATION_ID: string | undefined = RNConfig.DD_APPLICATION_ID;
   static LOGGER: string | undefined = RNConfig.LOGGER;
 
-  static FIREBASE_PROJECT_ID: string | undefined = RNConfig.FIREBASE_PROJECT_ID;
-  static FIREBASE_APP_ID_ANDROID: string | undefined = RNConfig.FIREBASE_APP_ID_ANDROID;
-  static FIREBASE_APP_ID_IOS: string | undefined = RNConfig.FIREBASE_APP_ID_IOS;
-  static FIREBASE_API_KEY_ANDROID: string | undefined = RNConfig.FIREBASE_API_KEY_ANDROID;
-  static FIREBASE_API_KEY_IOS: string | undefined = RNConfig.FIREBASE_API_KEY_IOS;
-  static FIREBASE_MESSAGING_SENDER_ID: string | undefined = RNConfig.FIREBASE_MESSAGING_SENDER_ID;
-  static FIREBASE_STORAGE_BUCKET: string | undefined = RNConfig.FIREBASE_STORAGE_BUCKET;
-  static FIREBASE_AUTH_DOMAIN: string | undefined = RNConfig.FIREBASE_AUTH_DOMAIN;
-  static FIREBASE_DATABASE_URL: string | undefined = RNConfig.FIREBASE_DATABASE_URL;
-  static FIREBASE_PROJECT_NUMBER: string | undefined = RNConfig.FIREBASE_PROJECT_NUMBER;
+  static ANDROID_FIREBASE_PROJECT_ID = RNConfig.ANDROID_FIREBASE_PROJECT_ID;
+  static ANDROID_FIREBASE_APP_ID = RNConfig.ANDROID_FIREBASE_APP_ID;
+  static FIREBASE_APP_ID_IOS = RNConfig.FIREBASE_APP_ID_IOS;
+  static ANDROID_FIREBASE_API_KEY = RNConfig.ANDROID_FIREBASE_API_KEY;
+  static FIREBASE_API_KEY_IOS = RNConfig.FIREBASE_API_KEY_IOS;
+  static ANDROID_FIREBASE_PROJECT_NUMBER = RNConfig.ANDROID_FIREBASE_PROJECT_NUMBER;
+  static ANDROID_FIREBASE_APP_PACKAGE = RNConfig.ANDROID_FIREBASE_APP_PACKAGE;
+  static IOS_FIREBASE_APP_PACKAGE = RNConfig.IOS_FIREBASE_APP_PACKAGE;
 
-  static PACKAGE_NAME: string | undefined = RNConfig.PACKAGE_NAME;
-  static BUNDLE_ID: string | undefined = RNConfig.BUNDLE_ID;
+  static get FIREBASE_STORAGE_BUCKET(): string | undefined {
+    const projectId = RNConfig.ANDROID_FIREBASE_PROJECT_ID;
+    return projectId ? `${projectId}.appspot.com` : undefined;
+  }
+
+  static get FIREBASE_AUTH_DOMAIN(): string | undefined {
+    const projectId = RNConfig.ANDROID_FIREBASE_PROJECT_ID;
+    return projectId ? `${projectId}.firebaseapp.com` : undefined;
+  }
+
+  static get FIREBASE_DATABASE_URL(): string | undefined {
+    const projectId = RNConfig.ANDROID_FIREBASE_PROJECT_ID;
+    return projectId ? `https://${projectId}-default-rtdb.firebaseio.com` : undefined;
+  }
 }

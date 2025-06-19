@@ -22,7 +22,6 @@ platform :ios do
       clean: true,
       scheme: "Boilerplate",
       export_method: "app-store",
-      keychain_name: "login.keychain-db",
       export_options: {
         signingStyle: "manual",
         provisioningProfiles: {

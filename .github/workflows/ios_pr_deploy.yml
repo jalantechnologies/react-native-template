@@ -99,14 +99,6 @@ jobs:
         run: |
           grep -i flipper ios/Podfile.lock && echo "❌ Flipper still present!" && exit 1 || echo "✅ Flipper not found"
 
-      - name: Set up custom keychain for code signing
-        run: |
-          security create-keychain -p "" build.keychain
-          security set-keychain-settings -lut 21600 build.keychain
-          security unlock-keychain -p "" build.keychain
-          security list-keychains -d user -s build.keychain login.keychain-db
-          security default-keychain -s build.keychain
-
       - name: Install code signing certificates via Match
         working-directory: ios
         env:

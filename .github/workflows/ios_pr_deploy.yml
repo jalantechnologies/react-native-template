@@ -112,6 +112,8 @@ jobs:
       - name: Unlock login keychain
         run: |
           security unlock-keychain -p "" ~/Library/Keychains/login.keychain-db
+          security list-keychains -s ~/Library/Keychains/login.keychain-db
+          security default-keychain -s ~/Library/Keychains/login.keychain-db
 
       - name: Debug installed identities
         run: |

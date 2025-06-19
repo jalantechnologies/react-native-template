@@ -102,10 +102,10 @@ jobs:
       - name: Set up custom keychain for code signing
         run: |
           security create-keychain -p "" build.keychain
-          security default-keychain -s build.keychain
+          security set-keychain-settings -lut 21600 build.keychain
           security unlock-keychain -p "" build.keychain
-          security set-keychain-settings
-          security list-keychains -s build.keychain
+          security list-keychains -d user -s build.keychain login.keychain-db
+          security default-keychain -s build.keychain
 
       - name: Debug certificates
         run: |

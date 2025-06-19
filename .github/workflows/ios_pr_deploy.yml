@@ -107,8 +107,19 @@ jobs:
           security list-keychains -d user -s build.keychain login.keychain-db
           security default-keychain -s build.keychain
 
-      - name: Debug certificates
+      - name: Install code signing certificates via Match
+        working-directory: ios
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          FASTLANE_USER: ${{ secrets.APPLE_ID }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
         run: |
+          echo "🔐 Installing certs..."
+          bundle exec fastlane ci_signing_setup
+
+      - name: Debug installed identities
+        run: |
+          echo "🕵️ Debugging code signing identities..."
           security find-identity -v -p codesigning
           security list-keychains
   

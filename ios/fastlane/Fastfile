@@ -33,9 +33,10 @@ platform :ios do
     upload_to_testflight(
       changelog: "PR Build - automated upload",
       distribute_external: true,
+      skip_waiting_for_build_processing: true,
       username: ENV["FASTLANE_USER"],
-      apple_id: "6747346204", # optional, for clarity
-      app_identifier: "com.bettrsw.boilerplate" # optional, helpful for clarity
+      apple_id: "6747346204",
+      app_identifier: "com.bettrsw.boilerplate"
     )
   end
 end

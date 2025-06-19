@@ -15,6 +15,9 @@ jobs:
       ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
       ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
       ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
+      GRADLE_OPTS: "-Xmx8g -XX:MaxMetaspaceSize=2g -Dorg.gradle.jvmargs='-Xmx8g -XX:MaxMetaspaceSize=2g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8'"
+      GRADLE_CONFIGURATION_CACHE: "true"
+      GRADLE_CONFIGURATION_CACHE_MAX_PROBLEMS: "100"
 
     steps:
       - uses: actions/checkout@v3
@@ -61,6 +64,16 @@ jobs:
         working-directory: android
         run: ./gradlew clean
 
+      - name: Setup Gradle properties
+        working-directory: android
+        run: |
+          echo "org.gradle.daemon=false" >> gradle.properties
+          echo "org.gradle.parallel=true" >> gradle.properties 
+          echo "org.gradle.workers.max=2" >> gradle.properties
+          echo "org.gradle.configureondemand=true" >> gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
+          echo "kotlin.incremental=false" >> gradle.properties
+
       - name: Build & Deploy to Firebase App Distribution
         working-directory: android
         env:
@@ -87,4 +100,3 @@ jobs:
 
               🔗 [View Release in Firebase Console](${releaseUrl})`
             });
-            

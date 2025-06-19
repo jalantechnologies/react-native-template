@@ -20,6 +20,12 @@ jobs:
         with:
           ruby-version: 3.1
 
+      - name: List available Xcode versions
+        run: ls -l /Applications | grep Xcode
+
+      - name: Select Xcode 16.0
+        run: sudo xcode-select -s /Applications/Xcode_16.0.0.app
+
       - name: Install Bundler
         run: gem install bundler
       
@@ -61,9 +67,6 @@ jobs:
         run: |
           rm -f Podfile.lock
           bundle exec pod install --repo-update
-      
-      - name: Select Xcode 16 (iOS 18 SDK)
-        run: sudo xcode-select -s /Applications/Xcode_16.0.app
 
       - name: Remove [CP] Embed Pods Frameworks build phase
         working-directory: ios

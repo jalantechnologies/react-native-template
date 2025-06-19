@@ -34,7 +34,7 @@ platform :ios do
       changelog: "PR Build - automated upload",
       distribute_external: true,
       username: ENV["FASTLANE_USER"],
-      apple_id: ENV["FASTLANE_USER"], # optional, for clarity
+      apple_id: "6747346204", # optional, for clarity
       app_identifier: "com.bettrsw.boilerplate" # optional, helpful for clarity
     )
   end

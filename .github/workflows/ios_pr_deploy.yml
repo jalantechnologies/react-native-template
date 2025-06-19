@@ -109,12 +109,16 @@ jobs:
           echo "🔐 Installing certs..."
           bundle exec fastlane ci_signing_setup
 
+      - name: Unlock login keychain
+        run: |
+          security unlock-keychain -p "" ~/Library/Keychains/login.keychain-db
+
       - name: Debug installed identities
         run: |
           echo "🕵️ Debugging code signing identities..."
           security find-identity -v -p codesigning
           security list-keychains
-  
+
       - name: iOS PR Deploy to TestFlight
         working-directory: ios
         env:

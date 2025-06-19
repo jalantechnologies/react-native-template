@@ -38,7 +38,7 @@ describe('Switch', () => {
       <Switch value={false} onValueChange={jest.fn()} style={customStyle} />,
     );
     const switchComponent = getByTestId('switch');
-    expect(switchComponent.props.style).toEqual(expect.arrayContaining([customStyle]));
+    expect(switchComponent.props.style).toMatchObject(customStyle);
   });
 
   it('applies dynamic colors from useThemeColor based on colorMode', () => {

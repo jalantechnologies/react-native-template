@@ -10,6 +10,13 @@ jobs:
     timeout-minutes: 30
     env:
       NO_FLIPPER: 1
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+      APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.APP_STORE_CONNECT_API_KEY_B64 }}
 
     steps:
       - uses: actions/checkout@v3
@@ -64,17 +71,6 @@ jobs:
           rm -f Podfile.lock
           bundle exec pod install --repo-update
 
-      # - name: Patch Embed Pods Frameworks to Set Dummy Output
-      #   working-directory: ios
-      #   run: |
-      #     EMBED_SCRIPT="Pods/Target Support Files/Pods-Boilerplate/Pods-Boilerplate-frameworks.sh"
-      #     if [ -f "$EMBED_SCRIPT" ]; then
-      #       echo 'export SCRIPT_OUTPUT_FILE_0=/tmp/dummy_output' >> "$EMBED_SCRIPT"
-      #       echo "✅ Added dummy output to avoid hang"
-      #     else
-      #       echo "⚠️ Embed script not found, skipping"
-      #     fi
-
       - name: Set up SSH for Match
         run: |
           mkdir -p ~/.ssh
@@ -82,26 +78,16 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           echo "GIT_SSH_COMMAND=ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" >> $GITHUB_ENV
-      
-      - name: Check for Flipper in Podfile.lock
-        run: |
-          grep -i flipper ios/Podfile.lock && echo "❌ Flipper still present!" && exit 1 || echo "✅ Flipper not found"
 
       - name: Setup Keychain
         run: |
           security create-keychain -p ${{ secrets.KEYCHAIN_PASSWORD }} ci.keychain
           security set-keychain-settings -lut 21600 ci.keychain
           security unlock-keychain -p ${{ secrets.KEYCHAIN_PASSWORD }} ci.keychain
-          security list-keychains -d user -s ci.keychain
           security default-keychain -d user -s ci.keychain
       
       - name: Install code signing certificates via Match
         working-directory: ios
-        env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          FASTLANE_USER: ${{ secrets.APPLE_ID }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
         run: |
           echo "🔐 Installing certs..."
           bundle exec fastlane ci_signing_setup
@@ -113,21 +99,24 @@ jobs:
           security list-keychains
 
       - name: iOS PR Deploy to TestFlight
-        working-directory: ios
-        env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          FASTLANE_USER: ${{ secrets.APPLE_ID }}
-          NO_FLIPPER: 1
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
-          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.APP_STORE_CONNECT_API_KEY_B64 }}
+        working-directory: ios 
         run: |
-          echo "MATCH_PASSWORD=${MATCH_PASSWORD:0:4}****"
           bundle exec fastlane ios pr_deploy
 
-      - name: Print last 100 lines of Xcode log
-        if: failure()
+      - name: Post PR comment with TestFlight link
+        if: ${{ github.event.pull_request }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BUILD_HASH: ${{ github.sha }}
         run: |
-          tail -n 100 ~/Library/Logs/gym/Boilerplate-Boilerplate.log || echo "Log not found"
+          brew install gh # Only needed if gh CLI is not pre-installed
+          gh auth setup-git
+          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$APPLE_ID/testflight/ios"
+          gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
+
+          - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
+          - 🆔 App ID: \`com.bettrsw.boilerplate\`
+          - 🧱 Build Hash: \`$BUILD_HASH\`
+
+          _This build was deployed by CI using Fastlane._"

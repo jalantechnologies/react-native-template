@@ -1,8 +1,7 @@
 import React, { PropsWithChildren } from 'react';
-import { TouchableOpacity, Text, View, GestureResponderEvent, DimensionValue } from 'react-native';
+import { TouchableOpacity, Text, View } from 'react-native';
 
 import { ButtonKind, ButtonProps, ButtonSize } from '../../types';
-
 import Spinner from '../spinner/spinner';
 
 import { useButtonStyles, useKindStyles, useSizeStyles } from './button.styles';

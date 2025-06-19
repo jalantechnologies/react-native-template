@@ -60,7 +60,7 @@ jobs:
         working-directory: ios
         run: |
           rm -f Podfile.lock
-          bundle exec pod install --repo-updatel
+          bundle exec pod install --repo-update
       
       - name: Remove [CP] Embed Pods Frameworks build phase
         working-directory: ios

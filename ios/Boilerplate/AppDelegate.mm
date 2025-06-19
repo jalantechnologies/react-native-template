@@ -9,14 +9,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [self configureFirebase];
-    
-    [self configureNotifications:application];
-    
-    self.moduleName = @"com.bettrsw.boilerplate";
-    self.initialProps = @{};
+  [self configureFirebase];
+  
+  [self configureNotifications:application];
+  
+  self.moduleName = @"com.bettrsw.boilerplate";
+  self.initialProps = @{};
 
-    return [super application:application didFinishLaunchingWithOptions:launchOptions];
+  return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }storageBucket
 
 - (void)configureFirebase {

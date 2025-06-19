@@ -98,6 +98,11 @@ jobs:
           security find-identity -v -p codesigning
           security list-keychains
 
+      - name: Clear Derived Data
+        run: |
+          rm -rf ~/Library/Developer/Xcode/DerivedData
+
+
       - name: iOS PR Deploy to TestFlight
         working-directory: ios 
         run: |

@@ -19,16 +19,8 @@ jobs:
         with:
           ruby-version: 3.1
 
-      - name: List available Xcode versions
-        run: ls -l /Applications | grep Xcode
-
       - name: Select Xcode 16.0
         run: sudo xcode-select -s /Applications/Xcode_16.2.app
-
-      - name: Show Xcode Version
-        run: |
-          xcode-select -p
-          xcodebuild -version
 
       - name: Install Bundler
         run: gem install bundler
@@ -37,7 +29,7 @@ jobs:
         working-directory: ios
         run: bundle install
       
-      - name: Use Node.js 22.13.1
+      - name: Set Node Version
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -71,20 +63,6 @@ jobs:
         run: |
           rm -f Podfile.lock
           bundle exec pod install --repo-update
-
-      - name: Remove [CP] Embed Pods Frameworks build phase
-        working-directory: ios
-        run: |
-          gem install xcodeproj
-          ruby -e "
-          require 'xcodeproj';
-          project_path = 'Boilerplate.xcodeproj';
-          project = Xcodeproj::Project.open(project_path);
-          target = project.targets.find { |t| t.name == 'Boilerplate' };
-          target.build_phases.delete_if { |bp| bp.display_name.include?('[CP] Embed Pods Frameworks') };
-          project.save;
-          puts '✅ Removed [CP] Embed Pods Frameworks phase';
-          "
 
       # - name: Patch Embed Pods Frameworks to Set Dummy Output
       #   working-directory: ios

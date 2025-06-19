@@ -135,6 +135,10 @@ jobs:
           security find-identity -v -p codesigning
           security list-keychains
 
+      - name: Decode App Store Connect API Key
+        run: |
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_B64 }}" | base64 --decode > ./auth_key.json
+
       - name: iOS PR Deploy to TestFlight
         working-directory: ios
         env:
@@ -148,7 +152,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.APP_STORE_CONNECT_API_KEY_B64 }}
         run: |
           echo "MATCH_PASSWORD=${MATCH_PASSWORD:0:4}****"
-          bundle exec fastlane ios pr_deploy
+          bundle exec fastlane ios pr_deploy --api_key_path ../auth_key.json
 
       - name: Print last 100 lines of Xcode log
         if: failure()

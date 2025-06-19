@@ -76,16 +76,16 @@ jobs:
           puts '✅ Removed [CP] Embed Pods Frameworks phase';
           "
 
-      - name: Patch Embed Pods Frameworks to Set Dummy Output
-        working-directory: ios
-        run: |
-          EMBED_SCRIPT="Pods/Target Support Files/Pods-Boilerplate/Pods-Boilerplate-frameworks.sh"
-          if [ -f "$EMBED_SCRIPT" ]; then
-            echo 'export SCRIPT_OUTPUT_FILE_0=/tmp/dummy_output' >> "$EMBED_SCRIPT"
-            echo "✅ Added dummy output to avoid hang"
-          else
-            echo "⚠️ Embed script not found, skipping"
-          fi
+      # - name: Patch Embed Pods Frameworks to Set Dummy Output
+      #   working-directory: ios
+      #   run: |
+      #     EMBED_SCRIPT="Pods/Target Support Files/Pods-Boilerplate/Pods-Boilerplate-frameworks.sh"
+      #     if [ -f "$EMBED_SCRIPT" ]; then
+      #       echo 'export SCRIPT_OUTPUT_FILE_0=/tmp/dummy_output' >> "$EMBED_SCRIPT"
+      #       echo "✅ Added dummy output to avoid hang"
+      #     else
+      #       echo "⚠️ Embed script not found, skipping"
+      #     fi
 
       - name: Set up SSH for Match
         run: |

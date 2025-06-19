@@ -3,7 +3,8 @@ default_platform(:ios)
 platform :ios do
   desc "Fetch certificates for CI"
   lane :ci_signing_setup do
-    match(type: "appstore")
+    match(type: "appstore", readonly: true)
+    match(type: "development", readonly: true)
   end
 
   desc "Build and upload to TestFlight"

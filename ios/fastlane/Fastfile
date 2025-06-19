@@ -36,7 +36,7 @@ platform :ios do
       },
     )
     
-    hermes_binary = "./build/Boilerplate/Build/Products/Release-iphoneos/Boilerplate.app/Frameworks/hermes.framework/hermes"
+    hermes_binary = "./ios/build/Boilerplate/Build/Products/Release-iphoneos/Boilerplate.app/Frameworks/hermes.framework/hermes"
     if File.exist?(hermes_binary)
       UI.message("🔧 Stripping bitcode from Hermes binary at: #{hermes_binary}")
       sh("xcrun bitcode_strip #{hermes_binary} -r -o #{hermes_binary}")

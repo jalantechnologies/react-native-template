@@ -59,8 +59,7 @@ describe('Switch', () => {
 
     const switchComponent = getByTestId('switch');
 
-    expect(switchComponent.props.trackColor.true).toBe('blue');
-    expect(switchComponent.props.trackColor.false).toBe('gray');
+    expect(switchComponent.props.trackColor).toEqual({ true: 'blue', false: 'gray' });
     expect(switchComponent.props.thumbColor).toBe('white');
   });
 });

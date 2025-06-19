@@ -33,7 +33,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       <TouchableOpacity onPress={() => setShow(true)} style={styles.button}>
         <Text style={styles.text}>
           {mode === DatePickerMode.TIME

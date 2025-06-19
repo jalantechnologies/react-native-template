@@ -5,10 +5,6 @@ export const DatePickerStyles = () => {
   const theme = useTheme();
 
   return StyleSheet.create({
-    container: {
-      marginVertical: theme.space[8],
-      marginHorizontal: theme.space[8],
-    },
     button: {
       paddingVertical: theme.space[3],
       paddingHorizontal: theme.space[4],

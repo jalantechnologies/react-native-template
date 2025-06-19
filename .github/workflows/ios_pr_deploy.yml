@@ -111,9 +111,10 @@ jobs:
 
       - name: Unlock login keychain
         run: |
-          security unlock-keychain -p "" ~/Library/Keychains/login.keychain-db
-          security list-keychains -s ~/Library/Keychains/login.keychain-db
-          security default-keychain -s ~/Library/Keychains/login.keychain-db
+          security create-keychain -p ${{ secrets.KEYCHAIN_PASSWORD }} ci.keychain
+          security set-keychain-settings -lut 21600 ci.keychain
+          security unlock-keychain -p ${{ secrets.KEYCHAIN_PASSWORD }} ci.keychain
+          security list-keychains -s ci.keychain
 
       - name: Debug installed identities
         run: |
@@ -127,6 +128,7 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           FASTLANE_USER: ${{ secrets.APPLE_ID }}
           NO_FLIPPER: 1
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
         run: |
           echo "MATCH_PASSWORD=${MATCH_PASSWORD:0:4}****"

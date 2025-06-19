@@ -3,8 +3,8 @@ default_platform(:ios)
 platform :ios do
   desc "Fetch certificates for CI"
   lane :ci_signing_setup do
-    match(type: "appstore", readonly: true, keychain_name: "login.keychain-db", keychain_password: "")
-    match(type: "development", readonly: true, keychain_name: "login.keychain-db", keychain_password: "")
+    match(type: "appstore", readonly: true, keychain_name: "login.keychain-db", keychain_password: ENV["KEYCHAIN_PASSWORD"])
+    match(type: "development", readonly: true, keychain_name: "login.keychain-db", keychain_password: ENV["KEYCHAIN_PASSWORD"])
   end
 
   desc "Build and upload to TestFlight"

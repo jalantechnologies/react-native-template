@@ -35,6 +35,15 @@ platform :ios do
         }
       },
     )
+    
+    hermes_binary = "./build/Boilerplate/Build/Products/Release-iphoneos/Boilerplate.app/Frameworks/hermes.framework/hermes"
+    if File.exist?(hermes_binary)
+      UI.message("🔧 Stripping bitcode from Hermes binary at: #{hermes_binary}")
+      sh("xcrun bitcode_strip #{hermes_binary} -r -o #{hermes_binary}")
+    else
+      UI.important("⚠️ Hermes binary not found at expected path: #{hermes_binary}")
+    end
+    
     sh <<~BASH
       echo "🔍 Verifying Hermes binary for bitcode..."
       unzip -q "#{lane_context[:IPA_OUTPUT_PATH]}" -d temp_payload
@@ -46,6 +55,8 @@ platform :ios do
       fi
       rm -rf temp_payload
     BASH
+
+
 
     upload_to_testflight(
       changelog: "PR ##{ENV['PR_NUMBER']} Build - automated upload",

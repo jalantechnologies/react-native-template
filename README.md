@@ -292,66 +292,64 @@ To fix this, follow these steps:
 
 # 🔧 Firebase Configuration
 
-To ensure Firebase works correctly with your app, follow the steps below to match the app's identifiers with the ones registered in Firebase.
+This project uses **environment variables** for Firebase configuration instead of traditional `google-services.json` and `GoogleService-Info.plist` files. This approach provides better security and flexibility across different environments.
 
 ---
 
-## ✅ Android Setup
+## ✅ Setup Instructions
 
-### 1. Verify Package Name
+### 1. Configure Environment Variables
 
-- Open your `google-services.json` file.
-- Locate the `package_name` field:
-  ```json
-  "package_name": "com.example.yourapp"
-  ```
-- This should **exactly match** the `applicationId` in your `android/app/build.gradle`:
-  ```groovy
-  defaultConfig {
-      applicationId "com.example.yourapp"
-      ...
-  }
-  ```
+Create or update your `.env` file with the following Firebase configuration variables:
 
-### 2. Update Package References in Kotlin Source Files
+```bash
+# Firebase Configuration
+ANDROID_FIREBASE_PROJECT_NUMBER=
+ANDROID_FIREBASE_PROJECT_ID=
+ANDROID_FIREBASE_APP_ID=
+ANDROID_FIREBASE_API_KEY=
+IOS_FIREBASE_APP_ID=
+IOS_FIREBASE_APP_KEY=
 
-Ensure your package name is consistent in the following files:
-```
-android/app/src/main/java/com/yourappname/MainActivity.kt
-android/app/src/main/java/com/yourappname/MainApplication.kt
+# App Configuration - Using your current package names
+ANDROID_FIREBASE_APP_PACKAGE=com.yourcompany.yourapp
+IOS_FIREBASE_APP_PACKAGE=com.yourcompany.yourapp
 ```
 
-Update the `package` declaration at the top of each file if the directory or application ID was changed:
-```kotlin
-package com.example.yourapp
-```
+### 2. Obtain Firebase Configuration Values
+
+To get these values from your Firebase project:
+
+#### From Firebase Console:
+
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Select your project
+3. Go to **Project Settings** (gear icon)
+4. Scroll down to **Your apps** section
+5. For each platform (Android/iOS), click on the config icon and copy the values:
+
+**For Android:**
+
+* `ANDROID_FIREBASE_APP_ID` → `app_id`
+* `ANDROID_FIREBASE_API_KEY` → `api_key`
+* `ANDROID_FIREBASE_APP_PACKAGE` → `package_name`
+
+**For iOS:**
+
+* `FIREBASE_APP_ID_IOS` → `GOOGLE_APP_ID`
+* `FIREBASE_API_KEY_IOS` → `API_KEY`
+* `IOS_FIREBASE_APP_PACKAGE` → `BUNDLE_ID`
+
+**Common values:**
+
+* `ANDROID_FIREBASE_PROJECT_ID` → `project_id`
+* `ANDROID_FIREBASE_PROJECT_NUMBER` → `project_number`
+
+**Auto-generated values:**
+
+* Storage Bucket: `{project_id}.appspot.com`
+* Auth Domain: `{project_id}.firebaseapp.com`
+* Database URL: `https://{project_id}-default-rtdb.firebaseio.com`
 
 ---
-
-## ✅ iOS Setup
-
-### 1. Verify Bundle Identifier
-
-- Open `GoogleService-Info.plist`.
-- Look for the following entry:
-  ```xml
-  <key>BUNDLE_ID</key>
-  <string>com.example.yourapp</string>
-  ```
-
-### 2. Match with AppDelegate Configuration
-
-- Open `ios/YourProjectName/AppDelegate.h` (or `.swift` if you're using Swift).
-- Ensure the `self.moduleName` or relevant entry matches the `BUNDLE_ID`:
-  ```objc
-  self.moduleName = @"com.example.yourapp";
-  ```
-
----
-
-By keeping your `package_name` (Android) and `BUNDLE_ID` (iOS) consistent across Firebase and your codebase, you ensure smooth integration of Firebase services such as notifications, analytics, and authentication.
-
-⚠️ Note
-
-If the app build identifier changes (e.g., you update the package name or bundle ID), you must create a new application in FCM with the updated identifier (package_name or BUNDLE_ID).
 

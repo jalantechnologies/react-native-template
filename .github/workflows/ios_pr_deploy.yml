@@ -56,21 +56,11 @@ jobs:
           { print }
           ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
 
-      - name: Cache CocoaPods
-        uses: actions/cache@v3
-        with:
-          path: |
-            ios/Pods
-            ios/Podfile.lock
-            ios/Podfile
-            ios/.symlinks
-          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
-
       - name: Install CocoaPods dependencies
         working-directory: ios
-        run: bundle exec pod install
+        run: |
+          rm -f Podfile.lock
+          bundle exec pod install --repo-updatel
       
       - name: Remove [CP] Embed Pods Frameworks build phase
         working-directory: ios

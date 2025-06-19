@@ -35,6 +35,17 @@ platform :ios do
         }
       },
     )
+    sh <<~BASH
+      echo "🔍 Verifying Hermes binary for bitcode..."
+      unzip -q "#{lane_context[:IPA_OUTPUT_PATH]}" -d temp_payload
+      if xcrun bitcode_strip -r temp_payload/Payload/Boilerplate.app/Frameworks/hermes.framework/hermes -o /dev/null; then
+        echo "✅ Hermes binary is clean (no bitcode)."
+      else
+        echo "❌ Hermes binary still contains bitcode!"
+        exit 1
+      fi
+      rm -rf temp_payload
+    BASH
 
     upload_to_testflight(
       changelog: "PR ##{ENV['PR_NUMBER']} Build - automated upload",

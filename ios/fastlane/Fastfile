@@ -18,10 +18,10 @@ platform :ios do
     match(type: "appstore", readonly: true, verbose: true, keychain_name: "ci.keychain", keychain_password: ENV["KEYCHAIN_PASSWORD"])
     sh("security find-identity -v -p codesigning")
     sh("ls ~/Library/MobileDevice/Provisioning\\ Profiles")
-        increment_build_number(
-      xcodeproj: "ios/Boilerplate.xcodeproj"
+    increment_build_number(
+      xcodeproj: "Boilerplate.xcodeproj"
     )
-    
+
     build_app(
       clean: true,
       scheme: "Boilerplate",

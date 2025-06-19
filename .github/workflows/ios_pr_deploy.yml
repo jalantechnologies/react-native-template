@@ -56,11 +56,21 @@ jobs:
           { print }
           ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
 
+      - name: Cache CocoaPods
+        uses: actions/cache@v3
+        with:
+          path: |
+            ios/Pods
+            ios/Podfile.lock
+            ios/Podfile
+            ios/.symlinks
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
       - name: Install CocoaPods dependencies
         working-directory: ios
-        run: |
-          rm -f Podfile.lock
-          bundle exec pod install --repo-update
+        run: bundle exec pod install
       
       - name: Remove [CP] Embed Pods Frameworks build phase
         working-directory: ios
@@ -105,18 +115,13 @@ jobs:
           security default-keychain -s build.keychain
           security unlock-keychain -p "" build.keychain
           security set-keychain-settings
+          security list-keychains -s build.keychain
 
-      - name: Debug environment variables
-        env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          FASTLANE_USER: ${{ secrets.APPLE_ID }}
-          NO_FLIPPER: 1
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
+      - name: Debug certificates
         run: |
-          echo "FASTLANE_USER = '${FASTLANE_USER}'"
-          echo "FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD = '${FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD:-<empty>}'"
-          echo "MATCH_PASSWORD = '${MATCH_PASSWORD:+set ✔}'"
-
+          security find-identity -v -p codesigning
+          security list-keychains
+  
       - name: iOS PR Deploy to TestFlight
         working-directory: ios
         env:
@@ -125,6 +130,7 @@ jobs:
           NO_FLIPPER: 1
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
         run: |
+          echo "MATCH_PASSWORD=${MATCH_PASSWORD:0:4}****"
           bundle exec fastlane ios pr_deploy
 
       - name: Print last 100 lines of Xcode log

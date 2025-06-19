@@ -1,9 +1,8 @@
 name: iOS PR Deploy
 
 on:
-  push:
-    branches:
-      - shivam/ios/preview-deployment
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:

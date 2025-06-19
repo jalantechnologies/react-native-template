@@ -24,7 +24,7 @@ const ChangeApiUrlButton = () => {
       <>
         <View style={styles.buttonContainer}>
           <Button onClick={() => setIsChangeAPIUrlModalOpen(true)} kind={ButtonKind.TERTIARY}>
-            <GearIcon width={24} height={24} fill={colors.secondary[900]} />
+            <GearIcon width={24} height={24} fill={colors.secondary[100]} />
           </Button>
         </View>
         <ChangeApiUrlModal
@@ -38,9 +38,9 @@ const ChangeApiUrlButton = () => {
 
 const styles = StyleSheet.create({
   buttonContainer: {
+    top: 55,
+    right: 30,
     position: 'absolute',
-    bottom: -28,
-    right: -28,
     zIndex: 1000,
   },
 });

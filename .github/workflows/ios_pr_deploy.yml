@@ -136,6 +136,7 @@ jobs:
           security list-keychains
 
       - name: Decode App Store Connect API Key
+        working-directory: ios
         run: |
           echo "${{ secrets.APP_STORE_CONNECT_API_KEY_B64 }}" | base64 --decode > ./auth_key.json
 
@@ -152,7 +153,7 @@ jobs:
           APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.APP_STORE_CONNECT_API_KEY_B64 }}
         run: |
           echo "MATCH_PASSWORD=${MATCH_PASSWORD:0:4}****"
-          bundle exec fastlane ios pr_deploy --api_key_path ../auth_key.json
+          bundle exec fastlane ios pr_deploy
 
       - name: Print last 100 lines of Xcode log
         if: failure()

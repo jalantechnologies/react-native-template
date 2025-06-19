@@ -28,7 +28,7 @@ platform :ios do
       scheme: "Boilerplate",
       export_method: "app-store",
       export_options: {
-        compileBitcode: false
+        compileBitcode: false,
         signingStyle: "manual",
         provisioningProfiles: {
         "com.bettrsw.boilerplate" => "match AppStore com.bettrsw.boilerplate"

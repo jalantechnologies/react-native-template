@@ -1,11 +1,10 @@
 import { useTheme } from 'native-base';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Modal, View } from 'react-native';
 
-import { AlertBoxProps, AlertType } from '../../types/alert';
+import { AlertBoxProps, AlertType } from '../../types';
 
 import { AlertActionButton } from './alert-action-button';
-import { AlertContent } from './alert-content';
 import { AlertIcon } from './alert-icon';
 import { useAlertStyles } from './alert.styles';
 
@@ -16,13 +15,7 @@ const SYMBOL = {
   [AlertType.WARNING]: '\u26A0',
 };
 
-export const AlertBox: React.FC<AlertBoxProps> = ({
-  type,
-  title,
-  message,
-  onClose,
-  confirmText,
-}) => {
+const Alert = ({ type, onClose, confirmText, children }: AlertBoxProps) => {
   const { colors } = useTheme();
   const styles = useAlertStyles();
 
@@ -48,10 +41,33 @@ export const AlertBox: React.FC<AlertBoxProps> = ({
       <View style={styles.overlay}>
         <View style={styles.container}>
           <AlertIcon symbol={SYMBOL[type]} color={alertColor} />
-          <AlertContent title={title} message={message} />
+          {children}
           <AlertActionButton label={confirmText} color={alertColor} onPress={onClose} />
         </View>
       </View>
     </Modal>
   );
 };
+
+const Title = ({ children }: { children: ReactNode }) => {
+  const styles = useAlertStyles();
+  return (
+    <View style={styles.title}>
+      <>{children}</>
+    </View>
+  );
+};
+
+const Body = ({ children }: { children: ReactNode }) => {
+  const styles = useAlertStyles();
+  return (
+    <View style={styles.message}>
+      <>{children}</>
+    </View>
+  );
+};
+
+Alert.Title = Title;
+Alert.Body = Body;
+
+export { Alert };

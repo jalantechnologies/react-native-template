@@ -2,37 +2,41 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 
 import Logger from '../logger/logger';
 import {
+  NotificationImportance,
+  NotificationPreference,
   NotificationSettings,
   NotificationType,
-  NotificationPreference,
 } from '../types/notification.types';
 import { useLocalStorage } from '../utils';
 
 const DEFAULT_NOTIFICATION_PREFERENCE: NotificationPreference = {
   enabled: true,
+  importance: NotificationImportance.DEFAULT,
   sound: true,
   vibration: true,
-  importance: 'default',
 };
 
 const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
   masterToggle: true,
-  showInForeground: true,
   preferences: {
-    message: { ...DEFAULT_NOTIFICATION_PREFERENCE, importance: 'high' },
+    [NotificationType.MESSAGE]: {
+      ...DEFAULT_NOTIFICATION_PREFERENCE,
+      importance: NotificationImportance.HIGH,
+    },
   },
+  showInForeground: true,
 };
 
 interface NotificationContextType {
-  settings: NotificationSettings;
   isLoading: boolean;
+  isNotificationTypeEnabled: (type: NotificationType) => boolean;
+  settings: NotificationSettings;
   updateMasterToggle: (enabled: boolean) => Promise<void>;
   updateShowInForeground: (enabled: boolean) => Promise<void>;
   updateTypePreference: (
     type: NotificationType,
     preference: Partial<NotificationPreference>,
   ) => Promise<void>;
-  isNotificationTypeEnabled: (type: NotificationType) => boolean;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -49,6 +53,14 @@ export const NotificationContextProvider: React.FC<{ children: React.ReactNode }
   useEffect(() => {
     loadSettingsFromStorage();
   }, []);
+
+  const createUpdatedSettings = (updates: Partial<NotificationSettings>): NotificationSettings => {
+    return { ...settings, ...updates };
+  };
+
+  const isNotificationTypeEnabled = (type: NotificationType): boolean => {
+    return settings.masterToggle && settings.preferences[type].enabled;
+  };
 
   const loadSettingsFromStorage = () => {
     try {
@@ -99,32 +111,22 @@ export const NotificationContextProvider: React.FC<{ children: React.ReactNode }
     saveSettings(updatedSettings);
   };
 
-  const createUpdatedSettings = (updates: Partial<NotificationSettings>): NotificationSettings => {
-    return { ...settings, ...updates };
-  };
-
-  /**
-   * @returns true if notifications are enabled globally AND for this specific type
-   */
-  const isNotificationTypeEnabled = (type: NotificationType): boolean => {
-    return settings.masterToggle && settings.preferences[type].enabled;
-  };
   const contextValue = useMemo(
     () => ({
-      settings,
       isLoading,
+      isNotificationTypeEnabled,
+      settings,
       updateMasterToggle,
       updateShowInForeground,
       updateTypePreference,
-      isNotificationTypeEnabled,
     }),
     [
-      settings,
       isLoading,
+      isNotificationTypeEnabled,
+      settings,
       updateMasterToggle,
       updateShowInForeground,
       updateTypePreference,
-      isNotificationTypeEnabled,
     ],
   );
 

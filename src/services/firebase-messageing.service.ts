@@ -6,13 +6,16 @@ import {
   onNotificationOpenedApp,
   getInitialNotification,
   setBackgroundMessageHandler,
+  AuthorizationStatus,
+  FirebaseMessagingTypes,
 } from '@react-native-firebase/messaging';
 import { Alert, Platform } from 'react-native';
 
 import Logger from '../logger/logger';
+import { NotificationType, NotificationPlatforms } from '../types/notification.types';
 
 export class FirebaseMessagingService {
-  private readonly messaging: any;
+  private readonly messaging: FirebaseMessagingTypes.Module;
 
   constructor() {
     const app = getApp();
@@ -21,10 +24,11 @@ export class FirebaseMessagingService {
 
   readonly requestUserPermission = async (): Promise<void> => {
     try {
-      if (Platform.OS === 'ios') {
+      if (Platform.OS === NotificationPlatforms.IOS) {
         const authStatus = await this.messaging.requestPermission();
-        const enabled = authStatus === 1 || authStatus === 2;
-
+        const enabled =
+          authStatus === AuthorizationStatus.AUTHORIZED ||
+          authStatus === AuthorizationStatus.PROVISIONAL;
         if (enabled) {
           Logger.info('Notification permission granted');
           await this.getFcmToken();
@@ -62,7 +66,7 @@ export class FirebaseMessagingService {
       Logger.info('Message handled in the background! ' + JSON.stringify(remoteMessage));
       if (remoteMessage.notification) {
         await displayNotification(
-          remoteMessage.notification.title ?? 'New Message',
+          remoteMessage.notification.title ?? NotificationType.MESSAGE,
           remoteMessage.notification.body ?? '',
           remoteMessage.data,
         );
@@ -77,7 +81,7 @@ export class FirebaseMessagingService {
       Logger.info('Received foreground message: ' + JSON.stringify(remoteMessage));
       if (remoteMessage.notification) {
         await displayNotification(
-          remoteMessage.notification.title ?? 'New Notification',
+          remoteMessage.notification.title ?? NotificationType.MESSAGE,
           remoteMessage.notification.body ?? '',
           remoteMessage.data,
         );

@@ -52,17 +52,12 @@ export const useAlertStyles = () => {
       fontWeight: 'bold',
     },
     title: {
-      fontSize: theme.fontSizes.xl,
-      fontWeight: 'bold',
       marginBottom: theme.space[2],
-      color: theme.colors.gray[900],
       textAlign: 'center',
     },
     message: {
       textAlign: 'center',
       marginBottom: theme.space[5],
-      fontSize: theme.fontSizes.md,
-      color: theme.colors.gray[900],
     },
     button: {
       borderRadius: theme.radii['2xl'],

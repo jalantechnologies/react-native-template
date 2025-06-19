@@ -14,7 +14,7 @@ import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
 
-  private final- ReactNativeHost mReactNativeHost =
+  private final ReactNativeHost mReactNativeHost =
       new DefaultReactNativeHost(this) {
         @Override
         public boolean getUseDeveloperSupport() {
@@ -39,7 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
         protected boolean isNewArchEnabled() {
           return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
         }
-
+        
         @Override
         protected Boolean isHermesEnabled() {
           return BuildConfig.IS_HERMES_ENABLED;

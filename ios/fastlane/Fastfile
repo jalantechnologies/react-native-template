@@ -9,45 +9,17 @@ platform :ios do
 
   desc "Build and upload to TestFlight"
   lane :pr_deploy do
-    match(type: "appstore", readonly: true, app_identifier: "com.bettrsw.boilerplate")
-
-    provisioning_profile_path = lane_context[SharedValues::MATCH_PROVISIONING_PROFILE_MAPPING]["com.bettrsw.boilerplate"]
-
-    if provisioning_profile_path.nil? || provisioning_profile_path.empty?
-      UI.user_error!("Could not find provisioning profile path for 'com.bettrsw.boilerplate'. Make sure 'match' ran successfully.")
-    end
-
-    UI.message("Using provisioning profile path: #{provisioning_profile_path}")
-
-    update_project_provisioning(
-      xcodeproj: "Boilerplate.xcodeproj",
-      target_filter: "Boilerplate", 
-      build_configuration: "Release",
-      profile: provisioning_profile_path, 
-      code_signing_identity: "Apple Distribution"
-    )
-
-    current_build_number = (latest_testflight_build_number(app_identifier: "com.bettrsw.boilerplate") + 1).to_s
-    increment_build_number(build_number: current_build_number)
+    sync_code_signing(type: "appstore")
+    match(type: "appstore", readonly: true)
 
     build_app(
-      workspace: "Boilerplate.xcworkspace", # Use workspace if you have one, otherwise xcodeproj
       scheme: "Boilerplate",
-      export_method: "app-store", # Correct for TestFlight
-      configuration: "Release" 
+      export_method: "app-store"
     )
 
-    pr_number = ENV["GITHUB_PR_NUMBER"] || "N/A" 
-    pr_title = ENV["GITHUB_PR_TITLE"] || "N/A"   
-    pr_url = ENV["GITHUB_PR_URL"] || "N/A"       
-    branch_name = ENV["GITHUB_HEAD_REF"] || "N/A" 
-
-    changelog_message = "PR ##{pr_number}: #{pr_title}\nBranch: #{branch_name}\nView PR: #{pr_url}"
-
     upload_to_testflight(
-      changelog: changelog_message,
-      distribute_external: false, 
-      groups: ["all testers"],
+      changelog: "PR Build - automated upload",
+      distribute_external: true
     )
 
   end

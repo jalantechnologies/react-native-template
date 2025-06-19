@@ -3,8 +3,8 @@ default_platform(:ios)
 platform :ios do
   desc "Fetch certificates for CI"
   lane :ci_signing_setup do
-    match(type: "appstore", readonly: true, keychain_name: "login.keychain-db", keychain_password: ENV["KEYCHAIN_PASSWORD"])
-    match(type: "development", readonly: true, keychain_name: "login.keychain-db", keychain_password: ENV["KEYCHAIN_PASSWORD"])
+    match(type: "appstore", readonly: true, keychain_name: "ci.keychain", keychain_password: ENV["KEYCHAIN_PASSWORD"])
+    match(type: "development", readonly: true, keychain_name: "ci.keychain", keychain_password: ENV["KEYCHAIN_PASSWORD"])
   end
 
   desc "Build and upload to TestFlight"
@@ -15,7 +15,7 @@ platform :ios do
     UI.message("✅ FASTLANE_USER: #{ENV['FASTLANE_USER']}")
     UI.message("✅ MATCH_PASSWORD is set: #{ENV['MATCH_PASSWORD'] ? '✔' : '❌'}")
 
-    # match(type: "appstore", readonly: true, verbose: true, keychain_name: "login.keychain-db", keychain_password: "")
+    match(type: "appstore", readonly: true, verbose: true, keychain_name: "ci.keychain", keychain_password: ENV["KEYCHAIN_PASSWORD"])
     sh("security find-identity -v -p codesigning")
     sh("ls ~/Library/MobileDevice/Provisioning\\ Profiles")
     build_app(

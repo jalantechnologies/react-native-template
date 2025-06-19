@@ -4,7 +4,6 @@ platform :ios do
   desc "Fetch certificates for CI"
   lane :ci_signing_setup do
     match(type: "appstore", readonly: true)
-    match(type: "development", readonly: true)
   end
 
   desc "Build and upload to TestFlight"
@@ -19,6 +18,7 @@ platform :ios do
     sh("security find-identity -v -p codesigning")
     sh("ls ~/Library/MobileDevice/Provisioning\\ Profiles")
     build_app(
+      clean: true,
       scheme: "Boilerplate",
       export_method: "app-store",
       export_options: {

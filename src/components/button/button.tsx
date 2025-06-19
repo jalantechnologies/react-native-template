@@ -1,20 +1,22 @@
 import React, { PropsWithChildren } from 'react';
-import { TouchableOpacity, Text, View } from 'react-native';
+import { TouchableOpacity, Text, View, GestureResponderEvent, DimensionValue } from 'react-native';
 
-import { ButtonKind, ButtonSize, ButtonProps } from '../../types/button';
+import { ButtonKind, ButtonProps, ButtonSize } from '../../types';
+
 import Spinner from '../spinner/spinner';
 
 import { useButtonStyles, useKindStyles, useSizeStyles } from './button.styles';
 
 const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
+  children,
   disabled = false,
-  icon = undefined,
+  endEnhancer = undefined,
+  isLoading = false,
   kind = ButtonKind.PRIMARY,
-  loading = false,
-  onPress = undefined,
+  onClick = undefined,
   size = ButtonSize.DEFAULT,
-  style = undefined,
-  title,
+  startEnhancer = undefined,
+  width = undefined,
 }) => {
   const kindStyles = useKindStyles();
   const sizeStyles = useSizeStyles();
@@ -29,22 +31,35 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
       style={[
         styles.button,
         kindStyle.base,
-        disabled || loading ? kindStyle.disabled : kindStyle.enabled,
+        disabled || isLoading ? kindStyle.disabled : kindStyle.enabled,
         sizeStyle.container,
-        style,
+        width ? { width } : {},
       ]}
-      disabled={disabled || loading}
-      onPress={onPress}
+      disabled={disabled || isLoading}
+      onPress={onClick}
       accessibilityRole="button"
     >
       <View style={styles.horizontalStack}>
-        {title && <Text style={[kindStyle.text, sizeStyle.text]}>{title}</Text>}
-        {loading ? <Spinner /> : null}
-        {icon && (
+        {startEnhancer ? (
           <View style={styles.enhancer}>
-            <Text style={[kindStyle.text, sizeStyle.text]}>{icon}</Text>
+            {typeof startEnhancer === 'string' ? (
+              <Text style={[kindStyle.text, sizeStyle.text]}>{startEnhancer}</Text>
+            ) : (
+              startEnhancer
+            )}
           </View>
-        )}
+        ) : null}
+        <Text style={[kindStyle.text, sizeStyle.text]}>{children}</Text>
+        {isLoading ? <Spinner /> : null}
+        {endEnhancer ? (
+          <View style={styles.enhancer}>
+            {typeof endEnhancer === 'string' ? (
+              <Text style={[kindStyle.text, sizeStyle.text]}>{endEnhancer}</Text>
+            ) : (
+              endEnhancer
+            )}
+          </View>
+        ) : null}
       </View>
     </TouchableOpacity>
   );

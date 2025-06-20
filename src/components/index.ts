@@ -27,3 +27,5 @@ export { default as Tag } from './tag/tag';
 export { Input } from './inputs';
 export { PasswordInput } from './inputs';
 export { TextAreaInput } from './inputs';
+export { default as Divider } from './divider/divider';
+export * from './divider';

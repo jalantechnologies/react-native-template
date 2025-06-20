@@ -13,7 +13,7 @@ const Slider = ({
   maximumTrackTintColor,
   thumbTintColor,
   lowerLimit = 0,
-  upperLimit = 200,
+  upperLimit = 100,
   orientation = SliderOrientation.HORIZONTAL,
   onValueChange,
 }: CustomSliderProps) => {
@@ -33,11 +33,19 @@ const Slider = ({
 
   const styles = useSliderStyles(isVertical);
 
-  const calculatePositionFromValue = (val: number) =>
-    ((val - lowerLimit) / (upperLimit - lowerLimit)) * (trackLength - handleSize);
+  const calculatePositionFromValue = (val: number) => {
+    if (isVertical) {
+      return (1 - (val - lowerLimit) / (upperLimit - lowerLimit)) * (trackLength - handleSize);
+    }
+    return ((val - lowerLimit) / (upperLimit - lowerLimit)) * (trackLength - handleSize);
+  };
 
-  const calculateValueFromPosition = (pos: number): number =>
-    lowerLimit + (upperLimit - lowerLimit) * (pos / (trackLength - handleSize));
+  const calculateValueFromPosition = (pos: number): number => {
+    if (isVertical) {
+      return lowerLimit + (upperLimit - lowerLimit) * (1 - pos / (trackLength - handleSize));
+    }
+    return lowerLimit + (upperLimit - lowerLimit) * (pos / (trackLength - handleSize));
+  };
 
   const initialPosition = calculatePositionFromValue(value);
   const handlePosition = useRef(new Animated.Value(initialPosition)).current;
@@ -111,13 +119,6 @@ const Slider = ({
     borderColor: _borderColor,
   };
 
-  const progressBarStyle = {
-    ...(isVertical
-      ? { height: Animated.add(handlePosition, new Animated.Value(handleSize / 2)) }
-      : { width: Animated.add(handlePosition, new Animated.Value(handleSize / 2)) }),
-    backgroundColor: _minimumTrackColor,
-  };
-
   return (
     <View style={styles.container}>
       <View
@@ -130,7 +131,19 @@ const Slider = ({
         <Animated.View
           style={[
             styles.filledTrack,
-            progressBarStyle,
+            isVertical
+              ? {
+                  height: Animated.add(
+                    new Animated.Value(trackLength - handleSize),
+                    Animated.multiply(handlePosition, -1),
+                  ),
+                }
+              : {
+                  width: Animated.add(handlePosition, new Animated.Value(handleSize / 2)),
+                },
+            {
+              backgroundColor: _minimumTrackColor,
+            },
             isVertical ? styles.filledVertical : styles.filledHorizontal,
           ]}
         />

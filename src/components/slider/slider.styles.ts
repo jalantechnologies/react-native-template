@@ -41,6 +41,9 @@ export const useSliderStyles = (isVertical: boolean) => {
     },
     filledVertical: {
       width: theme.sizes['2'],
+      position: 'absolute',
+      left: 0,
+      bottom: 0,
     },
     handle: {
       position: 'absolute',

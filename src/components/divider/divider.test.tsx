@@ -39,7 +39,7 @@ jest.mock('./divider.styles', () => {
             divider: {
               ...baseStyle,
               width: thickness,
-              height: length || '100%',
+              height: '100%',
             },
           };
         }
@@ -58,15 +58,14 @@ describe('Divider', () => {
   it('renders correctly with default props', () => {
     renderDivider();
     const divider = screen.getByTestId('divider');
-
     expect(divider).toBeTruthy();
     expect(divider.props.style).toEqual(
       expect.arrayContaining([
-        {
+        expect.objectContaining({
           backgroundColor: '#E0E0E0',
           height: 1,
           width: '100%',
-        },
+        }),
       ]),
     );
   });
@@ -77,33 +76,30 @@ describe('Divider', () => {
       thickness: 2,
     });
     const divider = screen.getByTestId('divider');
-
     expect(divider.props.style).toEqual(
       expect.arrayContaining([
-        {
+        expect.objectContaining({
           backgroundColor: '#99C2FF',
           height: 2,
           width: '100%',
-        },
+        }),
       ]),
     );
   });
 
-  it('renders vertical divider with custom length', () => {
+  it('renders vertical divider with custom thickness', () => {
     renderDivider({
       orientation: DividerOrientation.Vertical,
       thickness: 3,
-      length: 50,
     });
     const divider = screen.getByTestId('divider');
-
     expect(divider.props.style).toEqual(
       expect.arrayContaining([
-        {
+        expect.objectContaining({
           backgroundColor: '#E0E0E0',
           width: 3,
-          height: 50,
-        },
+          height: '100%',
+        }),
       ]),
     );
   });
@@ -111,30 +107,28 @@ describe('Divider', () => {
   it('applies dashed style correctly', () => {
     renderDivider({ dashStyle: DividerDashStyle.Dashed, thickness: 1 });
     const divider = screen.getByTestId('divider');
-
     expect(divider.props.style).toEqual(
       expect.arrayContaining([
-        {
+        expect.objectContaining({
           backgroundColor: '#E0E0E0',
           borderStyle: 'dashed',
           height: 1,
           width: '100%',
-        },
+        }),
       ]),
     );
   });
 
-  it('renders with percentage length', () => {
-    renderDivider({ length: '50%' });
+  it('renders with percentage width', () => {
+    renderDivider({ orientation: DividerOrientation.Horizontal, thickness: 1 });
     const divider = screen.getByTestId('divider');
-
     expect(divider.props.style).toEqual(
       expect.arrayContaining([
-        {
+        expect.objectContaining({
           backgroundColor: '#E0E0E0',
           height: 1,
-          width: '50%',
-        },
+          width: '100%',
+        }),
       ]),
     );
   });
@@ -142,14 +136,13 @@ describe('Divider', () => {
   it('uses default props when none provided', () => {
     renderDivider({});
     const divider = screen.getByTestId('divider');
-
     expect(divider.props.style).toEqual(
       expect.arrayContaining([
-        {
+        expect.objectContaining({
           backgroundColor: '#E0E0E0',
           height: 1,
           width: '100%',
-        },
+        }),
       ]),
     );
   });

@@ -18,7 +18,6 @@ export enum DividerDashStyle {
 interface DividerStyleProps {
   orientation: DividerOrientation;
   thickness: number;
-  length?: number | string;
   dashStyle: DividerDashStyle;
   dividerColor: string;
 }
@@ -26,15 +25,14 @@ interface DividerStyleProps {
 export const useDividerStyles = ({
   orientation,
   thickness,
-  length,
   dashStyle,
   dividerColor,
 }: DividerStyleProps) => {
   return StyleSheet.create({
     divider: {
       ...(orientation === DividerOrientation.Horizontal
-        ? { width: length ?? '100%', height: thickness }
-        : { height: length ?? '100%', width: thickness }),
+        ? { width: '100%', height: thickness }
+        : { height: '100%', width: thickness }),
       ...(dashStyle === DividerDashStyle.Solid
         ? { backgroundColor: dividerColor }
         : { borderStyle: dashStyle, borderWidth: thickness, borderColor: dividerColor }),

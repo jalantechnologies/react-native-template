@@ -7,9 +7,8 @@ import appTheme from '../../app-theme';
 import { DividerOrientation, DividerDashStyle, useDividerStyles, Shade } from './divider.styles';
 
 export interface DividerProps {
-  color?: keyof typeof appTheme.colors;
+  color?: string;
   dashStyle?: DividerDashStyle;
-  length?: number | string;
   orientation?: DividerOrientation;
   shade?: Shade;
   testID?: string;
@@ -19,7 +18,6 @@ export interface DividerProps {
 const Divider: React.FC<DividerProps> = ({
   color,
   dashStyle,
-  length,
   orientation,
   shade,
   testID,
@@ -28,14 +26,16 @@ const Divider: React.FC<DividerProps> = ({
   const theme = useTheme();
   const colors = theme.colors as typeof appTheme.colors;
   const dividerColor =
-    color && shade && typeof colors[color] === 'object' && colors[color]?.[shade]
-      ? colors[color][shade as keyof (typeof colors)[typeof color]]
+    color &&
+    shade &&
+    colors[color as keyof typeof colors] &&
+    typeof colors[color as keyof typeof colors] === 'object'
+      ? (colors[color as keyof typeof colors] as Record<string, string>)[shade]
       : colors.primary['200'];
 
   const styles = useDividerStyles({
     orientation: orientation ?? DividerOrientation.Horizontal,
     thickness: thickness ?? 1,
-    length,
     dashStyle: dashStyle ?? DividerDashStyle.Solid,
     dividerColor,
   });
@@ -46,7 +46,6 @@ const Divider: React.FC<DividerProps> = ({
 Divider.defaultProps = {
   color: 'primary',
   dashStyle: DividerDashStyle.Solid,
-  length: undefined,
   orientation: DividerOrientation.Horizontal,
   shade: '200',
   testID: 'divider',

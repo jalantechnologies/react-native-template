@@ -1,4 +1,4 @@
-import { CloseIcon, IconButton, useTheme } from 'native-base';
+import { useTheme } from 'native-base';
 import React, { ReactNode } from 'react';
 import { Modal, TouchableWithoutFeedback, View } from 'react-native';
 

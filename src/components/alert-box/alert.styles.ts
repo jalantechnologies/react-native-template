@@ -47,7 +47,6 @@ export const useAlertStyles = () => {
       marginBottom: theme.space[5],
     },
     iconText: {
-      color: theme.colors.white,
       fontSize: theme.fontSizes['3xl'],
       fontWeight: 'bold',
     },
@@ -63,11 +62,16 @@ export const useAlertStyles = () => {
       borderRadius: theme.radii['2xl'],
     },
     buttonText: {
-      color: theme.colors.white,
       fontWeight: 'bold',
       textAlign: 'center',
       fontSize: theme.fontSizes.md,
-      minWidth: theme.sizes[4],
+      minWidth: theme.sizes[3],
+    },
+    closeIconContainer: {
+      position: 'absolute',
+      top: theme.space[3],
+      right: theme.space[3],
+      zIndex: 2,
     },
   });
 };

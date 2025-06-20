@@ -5,10 +5,20 @@ import { AlertActionButtonProps } from '../../types/alert';
 
 import { useAlertStyles } from './alert.styles';
 
-export const AlertActionButton: React.FC<AlertActionButtonProps> = ({ label, color, onPress }) => {
+export const AlertActionButton: React.FC<AlertActionButtonProps> = ({
+  label,
+  bgColor,
+  onPress,
+  textColor,
+}) => {
   const styles = useAlertStyles();
   return (
-    <Button onPress={onPress} bgColor={color} _text={styles.buttonText} style={styles.button}>
+    <Button
+      onPress={onPress}
+      bgColor={bgColor}
+      _text={{ ...styles.buttonText, color: textColor }}
+      style={styles.button}
+    >
       {label}
     </Button>
   );

@@ -12,7 +12,7 @@ describe('Divider', () => {
         expect.objectContaining({
           width: '100%',
           height: 1,
-          backgroundColor: '#E0E0E0',
+          backgroundColor: '#888888',
         }),
       ]),
     );

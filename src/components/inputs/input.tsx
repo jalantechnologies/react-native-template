@@ -1,20 +1,22 @@
 import React, { forwardRef } from 'react';
-import { View, TextInput, Text, TextInputProps, TextStyle } from 'react-native';
+import { View, TextInput, Text } from 'react-native';
+
+import { InputProps, KeyboardTypes } from '../../types';
 
 import { useInputStyles } from './input.styles';
 
-export interface InputProps extends Omit<TextInputProps, 'style | multiline'> {
-  disabled?: boolean;
-  endEnhancer?: React.ReactElement | string;
-  handleInputRef?: (ref: TextInput) => void;
-  startEnhancer?: React.ReactElement | string;
-  testId?: string;
-  textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
-}
-
 const Input = forwardRef<TextInput, InputProps>(
   (
-    { disabled, endEnhancer, handleInputRef, startEnhancer, testId, textAlign = 'left', ...props },
+    {
+      disabled,
+      endEnhancer,
+      keyboardType = KeyboardTypes.DEFAULT,
+      handleInputRef,
+      startEnhancer,
+      testId,
+      textAlign = 'left',
+      ...props
+    },
     ref,
   ) => {
     const styles = useInputStyles();
@@ -48,6 +50,7 @@ const Input = forwardRef<TextInput, InputProps>(
             style={[styles.input, disabled && styles.disabled, textAlign && { textAlign }]}
             autoCorrect={false}
             autoCapitalize="none"
+            keyboardType={keyboardType}
           />
           {endEnhancer && (
             <View style={styles.enhancer}>

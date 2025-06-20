@@ -1,18 +1,10 @@
 import { Text } from 'native-base';
 import React, { forwardRef } from 'react';
-import { TextInput, TextInputProps, TextStyle, View } from 'react-native';
+import { TextInput, View } from 'react-native';
+
+import { KeyboardTypes, TextAreaInputProps } from '../../types';
 
 import { useTextAreaInputStyles } from './input.styles';
-
-interface TextAreaInputProps extends Omit<TextInputProps, 'style | multiline'> {
-  disabled?: boolean;
-  endEnhancer?: React.ReactElement | string;
-  handleInputRef?: (ref: TextInput) => void;
-  startEnhancer?: React.ReactElement | string;
-  testId?: string;
-  textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
-  numberOfLines?: number;
-}
 
 const TextAreaInput = forwardRef<TextInput | null, TextAreaInputProps>(
   (
@@ -21,6 +13,7 @@ const TextAreaInput = forwardRef<TextInput | null, TextAreaInputProps>(
       testId,
       startEnhancer,
       endEnhancer,
+      keyboardType = KeyboardTypes.DEFAULT,
       handleInputRef,
       textAlign,
       numberOfLines,
@@ -63,6 +56,7 @@ const TextAreaInput = forwardRef<TextInput | null, TextAreaInputProps>(
           multiline={true}
           numberOfLines={numberOfLines}
           textAlignVertical="top"
+          keyboardType={keyboardType}
         />
         {endEnhancer && (
           <View style={styles.enhancer}>

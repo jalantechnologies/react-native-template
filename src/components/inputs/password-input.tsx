@@ -4,12 +4,17 @@ import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 
-import Input, { InputProps } from './input';
+import { KeyboardTypes, PasswordInputProps } from '../../types';
+
+import Input from './input';
 import { usePasswordInputStyles } from './input.styles';
 
-interface PasswordInputProps extends InputProps {}
-
-const PasswordInput: React.FC<PasswordInputProps> = ({ placeholder, testID, ...props }) => {
+const PasswordInput: React.FC<PasswordInputProps> = ({
+  keyboardType = KeyboardTypes.DEFAULT,
+  placeholder,
+  testID,
+  ...props
+}) => {
   const theme = useTheme();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -29,6 +34,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({ placeholder, testID, ...p
           autoCapitalize="none"
           autoCorrect={false}
           testID={testID}
+          keyboardType={keyboardType}
           {...props}
         />
         <TouchableOpacity

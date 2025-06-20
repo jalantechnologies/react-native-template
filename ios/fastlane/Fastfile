@@ -36,27 +36,36 @@ platform :ios do
       },
     )
     
-    hermes_binary = "./ios/build/Boilerplate/Build/Products/Release-iphoneos/Boilerplate.app/Frameworks/hermes.framework/hermes"
-    if File.exist?(hermes_binary)
-      UI.message("🔧 Stripping bitcode from Hermes binary at: #{hermes_binary}")
-      sh("xcrun bitcode_strip #{hermes_binary} -r -o #{hermes_binary}")
-    else
-      UI.important("⚠️ Hermes binary not found at expected path: #{hermes_binary}")
-    end
-    
     sh <<~BASH
-      echo "🔍 Verifying Hermes binary for bitcode..."
-      unzip -q "#{lane_context[:IPA_OUTPUT_PATH]}" -d temp_payload
-      if xcrun bitcode_strip -r temp_payload/Payload/Boilerplate.app/Frameworks/hermes.framework/hermes -o /dev/null; then
-        echo "✅ Hermes binary is clean (no bitcode)."
+      echo "🔍 Stripping bitcode from Hermes binary before uploading to TestFlight..."
+
+      IPA_PATH=#{lane_context[:IPA_OUTPUT_PATH]}
+      unzip -q "$IPA_PATH" -d temp_payload
+
+      HERMES_BIN="temp_payload/Payload/Boilerplate.app/Frameworks/hermes.framework/hermes"
+
+      if [ -f "$HERMES_BIN" ]; then
+        echo "📦 Found Hermes binary. Stripping bitcode..."
+        xcrun bitcode_strip -r "$HERMES_BIN" -o "$HERMES_BIN"
+
+        echo "🔬 Verifying..."
+        if otool -l "$HERMES_BIN" | grep -i bitcode; then
+          echo "❌ Bitcode still present! Failing the build."
+          exit 1
+        else
+          echo "✅ Bitcode successfully stripped."
+        fi
       else
-        echo "❌ Hermes binary still contains bitcode!"
-        exit 1
+        echo "⚠️ Hermes binary not found at expected path: $HERMES_BIN"
+        echo "Skipping bitcode stripping."
       fi
+
+      echo "📦 Repacking IPA..."
+      cd temp_payload && zip -r -y ../fixed.ipa * >/dev/null && cd ..
+      mv fixed.ipa "$IPA_PATH"
+
       rm -rf temp_payload
     BASH
-
-
 
     upload_to_testflight(
       changelog: "PR ##{ENV['PR_NUMBER']} Build - automated upload",

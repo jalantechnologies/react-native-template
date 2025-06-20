@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 
 import { useThemeColor } from '../../utils/use-theme-color.hook';
 
-import Switch from './Switch';
+import Switch from './switch';
 
 jest.mock('../../utils/use-theme-color.hook', () => ({
   useThemeColor: jest.fn(),

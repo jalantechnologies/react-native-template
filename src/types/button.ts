@@ -5,6 +5,7 @@ export enum ButtonKind {
   SECONDARY = 'secondary',
   TERTIARY = 'tertiary',
   DANGER = 'danger',
+  DARK = 'dark',
   SUCCESS = 'success',
   WARNING = 'warning',
 }

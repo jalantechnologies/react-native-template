@@ -70,11 +70,17 @@ export const useKindStyles = () => {
       disabled: { opacity: 0.5 },
       text: { color: appTheme.colors.lightText },
     }),
-    [ButtonKind.WARNING]: StyleSheet.create({
-      base: { backgroundColor: appTheme.colors.warning['600'], borderRadius: appTheme.radii.md },
+    [ButtonKind.DARK]: StyleSheet.create({
+      base: { backgroundColor: appTheme.colors.secondary['900'], borderRadius: appTheme.radii.md },
       enabled: { opacity: 1 },
       disabled: { opacity: 0.5 },
-      text: { color: appTheme.colors.lightText },
+      text: { color: appTheme.colors.secondary['100'] },
+    }),
+    [ButtonKind.WARNING]: StyleSheet.create({
+      base: { backgroundColor: appTheme.colors.warning['400'], borderRadius: appTheme.radii.md },
+      enabled: { opacity: 1 },
+      disabled: { opacity: 0.5 },
+      text: { color: appTheme.colors.secondary['900'] },
     }),
   } as Record<
     ButtonKind,

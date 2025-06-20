@@ -1,4 +1,5 @@
-import { useTheme } from 'native-base';
+/* eslint-disable react/require-default-props */
+ import { useTheme } from 'native-base';
 import React from 'react';
 import { View } from 'react-native';
 

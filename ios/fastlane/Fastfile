@@ -88,7 +88,6 @@ platform :ios do
     upload_to_testflight(
       changelog: "PR ##{ENV['PR_NUMBER']} Build - automated upload",
       distribute_external: true,
-      skip_waiting_for_build_processing: true,
       username: ENV["FASTLANE_USER"],
       apple_id: ENV["APPLE_ID"],
       app_identifier: "com.bettrsw.boilerplate"

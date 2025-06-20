@@ -1,3 +1,4 @@
+import { useTheme } from 'native-base';
 import React from 'react';
 import { View, ViewStyle, StyleProp } from 'react-native';
 
@@ -11,6 +12,14 @@ export interface DividerProps {
   testID?: string;
 }
 
+const getThemeColor = (theme: any, color?: string) => {
+  if (!color) {
+    return theme.colors.gray[400];
+  }
+  const [palette, shade] = color.split('.');
+  return theme.colors?.[palette]?.[shade] || color;
+};
+
 const Divider: React.FC<DividerProps> = ({
   orientation,
   thickness,
@@ -19,10 +28,13 @@ const Divider: React.FC<DividerProps> = ({
   testID,
   ...rest
 }) => {
+  const theme = useTheme();
+  const resolvedColor = getThemeColor(theme, color);
+
   const styles = useDividerStyles({
     orientation: orientation ?? 'horizontal',
     thickness: thickness ?? 1,
-    color,
+    color: resolvedColor,
   });
 
   return <View testID={testID ?? 'divider'} style={[styles.divider, style]} {...rest} />;
@@ -31,9 +43,9 @@ const Divider: React.FC<DividerProps> = ({
 Divider.defaultProps = {
   orientation: 'horizontal',
   thickness: 1,
-  color: '#888888',
+  color: 'gray.400',
+  style: undefined,
   testID: 'divider',
-  style: null,
 };
 
 export default Divider;

@@ -3,6 +3,17 @@ import React from 'react';
 
 import Divider from './divider';
 
+jest.mock('native-base', () => ({
+  useTheme: () => ({
+    colors: {
+      gray: { 400: '#888888' },
+      coolGray: { 500: '#555555' },
+      warmGray: { 300: '#bbbbbb' },
+      blueGray: { 700: '#222244' },
+    },
+  }),
+}));
+
 describe('Divider', () => {
   it('renders with default props (horizontal)', () => {
     const { getByTestId } = render(<Divider />);
@@ -29,6 +40,18 @@ describe('Divider', () => {
           width: 2,
           height: '100%',
           backgroundColor: '#123456',
+        }),
+      ]),
+    );
+  });
+
+  it('renders with palette color string', () => {
+    const { getByTestId } = render(<Divider color="coolGray.500" />);
+    const divider = getByTestId('divider');
+    expect(divider.props.style).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          backgroundColor: '#555555',
         }),
       ]),
     );

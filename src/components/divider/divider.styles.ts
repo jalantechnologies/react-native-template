@@ -1,4 +1,3 @@
-import { useTheme } from 'native-base';
 import { StyleSheet, ViewStyle } from 'react-native';
 
 export type DividerOrientation = 'horizontal' | 'vertical';
@@ -9,20 +8,22 @@ interface DividerStyleProps {
   color?: string;
 }
 
-export const useDividerStyles = ({ orientation, thickness, color }: DividerStyleProps) => {
-  const theme = useTheme();
-  const dividerColor = color || theme.colors?.gray?.[400] || '#888888';
+export const useDividerStyles = ({
+  orientation,
+  thickness,
+  color = '#888888',
+}: DividerStyleProps) => {
   const isHorizontal = orientation === 'horizontal';
   const style: ViewStyle = isHorizontal
     ? {
         width: '100%',
         height: thickness,
-        backgroundColor: dividerColor,
+        backgroundColor: color,
       }
     : {
         width: thickness,
         height: '100%',
-        backgroundColor: dividerColor,
+        backgroundColor: color,
       };
 
   return StyleSheet.create({

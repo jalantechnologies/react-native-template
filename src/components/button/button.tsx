@@ -1,21 +1,10 @@
-import { ButtonKind, ButtonSize } from 'boilerplate-react-native/src/types/button';
 import React, { PropsWithChildren } from 'react';
-import { TouchableOpacity, Text, View, GestureResponderEvent, DimensionValue } from 'react-native';
+import { TouchableOpacity, Text, View } from 'react-native';
 
+import { ButtonKind, ButtonProps, ButtonSize } from '../../types';
 import Spinner from '../spinner/spinner';
 
 import { useButtonStyles, useKindStyles, useSizeStyles } from './button.styles';
-
-interface ButtonProps {
-  disabled?: boolean;
-  endEnhancer?: React.ReactElement | string;
-  isLoading?: boolean;
-  kind?: ButtonKind;
-  onClick?: (event: GestureResponderEvent) => void;
-  size?: ButtonSize;
-  startEnhancer?: React.ReactElement | string;
-  width?: DimensionValue;
-}
 
 const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   children,
@@ -26,7 +15,6 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   onClick = undefined,
   size = ButtonSize.DEFAULT,
   startEnhancer = undefined,
-  width = undefined,
 }) => {
   const kindStyles = useKindStyles();
   const sizeStyles = useSizeStyles();
@@ -43,7 +31,6 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
         kindStyle.base,
         disabled || isLoading ? kindStyle.disabled : kindStyle.enabled,
         sizeStyle.container,
-        width ? { width } : {},
       ]}
       disabled={disabled || isLoading}
       onPress={onClick}
@@ -73,17 +60,6 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
       </View>
     </TouchableOpacity>
   );
-};
-
-Button.defaultProps = {
-  disabled: false,
-  endEnhancer: undefined,
-  isLoading: false,
-  kind: ButtonKind.PRIMARY,
-  onClick: undefined,
-  size: ButtonSize.DEFAULT,
-  startEnhancer: undefined,
-  width: undefined,
 };
 
 export default Button;

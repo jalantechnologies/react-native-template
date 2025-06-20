@@ -1,59 +1,29 @@
-import { ButtonKind, ButtonSize } from 'boilerplate-react-native/src/types/button';
 import { useTheme } from 'native-base';
 import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
+
+import { ButtonKind, ButtonSize } from '../../types';
 
 export const useButtonStyles = () => {
   const theme = useTheme();
 
   return StyleSheet.create({
-    activityIndicator: {
-      marginHorizontal: theme.space['1'],
-    },
     button: {
       alignItems: 'center',
       borderRadius: theme.radii.md,
       flexDirection: 'row',
       gap: theme.space['2'],
       justifyContent: 'center',
-      minHeight: 40,
-    },
-    compact: {
-      padding: theme.space['2'],
-    },
-    danger: {
-      backgroundColor: theme.colors.danger['700'],
-      borderColor: theme.colors.danger['600'],
-    },
-    default: {
-      padding: theme.space['3'],
+      minHeight: theme.sizes[10],
     },
     enhancer: {
       alignItems: 'center',
       justifyContent: 'center',
-      minWidth: 24,
+      minWidth: theme.sizes[6],
     },
     horizontalStack: {
       alignItems: 'center',
       flexDirection: 'row',
       gap: theme.space['1'],
-    },
-    large: {
-      padding: theme.space['4'],
-    },
-    mini: {
-      padding: theme.space['1'],
-    },
-    primary: {
-      backgroundColor: theme.colors.primary['500'],
-      borderColor: theme.colors.primary['500'],
-    },
-    secondary: {
-      backgroundColor: theme.colors.secondary['500'],
-      borderColor: theme.colors.secondary['500'],
-    },
-    tertiary: {
-      backgroundColor: theme.colors.tertiary['500'],
-      borderColor: theme.colors.tertiary['500'],
     },
   });
 };
@@ -88,11 +58,29 @@ export const useKindStyles = () => {
       disabled: { opacity: 0.5 },
       text: { color: appTheme.colors.primary['500'] },
     }),
-    [ButtonKind.DANGER]: StyleSheet.create({
-      base: { backgroundColor: appTheme.colors.danger['700'], borderRadius: 8 },
+    [ButtonKind.SUCCESS]: StyleSheet.create({
+      base: { backgroundColor: appTheme.colors.success['500'], borderRadius: appTheme.radii.md },
       enabled: { opacity: 1 },
       disabled: { opacity: 0.5 },
       text: { color: appTheme.colors.lightText },
+    }),
+    [ButtonKind.DANGER]: StyleSheet.create({
+      base: { backgroundColor: appTheme.colors.danger['700'], borderRadius: appTheme.radii.md },
+      enabled: { opacity: 1 },
+      disabled: { opacity: 0.5 },
+      text: { color: appTheme.colors.lightText },
+    }),
+    [ButtonKind.DARK]: StyleSheet.create({
+      base: { backgroundColor: appTheme.colors.secondary['900'], borderRadius: appTheme.radii.md },
+      enabled: { opacity: 1 },
+      disabled: { opacity: 0.5 },
+      text: { color: appTheme.colors.secondary['100'] },
+    }),
+    [ButtonKind.WARNING]: StyleSheet.create({
+      base: { backgroundColor: appTheme.colors.warning['400'], borderRadius: appTheme.radii.md },
+      enabled: { opacity: 1 },
+      disabled: { opacity: 0.5 },
+      text: { color: appTheme.colors.secondary['900'] },
     }),
   } as Record<
     ButtonKind,

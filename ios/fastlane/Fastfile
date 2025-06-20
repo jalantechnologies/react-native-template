@@ -43,6 +43,7 @@ platform :ios do
       unzip -q "$IPA_PATH" -d temp_payload
 
       HERMES_BIN="temp_payload/Payload/Boilerplate.app/Frameworks/hermes.framework/hermes"
+      APP_PATH="temp_payload/Payload/Boilerplate.app"
 
       if [ -f "$HERMES_BIN" ]; then
         echo "📦 Found Hermes binary. Stripping bitcode..."
@@ -55,6 +56,22 @@ platform :ios do
         else
           echo "✅ Bitcode successfully stripped."
         fi
+
+        echo "🔐 Re-signing .app after modification..."
+        CERT_ID=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n1 | awk '{print $2}')
+
+        for FRAMEWORK in "$APP_PATH/Frameworks/"*; do
+          if [ -d "$FRAMEWORK" ]; then
+            /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none "$FRAMEWORK"
+          fi
+        done
+
+        /usr/bin/codesign --force --sign "$CERT_ID" \
+          --timestamp=none \
+          --preserve-metadata=entitlements \
+          "$APP_PATH"
+
+        echo "✅ Code signing complete."
       else
         echo "⚠️ Hermes binary not found at expected path: $HERMES_BIN"
         echo "Skipping bitcode stripping."
@@ -66,6 +83,7 @@ platform :ios do
 
       rm -rf temp_payload
     BASH
+
 
     upload_to_testflight(
       changelog: "PR ##{ENV['PR_NUMBER']} Build - automated upload",

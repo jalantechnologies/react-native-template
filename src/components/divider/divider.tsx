@@ -28,10 +28,11 @@ const Divider: React.FC<DividerProps> = ({
   const dividerColor =
     color &&
     shade &&
-    colors[color as keyof typeof colors] &&
     typeof colors[color as keyof typeof colors] === 'object' &&
     (colors[color as keyof typeof colors] as Record<string, string>)[shade]
       ? (colors[color as keyof typeof colors] as Record<string, string>)[shade]
+      : typeof colors[color as keyof typeof colors] === 'string'
+      ? (colors[color as keyof typeof colors] as string)
       : colors.primary && typeof colors.primary === 'object' && colors.primary['200']
       ? colors.primary['200']
       : '#E0E0E0';

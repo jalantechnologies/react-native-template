@@ -1,49 +1,31 @@
+import { useTheme } from 'native-base';
 import { StyleSheet, ViewStyle } from 'react-native';
 
-import appTheme from '../../app-theme';
-
-export type Shade = keyof (typeof appTheme.colors)['primary'];
-
-export enum DividerOrientation {
-  Horizontal = 'horizontal',
-  Vertical = 'vertical',
-}
-
-export enum DividerDashStyle {
-  Solid = 'solid',
-  Dashed = 'dashed',
-  Dotted = 'dotted',
-}
+export type DividerOrientation = 'horizontal' | 'vertical';
 
 interface DividerStyleProps {
   orientation: DividerOrientation;
   thickness: number;
-  dashStyle: DividerDashStyle;
-  dividerColor: string;
+  color?: string;
 }
 
-export const useDividerStyles = ({
-  orientation,
-  thickness,
-  dashStyle,
-  dividerColor,
-}: DividerStyleProps) => {
-  const isHorizontal = orientation === DividerOrientation.Horizontal;
-
-  const baseStyle: ViewStyle = {
-    width: isHorizontal ? '100%' : thickness,
-    height: isHorizontal ? thickness : '100%',
-  };
-
-  if (dashStyle === DividerDashStyle.Solid) {
-    baseStyle.backgroundColor = dividerColor;
-  } else {
-    baseStyle.borderStyle = dashStyle;
-    baseStyle.borderColor = dividerColor;
-    baseStyle.borderWidth = thickness;
-  }
+export const useDividerStyles = ({ orientation, thickness, color }: DividerStyleProps) => {
+  const theme = useTheme();
+  const dividerColor = color || theme.colors?.gray?.[400] || '#888888';
+  const isHorizontal = orientation === 'horizontal';
+  const style: ViewStyle = isHorizontal
+    ? {
+        width: '100%',
+        height: thickness,
+        backgroundColor: dividerColor,
+      }
+    : {
+        width: thickness,
+        height: '100%',
+        backgroundColor: dividerColor,
+      };
 
   return StyleSheet.create({
-    divider: baseStyle,
+    divider: style,
   });
 };

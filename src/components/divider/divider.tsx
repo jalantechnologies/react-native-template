@@ -25,17 +25,26 @@ const Divider: React.FC<DividerProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors as typeof appTheme.colors;
-  const dividerColor =
+  let dividerColor: string = '#E0E0E0';
+
+  if (
     color &&
+    typeof color === 'string' &&
     shade &&
-    typeof colors[color as keyof typeof colors] === 'object' &&
-    (colors[color as keyof typeof colors] as Record<string, string>)[shade]
-      ? (colors[color as keyof typeof colors] as Record<string, string>)[shade]
-      : typeof colors[color as keyof typeof colors] === 'string'
-      ? (colors[color as keyof typeof colors] as string)
-      : colors.primary && typeof colors.primary === 'object' && colors.primary['200']
-      ? colors.primary['200']
-      : '#E0E0E0';
+    typeof colors?.[color as keyof typeof colors] === 'object'
+  ) {
+    const shadeColor = (colors[color as keyof typeof colors] as Record<string, string>)[shade];
+    if (typeof shadeColor === 'string') {
+      dividerColor = shadeColor;
+    }
+  } else if (color && typeof colors?.[color as keyof typeof colors] === 'string') {
+    const colorValue = colors[color as keyof typeof colors];
+    if (typeof colorValue === 'string' || typeof colorValue === 'number') {
+      dividerColor = String(colorValue);
+    }
+  } else if (colors?.primary && typeof colors.primary === 'object' && colors.primary['200']) {
+    dividerColor = colors.primary['200'];
+  }
 
   const styles = useDividerStyles({
     orientation: orientation ?? DividerOrientation.Horizontal,

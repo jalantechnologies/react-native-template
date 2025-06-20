@@ -15,7 +15,6 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   onClick = undefined,
   size = ButtonSize.DEFAULT,
   startEnhancer = undefined,
-  width = undefined,
 }) => {
   const kindStyles = useKindStyles();
   const sizeStyles = useSizeStyles();
@@ -32,7 +31,6 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
         kindStyle.base,
         disabled || isLoading ? kindStyle.disabled : kindStyle.enabled,
         sizeStyle.container,
-        width ? { width } : {},
       ]}
       disabled={disabled || isLoading}
       onPress={onClick}

@@ -18,7 +18,7 @@ export const useButtonStyles = () => {
     enhancer: {
       alignItems: 'center',
       justifyContent: 'center',
-      minWidth: 24,
+      minWidth: theme.sizes[6],
     },
     horizontalStack: {
       alignItems: 'center',

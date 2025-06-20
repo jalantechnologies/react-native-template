@@ -1,4 +1,4 @@
-import { DimensionValue, GestureResponderEvent } from 'react-native';
+import { GestureResponderEvent } from 'react-native';
 
 export enum ButtonKind {
   PRIMARY = 'primary',
@@ -24,5 +24,4 @@ export interface ButtonProps {
   onClick?: (event: GestureResponderEvent) => void;
   size?: ButtonSize;
   startEnhancer?: React.ReactElement | string;
-  width?: DimensionValue;
 }

@@ -28,18 +28,19 @@ export const useDividerStyles = ({
   dashStyle,
   dividerColor,
 }: DividerStyleProps) => {
-  const baseStyle: ViewStyle =
-    orientation === DividerOrientation.Horizontal
-      ? { width: '100%', height: thickness }
-      : { height: '100%', width: thickness };
+  const isHorizontal = orientation === DividerOrientation.Horizontal;
+
+  const baseStyle: ViewStyle = {
+    width: isHorizontal ? '100%' : thickness,
+    height: isHorizontal ? thickness : '100%',
+  };
 
   if (dashStyle === DividerDashStyle.Solid) {
     baseStyle.backgroundColor = dividerColor;
   } else {
     baseStyle.borderStyle = dashStyle;
-    baseStyle.borderWidth = thickness;
     baseStyle.borderColor = dividerColor;
-    baseStyle.backgroundColor = undefined;
+    baseStyle.borderWidth = thickness;
   }
 
   return StyleSheet.create({

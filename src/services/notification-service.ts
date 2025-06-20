@@ -1,3 +1,5 @@
+import { Alert } from 'react-native';
+
 import Logger from '../logger/logger';
 
 export class NotificationService {
@@ -11,7 +13,7 @@ export class NotificationService {
 
   private readonly initializeNotifications = async (): Promise<void> => {
     try {
-      Logger.debug('Push notifications have been disabled in this version');
+      Logger.debug('Notification service initialized');
       this.isInitialized = true;
     } catch (error) {
       Logger.error(`Failed to initialize notifications: ${error}`);
@@ -23,15 +25,35 @@ export class NotificationService {
   };
 
   readonly handleForegroundNotification = async (): Promise<void> => {
-    Logger.debug('Push notifications are disabled; cannot handle foreground notification');
+    Logger.debug('Handling foreground notification');
   };
 
-  readonly displayNotification = async (title: string, body: string): Promise<void> => {
-    Logger.debug(`Notification would have been displayed - Title: ${title}, Body: ${body}`);
+  readonly displayNotification = async (title: string, body: string, data?: any): Promise<void> => {
+    try {
+      Logger.debug(`Displaying notification - Title: ${title}, Body: ${body}`);
+
+      Alert.alert(
+        title || 'Notification',
+        body || 'You have a new message',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              if (data) {
+                Logger.info(`Notification data: ${JSON.stringify(data)}`);
+              }
+            },
+          },
+        ],
+        { cancelable: true },
+      );
+    } catch (error) {
+      Logger.error(`Failed to display notification: ${error}`);
+    }
   };
 
   readonly displayLocalNotification = async (title: string, body: string): Promise<void> => {
-    Logger.debug(`Local notification would have been displayed - Title: ${title}, Body: ${body}`);
+    await this.displayNotification(title, body);
   };
 
   readonly scheduleNotification = async (

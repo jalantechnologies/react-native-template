@@ -102,6 +102,28 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    flavorDimensions "version"
+
+    productFlavors {
+        production {
+            dimension "version"
+            applicationId "com.bettrsw.boilerplate"
+        }
+        dev {
+            dimension "version"
+
+            // Read BUILD_HASH from local.properties
+            def localProperties = new Properties()
+            def localFile = rootProject.file("local.properties")
+            if (localFile.exists()) {
+                localProperties.load(new FileInputStream(localFile))
+            }
+
+            def buildHash = localProperties.getProperty("BUILD_HASH") ?: "test"
+
+            applicationId "com.bettrsw.boilerplate.test.${buildHash}"
+        }
+    }
 }
 
 dependencies {

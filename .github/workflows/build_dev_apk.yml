@@ -1,0 +1,138 @@
+name: Build Android & iOS Dual Flavors
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # android:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     BUILD_HASH: pr${{ github.event.pull_request.number }}
+
+  #   steps:
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+
+  #     - name: Set up JDK
+  #       uses: actions/setup-java@v3
+  #       with:
+  #         java-version: '17'
+  #         distribution: 'temurin'
+
+  #     - name: Write local.properties with BUILD_HASH
+  #       run: echo "BUILD_HASH=${BUILD_HASH}" > android/local.properties
+
+  #     - name: Set up Gradle
+  #       uses: gradle/gradle-build-action@v2
+
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '22.13.1'
+
+  #     - name: Install Dependencies
+  #       run: yarn install
+
+  #     - name: Build Production APK
+  #       run: ./gradlew assembleProductionDebug
+  #       working-directory: android
+
+  #     - name: Build Dev APK
+  #       run: ./gradlew assembleDevDebug
+  #       working-directory: android
+
+  #     - name: Upload Production APK
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: android-production-apk
+  #         path: android/app/build/outputs/apk/production/debug/app-production-debug.apk
+
+  #     - name: Upload Dev APK
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: android-dev-apk
+  #         path: android/app/build/outputs/apk/dev/debug/app-dev-debug.apk
+
+  ios:
+    runs-on: macos-latest
+    env:
+      BUILD_HASH: pr${{ github.event.pull_request.number }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Ruby & Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.13.1'
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Install CocoaPods
+        working-directory: ios
+        run: |
+          gem install bundler
+          bundle install
+    
+      - name: Patch Boost Podspec with Custom Source
+        working-directory: node_modules/react-native/third-party-podspecs
+        run: |
+          awk '
+          BEGIN { found=0 }
+          /spec.source/ { found=1; print "  spec.source = { :http => '\''https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.gz'\'', :sha256 => '\''7bd7ddceec1a1dfdcbdb3e609b60d01739c38390a5f956385a12f3122049f0ca'\'' }"; next }
+          found && /^\s*:sha256/ { next }
+          found && /\}/ { found=0; next }
+          { print }
+          ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
+
+      - name: Clean and install Pods
+        working-directory: ios
+        run: |
+          pod cache clean --all
+          rm -rf Pods
+          rm -f Podfile.lock
+          pod deintegrate
+          pod install --repo-update
+
+      - name: Build Production IPA
+        run: |
+          cd ios
+          bundle exec fastlane gym \
+            --scheme "Boilerplate" \
+            --export_method "development" \
+            --output_name "Boilerplate-Prod.ipa"
+            --allowProvisioningUpdates
+
+      - name: List Xcode Schemes
+        run: |
+          xcodebuild -list -workspace ios/YourApp.xcworkspace
+
+      - name: Build Dev IPA with BUILD_HASH
+        run: |
+          cd ios
+          bundle exec fastlane gym \
+            --scheme "Boilerplate" \
+            --export_method "development" \
+            --output_name "Boilerplate-Dev-${BUILD_HASH}.ipa" \
+            --xcargs "BUILD_HASH=${BUILD_HASH}"
+
+      - name: Upload Production IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-production-ipa
+          path: ios/Boilerplate-Prod.ipa
+
+      - name: Upload Dev IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-dev-ipa
+          path: ios/Boilerplate-Dev-${{ env.BUILD_HASH }}.ipa

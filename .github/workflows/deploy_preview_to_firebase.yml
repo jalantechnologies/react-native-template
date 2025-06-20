@@ -14,6 +14,7 @@ jobs:
       ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
       ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
       ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
+      ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
 
     steps:
       - uses: actions/checkout@v3
@@ -57,6 +58,8 @@ jobs:
 
       - name: Build & Deploy to Firebase App Distribution
         working-directory: android
+        env:
+          FIREBASE_API_KEY: ${{ env.ANDROID_FIREBASE_API_KEY }}
         run: bundle exec fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" pr_title:"${{ github.event.pull_request.title }}" project_number:"${{ env.ANDROID_FIREBASE_PROJECT_NUMBER }}" app_id:"${{ env.ANDROID_FIREBASE_APP_ID }}"
 
       - name: Cleanup GCP key file

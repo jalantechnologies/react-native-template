@@ -28,14 +28,21 @@ export const useDividerStyles = ({
   dashStyle,
   dividerColor,
 }: DividerStyleProps) => {
+  const baseStyle: ViewStyle =
+    orientation === DividerOrientation.Horizontal
+      ? { width: '100%', height: thickness }
+      : { height: '100%', width: thickness };
+
+  if (dashStyle === DividerDashStyle.Solid) {
+    baseStyle.backgroundColor = dividerColor;
+  } else {
+    baseStyle.borderStyle = dashStyle;
+    baseStyle.borderWidth = thickness;
+    baseStyle.borderColor = dividerColor;
+    baseStyle.backgroundColor = undefined;
+  }
+
   return StyleSheet.create({
-    divider: {
-      ...(orientation === DividerOrientation.Horizontal
-        ? { width: '100%', height: thickness }
-        : { height: '100%', width: thickness }),
-      ...(dashStyle === DividerDashStyle.Solid
-        ? { backgroundColor: dividerColor }
-        : { borderStyle: dashStyle, borderWidth: thickness, borderColor: dividerColor }),
-    } as ViewStyle,
+    divider: baseStyle,
   });
 };

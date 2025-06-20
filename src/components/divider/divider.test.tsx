@@ -1,59 +1,11 @@
 import { render, screen } from '@testing-library/react-native';
 import React from 'react';
-import { ViewStyle } from 'react-native';
 
 import Divider, { DividerProps } from './divider';
 import { DividerOrientation, DividerDashStyle } from './divider.styles';
 
-jest.mock('@/utils/use-theme-color.hook', () => ({
-  useThemeColor: jest.fn((color: string) => {
-    const colorMap: { [key: string]: string } = {
-      'neutral.200': '#E0E0E0',
-      'primary.200': '#99C2FF',
-    };
-    return colorMap[color] || color;
-  }),
-}));
-
-jest.mock('./divider.styles', () => {
-  const actual = jest.requireActual('./divider.styles');
-  return {
-    ...actual,
-    useDividerStyles: jest.fn(
-      ({ orientation, thickness, length, dashStyle, dividerColor }: any) => {
-        const baseStyle: ViewStyle = {
-          backgroundColor: dividerColor,
-          borderStyle: dashStyle === actual.DividerDashStyle.Solid ? undefined : dashStyle,
-        };
-
-        if (orientation === actual.DividerOrientation.Horizontal) {
-          return {
-            divider: {
-              ...baseStyle,
-              height: thickness,
-              width: length || '100%',
-            },
-          };
-        } else {
-          return {
-            divider: {
-              ...baseStyle,
-              width: thickness,
-              height: '100%',
-            },
-          };
-        }
-      },
-    ),
-  };
-});
-
 describe('Divider', () => {
   const renderDivider = (props: Partial<DividerProps> = {}) => render(<Divider {...props} />);
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
 
   it('renders correctly with default props', () => {
     renderDivider();
@@ -74,6 +26,8 @@ describe('Divider', () => {
     renderDivider({
       orientation: DividerOrientation.Horizontal,
       thickness: 2,
+      color: 'primary',
+      shade: '200',
     });
     const divider = screen.getByTestId('divider');
     expect(divider.props.style).toEqual(
@@ -110,10 +64,9 @@ describe('Divider', () => {
     expect(divider.props.style).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          backgroundColor: '#E0E0E0',
           borderStyle: 'dashed',
-          height: 1,
-          width: '100%',
+          borderWidth: 1,
+          borderColor: '#E0E0E0',
         }),
       ]),
     );

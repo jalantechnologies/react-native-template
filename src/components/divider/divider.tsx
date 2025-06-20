@@ -15,45 +15,45 @@ export interface DividerProps {
   thickness?: number;
 }
 
+const getDividerColor = (
+  themeColors: typeof appTheme.colors,
+  color?: string,
+  shade?: Shade,
+): string => {
+  if (!color) {
+    return '#E0E0E0';
+  }
+  const colorValue = themeColors[color as keyof typeof themeColors];
+  if (typeof colorValue === 'object' && shade) {
+    return (colorValue as Record<string, string>)[shade] || '#E0E0E0';
+  }
+  if (typeof colorValue === 'string') {
+    return colorValue;
+  }
+  return '#E0E0E0';
+};
+
 const Divider: React.FC<DividerProps> = ({
-  color,
-  dashStyle,
-  orientation,
-  shade,
-  testID,
-  thickness,
+  color = 'primary',
+  dashStyle = DividerDashStyle.Solid,
+  orientation = DividerOrientation.Horizontal,
+  shade = '200',
+  testID = 'divider',
+  thickness = 1,
 }) => {
   const theme = useTheme();
   const colors = theme.colors as typeof appTheme.colors;
 
-  let dividerColor: string =
-    (color &&
-      shade &&
-      typeof colors?.[color as keyof typeof colors] === 'object' &&
-      (colors[color as keyof typeof colors] as Record<string, string>)[shade]) ||
-    (color &&
-      typeof colors?.[color as keyof typeof colors] === 'string' &&
-      (colors[color as keyof typeof colors] as string)) ||
-    (colors?.primary && typeof colors.primary === 'object' && colors.primary['200']) ||
-    '#E0E0E0';
+  const dividerColor = getDividerColor(colors, color, shade);
 
   const styles = useDividerStyles({
-    orientation: orientation ?? DividerOrientation.Horizontal,
-    thickness: thickness ?? 1,
-    dashStyle: dashStyle ?? DividerDashStyle.Solid,
+    orientation,
+    thickness,
+    dashStyle,
     dividerColor,
   });
 
-  return <View testID={testID ?? 'divider'} style={[styles.divider]} />;
-};
-
-Divider.defaultProps = {
-  color: 'primary',
-  dashStyle: DividerDashStyle.Solid,
-  orientation: DividerOrientation.Horizontal,
-  shade: '200',
-  testID: 'divider',
-  thickness: 1,
+  return <View testID={testID} style={[styles.divider]} />;
 };
 
 export default Divider;

@@ -22,6 +22,16 @@ These environment variables are used by the GitHub Actions workflows and Fastlan
 | `ANDROID_FIREBASE_APP_PACKAGE`          | GitHub Secret | Android app package name (e.g., `com.example.app`). Used during Gradle builds and as an identifier when uploading builds to Firebase.              |
 | `ANDROID_GCP_JSON_BASE64`               | GitHub Secret         | Base64-encoded GCP service account JSON. Decoded and written to `/tmp/gcp_key.json` to authenticate `gcloud` and Firebase App Distribution APIs.   |                                                                |
 | `ANDROID_FIREBASE_API_KEY`             | GitHub Secret         | Firebase Web API key used by the push notification system (e.g., FCM). Typically accessed by the app or backend to interact with Firebase services like messaging. |
+| `ANDROID_KEYSTORE_FILE`           | GitHub Secret  | Base64-encoded Android keystore file. Decoded and used to sign Android builds during Firebase and Play Store deployments. |
+| `ANDROID_KEYSTORE_PASSWORD`       | GitHub Secret  | Password for the Android keystore file used in signing builds. |
+| `ANDROID_KEY_ALIAS`               | GitHub Secret  | Alias used inside the keystore to refer to the signing key. |
+| `ANDROID_KEY_PASSWORD`            | GitHub Secret  | Password for the key alias used in Android app signing. |
+| `DOPPLER_PREVIEW_TOKEN`           | GitHub Secret  | Used to inject preview environment secrets via Doppler during PR builds and checks. |
+| `DOPPLER_PRODUCTION_TOKEN`        | GitHub Secret  | Used to inject production environment secrets via Doppler during production builds and checks. |
+| `DOCKER_PASSWORD`                 | GitHub Secret  | Docker registry password used for authenticating image pulls and pushes in CI. |
+| `GPLAY_SERVICE_ACCOUNT_KEY_JSON`  | GitHub Secret  | Google Play service account key for uploading Android production builds via Fastlane and GitHub Action. |
+| `SONAR_TOKEN`                     | GitHub Secret  | Authentication token for SonarQube analysis API access. |
+| `SONAR_HOST_URL`                  | GitHub Secret  | URL of your SonarQube server used in PR and branch scan jobs. |
 
 These variables are decoded and written to disk during the CI process so tools like Fastlane or the Firebase CLI can use them.
 

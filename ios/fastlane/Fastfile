@@ -24,11 +24,10 @@ platform :ios do
     )
     ENV["ENVFILE"] = ".env.preview"
     ENV["NODE_ENV"] = "production"
-    sh("ls -la ../")
-    sh("ls -la ../index.js")
-
+    sh("ls -la ../../")
+    sh("ls -la ../../index.js")
     sh("ENVFILE=../.env.preview NODE_ENV=production npx react-native bundle \
-      --entry-file ../index.js \
+      --entry-file ../../index.js \
       --platform ios \
       --dev false \
       --bundle-output main.jsbundle \

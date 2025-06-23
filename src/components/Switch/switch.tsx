@@ -1,36 +1,31 @@
+import { useTheme } from 'native-base';
 import React, { useMemo } from 'react';
-import { Switch as NativeSwitch, StyleSheet, ViewStyle } from 'react-native';
-
-import { useThemeColor } from '../../utils/use-theme-color.hook';
+import { Switch as NativeSwitch, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 
 export interface SwitchProps {
   value: boolean;
   onValueChange: (newValue: boolean) => void;
   disabled?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
-const Switch: React.FC<SwitchProps> = ({
-  value,
-  onValueChange,
-  disabled = false,
-  style = undefined,
-}) => {
-  const trackColorOn = useThemeColor('trackColorOn');
-  const trackColorOff = useThemeColor('trackColorOff');
-  const thumbColor = useThemeColor('thumbColor');
-
+const Switch: React.FC<SwitchProps> = ({ value, onValueChange, disabled, style, testID }) => {
+  const theme = useTheme();
   const switchStyle = useMemo(() => [styles.base, style], [style]);
 
   return (
     <NativeSwitch
-      testID="switch"
+      testID={testID}
       value={value}
       onValueChange={disabled ? undefined : onValueChange}
       disabled={disabled}
-      trackColor={{ true: trackColorOn, false: trackColorOff }}
-      thumbColor={thumbColor}
       style={switchStyle}
+      trackColor={{
+        false: theme.colors.gray?.[300] ?? '#d1d5db',
+        true: theme.colors.blue?.[500] ?? '#2563eb',
+      }}
+      thumbColor={disabled ? theme.colors.gray?.[400] ?? '#9ca3af' : theme.colors.white ?? '#fff'}
     />
   );
 };
@@ -38,6 +33,7 @@ const Switch: React.FC<SwitchProps> = ({
 Switch.defaultProps = {
   disabled: false,
   style: undefined,
+  testID: 'switch',
 };
 
 const styles = StyleSheet.create({

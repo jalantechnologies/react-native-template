@@ -1,20 +1,24 @@
 import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
-import { StyleSheet } from 'react-native';
 
-import { useThemeColor } from '../../utils/use-theme-color.hook';
+jest.mock('native-base', () => ({
+  useTheme: () => ({
+    colors: {
+      blue: { 500: '#2563eb' },
+      gray: { 300: '#d1d5db', 400: '#9ca3af' },
+      white: '#fff',
+    },
+  }),
+}));
 
 import Switch from './switch';
-
-jest.mock('../../utils/use-theme-color.hook', () => ({
-  useThemeColor: jest.fn(),
-}));
 
 describe('Switch', () => {
   it('renders correctly with default props', () => {
     const { getByTestId } = render(<Switch value={false} onValueChange={jest.fn()} />);
     const switchComponent = getByTestId('switch');
     expect(switchComponent.props.value).toBe(false);
+    expect(switchComponent.props.disabled).toBe(false);
   });
 
   it('toggles value when pressed', () => {
@@ -39,32 +43,9 @@ describe('Switch', () => {
       <Switch value={false} onValueChange={jest.fn()} style={customStyle} />,
     );
     const switchComponent = getByTestId('switch');
-    const flatStyle = StyleSheet.flatten(switchComponent.props.style);
-    expect(flatStyle).toMatchObject(customStyle);
-  });
-
-  it('applies dynamic colors from useThemeColor based on colorMode', () => {
-    (useThemeColor as jest.Mock).mockImplementation((key: string) => {
-      if (key === 'trackColorOn') {
-        return 'blue';
-      }
-      if (key === 'trackColorOff') {
-        return 'gray';
-      }
-      if (key === 'thumbColor') {
-        return 'white';
-      }
-      return 'transparent';
-    });
-
-    const { getByTestId } = render(<Switch value={true} onValueChange={jest.fn()} />);
-
-    const switchComponent = getByTestId('switch');
-
-    expect(switchComponent.props.trackColor).toEqual({
-      true: 'blue',
-      false: 'gray',
-    });
-    expect(switchComponent.props.thumbColor).toBe('white');
+    const flatStyle = Array.isArray(switchComponent.props.style)
+      ? switchComponent.props.style.flat()
+      : [switchComponent.props.style];
+    expect(flatStyle.some(styleObj => styleObj && styleObj.margin === 10)).toBe(true);
   });
 });

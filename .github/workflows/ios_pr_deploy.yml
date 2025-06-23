@@ -103,7 +103,6 @@ jobs:
           rm -rf ~/Library/Developer/Xcode/DerivedData
 
       - name: Bundle React Native for iOS
-        working-directory: ios
         run: |
           echo "Working directory: $(pwd)"
           ls -la ..
@@ -111,7 +110,7 @@ jobs:
             --entry-file index.js \
             --platform ios \
             --dev false \
-            --bundle-output ios/main.jsbundle \
+            --bundle-output main.jsbundle \
             --assets-dest . \
 
       - name: iOS PR Deploy to TestFlight

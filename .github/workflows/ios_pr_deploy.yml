@@ -110,7 +110,7 @@ jobs:
             --entry-file index.js \
             --platform ios \
             --dev false \
-            --bundle-output main.jsbundle \
+            --bundle-output ios/main.jsbundle \
             --assets-dest . \
 
       - name: iOS PR Deploy to TestFlight

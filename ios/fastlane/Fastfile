@@ -42,7 +42,7 @@ platform :ios do
      pilot(
        app_identifier: "com.bettrsw.boilerplate", # Replace with your app's bundle identifier
        build_number: "2",  # Replace with the build number to expire
-       version: "1.0"       # Replace with the version number
+       app_version: "1.0"       # Replace with the version number
      )
    end
 

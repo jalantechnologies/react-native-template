@@ -106,9 +106,9 @@ jobs:
         working-directory: ios
         run: |
           echo "Working directory: $(pwd)"
-          ls -la ../..
+          ls -la ..
           ENVFILE=.env.preview NODE_ENV=production npx react-native bundle \
-            --entry-file ../../index.js \
+            --entry-file ../index.js \
             --platform ios \
             --dev false \
             --bundle-output main.jsbundle \

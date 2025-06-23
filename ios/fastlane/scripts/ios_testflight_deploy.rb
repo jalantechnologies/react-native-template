@@ -43,7 +43,6 @@ def ios_testflight_deploy!(options = {})
   Dir.chdir("../..") do
     ENV["ENVFILE"] = ".env.preview"
     ENV["NODE_ENV"] = "production"
-    FastlaneCore::UI.user_error!("main.jsbundle not found in root.") unless File.exist?("main.jsbundle")
   end
 
   build_app(

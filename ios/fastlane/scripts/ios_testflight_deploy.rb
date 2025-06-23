@@ -4,8 +4,6 @@ def ios_testflight_deploy!(options = {})
   require 'fastlane'
   require 'fastlane_core/ui/ui'
 
-  UI = FastlaneCore::UI
-
   # === Required Inputs ===
   pr_number = options.fetch(:pr_number)
   app_identifier = options.fetch(:app_identifier)
@@ -43,6 +41,7 @@ def ios_testflight_deploy!(options = {})
   Dir.chdir("../..") do
     ENV["ENVFILE"] = ".env.preview"
     ENV["NODE_ENV"] = "production"
+    FastlaneCore::UI.user_error!("main.jsbundle not found in root.") unless File.exist?("main.jsbundle")
   end
 
   build_app(

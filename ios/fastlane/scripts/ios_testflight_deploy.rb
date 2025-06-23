@@ -1,6 +1,10 @@
 def ios_testflight_deploy!(options = {})
   require 'fileutils'
   require 'base64'
+  require 'fastlane'
+  require 'fastlane_core/ui/ui'
+
+  UI = FastlaneCore::UI
 
   # === Required Inputs ===
   pr_number = options.fetch(:pr_number)

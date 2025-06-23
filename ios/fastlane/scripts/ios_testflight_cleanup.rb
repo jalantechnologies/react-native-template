@@ -17,8 +17,12 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
   app = Spaceship::ConnectAPI::App.find(app_identifier)
   UI.user_error!("App '#{app_identifier}' not found!") unless app
 
-  # Get all builds for this app
-  builds = Spaceship::ConnectAPI.get_builds(filter: { app: app.id }).all
+  # Fetch builds with safe includes to avoid 'betaBuildMetrics' error
+  builds = Spaceship::ConnectAPI.get_builds(
+    filter: { app: app.id },
+    includes: [], # prevent inclusion of betaBuildMetrics
+    limit: 200
+  ).all
 
   builds.each do |build|
     if build.version.include?(pr_number)

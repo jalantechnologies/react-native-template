@@ -174,9 +174,6 @@ jobs:
             --bundle-output android/app/src/main/assets/index.android.bundle \
             --assets-dest android/app/src/main/res
 
-      - name: Set Java heap size for Gradle
-        run: echo "_JAVA_OPTIONS=-Xmx4096m" >> $GITHUB_ENV
-
       - name: Build & Deploy to Firebase App Distribution
         working-directory: android
         env:

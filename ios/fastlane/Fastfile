@@ -26,11 +26,11 @@ platform :ios do
     ENV["NODE_ENV"] = "production"
 
     sh("ENVFILE=.env.preview NODE_ENV=production npx react-native bundle \
-      --entry-file index.js \
+      --entry-file ../index.js \
       --platform ios \
       --dev false \
-      --bundle-output ios/main.jsbundle \
-      --assets-dest ios")
+      --bundle-output main.jsbundle \
+      --assets-dest .")
 
     build_app(
       clean: true,

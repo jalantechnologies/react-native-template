@@ -102,6 +102,17 @@ jobs:
         run: |
           rm -rf ~/Library/Developer/Xcode/DerivedData
 
+      - name: Bundle React Native for iOS
+        working-directory: ios
+        run: |
+          echo "Working directory: $(pwd)"
+          ls -la ../..
+          ENVFILE=.env.preview NODE_ENV=production npx react-native bundle \
+            --entry-file ../../index.js \
+            --platform ios \
+            --dev false \
+            --bundle-output main.jsbundle \
+            --assets-dest . \
 
       - name: iOS PR Deploy to TestFlight
         working-directory: ios 

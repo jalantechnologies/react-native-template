@@ -24,16 +24,9 @@ platform :ios do
     )
     ENV["ENVFILE"] = ".env.preview"
     ENV["NODE_ENV"] = "production"
-    sh("echo 'Fastlane working directory: $(pwd)'")
-    sh("ls -la ../../")
-    sh("ENVFILE=../.env.preview NODE_ENV=production npx react-native bundle \
-      --entry-file ../../index.js \
-      --platform ios \
-      --dev false \
-      --bundle-output main.jsbundle \
-      --assets-dest . \
-      --project-root ../..")
-
+    unless File.exist?("main.jsbundle")
+     UI.user_error!("main.jsbundle not found. Make sure bundling step ran before Fastlane.")
+    end
     build_app(
       clean: true,
       scheme: "Boilerplate",

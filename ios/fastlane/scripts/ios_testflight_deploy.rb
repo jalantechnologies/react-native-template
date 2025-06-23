@@ -58,51 +58,52 @@ def ios_testflight_deploy!(options = {})
   ipa_path = lane_context[:IPA_OUTPUT_PATH]
 
   sh <<~BASH
-    echo "\uD83D\uDD0D Stripping bitcode from Hermes binary before uploading to TestFlight..."
+      echo "🔍 Stripping bitcode from Hermes binary before uploading to TestFlight..."
 
-    unzip -q "$IPA_PATH" -d temp_payload
+      IPA_PATH=#{lane_context[:IPA_OUTPUT_PATH]}
+      unzip -q "$IPA_PATH" -d temp_payload
 
-    HERMES_BIN="temp_payload/Payload/Boilerplate.app/Frameworks/hermes.framework/hermes"
-    APP_PATH="temp_payload/Payload/Boilerplate.app"
+      HERMES_BIN="temp_payload/Payload/Boilerplate.app/Frameworks/hermes.framework/hermes"
+      APP_PATH="temp_payload/Payload/Boilerplate.app"
 
-    if [ -f "$HERMES_BIN" ]; then
-      echo "\uD83D\uDCE6 Found Hermes binary. Stripping bitcode..."
-      xcrun bitcode_strip -r "$HERMES_BIN" -o "$HERMES_BIN"
+      if [ -f "$HERMES_BIN" ]; then
+        echo "📦 Found Hermes binary. Stripping bitcode..."
+        xcrun bitcode_strip -r "$HERMES_BIN" -o "$HERMES_BIN"
 
-      echo "\uD83D\uDD2C Verifying..."
-      if otool -l "$HERMES_BIN" | grep -i bitcode; then
-        echo "\u274C Bitcode still present! Failing the build."
-        exit 1
+        echo "🔬 Verifying..."
+        if otool -l "$HERMES_BIN" | grep -i bitcode; then
+          echo "❌ Bitcode still present! Failing the build."
+          exit 1
+        else
+          echo "✅ Bitcode successfully stripped."
+        fi
+
+        echo "🔐 Re-signing .app after modification..."
+        CERT_ID=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n1 | awk '{print $2}')
+
+        for FRAMEWORK in "$APP_PATH/Frameworks/"*; do
+          if [ -d "$FRAMEWORK" ]; then
+            /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none "$FRAMEWORK"
+          fi
+        done
+
+        /usr/bin/codesign --force --sign "$CERT_ID" \
+          --timestamp=none \
+          --preserve-metadata=entitlements \
+          "$APP_PATH"
+
+        echo "✅ Code signing complete."
       else
-        echo "\u2705 Bitcode successfully stripped."
+        echo "⚠️ Hermes binary not found at expected path: $HERMES_BIN"
+        echo "Skipping bitcode stripping."
       fi
 
-      echo "\uD83D\uDD10 Re-signing .app after modification..."
-      CERT_ID=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n1 | awk '{print $2}')
+      echo "📦 Repacking IPA..."
+      cd temp_payload && zip -r -y ../fixed.ipa * >/dev/null && cd ..
+      mv fixed.ipa "$IPA_PATH"
 
-      for FRAMEWORK in "$APP_PATH/Frameworks/"*; do
-        if [ -d "$FRAMEWORK" ]; then
-          /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none "$FRAMEWORK"
-        fi
-      done
-
-      /usr/bin/codesign --force --sign "$CERT_ID" \
-        --timestamp=none \
-        --preserve-metadata=entitlements \
-        "$APP_PATH"
-
-      echo "\u2705 Code signing complete."
-    else
-      echo "\u26A0\uFE0F Hermes binary not found at expected path: $HERMES_BIN"
-      echo "Skipping bitcode stripping."
-    fi
-
-    echo "\uD83D\uDCE6 Repacking IPA..."
-    cd temp_payload && zip -r -y ../fixed.ipa * >/dev/null && cd ..
-    mv fixed.ipa "$IPA_PATH"
-
-    rm -rf temp_payload
-  BASH
+      rm -rf temp_payload
+    BASH
 
   upload_to_testflight(
     changelog: "PR ##{pr_number} Build - automated upload",

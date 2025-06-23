@@ -2,14 +2,7 @@ name: iOS PR Cleanup
 
 on:
   pull_request:
-    types: [closed]
-
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: "Pull Request number to clean up"
-        required: true
-        type: string  
+    types: [opened, synchronize, reopened]
 
 jobs:
   ios_testflight_cleanup:

@@ -38,10 +38,11 @@ def ios_testflight_deploy!(options = {})
     is_key_content_base64: true,
   )
 
-  Dir.chdir("../..") do
+  project_root = File.expand_path("../..", __FILE__)
+  Dir.chdir(project_root) do
     ENV["ENVFILE"] = ".env.preview"
     ENV["NODE_ENV"] = "production"
-    FastlaneCore::UI.user_error!("main.jsbundle not found in root.") unless File.exist?("main.jsbundle")
+    FastlaneCore::UI.user_error!("main.jsbundle not found in project root.") unless File.exist?("main.jsbundle")
   end
 
   build_app(

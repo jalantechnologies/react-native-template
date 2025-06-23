@@ -20,7 +20,6 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
   # Fetch builds with safe includes to avoid 'betaBuildMetrics' error
   builds = Spaceship::ConnectAPI.get_builds(
     filter: { app: app.id },
-    includes: [], # prevent inclusion of betaBuildMetrics
     limit: 200
   ).all
 

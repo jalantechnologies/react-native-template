@@ -37,4 +37,13 @@ platform :ios do
       api_key_b64: ENV['APP_STORE_CONNECT_API_KEY_B64']
     )
   end
+  desc "Cleanup TestFlight build for PR"
+  lane :expire_build do
+     pilot(
+       app_identifier: "com.bettrsw.boilerplate", # Replace with your app's bundle identifier
+       build_number: "2",  # Replace with the build number to expire
+       version: "1.0"       # Replace with the version number
+     )
+   end
+
 end

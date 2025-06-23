@@ -33,4 +33,4 @@ jobs:
 
       - name: Run Fastlane cleanup
         working-directory: ios
-        run: bundle exec fastlane pr_cleanup
+        run: bundle exec fastlane expire_build

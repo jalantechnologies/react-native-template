@@ -22,25 +22,26 @@ platform :ios do
       key_content: ENV['APP_STORE_CONNECT_API_KEY_B64'],
       is_key_content_base64: true,
     )
-    ENV["ENVFILE"] = ".env.preview"
-    ENV["NODE_ENV"] = "production"
-    UI.message("Looking for JS bundle at: #{File.expand_path("main.jsbundle")}")
-    unless File.exist?("main.jsbundle")
-     UI.user_error!("main.jsbundle not found. Make sure bundling step ran before Fastlane.")
+    Dir.chdir("..") do
+      ENV["ENVFILE"] = ".env.preview"
+      ENV["NODE_ENV"] = "production"
+      UI.message("Looking for JS bundle at: #{File.expand_path("main.jsbundle")}")
+      unless File.exist?("main.jsbundle")
+        UI.user_error!("main.jsbundle not found. Make sure bundling step ran before Fastlane.")
+      end
+      build_app(
+        clean: true,
+        scheme: "Boilerplate",
+        export_method: "app-store",
+        export_options: {
+          compileBitcode: false,
+          signingStyle: "manual",
+          provisioningProfiles: {
+          "com.bettrsw.boilerplate" => "match AppStore com.bettrsw.boilerplate"
+          }
+        },
+      )
     end
-    build_app(
-      clean: true,
-      scheme: "Boilerplate",
-      export_method: "app-store",
-      export_options: {
-        compileBitcode: false,
-        signingStyle: "manual",
-        provisioningProfiles: {
-        "com.bettrsw.boilerplate" => "match AppStore com.bettrsw.boilerplate"
-        }
-      },
-    )
-    
     sh <<~BASH
       echo "🔍 Stripping bitcode from Hermes binary before uploading to TestFlight..."
 

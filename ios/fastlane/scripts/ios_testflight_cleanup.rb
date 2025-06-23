@@ -1,5 +1,7 @@
 require 'spaceship'
 require 'base64'
+  require 'fastlane'
+  require 'fastlane_core/ui/ui'
 
 def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:, api_key_b64:)
   # Decode API key
@@ -23,15 +25,15 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
   builds.each do |build|
     build_version_str = build.version.to_s
     if build_version_str.include?("1237")
-      UI.message("🧹 Expiring build #{build_version_str} (#{build.id}) for PR ##{pr_number}")
+      FastlaneCore::UI.message("🧹 Expiring build #{build_version_str} (#{build.id}) for PR ##{pr_number}")
       begin
         Spaceship::ConnectAPI::Build.update(
           build_id: build.id,
           expired: true
         )
-        UI.success("✅ Expired build #{build_version_str}")
+        FastlaneCore::UI.success("✅ Expired build #{build_version_str}")
       rescue => e
-        UI.error("❌ Failed to expire build #{build.version}: #{e}")
+        FastlaneCore::UI.error("❌ Failed to expire build #{build.version}: #{e}")
       end
     end
   end

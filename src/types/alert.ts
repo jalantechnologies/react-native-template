@@ -1,16 +1,12 @@
+export interface AlertBodyProps {
+  children: React.ReactNode;
+}
+
 export interface AlertActionButtonProps {
   bgColor: string;
   label: string;
   onPress: () => void;
   textColor: string;
-}
-
-export interface AlertBoxProps {
-  children: React.ReactNode;
-  confirmText: string;
-  onClose: () => void;
-  onConfirm: () => void;
-  type: AlertType;
 }
 
 export interface AlertCloseButtonProps {
@@ -21,6 +17,18 @@ export interface AlertIconProps {
   bgColor: string;
   symbol: string;
   textColor: string;
+}
+
+export interface AlertProps {
+  children: React.ReactNode;
+  confirmText: string;
+  onClose: () => void;
+  onConfirm: () => void;
+  type: AlertType;
+}
+
+export interface AlertTitleProps {
+  children: React.ReactNode;
 }
 
 export enum AlertType {

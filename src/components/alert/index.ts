@@ -1,2 +1,2 @@
-export { Alert } from './alert-box';
+export { Alert } from './alert';
 export { AlertType } from '../../types';

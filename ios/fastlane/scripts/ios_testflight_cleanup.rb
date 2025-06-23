@@ -18,10 +18,7 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
   UI.user_error!("App '#{app_identifier}' not found!") unless app
 
   # Fetch builds without includes
-  builds = Spaceship::ConnectAPI.get_builds(
-    filter: { app: app.id },
-    limit: 200
-  ).all
+  builds = app.get_builds(limit: 200)
 
   builds.each do |build|
     build_version_str = build.version.to_s

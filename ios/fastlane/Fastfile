@@ -22,6 +22,15 @@ platform :ios do
       key_content: ENV['APP_STORE_CONNECT_API_KEY_B64'],
       is_key_content_base64: true,
     )
+    ENV["ENVFILE"] = ".env.preview"
+    ENV["NODE_ENV"] = "production"
+
+    sh("ENVFILE=.env.preview NODE_ENV=production npx react-native bundle \
+      --entry-file index.js \
+      --platform ios \
+      --dev false \
+      --bundle-output ios/main.jsbundle \
+      --assets-dest ios")
 
     build_app(
       clean: true,

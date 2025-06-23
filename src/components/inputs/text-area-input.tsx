@@ -29,7 +29,6 @@ const TextAreaInput = forwardRef<TextInput | null, TextAreaInputProps>(
       setIsFocused(true);
       props.onFocus?.(e);
     };
-    
     const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
       setIsFocused(false);
       props.onBlur?.(e);

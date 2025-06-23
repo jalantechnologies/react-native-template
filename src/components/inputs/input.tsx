@@ -36,9 +36,12 @@ const Input = forwardRef<TextInput, InputProps>(
     }, [status]);
 
     const getBorderColor = () => {
-      if (status === InputStatus.ERROR) return styles.errorBorder;
-      if (status === InputStatus.SUCCESS) return styles.successBorder;
-
+      if (status === InputStatus.ERROR) {
+        return styles.errorBorder;
+      }
+      if (status === InputStatus.SUCCESS) {
+        return styles.successBorder;
+      }
       return styles.defaultBorder;
     };
 
@@ -82,8 +85,12 @@ const Input = forwardRef<TextInput, InputProps>(
             <TextInput
               {...props}
               ref={input => {
-                if (handleInputRef && input) handleInputRef(input);
-                if (typeof ref === 'function') ref(input);
+                if (handleInputRef && input) {
+                  handleInputRef(input);
+                }
+                if (typeof ref === 'function') {
+                  ref(input);
+                }
               }}
               editable={!disabled}
               style={[styles.input, disabled && styles.disabled, textAlign && { textAlign }]}

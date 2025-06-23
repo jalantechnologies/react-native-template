@@ -31,6 +31,10 @@ jobs:
         working-directory: ios
         run: bundle install
 
+      - name: Expire Previous Build (Example - you'll need to fetch the previous build number)
+        run: |
+          bundle exec fastlane pilot expire_build --app_identifier com.bettrsw.boilerplate --build_number 202506231457 --platform ios --internal_testing_only true
+
       - name: Run Fastlane cleanup
         working-directory: ios
         run: bundle exec fastlane pr_cleanup

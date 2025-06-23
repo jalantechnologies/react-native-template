@@ -22,7 +22,7 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
     filter: { app: app.id },
     limit: 200,
     includes: nil
-  ).all
+  )
 
   builds.each do |build|
     build_version_str = build.version.to_s

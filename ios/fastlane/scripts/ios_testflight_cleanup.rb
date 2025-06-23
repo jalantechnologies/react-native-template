@@ -17,21 +17,24 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
   app = Spaceship::ConnectAPI::App.find(app_identifier)
   UI.user_error!("App '#{app_identifier}' not found!") unless app
 
-  # Fetch builds with safe includes to avoid 'betaBuildMetrics' error
+  # Fetch builds without includes
   builds = Spaceship::ConnectAPI.get_builds(
     filter: { app: app.id },
-    limit: 200,
-    includes: nil
-  )
+    limit: 200
+  ).all
 
   builds.each do |build|
     build_version_str = build.version.to_s
-    if build_version_str.include?(pr_number.to_s)
-      UI.message("🧹 Deleting build #{build_version_str} (#{build.id}) for PR ##{pr_number}")
+    if build_version_str.include?("1237")
+      UI.message("🧹 Expiring build #{build_version_str} (#{build.id}) for PR ##{pr_number}")
       begin
-        build.delete!
+        Spaceship::ConnectAPI::Build.update(
+          build_id: build.id,
+          expired: true
+        )
+        UI.success("✅ Expired build #{build_version_str}")
       rescue => e
-        UI.error("❌ Failed to delete build #{build.version}: #{e}")
+        UI.error("❌ Failed to expire build #{build.version}: #{e}")
       end
     end
   end

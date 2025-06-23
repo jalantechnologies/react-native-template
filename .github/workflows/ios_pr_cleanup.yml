@@ -28,6 +28,7 @@ jobs:
           bundler-cache: true
 
       - name: Install dependencies
+        working-directory: ios
         run: bundle install
 
       - name: Run Fastlane cleanup

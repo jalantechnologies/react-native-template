@@ -24,6 +24,7 @@ platform :ios do
     )
     ENV["ENVFILE"] = ".env.preview"
     ENV["NODE_ENV"] = "production"
+    UI.message("Looking for JS bundle at: #{File.expand_path("main.jsbundle")}")
     unless File.exist?("main.jsbundle")
      UI.user_error!("main.jsbundle not found. Make sure bundling step ran before Fastlane.")
     end

@@ -20,12 +20,14 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
   # Fetch builds with safe includes to avoid 'betaBuildMetrics' error
   builds = Spaceship::ConnectAPI.get_builds(
     filter: { app: app.id },
-    limit: 200
+    limit: 200,
+    includes: nil
   ).all
 
   builds.each do |build|
-    if build.version.include?(pr_number)
-      UI.message("🧹 Deleting build #{build.version} (#{build.id}) for PR ##{pr_number}")
+    build_version_str = build.version.to_s
+    if build_version_str.include?(pr_number.to_s)
+      UI.message("🧹 Deleting build #{build_version_str} (#{build.id}) for PR ##{pr_number}")
       begin
         build.delete!
       rescue => e

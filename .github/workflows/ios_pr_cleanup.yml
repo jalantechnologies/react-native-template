@@ -1,8 +1,9 @@
 name: iOS PR Cleanup
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - shivam/feat/testflight-pr-deploy
 
 jobs:
   ios_testflight_cleanup:

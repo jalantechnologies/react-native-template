@@ -96,3 +96,93 @@ jobs:
           docker_registry: ${{ vars.DOCKER_REGISTRY }}
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
+
+  firebase_deploy:
+    name: Firebase Preview Deploy
+    needs: [checks]
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+
+    env:
+      ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
+      ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
+      ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
+      ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
+      ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+
+      - uses: ./.github/actions/setup-fastlane
+
+      - name: Decode and save GCP service account key
+        run: echo "${{ secrets.ANDROID_GCP_JSON_BASE64 }}" | base64 --decode > /tmp/gcp_key.json
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Decode Keystore file
+        run: echo "${{ secrets.ANDROID_KEYSTORE_FILE }}" | base64 --decode > keystore.jks
+
+      - name: Set Gradle signing environment variables
+        run: |
+          echo "ANDROID_KEYSTORE_FILE=$(pwd)/keystore.jks" >> $GITHUB_ENV
+          echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
+          echo "ANDROID_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> $GITHUB_ENV
+          echo "ANDROID_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> $GITHUB_ENV
+
+      - name: Build & Deploy to Firebase App Distribution
+        working-directory: android
+        env:
+          FIREBASE_API_KEY: ${{ env.ANDROID_FIREBASE_API_KEY }}
+        run: bundle exec fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" pr_title:"${{ github.event.pull_request.title }}" project_number:"${{ env.ANDROID_FIREBASE_PROJECT_NUMBER }}" app_id:"${{ env.ANDROID_FIREBASE_APP_ID }}"
+
+      - name: Cleanup GCP key file
+        if: always()
+        run: rm -f /tmp/gcp_key.json
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.issue.number;
+            const projectId = process.env.ANDROID_FIREBASE_PROJECT_ID;
+            const appPackage = process.env.ANDROID_FIREBASE_APP_PACKAGE;
+            const releaseUrl = `https://console.firebase.google.com/project/${projectId}/appdistribution/app/${appPackage}/releases`;
+            github.rest.issues.createComment({
+              issue_number: prNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 Deployed PR #${prNumber} to Firebase App Distribution.
+
+              🔗 [View Release in Firebase Console](${releaseUrl})`
+            });

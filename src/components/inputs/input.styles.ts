@@ -356,5 +356,9 @@ export const useCardDetailsInputStyles = () => {
       flex: 1,
       textAlign: 'center',
     },
+    message: {
+      fontSize: theme.fontSizes.sm,
+      marginTop: theme.space[1],
+    },
   });
 };

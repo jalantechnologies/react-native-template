@@ -35,17 +35,21 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
 
   const getBorderColor = () => {
     if (disabled) {
-        return theme.colors.secondary[200];
+      return theme.colors.secondary[200];
     }
+
     if ((status ? status : localStatus) === InputStatus.ERROR) {
-        return theme.colors.danger[500];
+      return theme.colors.danger[500];
     }
+
     if ((status ? status : localStatus) === InputStatus.SUCCESS) {
-        return theme.colors.success[500];
+      return theme.colors.success[500];
     }
+
     if (focusedField) {
-        return theme.colors.primary[300];
+      return theme.colors.primary[300];
     }
+
     return theme.colors.secondary[200];
   };
 
@@ -170,13 +174,13 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
       </View>
 
       {status === InputStatus.ERROR && !!errorMessage && (
-        <Text style={{ color: theme.colors.danger[500], fontSize: 12, marginTop: 4 }}>
+        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>
           {errorMessage ? errorMessage : errorMsg}
         </Text>
       )}
 
       {status === InputStatus.SUCCESS && !!successMessage && (
-        <Text style={{ color: theme.colors.success[500], fontSize: 12, marginTop: 4 }}>
+        <Text style={[styles.message, { color: theme.colors.success[500] }]}>
           {successMessage ? successMessage : successMsg}
         </Text>
       )}

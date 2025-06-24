@@ -18,7 +18,7 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
   label,
   value,
   onValueChange,
-  status = 'default',
+  status = InputStatus.DEFAULT,
   errorMessage,
   successMessage,
   disabled = false,
@@ -47,7 +47,7 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
 
   return (
     <View ref={containerRef} onLayout={({ nativeEvent }) => setLayout(nativeEvent.layout)}>
-      <Text style={styles.label}>{label}</Text>
+      {label && <Text style={styles.label}>{label}</Text>}
 
       <TouchableOpacity
         activeOpacity={0.7}

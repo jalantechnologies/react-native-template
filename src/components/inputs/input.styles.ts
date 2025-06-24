@@ -36,7 +36,7 @@ export const useInputStyles = () => {
       borderColor: colors.secondary[200],
     },
     disabledBackground: {
-      backgroundColor: colors.coolGray[100],
+      backgroundColor: colors.secondary[100],
     },
     enabledBackground: {
       backgroundColor: colors.secondary[50],
@@ -236,6 +236,39 @@ export const useDropdownInputStyles = () => {
       borderRadius: theme.radii.md,
       zIndex: 1000,
       maxHeight: theme.sizes[40],
+    },
+  });
+};
+
+export const useMobileInputStyles = () => {
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    label: {
+      marginBottom: theme.space[1],
+      color: theme.colors.black,
+    },
+    container: {
+      flexDirection: 'row',
+      borderWidth: 0,
+      gap: theme.space[2],
+    },
+    dropdownContainer: {
+      width: theme.sizes[20],
+    },
+    inputContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      paddingHorizontal: theme.space[2],
+      borderWidth: parseInt(theme.borderWidths['1']),
+      borderRadius: theme.radii.md,
+    },
+    inputField: {
+      height: theme.sizes[10],
+    },
+    message: {
+      fontSize: theme.fontSizes.sm,
+      marginTop: theme.space[1],
     },
   });
 };

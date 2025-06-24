@@ -2,10 +2,10 @@ import { ReactNode } from 'react';
 import { KeyboardTypeOptions, TextInput, TextInputProps, TextStyle } from 'react-native';
 
 export interface DropdownInputProps {
-  label: string;
-  value?: string;
+  label?: string;
+  value?: ReactNode;
   onValueChange: (value: string) => void;
-  status?: 'default' | 'error' | 'success';
+  status?: InputStatus;
   errorMessage?: string;
   successMessage?: string;
   disabled?: boolean;
@@ -64,4 +64,22 @@ export enum KeyboardTypes {
   URL = 'url',
   VISIBLE_PASSWORD = 'visible-password',
   WEB_SEARCH = 'web-search',
+}
+
+export interface CountryOption {
+  value: string;
+  label: ReactNode;
+}
+
+export interface MobileNumberInputProps {
+  label?: string;
+  country: string;
+  onCountryChange: (value: string) => void;
+  mobileNumber: string;
+  onMobileNumberChange: (value: string) => void;
+  status?: InputStatus;
+  errorMessage?: string;
+  successMessage?: string;
+  disabled?: boolean;
+  countryOptions: CountryOption[];
 }

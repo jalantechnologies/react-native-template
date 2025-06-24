@@ -25,13 +25,15 @@ const MobileNumberInput: React.FC<MobileNumberInputProps> = ({
   const styles = useMobileInputStyles();
 
   const getBorderColor = () => {
-    if (disabled) return theme.colors.secondary[200];
+    if (disabled) {
+      return theme.colors.secondary[200];
+    }
     if (status === InputStatus.ERROR) {
       return theme.colors.danger[500];
     }
     if (status === InputStatus.SUCCESS) {
       return theme.colors.success[500];
-    } 
+    }
     if (isFocused) {
       return theme.colors.primary[300];
     }
@@ -86,7 +88,7 @@ const MobileNumberInput: React.FC<MobileNumberInputProps> = ({
       </View>
 
       {status === InputStatus.ERROR && !!errorMessage && (
-        <Text style={{ color: theme.colors.danger[500], fontSize: 12, marginTop: 4 }}>
+        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>
           {errorMessage}
         </Text>
       )}

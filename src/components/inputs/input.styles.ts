@@ -278,9 +278,9 @@ export const useWebsiteInputStyles = () => {
 
   return StyleSheet.create({
     label: {
-      marginBottom: 4,
+      marginBottom: theme.space[1],
       color: theme.colors.secondary[700],
-      fontSize: 14,
+      fontSize: theme.fontSizes.sm,
       fontWeight: '500',
     },
     container: {
@@ -288,35 +288,35 @@ export const useWebsiteInputStyles = () => {
       borderWidth: 0,
     },
     protocolContainer: {
-      width: 70,
+      width: theme.sizes[20],
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: theme.colors.secondary[100],
-      borderTopLeftRadius: 6,
-      borderBottomLeftRadius: 6,
-      borderWidth: 1,
+      borderTopLeftRadius: theme.radii.md,
+      borderBottomLeftRadius: theme.radii.md,
+      borderWidth: parseInt(theme.borderWidths['1']),
       borderRightWidth: 0,
       borderColor: theme.colors.secondary[200],
     },
     protocolText: {
-      fontSize: 14,
+      fontSize: theme.fontSizes.sm,
       color: theme.colors.secondary[700],
     },
     inputContainer: {
       flex: 1,
       justifyContent: 'center',
-      paddingHorizontal: 8,
-      borderWidth: 1,
-      borderTopRightRadius: 6,
-      borderBottomRightRadius: 6,
+      paddingHorizontal: theme.space[2],
+      borderWidth: parseInt(theme.borderWidths['1']),
+      borderTopRightRadius: theme.radii.md,
+      borderBottomRightRadius: theme.radii.md,
     },
     inputField: {
-      height: 40,
-      fontSize: 14,
+      height: theme.sizes[10],
+      fontSize: theme.fontSizes.sm,
     },
     message: {
-      fontSize: 12,
-      marginTop: 4,
+      fontSize: theme.fontSizes.sm,
+      marginTop: theme.space[1],
     },
   });
 };

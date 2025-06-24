@@ -33,10 +33,10 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
         end
           build.patch(attributes: { expired: true })
 
-        FastlaneCore::UI.success("Successfully expired build ID: #{build_id_to_expire}")
+        FastlaneCore::UI.success("Successfully expired build ID: #{build.id}")
 
       rescue StandardError => e
-        FastlaneCore::UI.error("Failed to expire build ID #{build_id_to_expire}: #{e.message}")
+        FastlaneCore::UI.error("Failed to expire build ID #{build.id}: #{e.message}")
       end
     end
   end

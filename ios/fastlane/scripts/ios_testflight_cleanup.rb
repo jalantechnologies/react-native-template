@@ -1,7 +1,7 @@
 require 'spaceship'
 require 'base64'
-  require 'fastlane'
-  require 'fastlane_core/ui/ui'
+require 'fastlane'
+require 'fastlane_core/ui/ui'
 
 def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:, api_key_b64:)
   # Decode API key
@@ -17,7 +17,7 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
 
   # Find the app
   app = Spaceship::ConnectAPI::App.find(app_identifier)
-  UI.user_error!("App '#{app_identifier}' not found!") unless app
+  FastlaneCore::UI.user_error!("App '#{app_identifier}' not found!") unless app
 
   # Fetch builds without includes
   builds = app.get_builds(limit: 200)
@@ -30,14 +30,14 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
           build = Spaceship::ConnectAPI::Build.get(build_id: build_id_to_expire)
 
         unless build
-          UI.user_error!("Build with ID #{build_id_to_expire} not found.")
+          FastlaneCore::UI.user_error!("Build with ID #{build_id_to_expire} not found.")
         end
           build.patch(attributes: { expired: true })
 
-        UI.success("Successfully expired build ID: #{build_id_to_expire}")
+        FastlaneCore::UI.success("Successfully expired build ID: #{build_id_to_expire}")
 
       rescue StandardError => e
-        UI.error("Failed to expire build ID #{build_id_to_expire}: #{e.message}")
+        FastlaneCore::UI.error("Failed to expire build ID #{build_id_to_expire}: #{e.message}")
       end
     end
   end

@@ -4,7 +4,7 @@ def ios_testflight_deploy!(options = {})
   require 'fastlane'
   require 'fastlane_core/ui/ui'
 
-  # === Required Inputs ===
+  # Required inputs passed from the Fastlane lane or script that invokes this deploy logic.
   pr_number = options.fetch(:pr_number)
   app_identifier = options.fetch(:app_identifier)
   xcodeproj = options.fetch(:xcodeproj)
@@ -17,7 +17,7 @@ def ios_testflight_deploy!(options = {})
   apple_id = options.fetch(:apple_id)
   username = options.fetch(:username)
 
-  # === Setup Signing ===
+  # Use match in readonly mode to fetch existing App Store signing certificates and provisioning profiles.
   match(
     type: "appstore",
     readonly: true,
@@ -25,7 +25,7 @@ def ios_testflight_deploy!(options = {})
     keychain_name: keychain_name,
     keychain_password: keychain_password
   )
-
+  # Set the build number using current datetime + PR number to ensure uniqueness across PR builds.
   increment_build_number(
     xcodeproj: xcodeproj,
     build_number: "#{Time.now.strftime('%m%d.%H%M')}.#{ENV['PR_NUMBER']}"
@@ -37,8 +37,9 @@ def ios_testflight_deploy!(options = {})
     key_content: api_key_b64,
     is_key_content_base64: true,
   )
-
-   Dir.chdir("..") do
+  # Change to the parent directory to run asset bundling and JS pre-checks.
+  # This ensures we fail early if the React Native JS bundle doesn't exist.
+  Dir.chdir("..") do
     ENV["ENVFILE"] = ".env.preview"
     ENV["NODE_ENV"] = "production"
 
@@ -46,15 +47,14 @@ def ios_testflight_deploy!(options = {})
     FastlaneCore::UI.message("🔍 Looking for main.jsbundle at: #{js_bundle_path}")
 
     FastlaneCore::UI.user_error!("❌ main.jsbundle not found at: #{js_bundle_path}") unless File.exist?(js_bundle_path)
-   end
-
-
+  end
+  # Build the .ipa with manual signing configuration, specifying the correct provisioning profile via `match`.
   build_app(
     clean: true,
     scheme: scheme,
     export_method: "app-store",
     export_options: {
-      compileBitcode: false,
+      compileBitcode: false,# Bitcode is stripped manually below due to Hermes compatibility issues.
       signingStyle: "manual",
       provisioningProfiles: {
         app_identifier => "match AppStore #{app_identifier}"
@@ -63,7 +63,8 @@ def ios_testflight_deploy!(options = {})
   )
 
   ipa_path = lane_context[:IPA_OUTPUT_PATH]
-
+  # Strip bitcode manually from Hermes binary to avoid App Store submission errors.
+  # Hermes framework often includes bitcode sections that aren't removed by default tools.
   sh <<~BASH
       echo "🔍 Stripping bitcode from Hermes binary before uploading to TestFlight..."
 
@@ -111,13 +112,7 @@ def ios_testflight_deploy!(options = {})
 
       rm -rf temp_payload
     BASH
-  original_ipa_path = lane_context[:IPA_OUTPUT_PATH]
-  custom_ipa_name = "PR-#{ENV['PR_NUMBER']}.ipa"
-  custom_ipa_path = File.expand_path(custom_ipa_name)
-
-  FileUtils.cp(original_ipa_path, custom_ipa_path)
-  ENV["CUSTOM_IPA_PATH"] = custom_ipa_path 
-
+  # Upload the build to TestFlight (internal only) with a changelog indicating the PR number.
   upload_to_testflight(
     changelog: "PR ##{pr_number} Build - automated upload",
     distribute_external: false,

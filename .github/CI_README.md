@@ -32,6 +32,14 @@ These environment variables are used by the GitHub Actions workflows and Fastlan
 | `GPLAY_SERVICE_ACCOUNT_KEY_JSON`  | GitHub Secret  | Google Play service account key for uploading Android production builds via Fastlane and GitHub Action. |
 | `SONAR_TOKEN`                     | GitHub Secret  | Authentication token for SonarQube analysis API access. |
 | `SONAR_HOST_URL`                  | GitHub Secret  | URL of your SonarQube server used in PR and branch scan jobs. |
+| `APPLE_ID`                            | GitHub Secret    | Apple Developer App-specific Apple ID. Used by Fastlane and App Store Connect APIs for identifying the app owner.                                    |
+| `KEYCHAIN_PASSWORD`                  | GitHub Secret    | Password for the temporary macOS CI keychain used to store signing certificates during iOS builds.                                                   |
+| `FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD` | GitHub Secret | App-specific password used by Fastlane to upload builds to TestFlight (required for some Fastlane operations).                                        |
+| `APP_STORE_CONNECT_API_KEY_ID`       | GitHub Secret    | App Store Connect API Key ID. Used by Fastlane to authenticate securely with App Store Connect.                                                      |
+| `APP_STORE_CONNECT_API_KEY_ISSUER_ID`| GitHub Secret    | App Store Connect API Issuer ID. Used in conjunction with API Key ID and Base64 key to authenticate.                                                 |
+| `APP_STORE_CONNECT_API_KEY_B64`      | GitHub Secret    | Base64-encoded contents of your App Store Connect API key (.p8 file). Used by Fastlane for secure authentication with Apple APIs.                    |
+| `MATCH_PASSWORD`                     | GitHub Secret    | Password for the Match encryption repo (used by Fastlane Match to decrypt signing certificates and provisioning profiles).                           |
+| `MATCH_DEPLOY_KEY`                   | GitHub Secret    | SSH private key with read access to your Match certificate repository. Used to fetch provisioning profiles during CI.                                |
 
 These variables are decoded and written to disk during the CI process so tools like Fastlane or the Firebase CLI can use them.
 
@@ -39,7 +47,7 @@ These variables are decoded and written to disk during the CI process so tools l
 
 ## 🚀 CI Workflow Summary
 
-### 1. 🔄 PR Build & Deploy to Firebase App Distribution
+### 1.  PR Build & Deploy to Firebase App Distribution
 
 **Why?**  
 To enable quick testing and feedback for each PR by distributing debug builds to Firebase testers.
@@ -54,7 +62,7 @@ To enable quick testing and feedback for each PR by distributing debug builds to
 
 ---
 
-### 2. 🧹 Firebase Cleanup on PR Close
+### 2.  Firebase Cleanup on PR Close
 
 **Why?**  
 To prevent clutter in Firebase App Distribution by automatically removing builds for closed PRs.
@@ -67,8 +75,34 @@ To prevent clutter in Firebase App Distribution by automatically removing builds
   - Call the Firebase App Distribution `batchDelete` API to remove them
 
 ---
+### 3.  PR Build & Deploy to TestFlight (iOS)
 
-## 🧪 Local Testing
+**Why?**  
+To make iOS preview builds available for testing via TestFlight for every active PR.
+
+**How?**
+- Triggered on PR open, reopen, or update (`pull_request` events)  
+- Uses Fastlane’s `ios/pr_deploy` lane to:
+  - Fetch iOS signing certificates and provisioning profiles using Fastlane Match
+  - Build the app using Xcode with `build_app`
+  - Upload the build to TestFlight via `upload_to_testflight`
+  - Comment on the PR with the TestFlight link and build metadata (App ID, build hash)
+
+---
+
+### 4. TestFlight Cleanup on PR Close (iOS)
+
+**Why?**  
+To automatically remove TestFlight builds for closed PRs, keeping TestFlight builds relevant and minimal.
+
+**How?**
+- Triggered on PR close (`pull_request.closed`)  
+- Uses Fastlane’s `ios/pr_cleanup` lane to:
+  - Authenticate with App Store Connect via API Key
+  - Identify and remove the TestFlight build associated with the closed PR
+  - Helps maintain a clean TestFlight history and avoids orphaned builds
+
+##  Local Testing
 
 You can test CI/CD behavior locally using Fastlane to simulate the GitHub Actions environment.
 

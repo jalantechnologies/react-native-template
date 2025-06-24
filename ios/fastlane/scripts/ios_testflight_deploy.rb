@@ -111,7 +111,13 @@ def ios_testflight_deploy!(options = {})
 
       rm -rf temp_payload
     BASH
-  ENV["FINAL_IPA_PATH"] = lane_context[:IPA_OUTPUT_PATH]
+  original_ipa_path = lane_context[:IPA_OUTPUT_PATH]
+  custom_ipa_name = "PR-#{ENV['PR_NUMBER']}.ipa"
+  custom_ipa_path = File.expand_path(custom_ipa_name)
+
+  FileUtils.mv(original_ipa_path, custom_ipa_path)
+  ENV["CUSTOM_IPA_PATH"] = custom_ipa_path
+
   upload_to_testflight(
     changelog: "PR ##{pr_number} Build - automated upload",
     distribute_external: false,

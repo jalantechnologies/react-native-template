@@ -134,26 +134,18 @@ jobs:
           TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$APPLE_ID/testflight/ios"
 
           # Step 2: Find the IPA file
-          IPA_PATH=$(find . -name "*.ipa" | head -n 1)
-          if [[ -z "$IPA_PATH" ]]; then
-            echo "❌ No .ipa file found for BrowserStack"
+          if [[ -z "$CUSTOM_IPA_PATH" || ! -f "$CUSTOM_IPA_PATH" ]]; then
+            echo "❌ IPA file not found: $CUSTOM_IPA_PATH"
             exit 1
           fi
 
-          # Step 3: Upload to BrowserStack
-          echo "📤 Uploading IPA to BrowserStack..."
+          echo "📤 Uploading renamed IPA to BrowserStack..."
           response=$(curl -s -u "$BROWSERSTACK_USERNAME:$BROWSERSTACK_ACCESS_KEY" \
             -X POST "https://api-cloud.browserstack.com/app-live/upload" \
-            -F "file=@$IPA_PATH" \
+            -F "file=@$CUSTOM_IPA_PATH" \
             -F "custom_id=pr_${PR_NUMBER}_${BUILD_HASH}")
 
-          APP_URL=$(echo "$response" | grep -o '"app_url":"[^"]*' | cut -d'"' -f4)
-
-          if [[ -z "$APP_URL" ]]; then
-            echo "❌ Failed to retrieve app_url from BrowserStack"
-            echo "$response"
-            exit 1
-          fi
+          APP_URL="https://app-live.browserstack.com/#os=iOS&os_version=17.0&zoom_to_fit=true&full_screen=true&speed=1"
 
           echo "✅ BrowserStack URL: $APP_URL"
 

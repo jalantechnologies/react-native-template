@@ -2,14 +2,14 @@ name: iOS PR Cleanup
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [closed]
 
 jobs:
   ios_testflight_cleanup:
     name: Cleanup iOS TestFlight Build
     runs-on: macos-14
 
-    # if: github.event.pull_request.merged == true || github.event.pull_request.state == 'closed'
+    if: github.event.pull_request.merged == true || github.event.pull_request.state == 'closed'
 
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}

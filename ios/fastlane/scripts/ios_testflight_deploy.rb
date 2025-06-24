@@ -28,7 +28,7 @@ def ios_testflight_deploy!(options = {})
 
   increment_build_number(
     xcodeproj: xcodeproj,
-    build_number: Time.now.strftime("%Y%m%d%H%M")
+    build_number: "#{pr_number}-#{Time.now.strftime('%Y%m%d')}"
   )
 
   app_store_connect_api_key(
@@ -111,7 +111,7 @@ def ios_testflight_deploy!(options = {})
 
       rm -rf temp_payload
     BASH
-
+  ENV["FINAL_IPA_PATH"] = lane_context[:IPA_OUTPUT_PATH]
   upload_to_testflight(
     changelog: "PR ##{pr_number} Build - automated upload",
     distribute_external: false,

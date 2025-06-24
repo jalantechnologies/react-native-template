@@ -12,10 +12,13 @@ import Logger from './logger/logger';
 import ApplicationNavigator from './navigators/application';
 import './translations';
 import DatadogConfig, { onDataDogSDKInitialized } from './services/datadog';
+import { useNotificationSetup } from './utils/use-notification-setup.hook';
 
 const App = () => {
   Logger.initializeLoggers();
   const ErrorComponent = useCallback(() => <ErrorFallback />, []);
+
+  useNotificationSetup();
 
   return (
     <NativeBaseProvider theme={appTheme}>

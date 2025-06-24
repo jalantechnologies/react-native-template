@@ -320,3 +320,41 @@ export const useWebsiteInputStyles = () => {
     },
   });
 };
+
+export const useCardDetailsInputStyles = () => {
+  const theme = useTheme();
+  return StyleSheet.create({
+    label: {
+      fontSize: theme.space[4],
+      color: theme.colors.black,
+      marginBottom: theme.space[2],
+    },
+    container: {
+      flexDirection: 'row',
+      borderWidth: parseInt(theme.borderWidths['1']),
+      borderRadius: theme.radii.md,
+      overflow: 'hidden',
+      alignItems: 'center',
+      paddingHorizontal: theme.space[2],
+    },
+    inputField: {
+      paddingVertical: theme.space[3],
+      paddingHorizontal: theme.space[2],
+      color: theme.colors.black,
+    },
+    cardInput: {
+      flex: 2,
+      borderRightWidth: 0,
+      minWidth: theme.space[24],
+    },
+    expiryInput: {
+      flex: 1,
+      borderRightWidth: 0,
+      textAlign: 'center',
+    },
+    cvvInput: {
+      flex: 1,
+      textAlign: 'center',
+    },
+  });
+};

@@ -2,19 +2,19 @@ import { ReactNode } from 'react';
 import { KeyboardTypeOptions, TextInput, TextInputProps, TextStyle } from 'react-native';
 
 export interface DropdownInputProps {
+  children: React.ReactElement<DropdownOptionProps>[];
+  disabled?: boolean;
+  errorMessage?: string;
   label?: string;
-  value?: ReactNode;
   onValueChange: (value: string) => void;
   status?: InputStatus;
-  errorMessage?: string;
   successMessage?: string;
-  disabled?: boolean;
-  children: React.ReactElement<DropdownOptionProps>[];
+  value?: ReactNode;
 }
 
 export interface DropdownOptionProps {
-  value: string;
   children: ReactNode;
+  value: string;
 }
 
 export enum InputStatus {
@@ -67,30 +67,48 @@ export enum KeyboardTypes {
 }
 
 export interface CountryOption {
-  value: string;
   label: ReactNode;
+  value: string;
 }
 
 export interface MobileNumberInputProps {
-  label?: string;
   country: string;
-  onCountryChange: (value: string) => void;
+  countryOptions: CountryOption[];
+  disabled?: boolean;
+  errorMessage?: string;
+  label?: string;
   mobileNumber: string;
+  onCountryChange: (value: string) => void;
   onMobileNumberChange: (value: string) => void;
   status?: InputStatus;
-  errorMessage?: string;
   successMessage?: string;
-  disabled?: boolean;
-  countryOptions: CountryOption[];
 }
 
 export interface WebsiteUrlInputProps {
-  label?: string;
-  url: string;
-  onUrlChange: (value: string) => void;
-  status?: InputStatus;
-  errorMessage?: string;
-  successMessage?: string;
   disabled?: boolean;
-  onValidate: (finalUrl: string, status: InputStatus) => void; // Return merged URL and status
+  errorMessage?: string;
+  label?: string;
+  onUrlChange: (value: string) => void;
+  onValidate: (finalUrl: string, status: InputStatus) => void;
+  status?: InputStatus;
+  successMessage?: string;
+  url: string;
+}
+
+export interface CardDetailsInputProps {
+  cardNumber: string;
+  cvv: string;
+  disabled?: boolean;
+  errorMessage?: string;
+  expiry: string;
+  label?: string;
+  onCardNumberChange: (value: string) => void;
+  onCvvChange: (value: string) => void;
+  onExpiryChange: (value: string) => void;
+  onValidate?: (
+    result: { cardNumber: string; expiry: string; cvv: string } | '',
+    status: InputStatus,
+  ) => void;
+  status?: InputStatus;
+  successMessage?: string;
 }

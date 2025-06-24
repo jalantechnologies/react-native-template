@@ -28,7 +28,7 @@ def ios_testflight_deploy!(options = {})
 
   increment_build_number(
     xcodeproj: xcodeproj,
-    build_number: "#{ENV['PR_NUMBER'].to_i % 1000}.#{Time.now.strftime('%m%d')}"
+    build_number: "#{Time.now.strftime('%m%d.%H%M')}.#{ENV['PR_NUMBER']}"
   )
 
   app_store_connect_api_key(

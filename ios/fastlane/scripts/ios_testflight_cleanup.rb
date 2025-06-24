@@ -22,7 +22,7 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
   builds = app.get_builds(limit: 200)
   builds.each do |build|
     build_version_str = build.version.to_s
-    if build_version_str.start_with?(pr_number.to_s)
+    if build_version_str.end_with?(pr_number.to_s)
       FastlaneCore::UI.message("🧹 Expiring build #{build_version_str} (#{build.id}) for PR ##{pr_number}")
         begin
           build = Spaceship::ConnectAPI::Build.get(build_id: build.id)

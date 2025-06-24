@@ -1,6 +1,6 @@
 # Divider Component
 
-A customizable and theme-consistent `Divider` component for React Native apps, used to separate content visually with support for orientation, thickness, length, and dash styles. 
+A customizable and theme-consistent `Divider` component for React Native apps, used to separate content visually with support for orientation, thickness, length, and dash styles.
 
 ## ✨ Features
 
@@ -11,20 +11,12 @@ A customizable and theme-consistent `Divider` component for React Native apps, u
 
 ## 🔧 Props
 
-| Prop         | Type                                | Default                         | Description                                      |
-|--------------|-------------------------------------|----------------------------------|--------------------------------------------------|
-| `orientation`| `horizontal` \| `vertical`          | `horizontal`                     | Divider layout direction                         |
-| `thickness`  | `number`                            | `1`                              | Line thickness                                   |
-| `length`     | `number` \| `string`                | `'100%'`                         | Length of the divider (px or percentage)         |
-| `dashStyle`  | `solid` \| `dashed` \| `dotted`     | `solid`                          | Border style                                     |
-| `style`      | `StyleProp<ViewStyle>`              | `undefined`                      | Additional custom styles (excluding color)       |
+| Prop         | Type                               | Default                         | Description                                      |
+|--------------|------------------------------------|----------------------------------|--------------------------------------------------|
+| `orientation`| `horizontal` \| `vertical`         | `horizontal`                     | Divider layout direction                         |
+| `thickness`  | `number`                           | `1`                              | Line thickness                                   |
+| `testID`     | `string`                           | `divider`                        | Custom test identifier                           |
 
 ## 🎨 Theming
 
-Divider color is derived from the app's theme using `ALLOWED_DIVIDER_COLORS` and `useThemeColor`. Consumers cannot override the color directly.
-
-```ts
-// Example internally used:
-const color: AllowedColor = 'primary';
-const shade: AllowedShade = ALLOWED_DIVIDER_COLORS[color];
-const dividerColor = useThemeColor(`${color}.${shade}`);
+Divider color is derived from the app's theme. Consumers cannot override the color directly. The divider will use the theme's default color for consistency across your app.

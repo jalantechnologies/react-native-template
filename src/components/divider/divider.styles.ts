@@ -1,29 +1,31 @@
+import { useTheme } from 'native-base';
 import { StyleSheet, ViewStyle } from 'react-native';
 
-export type DividerOrientation = 'horizontal' | 'vertical';
+export enum DividerOrientation {
+  Horizontal = 'horizontal',
+  Vertical = 'vertical',
+}
 
 interface DividerStyleProps {
   orientation: DividerOrientation;
   thickness: number;
-  color?: string;
 }
 
-export const useDividerStyles = ({
-  orientation,
-  thickness,
-  color = '#888888',
-}: DividerStyleProps) => {
-  const isHorizontal = orientation === 'horizontal';
+export const useDividerStyles = ({ orientation, thickness }: DividerStyleProps) => {
+  const theme = useTheme();
+  const resolvedColor = theme.colors.gray[400];
+
+  const isHorizontal = orientation === DividerOrientation.Horizontal;
   const style: ViewStyle = isHorizontal
     ? {
         width: '100%',
         height: thickness,
-        backgroundColor: color,
+        backgroundColor: resolvedColor,
       }
     : {
         width: thickness,
         height: '100%',
-        backgroundColor: color,
+        backgroundColor: resolvedColor,
       };
 
   return StyleSheet.create({

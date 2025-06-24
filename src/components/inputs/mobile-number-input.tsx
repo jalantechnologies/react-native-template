@@ -88,9 +88,7 @@ const MobileNumberInput: React.FC<MobileNumberInputProps> = ({
       </View>
 
       {status === InputStatus.ERROR && !!errorMessage && (
-        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>
-          {errorMessage}
-        </Text>
+        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>{errorMessage}</Text>
       )}
 
       {status === InputStatus.SUCCESS && !!successMessage && (

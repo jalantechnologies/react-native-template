@@ -96,15 +96,11 @@ const WebsiteUrlInput: React.FC<WebsiteUrlInputProps> = ({
       </View>
 
       {status === InputStatus.ERROR && !!errorMessage && (
-        <Text style={{ color: theme.colors.danger[500], fontSize: 12, marginTop: 4 }}>
-          {errorMessage}
-        </Text>
+        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>{errorMessage}</Text>
       )}
 
       {status === InputStatus.SUCCESS && !!successMessage && (
-        <Text style={{ color: theme.colors.success[500], fontSize: 12, marginTop: 4 }}>
-          {successMessage}
-        </Text>
+        <Text style={[styles.message, { color: theme.colors.success[500] }]}>{successMessage}</Text>
       )}
     </View>
   );

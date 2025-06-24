@@ -34,10 +34,18 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const getBorderColor = () => {
-    if (disabled) return theme.colors.secondary[200];
-    if (status === InputStatus.ERROR) return theme.colors.danger[500];
-    if (status === InputStatus.SUCCESS) return theme.colors.success[500];
-    if (focusedField) return theme.colors.primary[300];
+    if (disabled) {
+        return theme.colors.secondary[200];
+    }
+    if ((status ? status : localStatus) === InputStatus.ERROR) {
+        return theme.colors.danger[500];
+    }
+    if ((status ? status : localStatus) === InputStatus.SUCCESS) {
+        return theme.colors.success[500];
+    }
+    if (focusedField) {
+        return theme.colors.primary[300];
+    }
     return theme.colors.secondary[200];
   };
 
@@ -89,10 +97,26 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
     <View>
       {label && <Text style={styles.label}>{label}</Text>}
 
-      <View style={[styles.container, { borderColor: getBorderColor() }]}>
-        <Icon name="credit-card" size={18} color={theme.colors.black} />
+      <View
+        style={[
+          styles.container,
+          {
+            borderColor: getBorderColor(),
+            backgroundColor: disabled ? theme.colors.secondary[100] : theme.colors.secondary[50],
+          },
+        ]}
+      >
+        <Icon
+          name="credit-card"
+          size={18}
+          color={disabled ? theme.colors.secondary[400] : theme.colors.black}
+        />
         <TextInput
-          style={[styles.inputField, styles.cardInput]}
+          style={[
+            styles.inputField,
+            styles.cardInput,
+            { color: disabled ? theme.colors.secondary[400] : theme.colors.black },
+          ]}
           value={cardNumber}
           onChangeText={onCardNumberChange}
           placeholder="Card Number"
@@ -107,7 +131,11 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
 
         <TextInput
           ref={expiryRef}
-          style={[styles.inputField, styles.expiryInput]}
+          style={[
+            styles.inputField,
+            styles.expiryInput,
+            { color: disabled ? theme.colors.secondary[400] : theme.colors.black },
+          ]}
           value={expiry}
           onChangeText={handleExpiryInput}
           placeholder="MM/YY"
@@ -122,7 +150,11 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
 
         <TextInput
           ref={cvvRef}
-          style={[styles.inputField, styles.cvvInput]}
+          style={[
+            styles.inputField,
+            styles.cvvInput,
+            { color: disabled ? theme.colors.secondary[400] : theme.colors.black },
+          ]}
           value={cvv}
           onChangeText={onCvvChange}
           placeholder="CVV"

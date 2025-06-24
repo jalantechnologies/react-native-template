@@ -32,7 +32,7 @@ export const useInputStyles = () => {
       alignItems: 'center',
     },
     defaultBorder: {
-      borderWidth: parseInt(theme.borderWidths['1']),
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderColor: colors.secondary[200],
     },
     disabledBackground: {
@@ -61,12 +61,12 @@ export const useInputStyles = () => {
       fontSize: theme.fontSizes.sm,
     },
     errorBorder: {
-      borderWidth: parseInt(theme.borderWidths['1']),
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderColor: colors.danger[500],
     },
     successBorder: {
       borderColor: colors.success[500],
-      borderWidth: parseInt(theme.borderWidths['1']),
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
     },
     successMessage: {
       color: colors.success[500],
@@ -197,7 +197,7 @@ export const useDropdownInputStyles = () => {
     inputContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      borderWidth: parseInt(theme.borderWidths[1]),
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderRadius: theme.radii.md,
       paddingHorizontal: theme.space[3],
       paddingVertical: theme.space[3],
@@ -223,7 +223,7 @@ export const useDropdownInputStyles = () => {
     },
     option: {
       padding: theme.space[4],
-      borderBottomWidth: parseInt(theme.borderWidths[1]),
+      borderBottomWidth: parseInt(theme.borderWidths['1'], 10),
       borderBottomColor: theme.colors.secondary[200],
     },
     dropdown: {
@@ -231,7 +231,7 @@ export const useDropdownInputStyles = () => {
       left: 0,
       right: 0,
       backgroundColor: theme.colors.white,
-      borderWidth: parseInt(theme.borderWidths[1]),
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderColor: theme.colors.secondary[200],
       borderRadius: theme.radii.md,
       zIndex: 1000,
@@ -260,7 +260,7 @@ export const useMobileInputStyles = () => {
       flex: 1,
       justifyContent: 'center',
       paddingHorizontal: theme.space[2],
-      borderWidth: parseInt(theme.borderWidths['1']),
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderRadius: theme.radii.md,
     },
     inputField: {
@@ -294,7 +294,7 @@ export const useWebsiteInputStyles = () => {
       backgroundColor: theme.colors.secondary[100],
       borderTopLeftRadius: theme.radii.md,
       borderBottomLeftRadius: theme.radii.md,
-      borderWidth: parseInt(theme.borderWidths['1']),
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderRightWidth: 0,
       borderColor: theme.colors.secondary[200],
     },
@@ -306,7 +306,7 @@ export const useWebsiteInputStyles = () => {
       flex: 1,
       justifyContent: 'center',
       paddingHorizontal: theme.space[2],
-      borderWidth: parseInt(theme.borderWidths['1']),
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderTopRightRadius: theme.radii.md,
       borderBottomRightRadius: theme.radii.md,
     },
@@ -331,7 +331,7 @@ export const useCardDetailsInputStyles = () => {
     },
     container: {
       flexDirection: 'row',
-      borderWidth: parseInt(theme.borderWidths['1']),
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderRadius: theme.radii.md,
       overflow: 'hidden',
       alignItems: 'center',

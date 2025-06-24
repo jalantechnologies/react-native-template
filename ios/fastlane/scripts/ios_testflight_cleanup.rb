@@ -29,7 +29,7 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
           build = Spaceship::ConnectAPI::Build.get(build_id: build.id)
 
         unless build
-          FastlaneCore::UI.user_error!("Build with ID #{build_id_to_expire} not found.")
+          FastlaneCore::UI.user_error!("Build with ID #{build.id} not found.")
         end
           build.patch(attributes: { expired: true })
 

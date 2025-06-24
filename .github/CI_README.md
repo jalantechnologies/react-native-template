@@ -40,6 +40,7 @@ These environment variables are used by the GitHub Actions workflows and Fastlan
 | `APP_STORE_CONNECT_API_KEY_B64`      | GitHub Secret    | Base64-encoded contents of your App Store Connect API key (.p8 file). Used by Fastlane for secure authentication with Apple APIs.                    |
 | `MATCH_PASSWORD`                     | GitHub Secret    | Password for the Match encryption repo (used by Fastlane Match to decrypt signing certificates and provisioning profiles).                           |
 | `MATCH_DEPLOY_KEY`                   | GitHub Secret    | SSH private key with read access to your Match certificate repository. Used to fetch provisioning profiles during CI.                                |
+| `IOS_APP_IDENTIFIER`                | GitHub Secret    | iOS app bundle identifier. Used during iOS build and upload processes.                         |
 
 These variables are decoded and written to disk during the CI process so tools like Fastlane or the Firebase CLI can use them.
 

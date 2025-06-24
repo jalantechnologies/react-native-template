@@ -176,3 +176,66 @@ export const useTextAreaInputStyles = () => {
     },
   });
 };
+
+export const useDropdownInputStyles = () => {
+  const theme = useTheme();
+  return StyleSheet.create({
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 1000,
+    },
+    label: {
+      marginBottom: theme.space[2],
+      fontSize: theme.fontSizes.md,
+      fontWeight: '500',
+      color: theme.colors.black,
+    },
+    inputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: parseInt(theme.borderWidths[1]),
+      borderRadius: theme.radii.md,
+      paddingHorizontal: theme.space[3],
+      paddingVertical: theme.space[3],
+      justifyContent: 'space-between',
+    },
+    inputText: {
+      fontSize: theme.fontSizes.md,
+      color: theme.colors.black,
+    },
+    dropdownIcon: {
+      fontSize: theme.fontSizes.md,
+      color: theme.colors.black,
+    },
+    errorMessage: {
+      marginTop: theme.space[2],
+      fontSize: theme.fontSizes.sm,
+      color: theme.colors.danger[500],
+    },
+    successMessage: {
+      marginTop: theme.space[2],
+      fontSize: theme.fontSizes.sm,
+      color: theme.colors.success[500],
+    },
+    option: {
+      padding: theme.space[4],
+      borderBottomWidth: parseInt(theme.borderWidths[1]),
+      borderBottomColor: theme.colors.secondary[200],
+    },
+    dropdown: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      backgroundColor: theme.colors.white,
+      borderWidth: parseInt(theme.borderWidths[1]),
+      borderColor: theme.colors.secondary[200],
+      borderRadius: theme.radii.md,
+      zIndex: 1000,
+      maxHeight: theme.sizes[40],
+    },
+  });
+};

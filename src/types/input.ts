@@ -1,4 +1,21 @@
+import { ReactNode } from 'react';
 import { KeyboardTypeOptions, TextInput, TextInputProps, TextStyle } from 'react-native';
+
+export interface DropdownInputProps {
+  label: string;
+    value?: string;
+    onValueChange: (value: string) => void;
+    status?: 'default' | 'error' | 'success';
+    errorMessage?: string;
+    successMessage?: string;
+    disabled?: boolean;
+    children: React.ReactElement<DropdownOptionProps>[];
+}
+
+export interface DropdownOptionProps {
+  value: string;
+  children: ReactNode;
+}
 
 export enum InputStatus {
   DEFAULT = 'default',

@@ -83,3 +83,14 @@ export interface MobileNumberInputProps {
   disabled?: boolean;
   countryOptions: CountryOption[];
 }
+
+export interface WebsiteUrlInputProps {
+  label?: string;
+  url: string;
+  onUrlChange: (value: string) => void;
+  status?: InputStatus;
+  errorMessage?: string;
+  successMessage?: string;
+  disabled?: boolean;
+  onValidate: (finalUrl: string, status: InputStatus) => void; // Return merged URL and status
+}

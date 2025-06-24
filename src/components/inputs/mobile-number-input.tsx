@@ -26,9 +26,15 @@ const MobileNumberInput: React.FC<MobileNumberInputProps> = ({
 
   const getBorderColor = () => {
     if (disabled) return theme.colors.secondary[200];
-    if (status === InputStatus.ERROR) return theme.colors.danger[500];
-    if (status === InputStatus.SUCCESS) return theme.colors.success[500];
-    if (isFocused) return theme.colors.primary[500];
+    if (status === InputStatus.ERROR) {
+      return theme.colors.danger[500];
+    }
+    if (status === InputStatus.SUCCESS) {
+      return theme.colors.success[500];
+    } 
+    if (isFocused) {
+      return theme.colors.primary[300];
+    }
     return theme.colors.secondary[200];
   };
 

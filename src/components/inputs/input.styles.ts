@@ -272,3 +272,51 @@ export const useMobileInputStyles = () => {
     },
   });
 };
+
+export const useWebsiteInputStyles = () => {
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    label: {
+      marginBottom: 4,
+      color: theme.colors.secondary[700],
+      fontSize: 14,
+      fontWeight: '500',
+    },
+    container: {
+      flexDirection: 'row',
+      borderWidth: 0,
+    },
+    protocolContainer: {
+      width: 70,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.colors.secondary[100],
+      borderTopLeftRadius: 6,
+      borderBottomLeftRadius: 6,
+      borderWidth: 1,
+      borderRightWidth: 0,
+      borderColor: theme.colors.secondary[200],
+    },
+    protocolText: {
+      fontSize: 14,
+      color: theme.colors.secondary[700],
+    },
+    inputContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      paddingHorizontal: 8,
+      borderWidth: 1,
+      borderTopRightRadius: 6,
+      borderBottomRightRadius: 6,
+    },
+    inputField: {
+      height: 40,
+      fontSize: 14,
+    },
+    message: {
+      fontSize: 12,
+      marginTop: 4,
+    },
+  });
+};

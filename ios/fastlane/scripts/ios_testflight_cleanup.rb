@@ -31,7 +31,7 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
         unless build
           FastlaneCore::UI.user_error!("Build with ID #{build.id} not found.")
         end
-          build.update(build_id: build.id, attributes: { expired: true })
+          build.update(id: build.id, attributes: { expired: true })
 
         FastlaneCore::UI.success("Successfully expired build ID: #{build.id}")
 

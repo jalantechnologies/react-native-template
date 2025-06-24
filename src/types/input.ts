@@ -3,13 +3,13 @@ import { KeyboardTypeOptions, TextInput, TextInputProps, TextStyle } from 'react
 
 export interface DropdownInputProps {
   label: string;
-    value?: string;
-    onValueChange: (value: string) => void;
-    status?: 'default' | 'error' | 'success';
-    errorMessage?: string;
-    successMessage?: string;
-    disabled?: boolean;
-    children: React.ReactElement<DropdownOptionProps>[];
+  value?: string;
+  onValueChange: (value: string) => void;
+  status?: 'default' | 'error' | 'success';
+  errorMessage?: string;
+  successMessage?: string;
+  disabled?: boolean;
+  children: React.ReactElement<DropdownOptionProps>[];
 }
 
 export interface DropdownOptionProps {

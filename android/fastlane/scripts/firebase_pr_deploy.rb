@@ -19,9 +19,6 @@ def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_
     app_id: app_id,
     service_account_path: service_account_path
   )
-  sh("mkdir -p android/app/src/main/assets")
-  sh("mkdir -p android/app/src/main/res")
-  sh("npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res")
 
   firebase.build_apk
 

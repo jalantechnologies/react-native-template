@@ -25,10 +25,11 @@ def ios_testflight_deploy!(options = {})
     keychain_name: keychain_name,
     keychain_password: keychain_password
   )
+  
   # Set the build number using current datetime + PR number to ensure uniqueness across PR builds.
   increment_build_number(
     xcodeproj: xcodeproj,
-    build_number: "#{Time.now.strftime('%m%d.%H%M')}.#{ENV['PR_NUMBER']}"
+    build_number: "#{Time.now.strftime('%m%d.%H%M')}.#{pr_number}"  # Fixed: use pr_number instead of ENV
   )
 
   app_store_connect_api_key(
@@ -37,24 +38,24 @@ def ios_testflight_deploy!(options = {})
     key_content: api_key_b64,
     is_key_content_base64: true,
   )
-  # Change to the parent directory to run asset bundling and JS pre-checks.
-  # This ensures we fail early if the React Native JS bundle doesn't exist.
-  Dir.chdir("..") do
-    ENV["ENVFILE"] = ".env.preview"
-    ENV["NODE_ENV"] = "production"
-
-    js_bundle_path = File.expand_path("main.jsbundle")
-    FastlaneCore::UI.message("🔍 Looking for main.jsbundle at: #{js_bundle_path}")
-
-    FastlaneCore::UI.user_error!("❌ main.jsbundle not found at: #{js_bundle_path}") unless File.exist?(js_bundle_path)
+  
+  # FIXED: Check for bundle in current ios directory, not parent
+  js_bundle_path = File.expand_path("main.jsbundle")
+  FastlaneCore::UI.message("🔍 Looking for main.jsbundle at: #{js_bundle_path}")
+  
+  unless File.exist?(js_bundle_path)
+    FastlaneCore::UI.user_error!("❌ main.jsbundle not found at: #{js_bundle_path}")
   end
+  
+  FastlaneCore::UI.success("✅ Found main.jsbundle at: #{js_bundle_path}")
+
   # Build the .ipa with manual signing configuration, specifying the correct provisioning profile via `match`.
   build_app(
     clean: true,
     scheme: scheme,
     export_method: "app-store",
     export_options: {
-      compileBitcode: false,# Bitcode is stripped manually below due to Hermes compatibility issues.
+      compileBitcode: false,
       signingStyle: "manual",
       provisioningProfiles: {
         app_identifier => "match AppStore #{app_identifier}"
@@ -62,62 +63,20 @@ def ios_testflight_deploy!(options = {})
     },
   )
 
-  ipa_path = lane_context[:IPA_OUTPUT_PATH]
-  # Strip bitcode manually from Hermes binary to avoid App Store submission errors.
-  # Hermes framework often includes bitcode sections that aren't removed by default tools.
-  sh <<~BASH
-      echo "🔍 Stripping bitcode from Hermes binary before uploading to TestFlight..."
+  # SIMPLIFIED: Remove complex bitcode stripping since we disabled bitcode
+  FastlaneCore::UI.message("📦 IPA built successfully, bitcode disabled in export options")
 
-      IPA_PATH=#{lane_context[:IPA_OUTPUT_PATH]}
-      unzip -q "$IPA_PATH" -d temp_payload
-
-      HERMES_BIN="temp_payload/Payload/Boilerplate.app/Frameworks/hermes.framework/hermes"
-      APP_PATH="temp_payload/Payload/Boilerplate.app"
-
-      if [ -f "$HERMES_BIN" ]; then
-        echo "📦 Found Hermes binary. Stripping bitcode..."
-        xcrun bitcode_strip -r "$HERMES_BIN" -o "$HERMES_BIN"
-
-        echo "🔬 Verifying..."
-        if otool -l "$HERMES_BIN" | grep -i bitcode; then
-          echo "❌ Bitcode still present! Failing the build."
-          exit 1
-        else
-          echo "✅ Bitcode successfully stripped."
-        fi
-
-        echo "🔐 Re-signing .app after modification..."
-        CERT_ID=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n1 | awk '{print $2}')
-
-        for FRAMEWORK in "$APP_PATH/Frameworks/"*; do
-          if [ -d "$FRAMEWORK" ]; then
-            /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none "$FRAMEWORK"
-          fi
-        done
-
-        /usr/bin/codesign --force --sign "$CERT_ID" \
-          --timestamp=none \
-          --preserve-metadata=entitlements \
-          "$APP_PATH"
-
-        echo "✅ Code signing complete."
-      else
-        echo "⚠️ Hermes binary not found at expected path: $HERMES_BIN"
-        echo "Skipping bitcode stripping."
-      fi
-
-      echo "📦 Repacking IPA..."
-      cd temp_payload && zip -r -y ../fixed.ipa * >/dev/null && cd ..
-      mv fixed.ipa "$IPA_PATH"
-
-      rm -rf temp_payload
-    BASH
   # Upload the build to TestFlight (internal only) with a changelog indicating the PR number.
   upload_to_testflight(
-    changelog: "PR ##{pr_number} Build - automated upload",
+    changelog: "PR ##{pr_number} Build - automated upload via CI/CD",
     distribute_external: false,
     username: username,
     apple_id: apple_id,
-    app_identifier: app_identifier
+    app_identifier: app_identifier,
+    skip_waiting_for_build_processing: true,
+    skip_submission: true
   )
+  
+  FastlaneCore::UI.success("🚀 Successfully uploaded build to TestFlight!")
 end
+

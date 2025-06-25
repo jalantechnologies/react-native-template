@@ -1,4 +1,5 @@
 import { useTheme } from 'native-base';
+import sizes from 'native-base/lib/typescript/theme/base/sizes';
 import { StyleSheet } from 'react-native';
 
 export const useInputStyles = () => {
@@ -9,7 +10,7 @@ export const useInputStyles = () => {
 
   return StyleSheet.create({
     wrapper: {
-      gap: 8,
+      gap: spacing[2],
     },
     container: {
       flexDirection: 'row',
@@ -134,8 +135,8 @@ export const useTextAreaInputStyles = () => {
       borderRadius: theme.radii.md,
       paddingHorizontal: spacing[3],
       paddingVertical: spacing[2],
-      minHeight: 44,
-      borderWidth: 1,
+      minHeight: sizes[10],
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderColor: colors.coolGray[200],
     },
     input: {
@@ -144,7 +145,7 @@ export const useTextAreaInputStyles = () => {
       color: colors.coolGray[800],
       padding: 0,
       margin: 0,
-      minHeight: 76,
+      minHeight: sizes[20],
     },
     label: {
       marginBottom: spacing[1],
@@ -159,7 +160,7 @@ export const useTextAreaInputStyles = () => {
       marginHorizontal: spacing[1],
     },
     defaultBorder: {
-      borderWidth: 1,
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderColor: colors.coolGray[200],
     },
     disabledBackground: {

@@ -1,343 +1,36 @@
-name: preview_on_pr_update
+name: iOS PR Cleanup
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [closed]
 
 jobs:
-  sonarqube:
-    name: analyze
-    # only run when updating an 'Open' PR
-    if: github.event.pull_request.state == 'open'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          # Disabling shallow clone is recommended for improving relevancy of reporting
-          fetch-depth: 0
-      - name: sonarqube-scan-pullrequest
-        uses: sonarsource/sonarqube-scan-action@master
-        if: ${{ github.base_ref == 'main' }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          args: >
-            -Dsonar.pullrequest.key=${{ github.event.number }}
-            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
-            -Dsonar.pullrequest.base=${{ github.base_ref }}
-            -Dsonar.qualitygate.wait=true
-            -Dsonar.qualitygate.timeout=1000
+  ios_testflight_cleanup:
+    name: Cleanup iOS TestFlight Build
+    runs-on: macos-14
 
-  build:
-    runs-on: ubuntu-latest
-    outputs:
-      image_ref: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native@${{ steps.build.outputs.image_digest }}
-    steps:
-      - name: Checkout (app)
-        uses: actions/checkout@v3
-        # make sure to keep checked in code at different directory to avoid colliding with docker caching
-        with:
-          path: app
-
-      - name: Extract branch name
-        id: extract_branch
-        shell: bash
-        run: |
-          BRANCH_NAME=$(echo ${{ github.event.pull_request.head.ref }} | sed -e 's/^refs\/heads\///g')
-          BRANCH_HASH=$(sha1sum < <(printf '%s' $BRANCH_NAME) | cut -c -15)
-
-          echo "##[set-output name=branch_hash;]$(echo $BRANCH_HASH)"
-
-      - name: Inject Doppler secrets
-        uses: ./app/.github/actions/inject_doppler_secrets
-        with:
-          doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
-          working_directory: app
-
-      - name: Build application
-        id: build
-        uses: ./app/.github/actions/build
-        with:
-          tags: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native:${{ steps.extract_branch.outputs.branch_hash }}
-          build_args: NODE_CONFIG_ENV=preview
-          build_secrets: ''
-          context: app/
-          docker_registry: ${{ vars.DOCKER_REGISTRY }}
-          docker_username: ${{ vars.DOCKER_USERNAME }}
-          docker_password: ${{ secrets.DOCKER_PASSWORD }}
-  
-  checks:
-    needs: build
-    runs-on: ubuntu-latest
-    strategy:
-      # turn off fail fast, let all the checks run irrespective of failures
-      fail-fast: false
-      matrix:
-        check: ['yarn:lint', 'compose:test']
-    steps:
-      - name: Checkout (app)
-        uses: actions/checkout@v3
-        with:
-          path: app
-
-      - name: Inject Doppler secrets
-        uses: ./app/.github/actions/inject_doppler_secrets
-        with:
-          doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
-          working_directory: app
-          
-      - name: Run check
-        uses: ./app/.github/actions/check
-        with:
-          check: ${{ matrix.check }}
-          image: ${{ needs.build.outputs.image_ref }}
-          tag: boilerplate-react-native
-          docker_registry: ${{ vars.DOCKER_REGISTRY }}
-          docker_username: ${{ vars.DOCKER_USERNAME }}
-          docker_password: ${{ secrets.DOCKER_PASSWORD }}
-
-  firebase_deploy:
-    name: Firebase Preview Deploy
-    needs: [checks]
-    if: github.event.action != 'closed'
-    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true || github.event.pull_request.state == 'closed'
 
     env:
-      ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
-      ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
-      ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
-      ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
-      ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version-file: '.nvmrc'
-
-      - name: Install Yarn
-        run: npm install -g yarn
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1'
-
-      - uses: ./.github/actions/setup-fastlane
-
-      - name: Decode and save GCP service account key
-        run: echo "${{ secrets.ANDROID_GCP_JSON_BASE64 }}" | base64 --decode > /tmp/gcp_key.json
-
-      - name: Cache Gradle
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Decode Keystore file
-        run: echo "${{ secrets.ANDROID_KEYSTORE_FILE }}" | base64 --decode > keystore.jks
-
-      - name: Set Gradle signing environment variables
-        run: |
-          echo "ANDROID_KEYSTORE_FILE=$(pwd)/keystore.jks" >> $GITHUB_ENV
-          echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
-          echo "ANDROID_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> $GITHUB_ENV
-          echo "ANDROID_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> $GITHUB_ENV
-
-      - name: Create bundle assets directories
-        run: |
-          mkdir -p android/app/src/main/assets
-          mkdir -p android/app/src/main/res
-
-      - name: Generate JS bundle for preview APK
-        run: |
-          npx react-native bundle \
-            --platform android \
-            --dev false \
-            --entry-file index.js \
-            --bundle-output android/app/src/main/assets/index.android.bundle \
-            --assets-dest android/app/src/main/res
-
-      - name: Build & Deploy to Firebase App Distribution
-        working-directory: android
-        env:
-          FIREBASE_API_KEY: ${{ env.ANDROID_FIREBASE_API_KEY }}
-        run: bundle exec fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" pr_title:"${{ github.event.pull_request.title }}" project_number:"${{ env.ANDROID_FIREBASE_PROJECT_NUMBER }}" app_id:"${{ env.ANDROID_FIREBASE_APP_ID }}"
-
-      - name: Cleanup GCP key file
-        if: always()
-        run: rm -f /tmp/gcp_key.json
-
-      - name: Comment on PR
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const prNumber = context.issue.number;
-            const projectId = process.env.ANDROID_FIREBASE_PROJECT_ID;
-            const appPackage = process.env.ANDROID_FIREBASE_APP_PACKAGE;
-            const releaseUrl = `https://console.firebase.google.com/project/${projectId}/appdistribution/app/${appPackage}/releases`;
-            github.rest.issues.createComment({
-              issue_number: prNumber,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `🚀 Deployed PR #${prNumber} to Firebase App Distribution.
-
-              🔗 [View Release in Firebase Console](${releaseUrl})`
-            });
-
-  testflight_deploy:
-    name: TestFlight Preview Deploy
-    needs: [checks]
-    if: github.event.action != 'closed'
-    runs-on: macos-14 
-    timeout-minutes: 30
-    env:
-      NO_FLIPPER: 1
-      IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
-      IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
-      IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
-      IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
       IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
       IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-      IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
-      IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
-      IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
-      IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
-      PR_NUMBER: ${{ github.event.pull_request.number }}
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Setup Ruby
+      - name: Setup Ruby and Bundler
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1
-
-      - name: Select Xcode 16.0
-        run: sudo xcode-select -s /Applications/Xcode_16.2.app
-
-      - name: Install Bundler
-        run: gem install bundler
-      
-      - name: Install Ruby dependencies
-        working-directory: ios
-        run: bundle install
-      
-      - name: Set Node Version
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-
-      - name: Install Yarn
-        run: npm install -g yarn
+          ruby-version: '3.2'
+          bundler-cache: true
 
       - name: Install dependencies
-        run: yarn install
-      
-      # Remove Flipper-related native modules that cause iOS CI build failures
-      - name: Remove Flipper dependencies (hard cleanup)
-        run: |
-          rm -rf node_modules/react-native-flipper ios/Pods/Flipper* || true
-          yarn install --check-files || true
-
-      # Patch Boost podspec to use a stable source and checksum to prevent flaky builds
-      - name: Patch Boost Podspec with Custom Source
-        working-directory: node_modules/react-native/third-party-podspecs
-        run: |
-          awk '
-          /spec.source/ {
-          print "  spec.source = { :http => '\''https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.gz'\'', :sha256 => '\''7bd7ddceec1a1dfdcbdb3e609b60d01739c38390a5f956385a12f3122049f0ca'\'' }";
-          skip=1; next
-          }
-          skip && /\}/ { skip=0; next }
-          skip && /:sha256/ { next }
-          { print }
-          ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
-
-      - name: Install CocoaPods dependencies
         working-directory: ios
-        run: |
-          rm -f Podfile.lock
-          bundle exec pod install --repo-update
+        run: bundle install
 
-      # Set up SSH key so Match can pull signing identities from private Git repo
-      - name: Set up SSH for Match
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.IOS_MATCH_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          echo "GIT_SSH_COMMAND=ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" >> $GITHUB_ENV
-
-      - name: Setup Keychain
-        run: |
-          security create-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
-          security set-keychain-settings -lut 21600 ci.keychain
-          security unlock-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
-          security default-keychain -d user -s ci.keychain
-      
-      - name: Export Match password
-        run: echo "MATCH_PASSWORD=${{ secrets.IOS_MATCH_PASSWORD }}" >> $GITHUB_ENV
-
-      # Pull certificates and provisioning profiles using Fastlane Match
-      - name: Install code signing certificates via Match
+      - name: Run Fastlane cleanup
         working-directory: ios
-        run: |
-          echo "🔐 Installing certs..."
-          bundle exec fastlane ci_signing_setup
-
-      - name: Clear Derived Data
-        run: |
-          rm -rf ~/Library/Developer/Xcode/DerivedData
-
-      - name: Bundle React Native for iOS
-        run: |
-          echo "Working directory: $(pwd)"
-          ls -la ..
-          ENVFILE=.env.preview NODE_ENV=production npx react-native bundle \
-            --entry-file index.js \
-            --platform ios \
-            --dev false \
-            --bundle-output ios/main.jsbundle \
-            --assets-dest . \
-
-      - name: iOS PR Deploy to TestFlight
-        working-directory: ios 
-        run: |
-          bundle exec fastlane ios pr_deploy
-
-      # Comment on the PR with a link to the TestFlight build in App Store Connect
-      - name: Post PR comment with TestFlight link
-        if: ${{ github.event.pull_request }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          BUILD_HASH: ${{ github.sha }}
-        run: |
-          brew install gh # Only needed if gh CLI is not pre-installed
-          gh auth setup-git
-          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$IOS_APPLE_ID/testflight/ios"
-          gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
-
-          - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
-          - 🆔 App ID: \`com.bettrsw.boilerplate\`
-          - 🧱 Build Hash: \`$BUILD_HASH\`
-
-          _This build was deployed by CI using Fastlane._"         
-          
+        run: bundle exec fastlane pr_cleanup

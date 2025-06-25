@@ -113,7 +113,6 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
 
     const cardData = { cardNumber, expiry, cvv };
     onValidate?.(cardData, InputStatus.SUCCESS);
-    console.log('Validated Card Details:', cardData);
   };
 
   return (

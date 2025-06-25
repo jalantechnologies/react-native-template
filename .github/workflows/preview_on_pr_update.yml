@@ -206,7 +206,7 @@ jobs:
     needs: [checks]
     if: github.event.action != 'closed'
     runs-on: macos-14 
-    timeout-minutes: 30
+    timeout-minutes: 45  # Increased timeout
     env:
       NO_FLIPPER: 1
       IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
@@ -229,8 +229,32 @@ jobs:
         with:
           ruby-version: 3.1
 
-      - name: Select Xcode 16.0
-        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+      # CRITICAL FIX: Use Xcode 15.4 instead of 16.2 for better compatibility
+      - name: Select Compatible Xcode Version
+        run: |
+          # Try to use the most compatible Xcode version available
+          if [ -d "/Applications/Xcode_15.4.app" ]; then
+            echo "Using Xcode 15.4"
+            sudo xcode-select -s /Applications/Xcode_15.4.app
+          elif [ -d "/Applications/Xcode_15.3.app" ]; then
+            echo "Using Xcode 15.3"
+            sudo xcode-select -s /Applications/Xcode_15.3.app
+          elif [ -d "/Applications/Xcode_15.2.app" ]; then
+            echo "Using Xcode 15.2"
+            sudo xcode-select -s /Applications/Xcode_15.2.app
+          elif [ -d "/Applications/Xcode_15.1.app" ]; then
+            echo "Using Xcode 15.1"
+            sudo xcode-select -s /Applications/Xcode_15.1.app
+          elif [ -d "/Applications/Xcode_15.0.app" ]; then
+            echo "Using Xcode 15.0"
+            sudo xcode-select -s /Applications/Xcode_15.0.app
+          else
+            echo "Warning: No Xcode 15.x found, falling back to default"
+            sudo xcode-select -s /Applications/Xcode.app
+          fi
+          echo "Selected Xcode version:"
+          xcode-select -p
+          xcodebuild -version
 
       - name: Install Bundler
         run: gem install bundler
@@ -250,10 +274,15 @@ jobs:
       - name: Install dependencies
         run: yarn install
       
-      # Remove Flipper-related native modules that cause iOS CI build failures
-      - name: Remove Flipper dependencies (hard cleanup)
+      # Enhanced cleanup to remove Flipper and clear caches
+      - name: Remove Flipper dependencies and clean caches
         run: |
+          echo "🧹 Cleaning up Flipper and build caches..."
           rm -rf node_modules/react-native-flipper ios/Pods/Flipper* || true
+          rm -rf ios/Pods
+          rm -f ios/Podfile.lock
+          rm -rf ~/Library/Developer/Xcode/DerivedData
+          rm -rf ~/Library/Caches/CocoaPods
           yarn install --check-files || true
 
       # Patch Boost podspec to use a stable source and checksum to prevent flaky builds
@@ -273,7 +302,7 @@ jobs:
       - name: Install CocoaPods dependencies
         working-directory: ios
         run: |
-          rm -f Podfile.lock
+          echo "📦 Installing CocoaPods dependencies..."
           bundle exec pod install --repo-update
 
       # Set up SSH key so Match can pull signing identities from private Git repo
@@ -302,14 +331,10 @@ jobs:
           echo "🔐 Installing certs..."
           bundle exec fastlane ci_signing_setup
 
-      - name: Clear Derived Data
-        run: |
-          rm -rf ~/Library/Developer/Xcode/DerivedData
-
       - name: Bundle React Native for iOS
         run: |
+          echo "📦 Bundling React Native for iOS..."
           echo "Working directory: $(pwd)"
-          ls -la ..
           ENVFILE=.env.preview NODE_ENV=production npx react-native bundle \
             --entry-file index.js \
             --platform ios \
@@ -320,9 +345,10 @@ jobs:
       - name: iOS PR Deploy to TestFlight
         working-directory: ios 
         run: |
+          echo "🚀 Deploying to TestFlight..."
           bundle exec fastlane ios pr_deploy
 
-      # Comment on the PR with a link to the TestFlight build in App Store Connect
+      # Fixed TestFlight link construction with proper environment variables
       - name: Post PR comment with TestFlight link
         if: ${{ github.event.pull_request }}
         env:
@@ -332,11 +358,11 @@ jobs:
         run: |
           brew install gh # Only needed if gh CLI is not pre-installed
           gh auth setup-git
-          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$APPLE_ID/testflight/ios"
+          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}/apps/${{ secrets.IOS_APPLE_ID }}/testflight/ios"
           gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
 
           - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
-          - 🆔 App ID: \`com.bettrsw.boilerplate\`
+          - 🆔 App ID: \`${{ secrets.IOS_APP_IDENTIFIER }}\`
           - 🧱 Build Hash: \`$BUILD_HASH\`
 
-          _This build was deployed by CI using Fastlane._"         
+          _This build was deployed by CI using Fastlane._"

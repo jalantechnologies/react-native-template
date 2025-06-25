@@ -8,6 +8,7 @@ require Pod::Executable.execute_command('node', ['-p',
 platform :ios, '16.0'
 prepare_react_native_project!
 
+# Add modular headers support for Firebase
 use_modular_headers!
 
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
@@ -33,6 +34,7 @@ target 'Boilerplate' do
   # Flags change depending on the env values.
   flags = get_default_flags()
   
+  # Firebase pods with proper dependencies
   pod 'Firebase/Core', :modular_headers => true
   pod 'Firebase/Messaging', :modular_headers => true
   pod 'Firebase/Analytics', :modular_headers => true
@@ -71,10 +73,15 @@ target 'Boilerplate' do
         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FOLLY_MOBILE=1'
         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'FOLLY_USE_LIBCPP=1'
         
-        # Fix Swift optimization issues for Datadog
-        if target.name.include?('Datadog')
+        # Fix Swift optimization issues for all Swift-based pods in Xcode 16.2
+        swift_pods = ['Datadog', 'Firebase', 'DoubleConversion']
+        if swift_pods.any? { |pod| target.name.include?(pod) }
           config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] = '-Onone'
         end
+        
+        # Additional Xcode 16.2 compatibility fixes
+        config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+        config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
       end
       
       # This is a workaround for an issue causing iOS builds to fail due to missing include in Flipper.

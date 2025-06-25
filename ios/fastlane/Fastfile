@@ -1,0 +1,46 @@
+default_platform(:ios)
+
+platform :ios do
+  # Fetch App Store and Development signing certificates for CI environment.
+  # Both are required to unlock build and test capabilities in GitHub Actions.
+  desc "Fetch certificates for CI"
+  lane :ci_signing_setup do
+    match(type: "appstore", readonly: true, keychain_name: "ci.keychain", keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"])
+    match(type: "development", readonly: true, keychain_name: "ci.keychain", keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"])
+  end
+  # Deploys a PR build to TestFlight (internal testers only).
+  # This lane is triggered from CI and uses environment variables to stay generic.
+  # Upload fails if required env vars or bundle outputs are missing.
+  desc "Build and upload to TestFlight"
+  lane :pr_deploy do
+    require_relative "scripts/ios_testflight_deploy"
+
+    ios_testflight_deploy!(
+      pr_number: ENV["PR_NUMBER"],
+      app_identifier: ENV["IOS_APP_IDENTIFIER"],
+      xcodeproj: "Boilerplate.xcodeproj",
+      scheme: "Boilerplate",
+      api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
+      issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
+      api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64'],
+      keychain_name: "ci.keychain",
+      keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
+      apple_id: ENV["IOS_APPLE_ID"],
+      username: ENV["FASTLANE_USER"]
+    )
+  end
+  # Removes any TestFlight builds uploaded via pr_deploy for this PR.
+  # Should be called when PRs are closed or merged to keep TestFlight clean.
+  desc "Cleanup TestFlight build for PR"
+  lane :pr_cleanup do
+    require_relative "scripts/ios_testflight_cleanup"
+
+    ios_testflight_cleanup!(
+      pr_number: ENV["PR_NUMBER"],
+      app_identifier: ENV["IOS_APP_IDENTIFIER"],
+      api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
+      issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
+      api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64']
+    )
+  end
+end

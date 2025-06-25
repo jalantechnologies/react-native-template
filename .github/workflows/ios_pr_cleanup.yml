@@ -1,0 +1,36 @@
+name: iOS PR Cleanup
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  ios_testflight_cleanup:
+    name: Cleanup iOS TestFlight Build
+    runs-on: macos-14
+
+    if: github.event.pull_request.merged == true || github.event.pull_request.state == 'closed'
+
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.APP_STORE_CONNECT_API_KEY_B64 }}
+      APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby and Bundler
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install dependencies
+        working-directory: ios
+        run: bundle install
+
+      - name: Run Fastlane cleanup
+        working-directory: ios
+        run: bundle exec fastlane pr_cleanup

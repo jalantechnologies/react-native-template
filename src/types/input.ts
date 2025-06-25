@@ -1,6 +1,45 @@
 import { ReactNode } from 'react';
 import { KeyboardTypeOptions, TextInput, TextInputProps, TextStyle } from 'react-native';
 
+export enum KeyboardTypes {
+  ASCII_CAPABLE = 'ascii-capable',
+  DECIMAL_PAD = 'decimal-pad',
+  DEFAULT = 'default',
+  EMAIL_ADDRESS = 'email-address',
+  NAME_PHONE_PAD = 'name-phone-pad',
+  NUMBER_PAD = 'number-pad',
+  NUMBERS_AND_PUNCTUATION = 'numbers-and-punctuation',
+  NUMERIC = 'numeric',
+  PHONE_PAD = 'phone-pad',
+  TWITTER = 'twitter',
+  URL = 'url',
+  VISIBLE_PASSWORD = 'visible-password',
+  WEB_SEARCH = 'web-search',
+}
+
+export interface CardDetailsInputProps {
+  cardNumber: string;
+  cvv: string;
+  disabled?: boolean;
+  errorMessage?: string;
+  expiry: string;
+  label?: string;
+  onCardNumberChange: (value: string) => void;
+  onCvvChange: (value: string) => void;
+  onExpiryChange: (value: string) => void;
+  onValidate?: (
+    result: { cardNumber: string; expiry: string; cvv: string } | '',
+    status: InputStatus,
+  ) => void;
+  status?: InputStatus;
+  successMessage?: string;
+}
+
+export interface CountryOption {
+  label: ReactNode;
+  value: string;
+}
+
 export interface DropdownInputProps {
   children: React.ReactElement<DropdownOptionProps>[];
   disabled?: boolean;
@@ -36,6 +75,20 @@ export interface InputProps extends Omit<TextInputProps, 'style | multiline'> {
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
 }
 
+export interface MobileNumberInputProps {
+  country: string;
+  countryOptions: CountryOption[];
+  disabled?: boolean;
+  errorMessage?: string;
+  label?: string;
+  mobileNumber: string;
+  onCountryChange: (value: string) => void;
+  onMobileNumberChange: (value: string) => void;
+  onValidate: (finalNumber: string, status: InputStatus) => void;
+  status?: InputStatus;
+  successMessage?: string;
+}
+
 export interface PasswordInputProps extends InputProps {}
 
 export interface TextAreaInputProps extends Omit<TextInputProps, 'style | multiline'> {
@@ -50,40 +103,6 @@ export interface TextAreaInputProps extends Omit<TextInputProps, 'style | multil
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
 }
 
-export enum KeyboardTypes {
-  ASCII_CAPABLE = 'ascii-capable',
-  DECIMAL_PAD = 'decimal-pad',
-  DEFAULT = 'default',
-  EMAIL_ADDRESS = 'email-address',
-  NAME_PHONE_PAD = 'name-phone-pad',
-  NUMBER_PAD = 'number-pad',
-  NUMBERS_AND_PUNCTUATION = 'numbers-and-punctuation',
-  NUMERIC = 'numeric',
-  PHONE_PAD = 'phone-pad',
-  TWITTER = 'twitter',
-  URL = 'url',
-  VISIBLE_PASSWORD = 'visible-password',
-  WEB_SEARCH = 'web-search',
-}
-
-export interface CountryOption {
-  label: ReactNode;
-  value: string;
-}
-
-export interface MobileNumberInputProps {
-  country: string;
-  countryOptions: CountryOption[];
-  disabled?: boolean;
-  errorMessage?: string;
-  label?: string;
-  mobileNumber: string;
-  onCountryChange: (value: string) => void;
-  onMobileNumberChange: (value: string) => void;
-  status?: InputStatus;
-  successMessage?: string;
-}
-
 export interface WebsiteUrlInputProps {
   disabled?: boolean;
   errorMessage?: string;
@@ -93,22 +112,4 @@ export interface WebsiteUrlInputProps {
   status?: InputStatus;
   successMessage?: string;
   url: string;
-}
-
-export interface CardDetailsInputProps {
-  cardNumber: string;
-  cvv: string;
-  disabled?: boolean;
-  errorMessage?: string;
-  expiry: string;
-  label?: string;
-  onCardNumberChange: (value: string) => void;
-  onCvvChange: (value: string) => void;
-  onExpiryChange: (value: string) => void;
-  onValidate?: (
-    result: { cardNumber: string; expiry: string; cvv: string } | '',
-    status: InputStatus,
-  ) => void;
-  status?: InputStatus;
-  successMessage?: string;
 }

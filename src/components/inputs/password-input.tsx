@@ -4,15 +4,16 @@ import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 
-import { KeyboardTypes, PasswordInputProps } from '../../types';
+import { InputStatus, KeyboardTypes, PasswordInputProps } from '../../types';
 
 import Input from './input';
-import { usePasswordInputStyles } from './input.styles';
 
 const PasswordInput: React.FC<PasswordInputProps> = ({
   keyboardType = KeyboardTypes.DEFAULT,
   placeholder,
   testID,
+  disabled,
+  status = InputStatus.DEFAULT,
   ...props
 }) => {
   const theme = useTheme();
@@ -23,31 +24,40 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
     setIsPasswordVisible(prev => !prev);
   };
 
-  const styles = usePasswordInputStyles();
-
   return (
     <>
-      <View style={styles.inputWrapper}>
+      <View>
         <Input
           placeholder={placeholder}
           secureTextEntry={!isPasswordVisible}
+          label="Password"
           autoCapitalize="none"
           autoCorrect={false}
           testID={testID}
+          status={status}
           keyboardType={keyboardType}
+          endEnhancer={
+            <TouchableOpacity
+              onPress={togglePasswordVisibility}
+              testID={`${testID}-toggle-visibility`}
+            >
+              {isPasswordVisible ? (
+                <VisibilityIcon
+                  width={16}
+                  height={16}
+                  fill={disabled ? theme.colors.secondary[500] : theme.colors.primary[500]}
+                />
+              ) : (
+                <VisibilityOffIcon
+                  width={16}
+                  height={16}
+                  fill={disabled ? theme.colors.secondary[500] : theme.colors.primary[500]}
+                />
+              )}
+            </TouchableOpacity>
+          }
           {...props}
         />
-        <TouchableOpacity
-          onPress={togglePasswordVisibility}
-          style={styles.iconButton}
-          testID={`${testID}-toggle-visibility`}
-        >
-          {isPasswordVisible ? (
-            <VisibilityIcon width={16} height={16} fill={theme.colors.primary[500]} />
-          ) : (
-            <VisibilityOffIcon width={16} height={16} fill={theme.colors.primary[500]} />
-          )}
-        </TouchableOpacity>
       </View>
     </>
   );

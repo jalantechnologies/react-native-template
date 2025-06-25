@@ -1,4 +1,4 @@
-import { Text } from 'native-base';
+import { Text, useTheme } from 'native-base';
 import React, { forwardRef, useState } from 'react';
 import { NativeSyntheticEvent, TextInput, TextInputFocusEventData, View } from 'react-native';
 
@@ -22,6 +22,7 @@ const TextAreaInput = forwardRef<TextInput | null, TextAreaInputProps>(
     },
     ref,
   ) => {
+    const theme = useTheme();
     const styles = useTextAreaInputStyles();
     const [isFocused, setIsFocused] = useState(false);
 
@@ -35,8 +36,17 @@ const TextAreaInput = forwardRef<TextInput | null, TextAreaInputProps>(
     };
 
     return (
-      <View>
-        {label && <Text style={styles.label}>{label}</Text>}
+      <View style={styles.wrapper}>
+        {label && (
+          <Text
+            style={[
+              styles.label,
+              { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
+            ]}
+          >
+            {label}
+          </Text>
+        )}
         <View
           style={[
             styles.container,
@@ -73,6 +83,9 @@ const TextAreaInput = forwardRef<TextInput | null, TextAreaInputProps>(
             keyboardType={keyboardType}
             onFocus={handleFocus}
             onBlur={handleBlur}
+            placeholderTextColor={
+              disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
+            }
           />
           {endEnhancer && (
             <View style={styles.enhancer}>

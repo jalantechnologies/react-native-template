@@ -13,7 +13,8 @@ const MobileNumberInput: React.FC<MobileNumberInputProps> = ({
   onCountryChange,
   mobileNumber,
   onMobileNumberChange,
-  status = InputStatus.DEFAULT,
+  onValidate,
+  status,
   errorMessage,
   successMessage,
   disabled = false,
@@ -21,18 +22,40 @@ const MobileNumberInput: React.FC<MobileNumberInputProps> = ({
 }) => {
   const theme = useTheme();
   const [isFocused, setIsFocused] = useState(false);
+  const [localStatus, setLocalStatus] = useState(InputStatus.DEFAULT);
+  const [localErrorMessage, setLocalErrorMessage] = useState('');
 
   const styles = useMobileInputStyles();
 
+  const currentStatus = status !== undefined ? status : localStatus;
+  const currentErrorMessage = status !== undefined ? errorMessage : localErrorMessage;
+
+  const resetValidation = () => {
+    if (status === undefined) {
+      setLocalStatus(InputStatus.DEFAULT);
+      setLocalErrorMessage('');
+    }
+  };
+
+  const handleValidation = () => {
+    if (!mobileNumber || mobileNumber.length < 7 || mobileNumber.length > 15) {
+      if (status === undefined) {
+        setLocalStatus(InputStatus.ERROR);
+        setLocalErrorMessage('Enter a valid mobile number');
+      }
+      onValidate?.('', InputStatus.ERROR);
+    } else {
+      if (status === undefined) {
+        setLocalStatus(InputStatus.SUCCESS);
+      }
+      const finalNumber = selectedCountry?.value + mobileNumber;
+      onValidate?.(finalNumber, InputStatus.SUCCESS);
+    }
+  };
+
   const getBorderColor = () => {
-    if (disabled) {
-      return theme.colors.secondary[200];
-    }
-    if (status === InputStatus.ERROR) {
+    if (currentStatus === InputStatus.ERROR) {
       return theme.colors.danger[500];
-    }
-    if (status === InputStatus.SUCCESS) {
-      return theme.colors.success[500];
     }
     if (isFocused) {
       return theme.colors.primary[300];
@@ -43,15 +66,19 @@ const MobileNumberInput: React.FC<MobileNumberInputProps> = ({
   const selectedCountry = countryOptions.find(option => option.value === country);
 
   return (
-    <View>
-      {label && <Text style={styles.label}>{label}</Text>}
+    <View style={styles.wrapper}>
+      {label && (
+        <Text
+          style={[
+            styles.label,
+            { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
+          ]}
+        >
+          {label}
+        </Text>
+      )}
 
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: disabled ? theme.colors.secondary[100] : theme.colors.secondary[50] },
-        ]}
-      >
+      <View style={styles.container}>
         <View style={styles.dropdownContainer}>
           <DropdownInput
             value={selectedCountry ? selectedCountry.label : ''}
@@ -60,38 +87,69 @@ const MobileNumberInput: React.FC<MobileNumberInputProps> = ({
             disabled={disabled}
           >
             {countryOptions.map(option => (
-              <DropdownInput.Option value={option.value}>
-                {typeof option.label === 'string' ? <Text>{option.label}</Text> : option.label}
+              <DropdownInput.Option key={label} value={option.value}>
+                {typeof option.label === 'string' ? (
+                  <Text
+                    style={{
+                      color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900],
+                    }}
+                  >
+                    {option.label}
+                  </Text>
+                ) : (
+                  option.label
+                )}
               </DropdownInput.Option>
             ))}
           </DropdownInput>
         </View>
 
-        <View style={[styles.inputContainer, { borderColor: getBorderColor() }]}>
+        <View
+          style={[
+            styles.inputContainer,
+            {
+              borderColor: getBorderColor(),
+              backgroundColor: disabled ? theme.colors.secondary[50] : theme.colors.white,
+            },
+          ]}
+        >
           <TextInput
             style={[
-              styles.inputField,
+              styles.text,
               {
-                color: disabled ? theme.colors.secondary[500] : theme.colors.black,
+                color: disabled
+                  ? theme.colors.secondary[500]
+                  : currentStatus === InputStatus.ERROR
+                  ? theme.colors.danger[800]
+                  : theme.colors.secondary[900],
               },
             ]}
             value={mobileNumber}
-            onChangeText={onMobileNumberChange}
+            onChangeText={text => {
+              resetValidation();
+              onMobileNumberChange(text);
+            }}
             placeholder="Mobile Number"
-            placeholderTextColor={theme.colors.secondary[400]}
+            placeholderTextColor={
+              disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
+            }
             keyboardType="phone-pad"
             editable={!disabled}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            onSubmitEditing={handleValidation}
+            maxLength={15}
           />
         </View>
       </View>
 
-      {status === InputStatus.ERROR && !!errorMessage && (
-        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>{errorMessage}</Text>
+      {currentStatus === InputStatus.ERROR && !!currentErrorMessage && (
+        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>
+          {currentErrorMessage}
+        </Text>
       )}
 
-      {status === InputStatus.SUCCESS && !!successMessage && (
+      {currentStatus === InputStatus.SUCCESS && !!successMessage && (
         <Text style={[styles.message, { color: theme.colors.success[500] }]}>{successMessage}</Text>
       )}
     </View>

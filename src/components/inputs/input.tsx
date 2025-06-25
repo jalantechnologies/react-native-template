@@ -1,3 +1,4 @@
+import { useTheme } from 'native-base';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { View, TextInput, Text, NativeSyntheticEvent, TextInputFocusEventData } from 'react-native';
 
@@ -23,6 +24,7 @@ const Input = forwardRef<TextInput, InputProps>(
     },
     ref,
   ) => {
+    const theme = useTheme();
     const styles = useInputStyles();
     const [isFocused, setIsFocused] = useState(false);
     const [showMsg, setShowMsg] = useState(status === 'error' || status === 'success');
@@ -65,7 +67,16 @@ const Input = forwardRef<TextInput, InputProps>(
     return (
       <>
         <View style={styles.wrapper}>
-          {label && <Text style={styles.label}>{label}</Text>}
+          {label && (
+            <Text
+              style={[
+                styles.label,
+                { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
+              ]}
+            >
+              {label}
+            </Text>
+          )}
 
           <View
             style={[
@@ -93,13 +104,26 @@ const Input = forwardRef<TextInput, InputProps>(
                 }
               }}
               editable={!disabled}
-              style={[styles.input, disabled && styles.disabled, textAlign && { textAlign }]}
+              style={[
+                styles.input,
+                disabled && styles.disabled,
+                textAlign && { textAlign },
+                {
+                  color:
+                    status === InputStatus.ERROR
+                      ? theme.colors.danger[800]
+                      : theme.colors.secondary[900],
+                },
+              ]}
               autoCorrect={false}
               autoCapitalize="none"
               keyboardType={keyboardType}
               onFocus={handleFocus}
               onBlur={handleBlur}
               onChangeText={handleChangeText}
+              placeholderTextColor={
+                disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
+              }
             />
 
             {endEnhancer && (

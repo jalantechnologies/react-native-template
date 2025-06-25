@@ -1,5 +1,4 @@
 import { useTheme } from 'native-base';
-import sizes from 'native-base/lib/typescript/theme/base/sizes';
 import { StyleSheet } from 'react-native';
 
 export const useInputStyles = () => {
@@ -23,7 +22,6 @@ export const useInputStyles = () => {
     input: {
       flex: 1,
       fontSize: theme.fontSizes.md,
-      color: colors.coolGray[800],
       padding: spacing[0],
       margin: spacing[0],
     },
@@ -37,19 +35,18 @@ export const useInputStyles = () => {
       borderColor: colors.secondary[200],
     },
     disabledBackground: {
-      backgroundColor: colors.secondary[100],
-    },
-    enabledBackground: {
       backgroundColor: colors.secondary[50],
     },
+    enabledBackground: {
+      backgroundColor: colors.white,
+    },
     disabled: {
-      color: colors.coolGray[400],
+      color: colors.secondary[600],
     },
     label: {
-      marginBottom: spacing[1],
       fontWeight: '500',
-      color: colors.black,
-      fontSize: theme.fontSizes.md,
+      color: colors.secondary[900],
+      fontSize: theme.fontSizes.sm,
       fontFamily: 'Inter',
       lineHeight: Number(theme.lineHeights.sm),
       letterSpacing: -0.02 * theme.fontSizes.sm,
@@ -59,7 +56,7 @@ export const useInputStyles = () => {
     },
     errorMessage: {
       color: colors.danger[500],
-      fontSize: theme.fontSizes.sm,
+      fontSize: theme.fontSizes.xs,
     },
     errorBorder: {
       borderWidth: parseInt(theme.borderWidths['1'], 10),
@@ -71,53 +68,7 @@ export const useInputStyles = () => {
     },
     successMessage: {
       color: colors.success[500],
-      fontSize: theme.fontSizes.sm,
-    },
-  });
-};
-
-export const usePasswordInputStyles = () => {
-  const theme = useTheme();
-
-  const spacing = theme.space;
-  const colors = theme.colors;
-
-  return StyleSheet.create({
-    label: {
-      marginBottom: spacing[1],
-      color: colors.coolGray[800],
-      fontSize: theme.fontSizes.sm,
-      fontWeight: '500',
-    },
-    inputWrapper: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: 'transparent',
-      position: 'relative',
-    },
-    input: {
-      flex: 1,
-      height: 48,
-      fontSize: theme.fontSizes.md,
-      color: colors.coolGray[800],
-    },
-    iconButton: {
-      padding: spacing[2],
-      position: 'absolute',
-      right: 8,
-      top: '50%',
-      transform: [{ translateY: -16 }],
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    inputError: {
-      borderColor: colors.danger[600],
-    },
-    errorText: {
-      color: colors.danger[600],
       fontSize: theme.fontSizes.xs,
-      marginTop: spacing[1],
-      marginLeft: spacing[1],
     },
   });
 };
@@ -129,29 +80,27 @@ export const useTextAreaInputStyles = () => {
   const colors = theme.colors;
 
   return StyleSheet.create({
+    wrapper: {
+      gap: spacing[2],
+    },
     container: {
       flexDirection: 'row',
       alignItems: 'center',
       borderRadius: theme.radii.md,
       paddingHorizontal: spacing[3],
       paddingVertical: spacing[2],
-      minHeight: sizes[10],
-      borderWidth: parseInt(theme.borderWidths['1'], 10),
-      borderColor: colors.coolGray[200],
     },
     input: {
       flex: 1,
       fontSize: theme.fontSizes.md,
-      color: colors.coolGray[800],
+      color: colors.secondary[900],
       padding: 0,
       margin: 0,
-      minHeight: sizes[20],
+      minHeight: theme.sizes[20],
     },
     label: {
-      marginBottom: spacing[1],
       fontWeight: '500',
-      color: colors.black,
-      fontSize: theme.fontSizes.md,
+      fontSize: theme.fontSizes.sm,
       fontFamily: 'Inter',
       lineHeight: Number(theme.lineHeights.sm),
       letterSpacing: -0.02 * theme.fontSizes.sm,
@@ -161,16 +110,16 @@ export const useTextAreaInputStyles = () => {
     },
     defaultBorder: {
       borderWidth: parseInt(theme.borderWidths['1'], 10),
-      borderColor: colors.coolGray[200],
+      borderColor: colors.secondary[200],
     },
     disabledBackground: {
-      backgroundColor: colors.coolGray[100],
+      backgroundColor: colors.secondary[50],
     },
     enabledBackground: {
-      backgroundColor: 'transparent',
+      backgroundColor: colors.white,
     },
     disabled: {
-      color: colors.coolGray[400],
+      color: colors.secondary[500],
     },
     focusedBorder: {
       borderColor: colors.primary[300],
@@ -181,6 +130,9 @@ export const useTextAreaInputStyles = () => {
 export const useDropdownInputStyles = () => {
   const theme = useTheme();
   return StyleSheet.create({
+    wrapper: {
+      gap: theme.space[2],
+    },
     overlay: {
       position: 'absolute',
       top: 0,
@@ -190,10 +142,11 @@ export const useDropdownInputStyles = () => {
       zIndex: 1000,
     },
     label: {
-      marginBottom: theme.space[2],
-      fontSize: theme.fontSizes.md,
       fontWeight: '500',
-      color: theme.colors.black,
+      fontSize: theme.fontSizes.sm,
+      fontFamily: 'Inter',
+      lineHeight: Number(theme.lineHeights.sm),
+      letterSpacing: -0.02 * theme.fontSizes.sm,
     },
     inputContainer: {
       flexDirection: 'row',
@@ -206,20 +159,13 @@ export const useDropdownInputStyles = () => {
     },
     inputText: {
       fontSize: theme.fontSizes.md,
-      color: theme.colors.black,
-    },
-    dropdownIcon: {
-      fontSize: theme.fontSizes.md,
-      color: theme.colors.black,
     },
     errorMessage: {
-      marginTop: theme.space[2],
-      fontSize: theme.fontSizes.sm,
+      fontSize: theme.fontSizes.xs,
       color: theme.colors.danger[500],
     },
     successMessage: {
-      marginTop: theme.space[2],
-      fontSize: theme.fontSizes.sm,
+      fontSize: theme.fontSizes.xs,
       color: theme.colors.success[500],
     },
     option: {
@@ -236,7 +182,6 @@ export const useDropdownInputStyles = () => {
       borderColor: theme.colors.secondary[200],
       borderRadius: theme.radii.md,
       zIndex: 1000,
-      maxHeight: theme.sizes[40],
     },
   });
 };
@@ -245,9 +190,15 @@ export const useMobileInputStyles = () => {
   const theme = useTheme();
 
   return StyleSheet.create({
+    wrapper: {
+      gap: theme.space[2],
+    },
     label: {
-      marginBottom: theme.space[1],
-      color: theme.colors.black,
+      fontSize: theme.fontSizes.sm,
+      fontWeight: '500',
+      fontFamily: 'Inter',
+      lineHeight: Number(theme.lineHeights.sm),
+      letterSpacing: -0.02 * theme.fontSizes.sm,
     },
     container: {
       flexDirection: 'row',
@@ -255,7 +206,7 @@ export const useMobileInputStyles = () => {
       gap: theme.space[2],
     },
     dropdownContainer: {
-      width: theme.sizes[20],
+      width: '20%',
     },
     inputContainer: {
       flex: 1,
@@ -264,12 +215,15 @@ export const useMobileInputStyles = () => {
       borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderRadius: theme.radii.md,
     },
-    inputField: {
-      height: theme.sizes[10],
+    text: {
+      fontFamily: 'Inter',
+      fontWeight: '400',
+      fontSize: theme.fontSizes.md,
+      lineHeight: Number(theme.lineHeights.sm),
+      letterSpacing: -0.02 * theme.fontSizes.sm,
     },
     message: {
-      fontSize: theme.fontSizes.sm,
-      marginTop: theme.space[1],
+      fontSize: theme.fontSizes.xs,
     },
   });
 };
@@ -278,11 +232,15 @@ export const useWebsiteInputStyles = () => {
   const theme = useTheme();
 
   return StyleSheet.create({
+    wrapper: {
+      gap: theme.space[2],
+    },
     label: {
-      marginBottom: theme.space[1],
-      color: theme.colors.secondary[700],
       fontSize: theme.fontSizes.sm,
       fontWeight: '500',
+      fontFamily: 'Inter',
+      lineHeight: Number(theme.lineHeights.sm),
+      letterSpacing: -0.02 * theme.fontSizes.sm,
     },
     container: {
       flexDirection: 'row',
@@ -292,32 +250,33 @@ export const useWebsiteInputStyles = () => {
       width: theme.sizes[20],
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: theme.colors.secondary[100],
+      backgroundColor: theme.colors.white,
       borderTopLeftRadius: theme.radii.md,
       borderBottomLeftRadius: theme.radii.md,
       borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderRightWidth: 0,
       borderColor: theme.colors.secondary[200],
+      paddingHorizontal: theme.space[3],
+      paddingVertical: theme.space[2],
     },
-    protocolText: {
-      fontSize: theme.fontSizes.sm,
-      color: theme.colors.secondary[700],
+    text: {
+      fontFamily: 'Inter',
+      fontWeight: '400',
+      fontSize: theme.fontSizes.md,
+      lineHeight: Number(theme.lineHeights.sm),
+      letterSpacing: -0.02 * theme.fontSizes.sm,
     },
     inputContainer: {
       flex: 1,
       justifyContent: 'center',
-      paddingHorizontal: theme.space[2],
+      paddingHorizontal: theme.space[3],
+      paddingVertical: theme.space[1],
       borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderTopRightRadius: theme.radii.md,
       borderBottomRightRadius: theme.radii.md,
     },
-    inputField: {
-      height: theme.sizes[10],
-      fontSize: theme.fontSizes.sm,
-    },
     message: {
-      fontSize: theme.fontSizes.sm,
-      marginTop: theme.space[1],
+      fontSize: theme.fontSizes.xs,
     },
   });
 };
@@ -325,10 +284,15 @@ export const useWebsiteInputStyles = () => {
 export const useCardDetailsInputStyles = () => {
   const theme = useTheme();
   return StyleSheet.create({
+    wrapper: {
+      gap: theme.space[2],
+    },
     label: {
-      fontSize: theme.space[4],
-      color: theme.colors.black,
-      marginBottom: theme.space[2],
+      fontSize: theme.fontSizes.sm,
+      fontWeight: '500',
+      fontFamily: 'Inter',
+      lineHeight: Number(theme.lineHeights.sm),
+      letterSpacing: -0.02 * theme.fontSizes.sm,
     },
     container: {
       flexDirection: 'row',
@@ -336,30 +300,28 @@ export const useCardDetailsInputStyles = () => {
       borderRadius: theme.radii.md,
       overflow: 'hidden',
       alignItems: 'center',
-      paddingHorizontal: theme.space[2],
+      paddingHorizontal: theme.space[3],
     },
     inputField: {
-      paddingVertical: theme.space[3],
+      fontFamily: 'Inter',
+      fontWeight: '400',
+      fontSize: theme.fontSizes.md,
+      lineHeight: Number(theme.lineHeights.sm),
       paddingHorizontal: theme.space[2],
-      color: theme.colors.black,
     },
     cardInput: {
       flex: 2,
       borderRightWidth: 0,
-      minWidth: theme.space[24],
     },
     expiryInput: {
-      flex: 1,
       borderRightWidth: 0,
       textAlign: 'center',
     },
     cvvInput: {
-      flex: 1,
       textAlign: 'center',
     },
     message: {
-      fontSize: theme.fontSizes.sm,
-      marginTop: theme.space[1],
+      fontSize: theme.fontSizes.xs,
     },
   });
 };

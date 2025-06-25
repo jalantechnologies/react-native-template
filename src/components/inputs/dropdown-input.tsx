@@ -33,21 +33,28 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
   const options = React.Children.toArray(children);
 
   const getBorderColor = () => {
-    if (disabled) {
-      return theme.colors.secondary[200];
-    }
     if (status === InputStatus.ERROR) {
       return theme.colors.danger[500];
-    }
-    if (status === InputStatus.SUCCESS) {
-      return theme.colors.success[500];
     }
     return theme.colors.secondary[200];
   };
 
   return (
-    <View ref={containerRef} onLayout={({ nativeEvent }) => setLayout(nativeEvent.layout)}>
-      {label && <Text style={styles.label}>{label}</Text>}
+    <View
+      ref={containerRef}
+      onLayout={({ nativeEvent }) => setLayout(nativeEvent.layout)}
+      style={styles.wrapper}
+    >
+      {label && (
+        <Text
+          style={[
+            styles.label,
+            { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
+          ]}
+        >
+          {label}
+        </Text>
+      )}
 
       <TouchableOpacity
         activeOpacity={0.7}
@@ -56,7 +63,7 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
           styles.inputContainer,
           {
             borderColor: getBorderColor(),
-            backgroundColor: disabled ? theme.colors.secondary[100] : theme.colors.secondary[50],
+            backgroundColor: disabled ? theme.colors.secondary[50] : theme.colors.white,
           },
         ]}
         disabled={disabled}
@@ -64,12 +71,18 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
         <Text
           style={[
             styles.inputText,
-            { color: disabled ? theme.colors.secondary[500] : theme.colors.black },
+            {
+              color: disabled
+                ? theme.colors.secondary[500]
+                : status === InputStatus.ERROR
+                ? theme.colors.danger[800]
+                : theme.colors.secondary[900],
+            },
           ]}
         >
           {value || 'Select an option'}
         </Text>
-        <Text style={styles.dropdownIcon}>
+        <Text style={styles.inputText}>
           <Icon name="angle-down" size={24} color={theme.colors.secondary[900]} />
         </Text>
       </TouchableOpacity>

@@ -10,7 +10,7 @@ const WebsiteUrlInput: React.FC<WebsiteUrlInputProps> = ({
   label,
   url,
   onUrlChange,
-  status = InputStatus.DEFAULT,
+  status,
   errorMessage,
   successMessage,
   disabled = false,
@@ -18,24 +18,30 @@ const WebsiteUrlInput: React.FC<WebsiteUrlInputProps> = ({
 }) => {
   const theme = useTheme();
   const [isFocused, setIsFocused] = useState(false);
+  const [localStatus, setLocalStatus] = useState<InputStatus>(InputStatus.DEFAULT);
+  const [localErrorMessage, setLocalErrorMessage] = useState('');
   const protocol = 'https://';
 
   const styles = useWebsiteInputStyles();
 
   const getBorderColor = () => {
-    if (disabled) {
-      return theme.colors.secondary[200];
-    }
-    if (status === InputStatus.ERROR) {
+    if (currentStatus === InputStatus.ERROR) {
       return theme.colors.danger[500];
-    }
-    if (status === InputStatus.SUCCESS) {
-      return theme.colors.success[500];
     }
     if (isFocused) {
       return theme.colors.primary[300];
     }
     return theme.colors.secondary[200];
+  };
+
+  const currentStatus = status !== undefined ? status : localStatus;
+  const currentErrorMessage = status !== undefined ? errorMessage : localErrorMessage;
+
+  const resetValidation = () => {
+    if (status === undefined) {
+      setLocalStatus(InputStatus.DEFAULT);
+      setLocalErrorMessage('');
+    }
   };
 
   const handleValidation = () => {
@@ -46,44 +52,75 @@ const WebsiteUrlInput: React.FC<WebsiteUrlInputProps> = ({
     );
 
     const fullUrl = `${protocol}${url.trim()}`.toLowerCase();
+
     if (url.trim() === '' || !urlRegex.test(fullUrl)) {
-      onValidate('', InputStatus.ERROR);
+      if (status === undefined) {
+        setLocalStatus(InputStatus.ERROR);
+        setLocalErrorMessage('Enter a valid website URL');
+      }
+      onValidate?.('', InputStatus.ERROR);
     } else {
-      onValidate(fullUrl, InputStatus.SUCCESS);
+      if (status === undefined) {
+        setLocalStatus(InputStatus.SUCCESS);
+      }
+      onValidate?.(fullUrl, InputStatus.SUCCESS);
     }
   };
 
   return (
-    <View>
-      {label && <Text style={styles.label}>{label}</Text>}
+    <View style={styles.wrapper}>
+      {label && (
+        <Text
+          style={[
+            styles.label,
+            { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
+          ]}
+        >
+          {label}
+        </Text>
+      )}
 
-      <View
-        style={[
-          styles.container,
-          { backgroundColor: disabled ? theme.colors.secondary[100] : theme.colors.secondary[50] },
-        ]}
-      >
-        <View style={[styles.protocolContainer, { backgroundColor: theme.colors.secondary[50] }]}>
+      <View style={styles.container}>
+        <View style={styles.protocolContainer}>
           <Text
             style={[
-              styles.protocolText,
-              { color: disabled ? theme.colors.secondary[300] : theme.colors.black },
+              styles.text,
+              { color: disabled ? theme.colors.secondary[300] : theme.colors.secondary[900] },
             ]}
           >
             {protocol}
           </Text>
         </View>
 
-        <View style={[styles.inputContainer, { borderColor: getBorderColor() }]}>
+        <View
+          style={[
+            styles.inputContainer,
+            {
+              borderColor: getBorderColor(),
+              backgroundColor: disabled ? theme.colors.secondary[50] : theme.colors.white,
+            },
+          ]}
+        >
           <TextInput
             style={[
-              styles.inputField,
-              { color: disabled ? theme.colors.secondary[500] : theme.colors.black },
+              styles.text,
+              {
+                color: disabled
+                  ? theme.colors.secondary[500]
+                  : currentStatus === InputStatus.ERROR
+                  ? theme.colors.danger[800]
+                  : theme.colors.secondary[900],
+              },
             ]}
             value={url}
-            onChangeText={onUrlChange}
+            onChangeText={text => {
+              resetValidation();
+              onUrlChange(text);
+            }}
             placeholder="Website URL"
-            placeholderTextColor={theme.colors.secondary[400]}
+            placeholderTextColor={
+              disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
+            }
             keyboardType={KeyboardTypes.URL}
             editable={!disabled}
             onFocus={() => setIsFocused(true)}
@@ -95,11 +132,13 @@ const WebsiteUrlInput: React.FC<WebsiteUrlInputProps> = ({
         </View>
       </View>
 
-      {status === InputStatus.ERROR && !!errorMessage && (
-        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>{errorMessage}</Text>
+      {currentStatus === InputStatus.ERROR && !!currentErrorMessage && (
+        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>
+          {currentErrorMessage}
+        </Text>
       )}
 
-      {status === InputStatus.SUCCESS && !!successMessage && (
+      {currentStatus === InputStatus.SUCCESS && !!successMessage && (
         <Text style={[styles.message, { color: theme.colors.success[500] }]}>{successMessage}</Text>
       )}
     </View>

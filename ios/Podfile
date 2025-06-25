@@ -7,6 +7,7 @@ require Pod::Executable.execute_command('node', ['-p',
 
 platform :ios, '13.0'
 prepare_react_native_project!
+use_modular_headers!
 
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
 # because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
@@ -31,8 +32,11 @@ target 'Boilerplate' do
   # Flags change depending on the env values.
   flags = get_default_flags()
   
-  pod 'Firebase/Core'
-  pod 'Firebase/Messaging'
+  pod 'Firebase/Core', :modular_headers => true
+  pod 'Firebase/Messaging', :modular_headers => true
+  pod 'Firebase', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],

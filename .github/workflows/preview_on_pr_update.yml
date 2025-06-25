@@ -206,10 +206,9 @@ jobs:
     needs: [checks]
     if: github.event.action != 'closed'
     runs-on: macos-14 
-    timeout-minutes: 45
+    timeout-minutes: 30
     env:
       NO_FLIPPER: 1
-      RCT_NO_LAUNCH_PACKAGER: 1
       IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
       IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
       IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
@@ -223,124 +222,60 @@ jobs:
       PR_NUMBER: ${{ github.event.pull_request.number }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.2
-        
-      - name: Check Available Xcode Versions
-        run: |
-          echo "=== Available Xcode Versions ==="
-          ls -la /Applications/ | grep Xcode
-          echo ""
-          echo "=== Currently Selected Xcode ==="
-          xcode-select -p
-          xcodebuild -version
+          ruby-version: 3.1
 
-      - name: Select Best Available Xcode Version
-        run: |
-          # Check for Xcode versions in order of preference
-          if [ -d "/Applications/Xcode_15.4.app" ]; then
-            echo "✅ Using Xcode 15.4 (React Native compatible)"
-            sudo xcode-select -s /Applications/Xcode_15.4.app
-          elif [ -d "/Applications/Xcode_16.1.app" ]; then
-            echo "✅ Using Xcode 16.1"
-            sudo xcode-select -s /Applications/Xcode_16.1.app
-          elif [ -d "/Applications/Xcode_16.2.app" ]; then
-            echo "✅ Using Xcode 16.2"
-            sudo xcode-select -s /Applications/Xcode_16.2.app
-          elif [ -d "/Applications/Xcode.app" ]; then
-            echo "✅ Using default Xcode"
-            sudo xcode-select -s /Applications/Xcode.app
-          else
-            echo "❌ No suitable Xcode version found"
-            ls -la /Applications/ | grep -i xcode
-            exit 1
-          fi
-
-      - name: Verify Xcode Selection
-        run: |
-          echo "=== Selected Xcode Information ==="
-          xcode-select -p
-          xcodebuild -version
-          echo ""
-          echo "=== SDK Information ==="
-          xcodebuild -showsdks | grep iOS
+      - name: Select Xcode 16.0
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
       - name: Install Bundler
         run: gem install bundler
-        
+      
       - name: Install Ruby dependencies
         working-directory: ios
         run: bundle install
-        
+      
       - name: Set Node Version
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-        
+
       - name: Install Yarn
         run: npm install -g yarn
-        
+
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
-        
-      # Enhanced Flipper cleanup
-      - name: Remove Flipper dependencies (comprehensive cleanup)
+        run: yarn install
+      
+      # Remove Flipper-related native modules that cause iOS CI build failures
+      - name: Remove Flipper dependencies (hard cleanup)
         run: |
-          # Remove Flipper from node_modules
-          rm -rf node_modules/react-native-flipper || true
-          rm -rf node_modules/flipper* || true
+          rm -rf node_modules/react-native-flipper ios/Pods/Flipper* || true
+          yarn install --check-files || true
 
-          # Clean iOS build artifacts
-          rm -rf ios/build || true
-          rm -rf ios/Pods || true
-          rm -rf ios/Podfile.lock || true
-
-          # Remove DerivedData
-          rm -rf ~/Library/Developer/Xcode/DerivedData || true
-
-          # Reinstall node_modules
-          yarn install --check-files --frozen-lockfile
-        
-      # Enhanced Boost patch
-      - name: Fix Boost podspec for Xcode compatibility
+      # Patch Boost podspec to use a stable source and checksum to prevent flaky builds
+      - name: Patch Boost Podspec with Custom Source
         working-directory: node_modules/react-native/third-party-podspecs
         run: |
-          if [ -f "boost.podspec" ]; then
-            # Create a fixed boost.podspec
-            cat > boost.podspec << 'EOF'
-          Pod::Spec.new do |spec|
-            spec.name = "boost"
-            spec.version = "1.76.0"
-            spec.license = { :type => "Boost Software License", :file => "LICENSE_1_0.txt" }
-            spec.homepage = "http://www.boost.org"
-            spec.summary = "Boost provides free peer-reviewed portable C++ source libraries."
-            spec.authors = "Rene Rivera"
-            spec.source = {
-              :http => "https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.gz",
-              :sha256 => "7bd7ddceec1a1dfdcbdb3e609b60d01739c38390a5f956385a12f3122049f0ca"
-            }
-            spec.requires_arc = false
-            spec.module_name = "boost"
-            spec.header_dir = "boost"
-            spec.preserve_paths = "boost"
-          end
-          EOF
-            echo "✅ Fixed boost.podspec"
-          fi
-        
+          awk '
+          /spec.source/ {
+          print "  spec.source = { :http => '\''https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.gz'\'', :sha256 => '\''7bd7ddceec1a1dfdcbdb3e609b60d01739c38390a5f956385a12f3122049f0ca'\'' }";
+          skip=1; next
+          }
+          skip && /\}/ { skip=0; next }
+          skip && /:sha256/ { next }
+          { print }
+          ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
+
       - name: Install CocoaPods dependencies
         working-directory: ios
         run: |
-          # Clean CocoaPods cache
-          bundle exec pod cache clean --all || true
+          rm -f Podfile.lock
+          bundle exec pod install --repo-update
 
-          # Install with verbose output for debugging
-          bundle exec pod install --repo-update --verbose
-        
       # Set up SSH key so Match can pull signing identities from private Git repo
       - name: Set up SSH for Match
         run: |
@@ -349,53 +284,45 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           echo "GIT_SSH_COMMAND=ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" >> $GITHUB_ENV
-        
+
       - name: Setup Keychain
         run: |
           security create-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
           security set-keychain-settings -lut 21600 ci.keychain
           security unlock-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
           security default-keychain -d user -s ci.keychain
-        
+      
       - name: Export Match password
         run: echo "MATCH_PASSWORD=${{ secrets.IOS_MATCH_PASSWORD }}" >> $GITHUB_ENV
-        
+
       # Pull certificates and provisioning profiles using Fastlane Match
       - name: Install code signing certificates via Match
         working-directory: ios
         run: |
           echo "🔐 Installing certs..."
           bundle exec fastlane ci_signing_setup
-        
+
+      - name: Clear Derived Data
+        run: |
+          rm -rf ~/Library/Developer/Xcode/DerivedData
+
       - name: Bundle React Native for iOS
         run: |
-          echo "📦 Bundling React Native..."
+          echo "Working directory: $(pwd)"
+          ls -la ..
           ENVFILE=.env.preview NODE_ENV=production npx react-native bundle \
             --entry-file index.js \
             --platform ios \
             --dev false \
             --bundle-output ios/main.jsbundle \
-            --assets-dest ios \
-            --reset-cache
-        
-      # ADDED: Verify bundle was created
-      - name: Verify bundle creation
-        run: |
-          echo "=== Bundle Verification ==="
-          ls -la ios/main.jsbundle || echo "❌ main.jsbundle not found!"
-          if [ -f "ios/main.jsbundle" ]; then
-            echo "✅ main.jsbundle found ($(du -h ios/main.jsbundle | cut -f1))"
-          else
-            echo "❌ main.jsbundle missing - build will fail"
-            exit 1
-          fi
-        
+            --assets-dest . \
+
       - name: iOS PR Deploy to TestFlight
         working-directory: ios 
         run: |
           bundle exec fastlane ios pr_deploy
-        
-      # FIXED: PR comment formatting
+
+      # Comment on the PR with a link to the TestFlight build in App Store Connect
       - name: Post PR comment with TestFlight link
         if: ${{ github.event.pull_request }}
         env:
@@ -403,10 +330,13 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           BUILD_HASH: ${{ github.sha }}
         run: |
+          brew install gh # Only needed if gh CLI is not pre-installed
+          gh auth setup-git
+          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$IOS_APPLE_ID/testflight/ios"
           gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
 
-          - 🔗 [View in App Store Connect](https://appstoreconnect.apple.com/teams/${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}/apps/${{  secrets.IOS_APPLE_ID }}/testflight/ios)
-          - 🆔 App ID: \`${{ secrets.IOS_APP_IDENTIFIER }}\`
+          - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
+          - 🆔 App ID: \`com.bettrsw.boilerplate\`
           - 🧱 Build Hash: \`$BUILD_HASH\`
 
-          _This build was deployed by CI using Fastlane._"
+          _This build was deployed by CI using Fastlane._"         

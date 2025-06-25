@@ -62,22 +62,22 @@ def ios_testflight_deploy!(options = {})
     },
   )
 
-  IPA_PATH = lane_context[:IPA_OUTPUT_PATH]
-  sh("unzip -q #{IPA_PATH} -d temp_payload")
-  APP_PATH = Dir["temp_payload/Payload/*.app"].first
-  UI.user_error!("❌ .app bundle not found inside Payload") unless APP_PATH
-  HERMES_BIN = File.join(APP_PATH, "Frameworks/hermes.framework/hermes")
+  ipa_path = lane_context[:IPA_OUTPUT_PATH]
+  sh("unzip -q #{ipa_path} -d temp_payload")
+  app_path = Dir["temp_payload/Payload/*.app"].first
+  UI.user_error!("❌ .app bundle not found inside Payload") unless app_path
+  hermes_bin = File.join(app_path, "Frameworks/hermes.framework/hermes")
   # Strip bitcode manually from Hermes binary to avoid App Store submission errors.
   # Hermes framework often includes bitcode sections that aren't removed by default tools.
   sh <<~BASH
       echo "🔍 Stripping bitcode from Hermes binary before uploading to TestFlight..."
 
-      if [ -f "$HERMES_BIN" ]; then
+      if [ -f "$hermes_bin" ]; then
         echo "📦 Found Hermes binary. Stripping bitcode..."
-        xcrun bitcode_strip -r "$HERMES_BIN" -o "$HERMES_BIN"
+        xcrun bitcode_strip -r "$hermes_bin" -o "$hermes_bin"
 
         echo "🔬 Verifying..."
-        if otool -l "$HERMES_BIN" | grep -i bitcode; then
+        if otool -l "$hermes_bin" | grep -i bitcode; then
           echo "❌ Bitcode still present! Failing the build."
           exit 1
         else
@@ -87,7 +87,7 @@ def ios_testflight_deploy!(options = {})
         echo "🔐 Re-signing .app after modification..."
         CERT_ID=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n1 | awk '{print $2}')
 
-        for FRAMEWORK in "$APP_PATH/Frameworks/"*; do
+        for FRAMEWORK in "$app_path/Frameworks/"*; do
           if [ -d "$FRAMEWORK" ]; then
             /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none "$FRAMEWORK"
           fi
@@ -96,17 +96,17 @@ def ios_testflight_deploy!(options = {})
         /usr/bin/codesign --force --sign "$CERT_ID" \
           --timestamp=none \
           --preserve-metadata=entitlements \
-          "$APP_PATH"
+          "$app_path"
 
         echo "✅ Code signing complete."
       else
-        echo "⚠️ Hermes binary not found at expected path: $HERMES_BIN"
+        echo "⚠️ Hermes binary not found at expected path: $hermes_bin"
         echo "Skipping bitcode stripping."
       fi
 
       echo "📦 Repacking IPA..."
       cd temp_payload && zip -r -y ../fixed.ipa * >/dev/null && cd ..
-      mv fixed.ipa "$IPA_PATH"
+      mv fixed.ipa "$ipa_path"
 
       rm -rf temp_payload
     BASH

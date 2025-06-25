@@ -209,14 +209,16 @@ jobs:
     timeout-minutes: 30
     env:
       NO_FLIPPER: 1
-      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      APPLE_ID: ${{ secrets.APPLE_ID }}
-      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
-      APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-      APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.APP_STORE_CONNECT_API_KEY_B64 }}
+      IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
+      IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
+      IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
+      IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
+      IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+      IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
       IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
+      IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
+      IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
 
     steps:
@@ -278,16 +280,16 @@ jobs:
       - name: Set up SSH for Match
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.MATCH_DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.IOS_MATCH_DEPLOY_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           echo "GIT_SSH_COMMAND=ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" >> $GITHUB_ENV
 
       - name: Setup Keychain
         run: |
-          security create-keychain -p ${{ secrets.KEYCHAIN_PASSWORD }} ci.keychain
+          security create-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
           security set-keychain-settings -lut 21600 ci.keychain
-          security unlock-keychain -p ${{ secrets.KEYCHAIN_PASSWORD }} ci.keychain
+          security unlock-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
           security default-keychain -d user -s ci.keychain
       
       # Pull certificates and provisioning profiles using Fastlane Match

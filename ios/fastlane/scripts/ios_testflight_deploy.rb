@@ -62,17 +62,15 @@ def ios_testflight_deploy!(options = {})
     },
   )
 
-  ipa_path = lane_context[:IPA_OUTPUT_PATH]
+  IPA_PATH = lane_context[:IPA_OUTPUT_PATH]
+  sh("unzip -q #{IPA_PATH} -d temp_payload")
+  APP_PATH = Dir["temp_payload/Payload/*.app"].first
+  UI.user_error!("❌ .app bundle not found inside Payload") unless APP_PATH
+  HERMES_BIN = File.join(APP_PATH, "Frameworks/hermes.framework/hermes")
   # Strip bitcode manually from Hermes binary to avoid App Store submission errors.
   # Hermes framework often includes bitcode sections that aren't removed by default tools.
   sh <<~BASH
       echo "🔍 Stripping bitcode from Hermes binary before uploading to TestFlight..."
-
-      IPA_PATH=#{lane_context[:IPA_OUTPUT_PATH]}
-      unzip -q "$IPA_PATH" -d temp_payload
-
-      HERMES_BIN="temp_payload/Payload/Boilerplate.app/Frameworks/hermes.framework/hermes"
-      APP_PATH="temp_payload/Payload/Boilerplate.app"
 
       if [ -f "$HERMES_BIN" ]; then
         echo "📦 Found Hermes binary. Stripping bitcode..."

@@ -332,7 +332,7 @@ jobs:
         run: |
           brew install gh # Only needed if gh CLI is not pre-installed
           gh auth setup-git
-          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$APPLE_ID/testflight/ios"
+          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$IOS_APPLE_ID/testflight/ios"
           gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
 
           - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)

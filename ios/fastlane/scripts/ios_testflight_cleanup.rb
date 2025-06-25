@@ -24,13 +24,13 @@ def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:
     build_version_str = build.version.to_s
     if build_version_str.end_with?(pr_number.to_s)
       FastlaneCore::UI.message("🧹 Expiring build #{build_version_str} (#{build.id}) for PR ##{pr_number}")
-        begin
-          build = Spaceship::ConnectAPI::Build.get(build_id: build.id)
+      begin
+        build = Spaceship::ConnectAPI::Build.get(build_id: build.id)
 
         unless build
           FastlaneCore::UI.user_error!("Build with ID #{build.id} not found.")
         end
-          build.expire!
+        build.expire!
         FastlaneCore::UI.success("Successfully expired build ID: #{build.id}")
       rescue StandardError => e
         FastlaneCore::UI.error("Failed to expire build ID #{build.id}: #{e.message}")

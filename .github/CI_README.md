@@ -32,15 +32,18 @@ These environment variables are used by the GitHub Actions workflows and Fastlan
 | `GPLAY_SERVICE_ACCOUNT_KEY_JSON`  | GitHub Secret  | Google Play service account key for uploading Android production builds via Fastlane and GitHub Action. |
 | `SONAR_TOKEN`                     | GitHub Secret  | Authentication token for SonarQube analysis API access. |
 | `SONAR_HOST_URL`                  | GitHub Secret  | URL of your SonarQube server used in PR and branch scan jobs. |
-| `APPLE_ID`                            | GitHub Secret    | Apple Developer App-specific Apple ID. Used by Fastlane and App Store Connect APIs for identifying the app owner.                                    |
-| `KEYCHAIN_PASSWORD`                  | GitHub Secret    | Password for the temporary macOS CI keychain used to store signing certificates during iOS builds.                                                   |
-| `FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD` | GitHub Secret | App-specific password used by Fastlane to upload builds to TestFlight (required for some Fastlane operations).                                        |
-| `APP_STORE_CONNECT_API_KEY_ID`       | GitHub Secret    | App Store Connect API Key ID. Used by Fastlane to authenticate securely with App Store Connect.                                                      |
-| `APP_STORE_CONNECT_API_KEY_ISSUER_ID`| GitHub Secret    | App Store Connect API Issuer ID. Used in conjunction with API Key ID and Base64 key to authenticate.                                                 |
-| `APP_STORE_CONNECT_API_KEY_B64`      | GitHub Secret    | Base64-encoded contents of your App Store Connect API key (.p8 file). Used by Fastlane for secure authentication with Apple APIs.                    |
-| `MATCH_PASSWORD`                     | GitHub Secret    | Password for the Match encryption repo (used by Fastlane Match to decrypt signing certificates and provisioning profiles).                           |
-| `MATCH_DEPLOY_KEY`                   | GitHub Secret    | SSH private key with read access to your Match certificate repository. Used to fetch provisioning profiles during CI.                                |
-| `IOS_APP_IDENTIFIER`                | GitHub Secret    | iOS app bundle identifier. Used during iOS build and upload processes.                         |
+| `IOS_APPLE_ID`                            | GitHub Secret    | Apple Developer App-specific Apple ID. Used by Fastlane and App Store Connect APIs for identifying the app owner.                                    |
+| `IOS_KEYCHAIN_PASSWORD`                  | GitHub Secret    | Password for the temporary macOS CI keychain used to store signing certificates during iOS builds.                                                   |
+| `IOS_APP_STORE_CONNECT_API_KEY_ID`       | GitHub Secret    | App Store Connect API Key ID. Used by Fastlane to authenticate securely with App Store Connect.                                                      |
+| `IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID`| GitHub Secret    | App Store Connect API Issuer ID. Used in conjunction with API Key ID and Base64 key to authenticate.                                                 |
+| `IOS_APP_STORE_CONNECT_API_KEY_B64`      | GitHub Secret    | Base64-encoded contents of your App Store Connect API key (.p8 file). Used by Fastlane for secure authentication with Apple APIs.                    |
+| `IOS_MATCH_PASSWORD`                     | GitHub Secret    | Password for the Match encryption repo (used by Fastlane Match to decrypt signing certificates and provisioning profiles).                           |
+| `IOS_MATCH_DEPLOY_KEY`                   | GitHub Secret    | SSH private key with read access to your Match certificate repository. Used to fetch provisioning profiles during CI.                                |
+| `IOS_APP_IDENTIFIER`                | GitHub Secret    | iOS app bundle identifier. Used during iOS build and upload processes.
+| `IOS_MATCH_PASSWORD`         | GitHub Secret  | The password used to encrypt/decrypt certificates and profiles in the Match repository. |
+| `IOS_MATCH_REPOSITORY_URL`  | GitHub Secret  | The Git URL of the private repository used by Fastlane Match to store signing certificates and provisioning profiles. |
+| `IOS_APP_STORE_TEAM_ID`      | GitHub Secret  | Your App Store Connect Team ID (can be found in App Store Connect or developer.apple.com). Required for uploading builds and managing certificates. |
+| `IOS_DEV_EMAIL`              | GitHub Secret  | Apple Developer account email used for authentication or account identification in Fastlane. |                         |
 
 These variables are decoded and written to disk during the CI process so tools like Fastlane or the Firebase CLI can use them.
 

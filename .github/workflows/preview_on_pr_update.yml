@@ -378,6 +378,23 @@ jobs:
         run: |
           bundle exec fastlane ios pr_deploy
 
+      # Add this new step right after the iOS build step
+      - name: Show detailed build errors on failure
+        if: failure()
+        run: |
+          echo "=== FASTLANE BUILD LOG ==="
+          cat /tmp/fastlane_build.log || echo "Fastlane log not found"
+              
+          echo "=== XCODEBUILD LOGS ==="
+          find ~/Library/Developer/Xcode/DerivedData -name "*.log" -exec echo "=== {} ===" \; -exec cat {} \; 2>/dev/null || echo "No Xcode logs found"
+              
+          echo "=== GYM BUILD LOG ==="
+          cat /Users/runner/Library/Logs/gym/Boilerplate-Boilerplate.log 2>/dev/null || echo "Gym log not found"
+              
+          echo "=== CHECKING FIREBASE CONFIG ==="
+          ls -la ios/Boilerplate/GoogleService-Info.plist || echo "Firebase config missing"
+          head -20 ios/Boilerplate/GoogleService-Info.plist || echo "Cannot read Firebase config"      
+
       # Comment on the PR with a link to the TestFlight build in App Store Connect
       - name: Post PR comment with TestFlight link
         if: ${{ github.event.pull_request }}

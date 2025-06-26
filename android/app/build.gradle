@@ -2,6 +2,11 @@ apply plugin: "com.android.application"
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 apply plugin: "com.facebook.react"
 
+project.ext.envConfigFiles = [
+    debug: ".env",
+    release: ".env"
+]
+
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -76,11 +81,36 @@ android {
 
     namespace "com.bettrsw.boilerplate"
     defaultConfig {
-        applicationId "com.bettrsw.boilerplate"
+        applicationId project.env.get("ANDROID_FIREBASE_APP_PACKAGE")
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 7
         versionName "1.5"
+
+        def projectId = project.env.get("ANDROID_FIREBASE_PROJECT_ID") ?: ""
+        def storageBucket = projectId ? "${projectId}.appspot.com" : ""
+        def authDomain = projectId ? "${projectId}.firebaseapp.com" : ""
+        def databaseURL = projectId ? "https://${projectId}-default-rtdb.firebaseio.com" : ""
+
+        buildConfigField "String", "FIREBASE_PROJECT_ID", "\"${projectId}\""
+        buildConfigField "String", "FIREBASE_APP_ID", "\"${project.env.get("ANDROID_FIREBASE_APP_ID") ?: ""}\""
+        buildConfigField "String", "FIREBASE_API_KEY", "\"${project.env.get("ANDROID_FIREBASE_API_KEY") ?: ""}\""
+        buildConfigField "String", "FIREBASE_MESSAGING_SENDER_ID", "\"${project.env.get("ANDROID_FIREBASE_PROJECT_NUMBER") ?: ""}\""
+        buildConfigField "String", "FIREBASE_PROJECT_NUMBER", "\"${project.env.get("ANDROID_FIREBASE_PROJECT_NUMBER") ?: ""}\""
+        buildConfigField "String", "FIREBASE_STORAGE_BUCKET", "\"${storageBucket}\""
+        buildConfigField "String", "FIREBASE_AUTH_DOMAIN", "\"${authDomain}\""
+        buildConfigField "String", "FIREBASE_DATABASE_URL", "\"${databaseURL}\""
+
+        resValue "string", "firebase_project_id", projectId
+        resValue "string", "firebase_app_id", project.env.get("ANDROID_FIREBASE_APP_ID") ?: ""
+        resValue "string", "firebase_api_key", project.env.get("ANDROID_FIREBASE_API_KEY") ?: ""
+        resValue "string", "firebase_messaging_sender_id", project.env.get("ANDROID_FIREBASE_PROJECT_NUMBER") ?: ""
+        resValue "string", "firebase_project_number", project.env.get("ANDROID_FIREBASE_PROJECT_NUMBER") ?: ""
+        resValue "string", "firebase_storage_bucket", storageBucket
+        resValue "string", "firebase_auth_domain", authDomain
+        resValue "string", "firebase_database_url", databaseURL
+        
+        resValue "string", "default_notification_channel_id", "fcm_fallback_notification_channel"
     }
     signingConfigs {
         debug {
@@ -99,6 +129,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            debuggable true
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
@@ -113,6 +144,11 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {

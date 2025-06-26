@@ -7,11 +7,11 @@ require Pod::Executable.execute_command('node', ['-p',
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-# Changed from min_ios_version_supported to specific version
-platform :ios, '13.0'
+# FIXED: Changed from 13.0 to 16.0 to match project settings
+platform :ios, '16.0'
 
-# Add modular headers support for Firebase and Google utilities
-use_modular_headers!
+# REMOVED: use_modular_headers! to avoid conflicts with Firebase
+# Firebase pods will use modular headers individually
 
 prepare_react_native_project!
 

@@ -1,22 +1,28 @@
-import React, { PropsWithChildren } from 'react';
-import { TouchableOpacity, Text, View } from 'react-native';
+import React, { PropsWithChildren, useState } from 'react';
+import { TouchableOpacity, Text, View, ViewStyle } from 'react-native';
 
 import { ButtonKind, ButtonProps, ButtonSize } from '../../types';
 import Spinner from '../spinner/spinner';
 
 import { useButtonStyles, useKindStyles, useSizeStyles } from './button.styles';
+import { useTheme } from 'native-base';
 
 const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   children,
   disabled = false,
+  diameter,
   endEnhancer = undefined,
   isLoading = false,
+  isCircular = false,
   kind = ButtonKind.PRIMARY,
   onClick = undefined,
   size = ButtonSize.DEFAULT,
   startEnhancer = undefined,
 }) => {
-  const kindStyles = useKindStyles();
+  const [isPressed, setIsPressed] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+
+  const kindStyles = useKindStyles(isPressed || isLoading, isActive);
   const sizeStyles = useSizeStyles();
 
   const kindStyle = kindStyles[kind];
@@ -24,29 +30,60 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
 
   const styles = useButtonStyles();
 
+  const theme = useTheme();
+
+  const isCircularStyle = {
+    borderRadius: theme.radii.full,
+    width: diameter ?? theme.sizes[12],
+    height: diameter ?? theme.sizes[12],
+    justifyContent: 'center' as ViewStyle['justifyContent'],
+    alignItems: 'center' as ViewStyle['alignItems'],
+    padding: 0,
+  };
+
   return (
     <TouchableOpacity
       style={[
         styles.button,
         kindStyle.base,
-        disabled || isLoading ? kindStyle.disabled : kindStyle.enabled,
-        sizeStyle.container,
+        disabled ? kindStyle.disabled : {},
+        isCircular ? isCircularStyle : sizeStyle.container,
       ]}
       disabled={disabled || isLoading}
-      onPress={onClick}
+      onPress={event => {
+        setIsActive(true);
+        onClick?.(event);
+      }}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
       accessibilityRole="button"
     >
       <View style={styles.horizontalStack}>
         {startEnhancer ? (
           <View style={styles.enhancer}>
             {typeof startEnhancer === 'string' ? (
-              <Text style={[kindStyle.text, sizeStyle.text]}>{startEnhancer}</Text>
+              <Text
+                style={[
+                  disabled ? kindStyle.disabled : kindStyle.text,
+                  sizeStyle.text,
+                  styles.text,
+                ]}
+              >
+                {startEnhancer}
+              </Text>
             ) : (
               startEnhancer
             )}
           </View>
         ) : null}
-        <Text style={[kindStyle.text, sizeStyle.text]}>{children}</Text>
+        {children && (
+          <Text
+            style={[disabled ? kindStyle.disabled : kindStyle.text, sizeStyle.text, styles.text]}
+          >
+            {children}
+          </Text>
+        )}
+
         {isLoading ? <Spinner /> : null}
         {endEnhancer ? (
           <View style={styles.enhancer}>

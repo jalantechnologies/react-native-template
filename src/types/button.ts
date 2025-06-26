@@ -3,6 +3,8 @@ import { GestureResponderEvent } from 'react-native';
 export enum ButtonKind {
   DANGER = 'danger',
   DARK = 'dark',
+  DASHED = 'dashed',
+  INFO = 'info',
   PRIMARY = 'primary',
   SECONDARY = 'secondary',
   SUCCESS = 'success',
@@ -19,10 +21,12 @@ export enum ButtonSize {
 
 export interface ButtonProps {
   disabled?: boolean;
-  endEnhancer?: React.ReactElement;
+  diameter?: number;
+  endEnhancer?: React.ReactNode;
+  isCircular?: boolean;
   isLoading?: boolean;
   kind?: ButtonKind;
   onClick?: (event: GestureResponderEvent) => void;
   size?: ButtonSize;
-  startEnhancer?: React.ReactElement;
+  startEnhancer?: React.ReactNode;
 }

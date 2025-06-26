@@ -239,7 +239,7 @@ jobs:
         with:
           ruby-version: 3.1
 
-      - name: Select Xcode 16.2
+      - name: Select Xcode 16.0
         run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
       - name: Install Bundler
@@ -305,7 +305,7 @@ jobs:
           
           echo "✅ Created Firebase iOS configuration"
           ls -la ios/Boilerplate/GoogleService-Info.plist
-
+      
       # Remove Flipper-related native modules that cause iOS CI build failures
       - name: Remove Flipper dependencies (hard cleanup)
         run: |
@@ -373,33 +373,14 @@ jobs:
             --bundle-output ios/main.jsbundle \
             --assets-dest . \
 
-      # FIXED: Added output capture and continue-on-error
       - name: iOS PR Deploy to TestFlight
         working-directory: ios 
         run: |
-          bundle exec fastlane ios pr_deploy 2>&1 | tee /tmp/fastlane_build.log
-        continue-on-error: true
-
-      # FIXED: Error logging step that will actually work
-      - name: Show detailed build errors on failure
-        if: failure()
-        run: |
-          echo "=== FASTLANE BUILD LOG ==="
-          cat /tmp/fastlane_build.log || echo "Fastlane log not found"
-              
-          echo "=== XCODEBUILD LOGS ==="
-          find ~/Library/Developer/Xcode/DerivedData -name "*.log" -exec echo "=== {} ===" \; -exec cat {} \; 2>/dev/null || echo "No Xcode logs found"
-              
-          echo "=== GYM BUILD LOG ==="
-          cat /Users/runner/Library/Logs/gym/Boilerplate-Boilerplate.log 2>/dev/null || echo "Gym log not found"
-              
-          echo "=== CHECKING FIREBASE CONFIG ==="
-          ls -la ios/Boilerplate/GoogleService-Info.plist || echo "Firebase config missing"
-          head -20 ios/Boilerplate/GoogleService-Info.plist || echo "Cannot read Firebase config"
+          bundle exec fastlane ios pr_deploy
 
       # Comment on the PR with a link to the TestFlight build in App Store Connect
       - name: Post PR comment with TestFlight link
-        if: success()
+        if: ${{ github.event.pull_request }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -414,5 +395,4 @@ jobs:
           - 🆔 App ID: \`com.bettrsw.boilerplate\`
           - 🧱 Build Hash: \`$BUILD_HASH\`
 
-          _This build was deployed by CI using Fastlane._"
-          
+          _This build was deployed by CI using Fastlane._"         

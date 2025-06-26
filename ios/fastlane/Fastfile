@@ -18,7 +18,7 @@ platform :ios do
     ios_testflight_deploy!(
       pr_number: ENV["PR_NUMBER"],
       app_identifier: ENV["IOS_APP_IDENTIFIER"],
-      workspace: "Boilerplate.xcworkspace",
+      xcodeproj: "Boilerplate.xcodeproj",
       scheme: "Boilerplate",
       api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
       issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],

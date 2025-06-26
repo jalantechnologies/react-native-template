@@ -1,46 +1,169 @@
 default_platform(:ios)
 
 platform :ios do
+  # Fix: Force specific Xcode version in CI to avoid compatibility issues
+  before_all do
+    if is_ci
+      # Use Xcode 15.4 for better compatibility
+      begin
+        xcversion(version: "15.4")
+        FastlaneCore::UI.success("✅ Using Xcode 15.4")
+      rescue => e
+        FastlaneCore::UI.message("⚠️ Could not set Xcode version: #{e.message}")
+        FastlaneCore::UI.message("Current Xcode: #{sh('xcode-select -p').strip}")
+      end
+    end
+  end
+
   # Fetch App Store and Development signing certificates for CI environment.
   # Both are required to unlock build and test capabilities in GitHub Actions.
   desc "Fetch certificates for CI"
   lane :ci_signing_setup do
-    match(type: "appstore", readonly: true, keychain_name: "ci.keychain", keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"])
-    match(type: "development", readonly: true, keychain_name: "ci.keychain", keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"])
+    begin
+      FastlaneCore::UI.message("🔐 Fetching App Store certificates...")
+      match(
+        type: "appstore", 
+        readonly: true, 
+        keychain_name: "ci.keychain", 
+        keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
+        verbose: true
+      )
+      
+      FastlaneCore::UI.message("🔐 Fetching Development certificates...")
+      match(
+        type: "development", 
+        readonly: true, 
+        keychain_name: "ci.keychain", 
+        keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
+        verbose: true
+      )
+      
+      FastlaneCore::UI.success("✅ All certificates fetched successfully")
+      
+    rescue => e
+      FastlaneCore::UI.error("❌ Certificate setup failed: #{e.message}")
+      
+      # Debug keychain info
+      FastlaneCore::UI.message("🔍 Debugging keychain setup...")
+      sh("security list-keychains")
+      sh("security find-identity -v -p codesigning ci.keychain") rescue nil
+      
+      raise e
+    end
   end
+  
   # Deploys a PR build to TestFlight (internal testers only).
   # This lane is triggered from CI and uses environment variables to stay generic.
   # Upload fails if required env vars or bundle outputs are missing.
   desc "Build and upload to TestFlight"
   lane :pr_deploy do
+    # Verify required environment variables
+    required_env_vars = [
+      "PR_NUMBER",
+      "IOS_APP_IDENTIFIER", 
+      "IOS_APP_STORE_CONNECT_API_KEY_ID",
+      "IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID",
+      "IOS_APP_STORE_CONNECT_API_KEY_B64",
+      "IOS_KEYCHAIN_PASSWORD",
+      "IOS_APPLE_ID",
+      "FASTLANE_USER"  # Fix: Now required
+    ]
+    
+    missing_vars = required_env_vars.select { |var| ENV[var].nil? || ENV[var].empty? }
+    
+    if missing_vars.any?
+      FastlaneCore::UI.user_error!("❌ Missing required environment variables: #{missing_vars.join(', ')}")
+    end
+    
+    FastlaneCore::UI.message("✅ All required environment variables are present")
+    
     require_relative "scripts/ios_testflight_deploy"
 
-    ios_testflight_deploy!(
-      pr_number: ENV["PR_NUMBER"],
-      app_identifier: ENV["IOS_APP_IDENTIFIER"],
-      xcodeproj: "Boilerplate.xcodeproj",
-      scheme: "Boilerplate",
-      api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
-      issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
-      api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64'],
-      keychain_name: "ci.keychain",
-      keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
-      apple_id: ENV["IOS_APPLE_ID"],
-      username: ENV["FASTLANE_USER"]
-    )
+    begin
+      ios_testflight_deploy!(
+        pr_number: ENV["PR_NUMBER"],
+        app_identifier: ENV["IOS_APP_IDENTIFIER"],
+        xcodeproj: "Boilerplate.xcodeproj",
+        scheme: "Boilerplate",
+        api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
+        issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
+        api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64'],
+        keychain_name: "ci.keychain",
+        keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
+        apple_id: ENV["IOS_APPLE_ID"],
+        username: ENV["FASTLANE_USER"]
+      )
+      
+      FastlaneCore::UI.success("🎉 PR deploy completed successfully!")
+      
+    rescue => e
+      FastlaneCore::UI.error("❌ PR deploy failed: #{e.message}")
+      
+      # Additional debugging info
+      FastlaneCore::UI.message("🔍 Environment Debug Info:")
+      FastlaneCore::UI.message("  - PR Number: #{ENV['PR_NUMBER']}")
+      FastlaneCore::UI.message("  - App ID: #{ENV['IOS_APP_IDENTIFIER']}")
+      FastlaneCore::UI.message("  - Scheme: Boilerplate")
+      FastlaneCore::UI.message("  - Username: #{ENV['FASTLANE_USER']}")
+      
+      raise e
+    end
   end
+  
   # Removes any TestFlight builds uploaded via pr_deploy for this PR.
   # Should be called when PRs are closed or merged to keep TestFlight clean.
   desc "Cleanup TestFlight build for PR"
   lane :pr_cleanup do
     require_relative "scripts/ios_testflight_cleanup"
 
-    ios_testflight_cleanup!(
-      pr_number: ENV["PR_NUMBER"],
-      app_identifier: ENV["IOS_APP_IDENTIFIER"],
-      api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
-      issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
-      api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64']
-    )
+    begin
+      ios_testflight_cleanup!(
+        pr_number: ENV["PR_NUMBER"],
+        app_identifier: ENV["IOS_APP_IDENTIFIER"],
+        api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
+        issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
+        api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64']
+      )
+      
+      FastlaneCore::UI.success("🧹 PR cleanup completed successfully!")
+      
+    rescue => e
+      FastlaneCore::UI.error("❌ PR cleanup failed: #{e.message}")
+      # Don't fail the build for cleanup errors
+      FastlaneCore::UI.message("⚠️ Continuing despite cleanup failure...")
+    end
+  end
+  
+  # Additional lane for debugging build issues
+  desc "Debug build environment and dependencies"
+  lane :debug_environment do
+    FastlaneCore::UI.message("🔍 Debug Information:")
+    FastlaneCore::UI.message("  - Xcode path: #{sh('xcode-select -p').strip}")
+    FastlaneCore::UI.message("  - Xcode version: #{sh('xcodebuild -version | head -1').strip}")
+    FastlaneCore::UI.message("  - CocoaPods version: #{sh('pod --version').strip}")
+    FastlaneCore::UI.message("  - Ruby version: #{RUBY_VERSION}")
+    FastlaneCore::UI.message("  - Fastlane version: #{Fastlane::VERSION}")
+    FastlaneCore::UI.message("  - Working directory: #{Dir.pwd}")
+    
+    FastlaneCore::UI.message("🔐 Available signing identities:")
+    sh("security find-identity -v -p codesigning")
+    
+    FastlaneCore::UI.message("📱 Available simulators:")
+    sh("xcrun simctl list devices available")
+    
+    FastlaneCore::UI.message("📦 Pods status:")
+    if File.exist?("Podfile.lock")
+      FastlaneCore::UI.message("  - Podfile.lock exists")
+      pods_content = File.read("Podfile.lock")
+      if pods_content.include?("DatadogSDKReactNative")
+        datadog_version = pods_content.match(/DatadogSDKReactNative \(([^)]+)\)/)[1] rescue "unknown"
+        FastlaneCore::UI.message("  - Datadog SDK version: #{datadog_version}")
+      end
+    else
+      FastlaneCore::UI.message("  - Podfile.lock missing")
+    end
+    
+    FastlaneCore::UI.message("📁 Project structure:")
+    sh("find . -name '*.xcodeproj' -o -name '*.xcworkspace' -o -name 'Podfile*' -o -name '*.jsbundle' | head -20")
   end
 end

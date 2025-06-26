@@ -206,7 +206,7 @@ jobs:
     needs: [checks]
     if: github.event.action != 'closed'
     runs-on: macos-14 
-    timeout-minutes: 30
+    timeout-minutes: 45  # Increased timeout
     env:
       NO_FLIPPER: 1
       # Firebase environment variables
@@ -229,6 +229,7 @@ jobs:
       IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
       IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
       IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
+      FASTLANE_USER: ${{ secrets.IOS_DEV_EMAIL }}  # Fix: Added missing FASTLANE_USER
       PR_NUMBER: ${{ github.event.pull_request.number }}
 
     steps:
@@ -239,8 +240,9 @@ jobs:
         with:
           ruby-version: 3.1
 
-      - name: Select Xcode 16.2
-        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+      # Fix: Use Xcode 15.4 instead of 16.2 for better compatibility
+      - name: Select Xcode 15.4
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
 
       - name: Install Bundler
         run: gem install bundler
@@ -326,11 +328,18 @@ jobs:
           { print }
           ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
 
+      # Fix: Better CocoaPods installation with cleanup
       - name: Install CocoaPods dependencies
         working-directory: ios
         run: |
           rm -f Podfile.lock
-          bundle exec pod install --repo-update
+          # Update CocoaPods to latest version
+          gem update cocoapods
+          # Clean derived data and pods
+          rm -rf ~/Library/Developer/Xcode/DerivedData
+          rm -rf Pods
+          # Install with verbose output
+          bundle exec pod install --repo-update --verbose
 
       # Set up SSH key so Match can pull signing identities from private Git repo
       - name: Set up SSH for Match
@@ -362,16 +371,27 @@ jobs:
         run: |
           rm -rf ~/Library/Developer/Xcode/DerivedData
 
+      # Fix: Better JS bundle generation with error handling
       - name: Bundle React Native for iOS
         run: |
           echo "Working directory: $(pwd)"
-          ls -la ..
+          echo "🔍 Generating React Native bundle..."
           ENVFILE=.env.preview NODE_ENV=production npx react-native bundle \
             --entry-file index.js \
             --platform ios \
             --dev false \
             --bundle-output ios/main.jsbundle \
-            --assets-dest . \
+            --assets-dest ios/ \
+            --verbose
+          
+          # Verify bundle was created
+          if [ -f "ios/main.jsbundle" ]; then
+            echo "✅ JS bundle created successfully"
+            ls -la ios/main.jsbundle
+          else
+            echo "❌ JS bundle creation failed"
+            exit 1
+          fi
 
       - name: iOS PR Deploy to TestFlight
         working-directory: ios 
@@ -395,4 +415,5 @@ jobs:
           - 🆔 App ID: \`com.bettrsw.boilerplate\`
           - 🧱 Build Hash: \`$BUILD_HASH\`
 
-          _This build was deployed by CI using Fastlane._"         
+          _This build was deployed by CI using Fastlane._"
+          

@@ -18,7 +18,7 @@
     "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install && cd .."
   },
   "dependencies": {
-    "@datadog/mobile-react-native": "^2.8.0",
+    "@datadog/mobile-react-native": "^2.5.0" ,
     "@datadog/mobile-react-native-session-replay": "^2.8.0",
     "@datadog/mobile-react-navigation": "^2.8.0",
     "@react-native-firebase/app": "^22.2.1",

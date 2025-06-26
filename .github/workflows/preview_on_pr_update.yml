@@ -209,6 +209,16 @@ jobs:
     timeout-minutes: 30
     env:
       NO_FLIPPER: 1
+      # Firebase environment variables
+      ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
+      ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
+      ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
+      ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
+      FIREBASE_APP_ID_IOS: ${{ secrets.FIREBASE_APP_ID_IOS }}
+      FIREBASE_API_KEY_IOS: ${{ secrets.FIREBASE_API_KEY_IOS }}
+      IOS_FIREBASE_APP_PACKAGE: ${{ secrets.IOS_FIREBASE_APP_PACKAGE }}
+      ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
+      # iOS environment variables
       IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
       IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
       IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
@@ -229,7 +239,7 @@ jobs:
         with:
           ruby-version: 3.1
 
-      - name: Select Xcode 16.0
+      - name: Select Xcode 16.2
         run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
       - name: Install Bundler
@@ -250,6 +260,52 @@ jobs:
       - name: Install dependencies
         run: yarn install
       
+      - name: Generate Firebase configuration files
+        run: |
+          # Create iOS GoogleService-Info.plist
+          mkdir -p ios/Boilerplate
+          cat > ios/Boilerplate/GoogleService-Info.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CLIENT_ID</key>
+              <string>715635897715-d7cc56b8a186b100de0106.apps.googleusercontent.com</string>
+              <key>REVERSED_CLIENT_ID</key>
+              <string>com.googleusercontent.apps.715635897715-d7cc56b8a186b100de0106</string>
+              <key>API_KEY</key>
+              <string>${{ secrets.FIREBASE_API_KEY_IOS }}</string>
+              <key>GCM_SENDER_ID</key>
+              <string>${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}</string>
+              <key>PLIST_VERSION</key>
+              <string>1</string>
+              <key>BUNDLE_ID</key>
+              <string>${{ secrets.IOS_FIREBASE_APP_PACKAGE }}</string>
+              <key>PROJECT_ID</key>
+              <string>${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}</string>
+              <key>STORAGE_BUCKET</key>
+              <string>${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}.appspot.com</string>
+              <key>IS_ADS_ENABLED</key>
+              <false/>
+              <key>IS_ANALYTICS_ENABLED</key>
+              <true/>
+              <key>IS_APPINVITE_ENABLED</key>
+              <true/>
+              <key>IS_GCM_ENABLED</key>
+              <true/>
+              <key>IS_SIGNIN_ENABLED</key>
+              <true/>
+              <key>GOOGLE_APP_ID</key>
+              <string>${{ secrets.FIREBASE_APP_ID_IOS }}</string>
+              <key>DATABASE_URL</key>
+              <string>https://${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}-default-rtdb.firebaseio.com</string>
+          </dict>
+          </plist>
+          EOF
+          
+          echo "✅ Created Firebase iOS configuration"
+          ls -la ios/Boilerplate/GoogleService-Info.plist
+
       # Remove Flipper-related native modules that cause iOS CI build failures
       - name: Remove Flipper dependencies (hard cleanup)
         run: |
@@ -339,4 +395,5 @@ jobs:
           - 🆔 App ID: \`com.bettrsw.boilerplate\`
           - 🧱 Build Hash: \`$BUILD_HASH\`
 
-          _This build was deployed by CI using Fastlane._"         
+          _This build was deployed by CI using Fastlane._"
+          

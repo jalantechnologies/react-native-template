@@ -194,7 +194,7 @@ export const useKindStyles = (isPressed: boolean, isActive: boolean) => {
         borderColor: appTheme.colors.secondary[300],
         color: appTheme.colors.secondary[300],
       },
-      text: { color: appTheme.colors.white},
+      text: { color: appTheme.colors.white },
     }),
   } as Record<ButtonKind, { base: ViewStyle; disabled: ViewStyle; text: TextStyle }>;
 };

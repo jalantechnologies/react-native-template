@@ -25,41 +25,4 @@ jest.mock('react-i18next', () => ({
   },
 }));
 
-jest.mock('@react-native-firebase/app', () => ({
-  getApp: jest.fn(() => ({
-    name: '[DEFAULT]',
-    options: {
-      projectId: 'mock-project-id',
-    },
-  })),
-  getApps: jest.fn(() => []),
-  initializeApp: jest.fn(),
-  onLog: jest.fn(),
-  setLogLevel: jest.fn(),
-}));
-
-jest.mock('@react-native-firebase/messaging', () => ({
-  getMessaging: jest.fn(() => ({
-    getToken: jest.fn(() => Promise.resolve('mock-token')),
-    deleteToken: jest.fn(() => Promise.resolve()),
-    onMessage: jest.fn(() => jest.fn()),
-    onNotificationOpenedApp: jest.fn(() => jest.fn()),
-    getInitialNotification: jest.fn(() => Promise.resolve(null)),
-    requestPermission: jest.fn(() => Promise.resolve(1)),
-    hasPermission: jest.fn(() => Promise.resolve(1)),
-    subscribeToTopic: jest.fn(() => Promise.resolve()),
-    unsubscribeFromTopic: jest.fn(() => Promise.resolve()),
-    onTokenRefresh: jest.fn(() => jest.fn()),
-    setBackgroundMessageHandler: jest.fn(),
-  })),
-  getToken: jest.fn(() => Promise.resolve('mock-token')),
-  onMessage: jest.fn(() => jest.fn()),
-  onNotificationOpenedApp: jest.fn(() => jest.fn()),
-  getInitialNotification: jest.fn(() => Promise.resolve(null)),
-  requestPermission: jest.fn(() => Promise.resolve(1)),
-  hasPermission: jest.fn(() => Promise.resolve(1)),
-  subscribeToTopic: jest.fn(() => Promise.resolve()),
-  unsubscribeFromTopic: jest.fn(() => Promise.resolve()),
-  onTokenRefresh: jest.fn(() => jest.fn()),
-  setBackgroundMessageHandler: jest.fn(),
-}));
+// Remove Firebase mocks from here - they'll be handled per-test or in jest.config.js

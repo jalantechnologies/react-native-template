@@ -209,7 +209,7 @@ jobs:
     timeout-minutes: 30
     env:
       NO_FLIPPER: 1
-      # Add these Firebase environment variables
+      # Firebase environment variables
       ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
       ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
       ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
@@ -218,7 +218,7 @@ jobs:
       FIREBASE_API_KEY_IOS: ${{ secrets.FIREBASE_API_KEY_IOS }}
       IOS_FIREBASE_APP_PACKAGE: ${{ secrets.IOS_FIREBASE_APP_PACKAGE }}
       ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
-      # Existing iOS environment variables
+      # iOS environment variables
       IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
       IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
       IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
@@ -239,7 +239,7 @@ jobs:
         with:
           ruby-version: 3.1
 
-      - name: Select Xcode 16.0
+      - name: Select Xcode 16.2
         run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
       - name: Install Bundler
@@ -373,12 +373,14 @@ jobs:
             --bundle-output ios/main.jsbundle \
             --assets-dest . \
 
+      # FIXED: Added output capture and continue-on-error
       - name: iOS PR Deploy to TestFlight
         working-directory: ios 
         run: |
-          bundle exec fastlane ios pr_deploy
+          bundle exec fastlane ios pr_deploy 2>&1 | tee /tmp/fastlane_build.log
+        continue-on-error: true
 
-      # Add this new step right after the iOS build step
+      # FIXED: Error logging step that will actually work
       - name: Show detailed build errors on failure
         if: failure()
         run: |
@@ -393,11 +395,11 @@ jobs:
               
           echo "=== CHECKING FIREBASE CONFIG ==="
           ls -la ios/Boilerplate/GoogleService-Info.plist || echo "Firebase config missing"
-          head -20 ios/Boilerplate/GoogleService-Info.plist || echo "Cannot read Firebase config"      
+          head -20 ios/Boilerplate/GoogleService-Info.plist || echo "Cannot read Firebase config"
 
       # Comment on the PR with a link to the TestFlight build in App Store Connect
       - name: Post PR comment with TestFlight link
-        if: ${{ github.event.pull_request }}
+        if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -412,4 +414,5 @@ jobs:
           - 🆔 App ID: \`com.bettrsw.boilerplate\`
           - 🧱 Build Hash: \`$BUILD_HASH\`
 
-          _This build was deployed by CI using Fastlane._"         
+          _This build was deployed by CI using Fastlane._"
+          

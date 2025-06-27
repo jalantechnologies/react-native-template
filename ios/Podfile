@@ -10,8 +10,8 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 # FIXED: Changed from 13.0 to 16.0 to match project settings
 platform :ios, '16.0'
 
-# REMOVED: use_modular_headers! to avoid conflicts with Firebase
-# Firebase pods will use modular headers individually
+# Required for Firebase Swift pods
+use_modular_headers!
 
 prepare_react_native_project!
 
@@ -54,11 +54,8 @@ target 'Boilerplate' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  # Firebase Dependencies for iOS FCM
-  pod 'Firebase/Core', :modular_headers => true
-  pod 'Firebase/Messaging', :modular_headers => true
-  pod 'Firebase/Auth', :modular_headers => true
-  pod 'Firebase/Firestore', :modular_headers => true
+  # TESTING: Only Firebase Messaging for now
+  pod 'Firebase/Messaging'
 
   target 'BoilerplateTests' do
     inherit! :complete

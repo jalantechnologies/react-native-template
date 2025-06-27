@@ -7,7 +7,6 @@ import InfoIcon from '../../../assets/img/info.svg';
 import SavedIcon from '../../../assets/img/saved.svg';
 import SuccessIcon from '../../../assets/img/success.svg';
 import WarningIcon from '../../../assets/img/warning.svg';
-
 import { AlertProps, AlertType, AlertBodyProps, AlertTitleProps, AlertPosition } from '../../types';
 import { ButtonKind } from '../../types/button';
 

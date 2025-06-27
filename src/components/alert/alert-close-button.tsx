@@ -1,9 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import Button from '../button/button';
 import { AlertCloseButtonProps } from '../../types';
 import { ButtonKind } from '../../types/button';
+import Button from '../button/button';
 
 import { useAlertStyles } from './alert.styles';
 

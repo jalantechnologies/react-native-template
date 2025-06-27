@@ -1,7 +1,7 @@
 import React from 'react';
 
-import Button from '../button/button';
 import { AlertActionButtonProps } from '../../types';
+import Button from '../button/button';
 
 export const AlertActionButton: React.FC<AlertActionButtonProps> = ({ label, type, onPress }) => {
   return (

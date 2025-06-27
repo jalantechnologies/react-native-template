@@ -12,6 +12,13 @@ export enum ButtonKind {
   WARNING = 'warning',
 }
 
+export enum ButtonShape {
+  CAPSULE = 'capsule',
+  CIRCULAR = 'circular',
+  DEFAULT = 'default',
+  SQUARE = 'square',
+}
+
 export enum ButtonSize {
   COMPACT = 'compact',
   DEFAULT = 'default',
@@ -21,12 +28,11 @@ export enum ButtonSize {
 
 export interface ButtonProps {
   disabled?: boolean;
-  diameter?: number;
   endEnhancer?: React.ReactNode;
-  isCircular?: boolean;
   isLoading?: boolean;
   kind?: ButtonKind;
   onClick?: (event: GestureResponderEvent) => void;
+  shape?: ButtonShape;
   size?: ButtonSize;
   startEnhancer?: React.ReactNode;
 }

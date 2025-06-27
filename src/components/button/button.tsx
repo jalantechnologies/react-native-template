@@ -2,7 +2,7 @@ import { useTheme } from 'native-base';
 import React, { PropsWithChildren, useState } from 'react';
 import { TouchableOpacity, Text, View, ViewStyle } from 'react-native';
 
-import { ButtonKind, ButtonProps, ButtonSize } from '../../types';
+import { ButtonKind, ButtonProps, ButtonShape, ButtonSize } from '../../types';
 import Spinner from '../spinner/spinner';
 
 import { useButtonStyles, useKindStyles, useSizeStyles } from './button.styles';
@@ -10,17 +10,17 @@ import { useButtonStyles, useKindStyles, useSizeStyles } from './button.styles';
 const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   children,
   disabled = false,
-  diameter,
   endEnhancer = undefined,
   isLoading = false,
-  isCircular = false,
   kind = ButtonKind.PRIMARY,
   onClick = undefined,
+  shape = ButtonShape.DEFAULT,
   size = ButtonSize.DEFAULT,
   startEnhancer = undefined,
 }) => {
   const [isPressed, setIsPressed] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  const [contentSize, setContentSize] = useState({ width: 0, height: 0 });
 
   const kindStyles = useKindStyles(isPressed || isLoading, isActive);
   const sizeStyles = useSizeStyles();
@@ -32,23 +32,44 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
 
   const theme = useTheme();
 
-  const isCircularStyle = {
-    borderRadius: theme.radii.full,
-    width: diameter ?? theme.sizes[12],
-    height: diameter ?? theme.sizes[12],
-    justifyContent: 'center' as ViewStyle['justifyContent'],
-    alignItems: 'center' as ViewStyle['alignItems'],
-    padding: 0,
-  };
+  const shapeStyle: ViewStyle = (() => {
+    const dynamicSize = Math.max(
+      contentSize.width + theme.space[2],
+      contentSize.height + theme.space[2],
+    );
+    switch (shape) {
+      case ButtonShape.CIRCULAR:
+        return {
+          borderRadius: dynamicSize / 2,
+          width: dynamicSize,
+          height: dynamicSize,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 0,
+        };
+      case ButtonShape.CAPSULE:
+        return {
+          borderRadius: dynamicSize,
+          paddingVertical: sizeStyle.container.paddingVertical,
+          paddingHorizontal: sizeStyle.container.paddingHorizontal,
+        };
+      case ButtonShape.SQUARE:
+        return {
+          borderRadius: theme.radii.sm,
+          width: dynamicSize,
+          height: dynamicSize,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 0,
+        };
+      default:
+        return sizeStyle.container;
+    }
+  })();
 
   return (
     <TouchableOpacity
-      style={[
-        styles.button,
-        kindStyle.base,
-        disabled ? kindStyle.disabled : {},
-        isCircular ? isCircularStyle : sizeStyle.container,
-      ]}
+      style={[styles.button, kindStyle.base, disabled ? kindStyle.disabled : {}, shapeStyle]}
       disabled={disabled || isLoading}
       onPress={event => {
         setIsActive(true);
@@ -58,7 +79,13 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
       onPressOut={() => setIsPressed(false)}
       accessibilityRole="button"
     >
-      <View style={styles.horizontalStack}>
+      <View
+        style={styles.horizontalStack}
+        onLayout={event => {
+          const { width, height } = event.nativeEvent.layout;
+          setContentSize({ width, height });
+        }}
+      >
         {startEnhancer ? (
           <View style={styles.enhancer}>
             {typeof startEnhancer === 'string' ? (

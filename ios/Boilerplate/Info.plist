@@ -42,6 +42,44 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	
+	<!-- Push Notification Permission Description -->
+	<key>NSUserNotificationUsageDescription</key>
+	<string>This app uses notifications to keep you updated with important information.</string>
+	
+	<!-- Background modes for push notifications -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>background-fetch</string>
+		<string>remote-notification</string>
+	</array>
+	
+	<!-- Firebase URL Scheme Configuration -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>GoogleService</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- This will be set programmatically or via build settings -->
+				<string>com.googleusercontent.apps.715635897715-d7cc56b8a186b100de0106</string>
+			</array>
+		</dict>
+	</array>
+	
+	<!-- Firebase Configuration Keys (will be populated via environment variables) -->
+	<key>FIREBASE_API_KEY</key>
+	<string>$(FIREBASE_API_KEY_IOS)</string>
+	<key>FIREBASE_APP_ID</key>
+	<string>$(FIREBASE_APP_ID_IOS)</string>
+	<key>FIREBASE_PROJECT_ID</key>
+	<string>$(ANDROID_FIREBASE_PROJECT_ID)</string>
+	<key>FIREBASE_PROJECT_NUMBER</key>
+	<string>$(ANDROID_FIREBASE_PROJECT_NUMBER)</string>
+	<key>FIREBASE_BUNDLE_ID</key>
+	<string>$(IOS_FIREBASE_APP_PACKAGE)</string>
+	
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

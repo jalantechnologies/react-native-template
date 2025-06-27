@@ -129,7 +129,7 @@ end
   desc "Build and deploy release to Play Store internal track"
   lane :deploy_android_internal do
     sync_versions
-
+    fetch_and_increment_build_number
     gradle(
       task: "bundle",
       build_type: "release",

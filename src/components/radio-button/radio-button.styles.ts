@@ -1,7 +1,7 @@
 import { useTheme } from 'native-base';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
 
-import { RadioButtonKind } from '../../types/radio-button';
+import { RadioButtonKind, RadioButtonSize } from '../../types/radio-button';
 
 interface RadioKindStyle {
   borderColor: string;
@@ -27,7 +27,7 @@ export const useRadioKindStyles = (): Record<RadioButtonKind, RadioKindStyle> =>
   };
 };
 
-export const RadioStyles = (small: boolean) => {
+export const useRadioStyles = () => {
   const theme = useTheme();
   return StyleSheet.create({
     wrapper: {
@@ -35,8 +35,6 @@ export const RadioStyles = (small: boolean) => {
       alignItems: 'center',
     },
     outerCircle: {
-      height: small ? theme.sizes[4] : theme.sizes[5],
-      width: small ? theme.sizes[4] : theme.sizes[5],
       borderRadius: theme.radii.full,
       borderWidth: parseInt(theme.borderWidths[1], 10),
       justifyContent: 'center',
@@ -44,12 +42,23 @@ export const RadioStyles = (small: boolean) => {
       marginRight: theme.space[2],
     },
     innerCircle: {
-      height: small ? theme.sizes[2] : theme.sizes[2] + 2,
-      width: small ? theme.sizes[2] : theme.sizes[2] + 2,
       borderRadius: theme.radii.full,
     },
-    label: {
-      fontSize: theme.fontSizes.md,
-    },
   });
+};
+
+export const useSizeStyles = () => {
+  const theme = useTheme();
+  return {
+    [RadioButtonSize.SMALL]: StyleSheet.create({
+      outerCircle: { height: theme.sizes[4], width: theme.sizes[4] },
+      innerCircle: { height: theme.sizes[2], width: theme.sizes[2] },
+      label: { fontSize: theme.fontSizes.sm },
+    }),
+    [RadioButtonSize.LARGE]: StyleSheet.create({
+      outerCircle: { height: theme.sizes[5], width: theme.sizes[5] },
+      innerCircle: { height: theme.sizes[2] + 2, width: theme.sizes[2] + 2 },
+      label: { fontSize: theme.fontSizes.md },
+    }),
+  } as Record<RadioButtonSize, { outerCircle: ViewStyle; innerCircle: ViewStyle; label: TextStyle }>;
 };

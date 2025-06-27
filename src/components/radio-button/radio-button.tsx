@@ -2,9 +2,9 @@ import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 
-import { RadioButtonProps, RadioButtonKind } from '../../types/radio-button';
+import { RadioButtonProps, RadioButtonKind, RadioButtonSize } from '../../types/radio-button';
 
-import { RadioStyles, useRadioKindStyles } from './radio-button.styles';
+import { useRadioKindStyles, useRadioStyles, useSizeStyles } from './radio-button.styles';
 
 const RadioButton: React.FC<RadioButtonProps> = ({
   disabled = false,
@@ -12,14 +12,16 @@ const RadioButton: React.FC<RadioButtonProps> = ({
   label,
   onPress,
   selected,
-  small = false,
+  size = RadioButtonSize.LARGE,
   indeterminate = false,
   value,
 }) => {
   const theme = useTheme();
   const kindStyles = useRadioKindStyles();
   const btnKindStyle = kindStyles[kind];
-  const styles = RadioStyles(small);
+  const styles = useRadioStyles();
+  const sizeStyles = useSizeStyles();
+  const sizeStyle = sizeStyles[size];
 
   const [isFocused, setIsFocused] = useState(false);
 
@@ -82,14 +84,14 @@ const RadioButton: React.FC<RadioButtonProps> = ({
       accessibilityState={{ selected, disabled }}
       accessibilityLabel={label || value}
     >
-      <View style={[styles.outerCircle, outerCircleStyle, isFocused && focusedStyle]}>
+      <View style={[styles.outerCircle, sizeStyle.outerCircle, outerCircleStyle, isFocused && focusedStyle]}>
         {selected && (
           <View
-            style={[styles.innerCircle, innerCircleStyle, indeterminate && indeterminateStyle]}
+            style={[styles.innerCircle, sizeStyle.innerCircle, innerCircleStyle, indeterminate && indeterminateStyle]}
           />
         )}
       </View>
-      {label && <Text style={[styles.label, labelColorStyle]}>{label}</Text>}
+      {label && <Text style={[sizeStyle.label, labelColorStyle]}>{label}</Text>}
     </Pressable>
   );
 };

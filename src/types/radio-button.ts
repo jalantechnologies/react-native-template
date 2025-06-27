@@ -4,13 +4,18 @@ export enum RadioButtonKind {
   SUCCESS = 'success',
 }
 
+export enum RadioButtonSize {
+  LARGE = 'large',
+  SMALL = 'small',
+}
+
 export interface RadioButtonProps {
   disabled?: boolean;
   kind?: RadioButtonKind;
   label?: string;
   onPress: (value: string) => void;
   selected: boolean;
-  small?: boolean;
+  size?: RadioButtonSize;
   indeterminate?: boolean;
   value: string;
 }

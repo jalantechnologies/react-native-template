@@ -48,6 +48,8 @@
 		A6B4F8F7F01641D64DD7ABAB /* Pods-Boilerplate.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Boilerplate.release.xcconfig"; path = "Target Support Files/Pods-Boilerplate/Pods-Boilerplate.release.xcconfig"; sourceTree = "<group>"; };
 		D342590708C94853358B765F /* libPods-Boilerplate-BoilerplateTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Boilerplate-BoilerplateTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		/* ADDED: Entitlements file for Push Notifications */
+		13B07FB81A68108700A75B9A /* Boilerplate.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = Boilerplate.entitlements; path = Boilerplate/Boilerplate.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,8 @@
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
+				/* ADDED: Entitlements file reference */
+				13B07FB81A68108700A75B9A /* Boilerplate.entitlements */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
@@ -207,6 +211,15 @@
 			productName = Boilerplate;
 			productReference = 13B07F961A680F5B00A75B9A /* Boilerplate.app */;
 			productType = "com.apple.product-type.application";
+			/* ADDED: System capabilities for Push Notifications */
+			systemCapabilities = {
+				com.apple.Push = {
+					enabled = 1;
+				};
+				com.apple.BackgroundModes = {
+					enabled = 1;
+				};
+			};
 		};
 /* End PBXNativeTarget section */
 
@@ -222,6 +235,15 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1120;
+						/* ADDED: System capabilities */
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -525,6 +547,8 @@
 				CODE_SIGN_STYLE = Manual;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate";
+				/* ADDED: Reference to entitlements file */
+				CODE_SIGN_ENTITLEMENTS = "Boilerplate/Boilerplate.entitlements";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate;
 				PRODUCT_NAME = Boilerplate;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -556,6 +580,8 @@
 				CODE_SIGN_STYLE = Manual;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate";
+				/* ADDED: Reference to entitlements file */
+				CODE_SIGN_ENTITLEMENTS = "Boilerplate/Boilerplate.entitlements";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate;
 				PRODUCT_NAME = Boilerplate;
 				SWIFT_VERSION = 5.0;

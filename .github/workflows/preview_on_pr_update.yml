@@ -373,10 +373,40 @@ jobs:
             --bundle-output ios/main.jsbundle \
             --assets-dest . \
 
-      - name: iOS PR Deploy to TestFlight
+      - name: Debug Build Configuration
+        working-directory: ios
+        run: |
+          echo "🔍 Checking project configuration..."
+          
+          # Check if entitlements file exists
+          if [ -f "Boilerplate/Boilerplate.entitlements" ]; then
+            echo "✅ Entitlements file found"
+            cat Boilerplate/Boilerplate.entitlements
+          else
+            echo "❌ Entitlements file missing"
+          fi
+          
+          # Check build settings
+          echo "📋 Current build settings:"
+          xcodebuild -project Boilerplate.xcodeproj -target Boilerplate -configuration Release -showBuildSettings | grep -E "(CODE_SIGN|PROVISIONING|ENTITLEMENTS)" || echo "No matching build settings found"
+          
+          # List all provisioning profiles
+          echo "📄 Available provisioning profiles:"
+          ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ || echo "No provisioning profiles found"
+          
+          # Check capabilities in project
+          echo "🛠️ Project capabilities:"
+          grep -A 10 -B 5 "systemCapabilities\|SystemCapabilities" Boilerplate.xcodeproj/project.pbxproj || echo "No system capabilities found"
+
+      - name: iOS PR Deploy to TestFlight (Debug Mode)
         working-directory: ios 
         run: |
-          bundle exec fastlane ios pr_deploy
+          # Enable verbose mode for debugging
+          set -x
+          bundle exec fastlane ios pr_deploy --verbose
+        env:
+          FASTLANE_VERBOSE: true
+          XCODE_VERBOSE: true
 
       # Comment on the PR with a link to the TestFlight build in App Store Connect
       - name: Post PR comment with TestFlight link
@@ -396,4 +426,3 @@ jobs:
           - 🧱 Build Hash: \`$BUILD_HASH\`
 
           _This build was deployed by CI using Fastlane._"
-          

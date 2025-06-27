@@ -1,56 +1,127 @@
 import { useTheme } from 'native-base';
-import React from 'react';
-import { Modal, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Modal, TouchableWithoutFeedback, View, Animated, Dimensions } from 'react-native';
 
-import { AlertBodyProps, AlertProps, AlertTitleProps, AlertType } from '../../types';
+import DeleteIcon from '../../../assets/img/delete.svg';
+import InfoIcon from '../../../assets/img/info.svg';
+import SavedIcon from '../../../assets/img/saved.svg';
+import SuccessIcon from '../../../assets/img/success.svg';
+import WarningIcon from '../../../assets/img/warning.svg';
+
+import { AlertProps, AlertType, AlertBodyProps, AlertTitleProps, AlertPosition } from '../../types';
+import { ButtonKind } from '../../types/button';
 
 import { AlertActionButton } from './alert-action-button';
 import { AlertCloseButton } from './alert-close-button';
 import { AlertIcon } from './alert-icon';
 import { useAlertStyles } from './alert.styles';
 
+const { height } = Dimensions.get('window');
+
 const SYMBOL = {
-  [AlertType.DANGER]: '\u2718',
-  [AlertType.INFO]: '\u24D8',
-  [AlertType.SUCCESS]: '\u2714',
-  [AlertType.WARNING]: '\u26A0',
+  [AlertType.DELETE]: <DeleteIcon width={28} height={28} />,
+  [AlertType.INFO]: <InfoIcon width={28} height={28} />,
+  [AlertType.SUCCESS]: <SuccessIcon width={28} height={28} />,
+  [AlertType.SAVED]: <SavedIcon width={28} height={28} />,
+  [AlertType.WARNING]: <WarningIcon width={28} height={28} />,
 };
 
 const Alert: React.FC<AlertProps> & {
   Title: React.FC<AlertTitleProps>;
   Body: React.FC<AlertBodyProps>;
-} = ({ type, onClose, onConfirm, confirmText, children }) => {
+} = ({
+  type,
+  onClose,
+  onConfirm,
+  onCancel = () => {},
+  confirmText = 'Confirm',
+  cancelText,
+  position = AlertPosition.CENTER,
+  children,
+}) => {
   const { colors } = useTheme();
   const styles = useAlertStyles();
+  const slideAnim = useRef(new Animated.Value(height)).current;
 
-  const getAlertColors = () => {
-    const alertColorMap = {
-      [AlertType.DANGER]: { bgColor: colors.error[500], textColor: colors.white },
-      [AlertType.SUCCESS]: { bgColor: colors.success[500], textColor: colors.white },
-      [AlertType.INFO]: { bgColor: colors.info[500], textColor: colors.white },
-      [AlertType.WARNING]: { bgColor: colors.warning[300], textColor: colors.secondary[900] },
-    };
-    return alertColorMap[type] || { bgColor: colors.secondary[400], textColor: colors.white };
+  const getIconBgColors = () => {
+    if (type === AlertType.DELETE) {
+      return colors.danger[50];
+    } else if (type === AlertType.SUCCESS) {
+      return colors.success[50];
+    } else if (type === AlertType.WARNING) {
+      return colors.warning[50];
+    } else if (type === AlertType.SAVED) {
+      return colors.secondary[50];
+    } else {
+      return colors.info[50];
+    }
+  };
+  const bgColor = getIconBgColors();
+
+  const getButtonTypeFromAlertType = () => {
+    if (type === AlertType.DELETE) {
+      return ButtonKind.DANGER;
+    } else if (type === AlertType.SUCCESS) {
+      return ButtonKind.SECONDARY;
+    } else if (type === AlertType.WARNING) {
+      return ButtonKind.TERTIARY;
+    } else {
+      return ButtonKind.PRIMARY;
+    }
   };
 
-  const { bgColor, textColor } = getAlertColors();
+  const buttonType = getButtonTypeFromAlertType();
+
+  useEffect(() => {
+    Animated.spring(slideAnim, {
+      toValue: 0,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   return (
-    <Modal transparent animationType="fade">
+    <Modal transparent animationType="none">
       <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.overlay}>
+        <View
+          style={[
+            styles.overlay,
+            position === AlertPosition.BOTTOM
+              ? { justifyContent: 'flex-end' }
+              : { justifyContent: 'center' },
+          ]}
+        >
           <TouchableWithoutFeedback onPress={() => {}}>
-            <View style={styles.container}>
-              <AlertCloseButton onPress={onClose} />
-              <AlertIcon symbol={SYMBOL[type]} bgColor={bgColor} textColor={textColor} />
-              {children}
-              <AlertActionButton
-                label={confirmText}
-                bgColor={bgColor}
-                textColor={textColor}
-                onPress={onConfirm}
-              />
-            </View>
+            <Animated.View
+              style={[
+                { transform: [{ translateY: slideAnim }] },
+                position === AlertPosition.BOTTOM ? styles.bottomContainer : styles.centerContainer,
+              ]}
+            >
+              {position === AlertPosition.BOTTOM ? (
+                <View style={styles.handleBar} />
+              ) : (
+                <AlertCloseButton onPress={onClose} />
+              )}
+              <AlertIcon symbol={SYMBOL[type]} bgColor={bgColor} />
+              <View style={styles.childrenContainer}>{children}</View>
+              <View style={styles.buttonContainer}>
+                {cancelText && (
+                  <>
+                    <View style={styles.buttonWrapper}>
+                      <AlertActionButton
+                        label={cancelText}
+                        onPress={onCancel}
+                        type={ButtonKind.SECONDARY}
+                      />
+                    </View>
+                    <View style={styles.buttonSpacing} />
+                  </>
+                )}
+                <View style={styles.buttonWrapper}>
+                  <AlertActionButton label={confirmText} onPress={onConfirm} type={buttonType} />
+                </View>
+              </View>
+            </Animated.View>
           </TouchableWithoutFeedback>
         </View>
       </TouchableWithoutFeedback>

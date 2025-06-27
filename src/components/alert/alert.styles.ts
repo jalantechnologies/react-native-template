@@ -1,77 +1,74 @@
-import { useColorMode, useTheme } from 'native-base';
-import { Dimensions, DimensionValue, StyleSheet } from 'react-native';
+import { useTheme } from 'native-base';
+import { Dimensions, StyleSheet } from 'react-native';
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const BOX_SIZE = SCREEN_WIDTH * 0.15;
+const { width } = Dimensions.get('window');
+const iconContSize = width * 0.12;
 
 export const useAlertStyles = () => {
   const theme = useTheme();
-  const { colorMode } = useColorMode();
-
-  const isLight = colorMode === 'light';
-
   return StyleSheet.create({
     overlay: {
       flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: isLight ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.1)',
     },
-    iconContainer: {
-      position: 'absolute',
-      top: -BOX_SIZE / 2,
-      alignSelf: 'center',
-      zIndex: 1,
-    },
-    container: {
-      width: theme.sizes['4/5'] as DimensionValue,
+    centerContainer: {
       backgroundColor: theme.colors.white,
-      borderRadius: theme.radii['3xl'],
-      alignItems: 'center',
-      paddingTop: theme.space[12],
-      paddingBottom: theme.space[8],
-      paddingHorizontal: theme.space[5],
-    },
-    unrotate: {
-      transform: [{ rotate: '-45deg' }],
-      justifyContent: 'center',
+      width: '80%',
+      borderRadius: theme.radii.xl,
+      padding: theme.space[5],
+      paddingTop: theme.space[2],
       alignItems: 'center',
     },
-    iconWrapper: {
-      width: BOX_SIZE,
-      height: BOX_SIZE,
-      transform: [{ rotate: '45deg' }],
+    bottomContainer: {
+      backgroundColor: theme.colors.white,
+      borderTopLeftRadius: theme.radii.xl,
+      borderTopRightRadius: theme.radii.xl,
+      paddingVertical: theme.space[2],
+      paddingHorizontal: theme.space[4],
       alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: theme.radii.md,
-      marginBottom: theme.space[5],
+      width: '100%',
     },
-    iconText: {
-      fontSize: theme.fontSizes['3xl'],
-      fontWeight: 'bold',
+    childrenContainer: {
+      paddingVertical: theme.space[3],
     },
     title: {
-      marginBottom: theme.space[2],
-      textAlign: 'center',
+      paddingBottom: theme.space[2],
+      alignItems: 'center',
     },
     message: {
-      textAlign: 'center',
+      paddingBottom: theme.space[3],
+      alignItems: 'center',
+    },
+    iconContainer: {
+      width: iconContSize,
+      height: iconContSize,
+      borderRadius: theme.radii.lg,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    closeButtonContainer: {
+      alignSelf: 'flex-end',
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '100%',
+      paddingTop: theme.space[2],
+    },
+    buttonWrapper: {
+      flex: 1,
+    },
+    buttonSpacing: {
+      width: theme.space[3],
+    },
+    handleBar: {
+      width: '30%',
+      height: theme.sizes[1],
+      borderRadius: theme.radii.xs,
+      backgroundColor: theme.colors.secondary[200],
       marginBottom: theme.space[5],
-    },
-    button: {
-      borderRadius: theme.radii['2xl'],
-    },
-    buttonText: {
-      fontWeight: 'bold',
-      textAlign: 'center',
-      fontSize: theme.fontSizes.md,
-      minWidth: theme.sizes[3],
-    },
-    closeIconContainer: {
-      position: 'absolute',
-      top: theme.space[3],
-      right: theme.space[3],
-      zIndex: 2,
     },
   });
 };

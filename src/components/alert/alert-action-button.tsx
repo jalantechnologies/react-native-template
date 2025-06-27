@@ -1,24 +1,11 @@
-import { Button } from 'native-base';
 import React from 'react';
 
-import { AlertActionButtonProps } from '../../types/alert';
+import Button from '../button/button';
+import { AlertActionButtonProps } from '../../types';
 
-import { useAlertStyles } from './alert.styles';
-
-export const AlertActionButton: React.FC<AlertActionButtonProps> = ({
-  label,
-  bgColor,
-  onPress,
-  textColor,
-}) => {
-  const styles = useAlertStyles();
+export const AlertActionButton: React.FC<AlertActionButtonProps> = ({ label, type, onPress }) => {
   return (
-    <Button
-      onPress={onPress}
-      bgColor={bgColor}
-      _text={{ ...styles.buttonText, color: textColor }}
-      style={styles.button}
-    >
+    <Button onClick={onPress} kind={type}>
       {label}
     </Button>
   );

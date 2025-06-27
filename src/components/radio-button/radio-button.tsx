@@ -84,10 +84,22 @@ const RadioButton: React.FC<RadioButtonProps> = ({
       accessibilityState={{ selected, disabled }}
       accessibilityLabel={label || value}
     >
-      <View style={[styles.outerCircle, sizeStyle.outerCircle, outerCircleStyle, isFocused && focusedStyle]}>
+      <View
+        style={[
+          styles.outerCircle,
+          sizeStyle.outerCircle,
+          outerCircleStyle,
+          isFocused && focusedStyle,
+        ]}
+      >
         {selected && (
           <View
-            style={[styles.innerCircle, sizeStyle.innerCircle, innerCircleStyle, indeterminate && indeterminateStyle]}
+            style={[
+              styles.innerCircle,
+              sizeStyle.innerCircle,
+              innerCircleStyle,
+              indeterminate && indeterminateStyle,
+            ]}
           />
         )}
       </View>

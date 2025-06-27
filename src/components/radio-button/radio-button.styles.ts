@@ -60,5 +60,8 @@ export const useSizeStyles = () => {
       innerCircle: { height: theme.sizes[2] + 2, width: theme.sizes[2] + 2 },
       label: { fontSize: theme.fontSizes.md },
     }),
-  } as Record<RadioButtonSize, { outerCircle: ViewStyle; innerCircle: ViewStyle; label: TextStyle }>;
+  } as Record<
+    RadioButtonSize,
+    { outerCircle: ViewStyle; innerCircle: ViewStyle; label: TextStyle }
+  >;
 };

@@ -1,0 +1,59 @@
+name: Android Production Deploy
+on:
+  push:
+    branches:
+      - shivam/feat/android-production-deploy
+
+jobs:
+  android_production_deploy:
+    name: Deploy Android to Play Store
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+
+      - uses: ./.github/actions/setup-fastlane
+
+      - name: Decode Keystore file
+        run: echo "${{ secrets.ANDROID_KEYSTORE_FILE }}" | base64 --decode > keystore.jks
+
+      - name: Set Gradle signing environment variables
+        run: |
+          echo "ANDROID_KEYSTORE_FILE=$(pwd)/keystore.jks" >> $GITHUB_ENV
+          echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
+          echo "ANDROID_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> $GITHUB_ENV
+          echo "ANDROID_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> $GITHUB_ENV
+          echo "ANDROID_JSON_KEY_FILE=$(pwd)/play_store.json" >> $GITHUB_ENV
+
+      - name: Decode Google Play JSON Key
+        run: echo "${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}" | base64 --decode > play_store.json
+
+      - name: Build and Deploy to Play Store
+        working-directory: android
+        run: bundle exec fastlane android deploy_android_internal
+
+      - name: Cleanup
+        if: always()
+        run: rm -f keystore.jks play_store.json

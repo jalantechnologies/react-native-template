@@ -47,10 +47,9 @@
 	<key>NSUserNotificationUsageDescription</key>
 	<string>This app uses notifications to keep you updated with important information.</string>
 	
-	<!-- Background modes for push notifications -->
+	<!-- FIXED: Background modes for push notifications - REMOVED background-fetch -->
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>background-fetch</string>
 		<string>remote-notification</string>
 	</array>
 	

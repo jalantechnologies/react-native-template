@@ -1,12 +1,12 @@
 import { useTheme } from 'native-base';
 import React, { PropsWithChildren, useState } from 'react';
-import { TouchableOpacity, Text, View, ViewStyle } from 'react-native';
+import { TouchableOpacity, Text, View } from 'react-native';
 
 import { ButtonKind, ButtonProps, ButtonShape, ButtonSize } from '../../types';
+import { SpinnerTypes } from '../../types/spinner';
 import Spinner from '../spinner/spinner';
 
 import { useButtonStyles, useKindStyles, useSizeStyles } from './button.styles';
-import { SpinnerTypes } from '../../types/spinner';
 
 const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   children,

@@ -69,7 +69,7 @@ export const useKindStyles = (isPressed: boolean, isActive: boolean) => {
           ? appTheme.colors.primary['700']
           : appTheme.colors.secondary['300'],
         backgroundColor: appTheme.colors.white,
-        borderWidth: parseInt(appTheme.borderWidths['1'],10),
+        borderWidth: parseInt(appTheme.borderWidths['1'], 10),
         shadowOpacity: 0.016,
       },
       disabled: {

@@ -168,15 +168,6 @@ class FirebaseDistributionService
     UI.message("Response: #{response.body}")
   end
 
-  private
-
-  # Returns the expected debug APK path.
-  # This method exists to encapsulate assumptions about the project structure.
-  def apk_path
-    File.expand_path("../../app/build/outputs/apk/debug/app-debug.apk", __dir__)
-  end
-
-  # Upload to Google Play internal track
   def upload_to_play_store_internal(pr_number:, pr_title:)
     app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
 
@@ -211,5 +202,13 @@ class FirebaseDistributionService
     )
 
     UI.success("✅ Uploaded to Google Play internal track with PR context.")
+  end
+
+  private
+
+  # Returns the expected debug APK path.
+  # This method exists to encapsulate assumptions about the project structure.
+  def apk_path
+    File.expand_path("../../app/build/outputs/apk/debug/app-debug.apk", __dir__)
   end
 end

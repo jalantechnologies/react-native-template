@@ -1,5 +1,4 @@
 require_relative './firebase_distribution_service'
-require_relative './play_console_upload_service'
 
 # Generates a preview build for a pull request and uploads it to Firebase App Distribution.
 #

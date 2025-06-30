@@ -174,34 +174,45 @@ class FirebaseDistributionService
     UI.message("📦 Uploading build to Google Play internal track...")
 
     # This expects the AAB to be present; trigger the bundle build here if needed
-    Actions::GradleAction.run(
-      task: "bundle",
-      build_type: "release",
-      project_dir: File.expand_path("../..", __dir__),
-      gradle_path: "gradlew",
-      properties: {
-        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
-        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
-        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
-        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
-      }
-    )
-
+    begin
+      Actions::GradleAction.run(
+        task: "bundle",
+        build_type: "release",
+        project_dir: File.expand_path("../..", __dir__),
+        gradle_path: "gradlew",
+        properties: {
+          "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
+          "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
+          "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+          "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
+        }
+      )
+    rescue => e
+      UI.error("🔥 Gradle build failed for release bundle.")
+      UI.error("📄 Error: #{e.message}")
+      UI.error("🔍 Backtrace:\n#{e.backtrace.join("\n")}")
+      raise e
+    end
     release_notes = "PR ##{pr_number}: #{pr_title} - Uploaded on #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}"
-
-    upload_to_play_store(
-      track: "internal",
-      json_key: ENV["ANDROID_JSON_KEY_FILE"],
-      aab: "app/build/outputs/bundle/release/app-release.aab",
-      skip_upload_apk: true,
-      release_status: "draft",
-      release_notes: [{
-        language: "en-US",
-        text: release_notes
-      }]
-    )
-
-    UI.success("✅ Uploaded to Google Play internal track with PR context.")
+    begin
+      upload_to_play_store(
+        track: "internal",
+        json_key: ENV["ANDROID_JSON_KEY_FILE"],
+        aab: "app/build/outputs/bundle/release/app-release.aab",
+        skip_upload_apk: true,
+        release_status: "draft",
+        release_notes: [{
+          language: "en-US",
+          text: release_notes
+        }]
+      )
+      UI.success("✅ Uploaded to Google Play internal track with PR context.")
+    rescue => e
+      UI.error("🔥 Failed to upload to Google Play internal track.")
+      UI.error("📄 Error: #{e.message}")
+      UI.error("🔍 Backtrace:\n#{e.backtrace.join("\n")}")
+      raise e
+    end
   end
 
   private

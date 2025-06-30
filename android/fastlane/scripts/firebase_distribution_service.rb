@@ -186,6 +186,8 @@ class FirebaseDistributionService
           "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
           "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
         }
+        print_command: true,
+        print_command_output: true
       )
     rescue => e
       UI.error("🔥 Gradle build failed for release bundle.")

@@ -109,7 +109,7 @@ jobs:
       ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
       ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
       ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
-
+      ANDROID_JSON_KEY_FILE: ${{ secrets.ANDROID_JSON_KEY_FILE }}
     steps:
       - uses: actions/checkout@v3
 

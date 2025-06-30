@@ -129,6 +129,7 @@ end
   desc "Deploy APK to Firebase App Distribution"
   lane :pr_deploy do |options|
     # Load the deploy script.
+    sync_versions
     load './scripts/firebase_pr_deploy.rb'
     firebase_pr_deploy(
       pr_number: options[:pr_number],

@@ -1,4 +1,5 @@
 require_relative './firebase_distribution_service'
+require_relative './play_console_upload_service'
 
 # Generates a preview build for a pull request and uploads it to Firebase App Distribution.
 #
@@ -34,4 +35,8 @@ def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_
   release_name = firebase.poll_for_release(operation_name)
 
   firebase.add_release_notes(release_name, pr_number, pr_title)
+  upload_to_play_store_internal(
+    pr_number: pr_number,
+    pr_title: pr_title
+  )
 end

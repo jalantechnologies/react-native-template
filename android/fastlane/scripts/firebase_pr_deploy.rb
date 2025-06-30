@@ -34,8 +34,15 @@ def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_
   release_name = firebase.poll_for_release(operation_name)
 
   firebase.add_release_notes(release_name, pr_number, pr_title)
-  firebase.upload_to_play_store_internal(
-    pr_number: pr_number,
-    pr_title: pr_title
+  upload_to_play_store(
+    track: "internal",
+    json_key: ENV["ANDROID_JSON_KEY_FILE"],
+    skip_upload_metadata: true,
+    skip_upload_images: true,
+    skip_upload_screenshots: true,
+    release_status: "draft",
+    apk: apk_path
   )
+
+  UI.message("✅ Uploaded to Google Play Internal Track")
 end

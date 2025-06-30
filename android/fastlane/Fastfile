@@ -129,7 +129,6 @@ end
   desc "Deploy APK to Firebase App Distribution"
   lane :pr_deploy do |options|
     # Load the deploy script.
-    sync_versions
     load './scripts/firebase_pr_deploy.rb'
     firebase_pr_deploy(
       pr_number: options[:pr_number],
@@ -151,4 +150,17 @@ end
       service_account_path: "/tmp/gcp_key.json" # Path to GCP service account key
     )
   end
+  desc "Upload APK to Google Play Console internal track"
+  lane :upload_internal_track do
+    upload_to_play_store(
+      track: "internal",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      release_status: "draft", # or "completed"
+      aab: false, # false if you're uploading APK instead of AAB
+      apk: "./app/build/outputs/apk/debug/app-debug.apk"
+    )
+end
+
 end

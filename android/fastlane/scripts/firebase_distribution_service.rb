@@ -176,8 +176,12 @@ class FirebaseDistributionService
     # This expects the AAB to be present; trigger the bundle build here if needed
     begin
       gradlew_path = File.expand_path("../../gradlew", __dir__)
-      Fastlane::Actions.sh("#{gradlew_path} clean") 
+      android_dir = File.expand_path("../..", __dir__)
 
+      Dir.chdir(android_dir) do
+      Fastlane::Actions.sh("#{gradlew_path} clean")
+    end
+ 
       Actions::GradleAction.run(
         task: "bundle",
         build_type: "release",

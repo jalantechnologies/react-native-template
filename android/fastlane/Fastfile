@@ -135,7 +135,8 @@ end
       pr_title: options[:pr_title],
       project_number: options[:project_number],
       app_id: options[:app_id],
-      service_account_path: "/tmp/gcp_key.json" # Path to GCP service account key
+      service_account_path: "/tmp/gcp_key.json", # Path to GCP service account key
+      json_key_file: options[:json_key_file]
     )
   end
 

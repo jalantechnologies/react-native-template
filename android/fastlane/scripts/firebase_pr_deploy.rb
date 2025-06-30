@@ -13,7 +13,7 @@ require_relative './firebase_distribution_service'
 # @param project_number [String] Firebase project number
 # @param app_id [String] Firebase app ID
 # @param service_account_path [String] Path to the GCP service account JSON key
-def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_account_path:)
+def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_account_path:, json_key_file:)
   firebase = FirebaseDistributionService.new(
     project_number: project_number,
     app_id: app_id,
@@ -36,7 +36,7 @@ def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_
   firebase.add_release_notes(release_name, pr_number, pr_title)
   upload_to_play_store(
     track: "internal",
-    json_key: ENV["ANDROID_JSON_KEY_FILE"],
+    json_key: json_key_file,
     skip_upload_metadata: true,
     skip_upload_images: true,
     skip_upload_screenshots: true,

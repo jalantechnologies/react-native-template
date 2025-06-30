@@ -189,7 +189,7 @@ class FirebaseDistributionService
 
     release_notes = "PR ##{pr_number}: #{pr_title} - Uploaded on #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}"
 
-    upload_to_play_store_internal(
+    upload_to_play_store(
       track: "internal",
       json_key: ENV["ANDROID_JSON_KEY_FILE"],
       aab: "app/build/outputs/bundle/release/app-release.aab",

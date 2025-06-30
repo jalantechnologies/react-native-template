@@ -175,7 +175,7 @@ class FirebaseDistributionService
 
     # This expects the AAB to be present; trigger the bundle build here if needed
     begin
-      Fastlane::Actions.sh("./gradlew clean")
+      Fastlane::Actions.sh("../../gradlew clean")
       Actions::GradleAction.run(
         task: "bundle",
         build_type: "release",

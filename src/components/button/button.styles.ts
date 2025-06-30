@@ -12,9 +12,9 @@ export const useButtonStyles = () => {
       flexDirection: 'row',
       gap: theme.space['2'],
       justifyContent: 'center',
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowRadius: 0,
+      shadowColor: theme.colors.black,
+      shadowOffset: { width: theme.sizes[0], height: 2 },
+      shadowRadius: theme.radii.none,
       elevation: 1,
       borderWidth: parseInt(theme.borderWidths['1'], 10),
     },
@@ -69,7 +69,7 @@ export const useKindStyles = (isPressed: boolean, isActive: boolean) => {
           ? appTheme.colors.primary['700']
           : appTheme.colors.secondary['300'],
         backgroundColor: appTheme.colors.white,
-        borderWidth: 1,
+        borderWidth: parseInt(appTheme.borderWidths['1'],10),
         shadowOpacity: 0.016,
       },
       disabled: {
@@ -92,7 +92,7 @@ export const useKindStyles = (isPressed: boolean, isActive: boolean) => {
         shadowColor: 'transparent',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0,
-        shadowRadius: 0,
+        shadowRadius: appTheme.radii.none,
         elevation: 0,
       },
       disabled: {

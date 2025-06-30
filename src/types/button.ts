@@ -14,9 +14,7 @@ export enum ButtonKind {
 
 export enum ButtonShape {
   CAPSULE = 'capsule',
-  CIRCULAR = 'circular',
   DEFAULT = 'default',
-  SQUARE = 'square',
 }
 
 export enum ButtonSize {

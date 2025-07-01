@@ -196,8 +196,8 @@ export const useClockStyles = (ITEM_HEIGHT: number) => {
       textAlign: 'center',
     },
     timerItem: {
-      justifyContent: 'center', 
-      alignItems: 'center'
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     pickerRow: {
       flexDirection: 'row',

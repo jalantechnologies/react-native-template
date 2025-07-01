@@ -1,7 +1,7 @@
 import { useTheme } from 'native-base';
 import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
 
-import { ButtonKind, ButtonSize } from '../../types';
+import { ButtonKind, ButtonSize, ButtonClass } from '../../types';
 
 export const useButtonStyles = () => {
   const theme = useTheme();
@@ -12,10 +12,6 @@ export const useButtonStyles = () => {
       flexDirection: 'row',
       gap: theme.space['2'],
       justifyContent: 'center',
-      shadowColor: theme.colors.black,
-      shadowOffset: { width: theme.sizes[0], height: 2 },
-      shadowRadius: theme.radii.none,
-      elevation: 1,
       borderWidth: parseInt(theme.borderWidths['1'], 10),
     },
     enhancer: {
@@ -28,30 +24,66 @@ export const useButtonStyles = () => {
       gap: theme.space['2'],
     },
     text: {
-      fontFamily: 'Public Sans',
-      fontWeight: '400',
-      lineHeight: Number(theme.lineHeights.sm),
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
     },
   });
 };
 
-export const useKindStyles = (isPressed: boolean, isActive: boolean) => {
+export const useClassStyles = (isPressed: boolean) => {
+  const theme = useTheme();
+  return {
+    [ButtonClass.NORMAL]: StyleSheet.create({
+      base: {
+        backgroundColor: theme.colors.primary[500],
+        borderColor: theme.colors.primary[500],
+      },
+      text: { color: isPressed ? theme.colors.primary[400] : theme.colors.primary[500] },
+    }),
+    [ButtonClass.SUCCESS]: StyleSheet.create({
+      base: {
+        backgroundColor: isPressed ? theme.colors.success[400] : theme.colors.success[500],
+        borderColor: theme.colors.success[500],
+      },
+      text: { color: isPressed ? theme.colors.success[400] : theme.colors.success[500] },
+    }),
+    [ButtonClass.DANGER]: StyleSheet.create({
+      base: {
+        backgroundColor: isPressed ? theme.colors.danger[400] : theme.colors.danger[500],
+        borderColor: theme.colors.danger[500],
+      },
+      text: { color: isPressed ? theme.colors.danger[400] : theme.colors.danger[500] },
+    }),
+    [ButtonClass.INFO]: StyleSheet.create({
+      base: {
+        backgroundColor: isPressed ? theme.colors.info[400] : theme.colors.info[500],
+        borderColor: theme.colors.info[500],
+      },
+      text: { color: isPressed ? theme.colors.info[400] : theme.colors.info[500] },
+    }),
+    [ButtonClass.WARNING]: StyleSheet.create({
+      base: {
+        backgroundColor: isPressed ? theme.colors.warning[400] : theme.colors.warning[500],
+        borderColor: theme.colors.warning[500],
+      },
+      text: { color: isPressed ? theme.colors.warning[400] : theme.colors.warning[500] },
+    }),
+    [ButtonClass.DARK]: StyleSheet.create({
+      base: {
+        backgroundColor: isPressed ? theme.colors.secondary[400] : theme.colors.secondary[500],
+        borderColor: theme.colors.secondary[500],
+      },
+      text: { color: isPressed ? theme.colors.secondary[400] : theme.colors.secondary[500] },
+    }),
+  } as Record<ButtonClass, { base: ViewStyle; text: TextStyle }>;
+};
+
+export const useKindStyles = () => {
   const appTheme = useTheme();
   return {
     [ButtonKind.PRIMARY]: StyleSheet.create({
       base: {
-        backgroundColor: isPressed
-          ? appTheme.colors.primary['400']
-          : isActive
-          ? appTheme.colors.primary['700']
-          : appTheme.colors.primary['500'],
-        borderColor: isPressed
-          ? appTheme.colors.primary['400']
-          : isActive
-          ? appTheme.colors.primary['700']
-          : appTheme.colors.primary['500'],
+        ...appTheme.shadows[3],
         borderRadius: appTheme.radii.sm,
-        shadowOpacity: 0.043,
       },
       disabled: {
         backgroundColor: appTheme.colors.secondary[100],
@@ -62,112 +94,31 @@ export const useKindStyles = (isPressed: boolean, isActive: boolean) => {
     }),
     [ButtonKind.SECONDARY]: StyleSheet.create({
       base: {
+        ...appTheme.shadows[1],
         borderRadius: appTheme.radii.sm,
-        borderColor: isPressed
-          ? appTheme.colors.primary['400']
-          : isActive
-          ? appTheme.colors.primary['700']
-          : appTheme.colors.secondary['300'],
         backgroundColor: appTheme.colors.white,
         borderWidth: parseInt(appTheme.borderWidths['1'], 10),
-        shadowOpacity: 0.016,
       },
       disabled: {
-        borderColor: appTheme.colors.secondary['300'],
-        backgroundColor: appTheme.colors.white,
-        color: appTheme.colors.secondary['300'],
-      },
-      text: {
-        color: isPressed
-          ? appTheme.colors.primary['400']
-          : isActive
-          ? appTheme.colors.primary['700']
-          : appTheme.colors.secondary['700'],
+        backgroundColor: appTheme.colors.secondary[100],
+        borderColor: appTheme.colors.secondary[300],
+        color: appTheme.colors.secondary[300],
       },
     }),
-    [ButtonKind.TERTIARY]: StyleSheet.create({
+    [ButtonKind.LINK]: StyleSheet.create({
       base: {
         borderWidth: 0,
         borderRadius: appTheme.radii.xs,
-        shadowColor: 'transparent',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0,
-        shadowRadius: appTheme.radii.none,
-        elevation: 0,
+        backgroundColor: 'transparent',
       },
       disabled: {
         color: appTheme.colors.secondary['300'],
       },
-      text: { color: isPressed ? appTheme.colors.primary['400'] : appTheme.colors.primary['500'] },
-    }),
-    [ButtonKind.SUCCESS]: StyleSheet.create({
-      base: {
-        backgroundColor: isPressed
-          ? appTheme.colors.success['400']
-          : appTheme.colors.success['500'],
-        borderColor: appTheme.colors.success['500'],
-        borderRadius: appTheme.radii.sm,
-        borderWidth: parseInt(appTheme.borderWidths['1'], 10),
-      },
-
-      disabled: {
-        backgroundColor: appTheme.colors.secondary[100],
-        borderColor: appTheme.colors.secondary[300],
-        color: appTheme.colors.secondary[300],
-      },
-      text: { color: appTheme.colors.lightText },
-    }),
-    [ButtonKind.DANGER]: StyleSheet.create({
-      base: {
-        backgroundColor: isPressed ? appTheme.colors.danger['300'] : appTheme.colors.danger['500'],
-        borderColor: appTheme.colors.danger['500'],
-        borderRadius: appTheme.radii.sm,
-        borderWidth: parseInt(appTheme.borderWidths['1'], 10),
-      },
-
-      disabled: {
-        backgroundColor: appTheme.colors.secondary[100],
-        borderColor: appTheme.colors.secondary[300],
-        color: appTheme.colors.secondary[300],
-      },
-      text: { color: appTheme.colors.white },
-    }),
-    [ButtonKind.DARK]: StyleSheet.create({
-      base: {
-        backgroundColor: isPressed
-          ? appTheme.colors.secondary['300']
-          : appTheme.colors.secondary['500'],
-        borderColor: appTheme.colors.secondary['500'],
-        borderWidth: parseInt(appTheme.borderWidths['1'], 10),
-        borderRadius: appTheme.radii.sm,
-      },
-      disabled: {
-        backgroundColor: appTheme.colors.secondary[100],
-        borderColor: appTheme.colors.secondary[300],
-        color: appTheme.colors.secondary[300],
-      },
-      text: { color: appTheme.colors.white },
-    }),
-    [ButtonKind.WARNING]: StyleSheet.create({
-      base: {
-        backgroundColor: appTheme.colors.warning['500'],
-        borderColor: appTheme.colors.warning['500'],
-        borderWidth: parseInt(appTheme.borderWidths['1'], 10),
-        borderRadius: appTheme.radii.sm,
-      },
-
-      disabled: {
-        backgroundColor: appTheme.colors.secondary[100],
-        borderColor: appTheme.colors.secondary[300],
-        color: appTheme.colors.secondary[300],
-      },
-      text: { color: appTheme.colors.white },
     }),
     [ButtonKind.DASHED]: StyleSheet.create({
       base: {
         backgroundColor: appTheme.colors.white,
         borderRadius: appTheme.radii.sm,
-        borderColor: isPressed ? appTheme.colors.primary['500'] : appTheme.colors.secondary['300'],
         borderWidth: parseInt(appTheme.borderWidths['1'], 10),
         borderStyle: 'dashed',
       },
@@ -177,26 +128,8 @@ export const useKindStyles = (isPressed: boolean, isActive: boolean) => {
         borderColor: appTheme.colors.secondary[300],
         color: appTheme.colors.secondary[300],
       },
-      text: {
-        color: isPressed ? appTheme.colors.primary['500'] : appTheme.colors.secondary['800'],
-      },
     }),
-    [ButtonKind.INFO]: StyleSheet.create({
-      base: {
-        backgroundColor: appTheme.colors.info['500'],
-        borderRadius: appTheme.radii.md,
-        borderColor: appTheme.colors.info['500'],
-        borderWidth: parseInt(appTheme.borderWidths['1'], 10),
-      },
-
-      disabled: {
-        backgroundColor: appTheme.colors.secondary[100],
-        borderColor: appTheme.colors.secondary[300],
-        color: appTheme.colors.secondary[300],
-      },
-      text: { color: appTheme.colors.white },
-    }),
-  } as Record<ButtonKind, { base: ViewStyle; disabled: ViewStyle; text: TextStyle }>;
+  } as Record<ButtonKind, { base: ViewStyle; disabled: ViewStyle; text?: TextStyle }>;
 };
 
 export const useSizeStyles = () => {

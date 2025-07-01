@@ -2,11 +2,11 @@ import { useTheme } from 'native-base';
 import React, { PropsWithChildren, useState } from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
 
-import { ButtonKind, ButtonProps, ButtonShape, ButtonSize } from '../../types';
+import { ButtonClass, ButtonKind, ButtonProps, ButtonShape, ButtonSize } from '../../types';
 import { SpinnerTypes } from '../../types/spinner';
 import Spinner from '../spinner/spinner';
 
-import { useButtonStyles, useKindStyles, useSizeStyles } from './button.styles';
+import { useButtonStyles, useKindStyles, useSizeStyles, useClassStyles } from './button.styles';
 
 const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   children,
@@ -14,28 +14,29 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   endEnhancer = undefined,
   isLoading = false,
   kind = ButtonKind.PRIMARY,
+  buttonClass = ButtonClass.NORMAL,
   onClick = undefined,
-  shape = ButtonShape.DEFAULT,
+  shape = ButtonShape.REGULAR,
   size = ButtonSize.DEFAULT,
   startEnhancer = undefined,
 }) => {
   const [isPressed, setIsPressed] = useState(false);
-  const [isActive, setIsActive] = useState(false);
 
-  const kindStyles = useKindStyles(isPressed || isLoading, isActive);
+  const kindStyles = useKindStyles();
+  const classStyles = useClassStyles(isPressed || isLoading);
   const sizeStyles = useSizeStyles();
+  const theme = useTheme();
 
   const kindStyle = kindStyles[kind];
+  const classStyle = classStyles[buttonClass];
   const sizeStyle = sizeStyles[size];
-
   const styles = useButtonStyles();
-
-  const theme = useTheme();
 
   return (
     <TouchableOpacity
       style={[
         styles.button,
+        classStyle.base,
         kindStyle.base,
         disabled ? kindStyle.disabled : {},
         sizeStyle.container,
@@ -43,7 +44,6 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
       ]}
       disabled={disabled || isLoading}
       onPress={event => {
-        setIsActive(true);
         onClick?.(event);
       }}
       onPressIn={() => setIsPressed(true)}
@@ -68,9 +68,18 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
             )}
           </View>
         ) : null}
+
         {children && (
           <Text
-            style={[disabled ? kindStyle.disabled : kindStyle.text, sizeStyle.text, styles.text]}
+            style={[
+              disabled
+                ? kindStyle.disabled
+                : kind === ButtonKind.PRIMARY
+                ? kindStyle.text
+                : classStyle.text,
+              sizeStyle.text,
+              styles.text,
+            ]}
           >
             {children}
           </Text>
@@ -80,13 +89,14 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
           <Spinner
             type={
               kind === ButtonKind.SECONDARY ||
-              kind === ButtonKind.TERTIARY ||
+              kind === ButtonKind.LINK ||
               kind === ButtonKind.DASHED
                 ? SpinnerTypes.PRIMARY
                 : SpinnerTypes.SECONDARY
             }
           />
         ) : null}
+
         {endEnhancer ? (
           <View style={styles.enhancer}>
             {typeof endEnhancer === 'string' ? (

@@ -34,13 +34,17 @@ jobs:
 
       - name: Decode and save App Store Connect API key
         run: |
-          echo "${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}" | base64 --decode > ./auth_key.json
+          echo "${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}" > ./AuthKey.p8
         shell: bash
 
       - name: Setup signing - App Store for Preview
-        working-directory: ios
-        run: fastlane match appstore --app_identifier "$PREVIEW_APP_ID" --api_key_path ../auth_key.json
+        run: |
+          cd ios
+          fastlane match appstore \
+            --api_key "{\"key_id\":\"${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}\",\"issuer_id\":\"${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}\",\"key_filepath\":\"../AuthKey.p8\"}"
 
       - name: Setup signing - Development for Preview
-        working-directory: ios
-        run: fastlane match development --app_identifier "$PREVIEW_APP_ID" --api_key_path ../auth_key.json
+        run: |
+          cd ios
+          fastlane match development \
+            --api_key "{\"key_id\":\"${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}\",\"issuer_id\":\"${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}\",\"key_filepath\":\"../AuthKey.p8\"}"

@@ -23,8 +23,12 @@ const DatePicker: React.FC<DatePickerProps> = ({ tempDate, onChange, onCancel })
   const handleMonthChange = (increment: number) => {
     setCalendarMonth(prev => {
       let newMonth = prev + increment;
-      if (newMonth < 0) newMonth = 11;
-      if (newMonth > 11) newMonth = 0;
+      if (newMonth < 0) {
+        newMonth = 11;
+      }
+      if (newMonth > 11) {
+        newMonth = 0;
+      }
       return newMonth;
     });
   };

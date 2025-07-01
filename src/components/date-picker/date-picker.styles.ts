@@ -195,6 +195,10 @@ export const useClockStyles = (ITEM_HEIGHT: number) => {
       marginBottom: theme.space[5],
       textAlign: 'center',
     },
+    timerItem: {
+      justifyContent: 'center', 
+      alignItems: 'center'
+    },
     pickerRow: {
       flexDirection: 'row',
       justifyContent: 'space-evenly',

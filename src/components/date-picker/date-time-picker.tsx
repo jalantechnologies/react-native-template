@@ -8,7 +8,7 @@ import { Input } from '../inputs';
 import DatePicker from './date-picker';
 import TimePicker from './time-picker';
 
-export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange, mode}) => {
+export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange, mode }) => {
   const [selectedDate, setSelectedDate] = useState<Date>(value);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);

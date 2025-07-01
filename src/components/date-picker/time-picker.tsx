@@ -37,7 +37,7 @@ const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel })
   };
 
   const renderItem = (item: string, index: number, selectedIndex: number) => (
-    <View style={{ height: ITEM_HEIGHT, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={[styles.timerItem, { height: ITEM_HEIGHT }]}>
       <Text
         style={{
           fontSize: theme.fontSizes['3xl'],
@@ -51,7 +51,9 @@ const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel })
 
   const confirmTime = () => {
     let hour = selectedHour % 12;
-    if (ampm[selectedAmPm] === 'PM') hour += 12;
+    if (ampm[selectedAmPm] === 'PM') {
+      hour += 12;
+    }
     const newDate = new Date(tempDate);
     newDate.setHours(hour);
     newDate.setMinutes(selectedMinute);

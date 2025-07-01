@@ -40,9 +40,15 @@ const Calendar: React.FC<CalendarProps> = ({
   const theme = useTheme();
 
   const dates: (number | null)[] = [];
-  for (let i = 0; i < firstDay; i++) dates.push(null);
-  for (let i = 1; i <= daysInMonth; i++) dates.push(i);
-  while (dates.length % 7 !== 0) dates.push(null);
+  for (let i = 0; i < firstDay; i++) {
+    dates.push(null);
+  }
+  for (let i = 1; i <= daysInMonth; i++) {
+    dates.push(i);
+  }
+  while (dates.length % 7 !== 0) {
+    dates.push(null);
+  }
 
   const translateX = useRef(new Animated.Value(0)).current;
 

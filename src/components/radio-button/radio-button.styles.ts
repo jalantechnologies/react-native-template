@@ -56,8 +56,8 @@ export const useSizeStyles = () => {
       label: { fontSize: theme.fontSizes.sm },
     }),
     [RadioButtonSize.LARGE]: StyleSheet.create({
-      outerCircle: { height: theme.sizes[5], width: theme.sizes[5] },
-      innerCircle: { height: theme.sizes[2] + 2, width: theme.sizes[2] + 2 },
+      outerCircle: { height: theme.sizes[6], width: theme.sizes[6] },
+      innerCircle: { height: theme.sizes[3], width: theme.sizes[3] },
       label: { fontSize: theme.fontSizes.md },
     }),
   } as Record<

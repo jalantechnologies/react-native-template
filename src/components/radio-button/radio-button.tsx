@@ -13,7 +13,6 @@ const RadioButton: React.FC<RadioButtonProps> = ({
   onPress,
   selected,
   size = RadioButtonSize.LARGE,
-  indeterminate = false,
   value,
 }) => {
   const theme = useTheme();
@@ -63,15 +62,8 @@ const RadioButton: React.FC<RadioButtonProps> = ({
   };
 
   const focusedStyle = {
+    ...theme.shadows[2],
     shadowColor: selected ? btnKindStyle.innerColor : theme.colors.secondary[400],
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.15,
-    shadowRadius: theme.radii.sm,
-  };
-
-  const indeterminateStyle = {
-    width: theme.sizes[2] + 2,
-    height: 1.2,
   };
 
   return (
@@ -92,16 +84,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({
           isFocused && focusedStyle,
         ]}
       >
-        {selected && (
-          <View
-            style={[
-              styles.innerCircle,
-              sizeStyle.innerCircle,
-              innerCircleStyle,
-              indeterminate && indeterminateStyle,
-            ]}
-          />
-        )}
+        {selected && <View style={[styles.innerCircle, sizeStyle.innerCircle, innerCircleStyle]} />}
       </View>
       {label && <Text style={[sizeStyle.label, labelColorStyle]}>{label}</Text>}
     </Pressable>

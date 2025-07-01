@@ -16,6 +16,5 @@ export interface RadioButtonProps {
   onPress: (value: string) => void;
   selected: boolean;
   size?: RadioButtonSize;
-  indeterminate?: boolean;
   value: string;
 }

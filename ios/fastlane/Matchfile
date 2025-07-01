@@ -1,2 +1,2 @@
-git_url(ENV["MATCH_REPOSITORY_URL"])
-app_identifier("com.bettrsw.boilerplate.preview")
+git_url(ENV["IOS_MATCH_REPOSITORY_URL"])
+app_identifier(ENV['IOS_APP_IDENTIFIER_PREVIEW'])

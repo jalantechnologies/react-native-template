@@ -217,6 +217,7 @@ jobs:
       IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
       IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
       IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
+      IOS_APP_IDENTIFIER_PREVIEW: ${{ secrets.IOS_APP_IDENTIFIER_PREVIEW }}
       IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
       IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -336,7 +337,7 @@ jobs:
           gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
 
           - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
-          - 🆔 App ID: \`com.bettrsw.boilerplate\`
+          - 🆔 App ID: \`com.bettrsw.boilerplate.preview\`
           - 🧱 Build Hash: \`$BUILD_HASH\`
 
           _This build was deployed by CI using Fastlane._"         

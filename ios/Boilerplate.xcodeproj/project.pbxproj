@@ -467,8 +467,8 @@
 				);
 				CODE_SIGN_STYLE = Manual;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate;
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate.preview";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate.preview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Boilerplate.app/Boilerplate";
 			};
@@ -494,8 +494,8 @@
 				);
 				CODE_SIGN_STYLE = Manual;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate;
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate.preview";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate.preview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Boilerplate.app/Boilerplate";
 			};
@@ -524,8 +524,8 @@
 				);
 				CODE_SIGN_STYLE = Manual;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate;
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate.preview";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate.preview;
 				PRODUCT_NAME = Boilerplate;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -555,8 +555,8 @@
 				);
 				CODE_SIGN_STYLE = Manual;
 				CODE_SIGN_IDENTITY = "Apple Distribution";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate;
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate.preview";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate.preview.preview;
 				PRODUCT_NAME = Boilerplate;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

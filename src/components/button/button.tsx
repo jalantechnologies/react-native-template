@@ -87,13 +87,7 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
 
         {isLoading ? (
           <Spinner
-            type={
-              kind === ButtonKind.SECONDARY ||
-              kind === ButtonKind.LINK ||
-              kind === ButtonKind.DASHED
-                ? SpinnerTypes.PRIMARY
-                : SpinnerTypes.SECONDARY
-            }
+            type={kind === ButtonKind.PRIMARY ? SpinnerTypes.SECONDARY : SpinnerTypes.PRIMARY}
           />
         ) : null}
 

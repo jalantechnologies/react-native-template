@@ -34,7 +34,7 @@ jobs:
 
       - name: Decode and save App Store Connect API key
         run: |
-          echo "${{ secrets.APP_STORE_CONNECT_API_KEY_B64 }}" | base64 --decode > ./auth_key.json
+          echo "${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}" | base64 --decode > ./auth_key.json
         shell: bash
 
       - name: Setup signing - App Store for Preview

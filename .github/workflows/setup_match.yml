@@ -1,9 +1,8 @@
 name: Setup Fastlane Match
 
 on:
-  push:
-    branches:
-      - shivam/ios/preview-deployment
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   setup-match:

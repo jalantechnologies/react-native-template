@@ -1,59 +1,68 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
-import React, { useMemo, useState } from 'react';
-import { Platform, View, Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { Modal } from 'react-native';
 
-import { DatePickerProps, DatePickerMode } from '../../types/date-picker';
+import { DatePickerProps } from '../../types/date-picker';
 
-import { DatePickerStyles } from './date-picker.styles';
+import Calendar from './Calendar';
+import YearPicker from './YearPicker';
 
-export const DatePicker: React.FC<DatePickerProps> = ({
-  date,
-  onDateChange,
-  mode = DatePickerMode.DATE,
-}) => {
-  const [show, setShow] = useState(false);
-  const userLocale = useMemo(() => Intl.DateTimeFormat().resolvedOptions().locale, []);
-  const styles = DatePickerStyles();
-  const onChange = (_: any, selectedDate?: Date) => {
-    setShow(false);
-    if (selectedDate) {
-      onDateChange(selectedDate);
-    }
+const DatePicker: React.FC<DatePickerProps> = ({ tempDate, onChange, onCancel, label }) => {
+  const [calendarMonth, setCalendarMonth] = useState(tempDate.getMonth());
+  const [calendarYear, setCalendarYear] = useState(tempDate.getFullYear());
+  const [showYearPicker, setShowYearPicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(tempDate);
+
+  const handleDateSelect = (day: number) => {
+    const updatedDate = new Date(selectedDate);
+    updatedDate.setFullYear(calendarYear);
+    updatedDate.setMonth(calendarMonth);
+    updatedDate.setDate(day);
+    setSelectedDate(updatedDate);
   };
 
-  const mapToNativePickerMode = (mode: DatePickerMode): 'date' | 'time' => {
-    switch (mode) {
-      case DatePickerMode.TIME:
-        return 'time';
-      case DatePickerMode.DATETIME:
-      case DatePickerMode.DATE:
-      default:
-        return 'date';
-    }
+  const handleMonthChange = (increment: number) => {
+    setCalendarMonth(prev => {
+      let newMonth = prev + increment;
+      if (newMonth < 0) newMonth = 11;
+      if (newMonth > 11) newMonth = 0;
+      return newMonth;
+    });
+  };
+
+  const handleYearSelect = (year: number) => {
+    setCalendarYear(year);
+    setShowYearPicker(false);
+  };
+
+  const confirmDate = () => {
+    onChange(selectedDate);
   };
 
   return (
-    <View>
-      <TouchableOpacity onPress={() => setShow(true)} style={styles.button}>
-        <Text style={styles.text}>
-          {mode === DatePickerMode.TIME
-            ? date.toLocaleTimeString()
-            : date.toLocaleDateString(userLocale, {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })}
-        </Text>
-      </TouchableOpacity>
+    <>
+      <Modal visible={!showYearPicker} transparent animationType="fade">
+        <Calendar
+          tempDate={selectedDate}
+          calendarMonth={calendarMonth}
+          calendarYear={calendarYear}
+          label={label}
+          onDateSelect={handleDateSelect}
+          onMonthChange={handleMonthChange}
+          onYearPress={() => setShowYearPicker(true)}
+          onCancel={onCancel}
+          onConfirm={confirmDate}
+        />
+      </Modal>
 
-      {show && (
-        <DateTimePicker
-          value={date}
-          mode={mapToNativePickerMode(mode)}
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={onChange}
+      {showYearPicker && (
+        <YearPicker
+          calendarYear={calendarYear}
+          onYearSelect={handleYearSelect}
+          onCancel={() => setShowYearPicker(false)}
         />
       )}
-    </View>
+    </>
   );
 };
+
+export default DatePicker;

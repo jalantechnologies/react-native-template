@@ -1,9 +1,15 @@
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { Text, TextStyle, TouchableOpacity } from 'react-native';
 
 import { ClockFaceProps } from '../../types/date-picker';
 
+import { useClockStyles } from './date-picker.styles';
+import { useTheme } from 'native-base';
+
 const ClockFace: React.FC<ClockFaceProps> = ({ tempDate, clockMode, onSelect }) => {
+  const theme = useTheme();
+  const styles = useClockStyles();
+
   const radius = 100;
   const center = { x: radius, y: radius };
   const hours = Array.from({ length: 12 }, (_, i) => (i === 0 ? 12 : i));
@@ -28,22 +34,21 @@ const ClockFace: React.FC<ClockFaceProps> = ({ tempDate, clockMode, onSelect }) 
           <TouchableOpacity
             key={val}
             onPress={() => onSelect(val)}
-            style={{
-              position: 'absolute',
-              left: x - 15,
-              top: y - 15,
-              width: 30,
-              height: 30,
-              borderRadius: 15,
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: isSelected ? '#4d8bf5' : 'transparent',
-            }}
+            style={[
+              styles.clockItem,
+              {
+                left: x - 15,
+                top: y - 15,
+                backgroundColor: isSelected ? '#4d8bf5' : 'transparent',
+              },
+            ]}
           >
             <Text
               style={{
-                color: isSelected ? '#fff' : '#000',
-                fontWeight: isSelected ? 'bold' : 'normal',
+                color: isSelected ? theme.colors.white : theme.colors.black,
+                fontWeight: isSelected
+                  ? (String(theme.fontWeights.bold) as TextStyle['fontWeight'])
+                  : (String(theme.fontWeights.normal) as TextStyle['fontWeight']),
               }}
             >
               {val.toString().padStart(2, '0')}

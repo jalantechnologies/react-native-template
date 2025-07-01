@@ -8,9 +8,6 @@ import { Input } from '../inputs';
 import DatePicker from './date-picker';
 import TimePicker from './TimePicker';
 
-const calendarIcon = 'https://img.icons8.com/ios-filled/50/000000/calendar.png';
-const clockIcon = 'https://img.icons8.com/ios-filled/50/000000/clock.png';
-
 export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange, mode, label }) => {
   const [selectedDate, setSelectedDate] = useState<Date>(value);
   const [showDatePicker, setShowDatePicker] = useState(false);

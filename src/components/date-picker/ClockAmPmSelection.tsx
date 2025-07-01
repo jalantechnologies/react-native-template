@@ -15,12 +15,7 @@ const ClockAmPmSelection: React.FC<ClockAmPmSelectionProps> = ({
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          padding: 20,
-        }}
+        style={styles.modalBackground}
       >
         <View style={styles.amPmModalContent}>
           <Text style={styles.headerText}>SELECT AM/PM</Text>

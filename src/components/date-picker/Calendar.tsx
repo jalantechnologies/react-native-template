@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { CalendarProps } from '../../types/date-picker';
 
 import { useCalendarStyles } from './date-picker.styles';
+import { useTheme } from 'native-base';
 
 const monthNames = [
   'Jan',
@@ -36,6 +37,7 @@ const Calendar: React.FC<CalendarProps> = ({
   const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
 
   const styles = useCalendarStyles();
+  const theme = useTheme();
 
   const dates: (number | null)[] = [];
   for (let i = 0; i < firstDay; i++) dates.push(null);
@@ -56,7 +58,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
         <View style={styles.monthYearRow}>
           <TouchableOpacity onPress={() => onMonthChange(-1)}>
-            <Icon name="angle-left" size={24} color="#4d8bf5" />
+            <Icon name="angle-left" size={theme.sizes[6]} color="#4d8bf5" />
           </TouchableOpacity>
           <View style={styles.monthYearCont}>
             <Text>{monthNames[calendarMonth]}</Text>
@@ -65,7 +67,7 @@ const Calendar: React.FC<CalendarProps> = ({
             </TouchableOpacity>
           </View>
           <TouchableOpacity onPress={() => onMonthChange(1)}>
-            <Icon name="angle-right" size={24} color="#4d8bf5" />
+            <Icon name="angle-right" size={theme.sizes[6]} color="#4d8bf5" />
           </TouchableOpacity>
         </View>
 

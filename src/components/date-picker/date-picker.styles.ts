@@ -147,6 +147,12 @@ export const useClockStyles = () => {
       backgroundColor: 'rgba(0,0,0,0.5)',
       padding: 20,
     },
+    modalBackground: {
+      flex: 1,
+      justifyContent: 'center',
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      padding: 20,
+    },
     modalContent: {
       backgroundColor: '#fff',
       padding: 20,
@@ -161,6 +167,19 @@ export const useClockStyles = () => {
       color: '#333',
       marginBottom: 10,
       fontSize: 16,
+    },
+    clockItem: {
+      position: 'absolute',
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    clockHand: {
+      position: 'absolute',
+      height: 2,
+      backgroundColor: '#4d8bf5',
     },
     amPmModalContent: {
       backgroundColor: '#fff',

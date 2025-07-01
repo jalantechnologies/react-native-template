@@ -2,8 +2,12 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { ClockHandProps } from '../../types/date-picker';
+import { useClockStyles } from './date-picker.styles';
 
 const ClockHand: React.FC<ClockHandProps> = ({ tempDate, clockMode }) => {
+
+  const styles = useClockStyles();
+
   const radius = 100;
   const center = { x: radius, y: radius };
   const val = clockMode === 'hour' ? tempDate.getHours() % 12 || 12 : tempDate.getMinutes();
@@ -14,20 +18,21 @@ const ClockHand: React.FC<ClockHandProps> = ({ tempDate, clockMode }) => {
 
   return (
     <View
-      style={{
-        position: 'absolute',
-        width: handLength,
-        height: 2,
-        backgroundColor: '#4d8bf5',
-        top: center.y,
-        left: center.x,
-        transform: [
-          { translateX: -handLength / 2 },
-          { translateY: -1 },
-          { rotate: `${rotateDeg}deg` },
-          { translateX: handLength / 2 },
-        ],
-      }}
+      style={[
+        styles.clockHand,
+        {
+          width: handLength,
+          top: center.y,
+          left: center.x,
+          transform: [
+            { translateX: -handLength / 2 },
+            { translateY: -1 },
+            { rotate: `${rotateDeg}deg` },
+            { translateX: handLength / 2 },
+          ],
+        }
+      ] 
+      }
     />
   );
 };

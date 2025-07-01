@@ -6,7 +6,7 @@ import { DateTimePickerMode, DateTimePickerProps } from '../../types/date-picker
 import { Input } from '../inputs';
 
 import DatePicker from './date-picker';
-import TimePicker from './TimePicker';
+import TimePicker from './time-picker';
 
 export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange, mode, label }) => {
   const [selectedDate, setSelectedDate] = useState<Date>(value);
@@ -67,7 +67,6 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
           tempDate={selectedDate}
           onChange={handleDateChange}
           onCancel={() => setShowDatePicker(false)}
-          label={label}
         />
       )}
 
@@ -81,4 +80,3 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
     </View>
   );
 };
-

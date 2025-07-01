@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Modal, Pressable } from 'react-native';
 
 import { YearPickerProps } from '../../types/date-picker';
 
@@ -9,9 +9,8 @@ const YearPicker: React.FC<YearPickerProps> = ({ calendarYear, onYearSelect, onC
   const styles = useYearPickerStyles();
   return (
     <Modal visible transparent animationType="none">
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <Text style={styles.headerText}>SELECT YEAR</Text>
+      <Pressable style={styles.modalContainer} onPress={onCancel}>
+        <Pressable style={styles.modalContent} onPress={() => {}}>
           <ScrollView>
             <View style={styles.yearGrid}>
               {Array.from({ length: 120 }, (_, i) => new Date().getFullYear() - 60 + i).map(
@@ -23,7 +22,7 @@ const YearPicker: React.FC<YearPickerProps> = ({ calendarYear, onYearSelect, onC
                   >
                     <Text
                       style={
-                        yearOption === calendarYear ? styles.selectedDate : styles.dateTextCell
+                        yearOption === calendarYear ? styles.selectedYear : styles.yearTextCell
                       }
                     >
                       {yearOption}
@@ -33,13 +32,8 @@ const YearPicker: React.FC<YearPickerProps> = ({ calendarYear, onYearSelect, onC
               )}
             </View>
           </ScrollView>
-          <View style={styles.actionRow}>
-            <TouchableOpacity onPress={onCancel}>
-              <Text style={styles.actionText}>CANCEL</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 };

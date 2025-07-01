@@ -1,5 +1,7 @@
 import { useTheme } from 'native-base';
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet, TextStyle } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 
 export const useCalendarStyles = () => {
   const theme = useTheme();
@@ -7,34 +9,59 @@ export const useCalendarStyles = () => {
     modalContainer: {
       flex: 1,
       justifyContent: 'center',
-      backgroundColor: 'rgba(0,0,0,0.5)',
       padding: theme.space[5],
     },
     modalContent: {
-      backgroundColor: '#fff',
-      borderRadius: 10,
-      padding: 20,
+      ...theme.shadows[5],
+      shadowColor: theme.colors.secondary[600],
+      backgroundColor: theme.colors.white,
+      borderRadius: theme.radii.md,
+      padding: theme.space[3],
+      gap: theme.space[2],
+      minHeight: height * 0.6,
+    },
+    headerCont: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    header: {
+      backgroundColor: theme.colors.primary[400],
+      borderWidth: parseInt(theme.borderWidths[1], 10),
+      borderColor: theme.colors.secondary[50],
+      borderRadius: theme.radii.md,
+      paddingVertical: theme.space[1],
+      paddingHorizontal: theme.space[2],
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     headerText: {
-      color: '#333',
-      fontSize: 12,
-      marginBottom: 10,
+      color: theme.colors.secondary[50],
+      fontSize: theme.fontSizes.md,
+      fontWeight: `${theme.fontWeights.medium}` as TextStyle['fontWeight'],
     },
     selectedDateHeader: {
-      fontSize: 24,
-      fontWeight: '500',
-      color: '#000',
-      marginBottom: 10,
+      fontSize: theme.fontSizes['3xl'],
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      color: theme.colors.primary[800],
     },
     daysRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginBottom: 10,
+      marginBottom: theme.space[2],
     },
     dayLabel: {
-      color: '#333',
-      width: 30,
+      color: theme.colors.primary[700],
+      width: theme.sizes[8],
       textAlign: 'center',
+      fontSize: theme.fontSizes.lg,
+    },
+    calendarCont: {
+      borderWidth: parseInt(theme.borderWidths[1], 10),
+      borderRadius: theme.radii['3xl'],
+      padding: theme.space[4],
+      backgroundColor: theme.colors.secondary[50],
+      borderColor: theme.colors.secondary[50],
+      minHeight: height * 0.46,
     },
     calendarGrid: {
       flexDirection: 'column',
@@ -44,182 +71,145 @@ export const useCalendarStyles = () => {
       justifyContent: 'space-between',
     },
     dateCell: {
-      width: 30,
-      height: 30,
+      minWidth: theme.sizes[8],
+      minHeight: theme.sizes[8],
       justifyContent: 'center',
       alignItems: 'center',
-      marginVertical: 5,
-      borderRadius: 15,
+      marginVertical: theme.space[1],
+      borderRadius: theme.radii.xl,
     },
     selectedCell: {
-      backgroundColor: 'blue',
+      ...theme.shadows[3],
+      shadowColor: theme.colors.primary[300],
+      backgroundColor: theme.colors.primary[400],
     },
     selectedDate: {
-      color: '#fff',
-      fontWeight: 'bold',
+      color: theme.colors.secondary[50],
+      fontWeight: `${theme.fontWeights.bold}` as TextStyle['fontWeight'],
     },
     dateTextCell: {
-      color: '#000',
+      color: theme.colors.primary[800],
+      fontSize: theme.fontSizes.md,
     },
     actionRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginTop: 10,
+      alignItems: 'flex-end',
     },
     actionText: {
-      color: '#4d8bf5',
-      fontSize: 16,
+      minWidth: width * 0.2,
     },
     monthYearRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 15,
+      marginBottom: theme.space[4],
     },
-    monthYearCont: {
+    monthYearItems: {
+      borderWidth: parseInt(theme.borderWidths[1], 10),
+      borderColor: theme.colors.secondary[100],
+      paddingHorizontal: theme.space[3],
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.secondary[50],
+    },
+    monthYear: {
       flexDirection: 'row',
-      gap: 5,
+      gap: theme.space[1],
+    },
+    monthYearText: {
+      fontSize: theme.fontSizes.lg,
+      color: theme.colors.primary[800],
     },
   });
 };
 
 export const useYearPickerStyles = () => {
-  return StyleSheet.create({
-    modalContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      padding: 20,
-    },
-    modalContent: {
-      backgroundColor: '#fff',
-      padding: 20,
-      borderRadius: 10,
-      maxHeight: 350,
-    },
-    headerText: {
-      color: '#333',
-      fontSize: 12,
-      marginBottom: 10,
-    },
-    yearGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      marginTop: 10,
-    },
-    yearCell: {
-      width: '22%',
-      marginVertical: 10,
-      alignItems: 'center',
-      paddingVertical: 10,
-      borderRadius: 8,
-      backgroundColor: '#f0f0f0',
-    },
-    selectedCell: {
-      backgroundColor: 'blue',
-    },
-    selectedDate: {
-      color: '#fff',
-      fontWeight: 'bold',
-    },
-    dateTextCell: {
-      color: '#000',
-    },
-    actionRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginTop: 10,
-    },
-    actionText: {
-      color: '#4d8bf5',
-      fontSize: 16,
-    },
-  });
-};
-
-export const useClockStyles = () => {
   const theme = useTheme();
   return StyleSheet.create({
     modalContainer: {
       flex: 1,
       justifyContent: 'center',
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      padding: 20,
-    },
-    modalBackground: {
-      flex: 1,
-      justifyContent: 'center',
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      padding: 20,
+      alignSelf: 'flex-end',
+      padding: theme.space[5],
     },
     modalContent: {
-      backgroundColor: '#fff',
-      padding: 20,
-      borderRadius: 10,
+      ...theme.shadows[4],
+      shadowColor: theme.colors.secondary[600],
+      backgroundColor: theme.colors.white,
+      padding: theme.space[5],
+      borderRadius: theme.radii.xl,
+      maxHeight: height * 0.4,
+      width: width * 0.8,
+      alignSelf: 'center',
+      gap: theme.space[2],
+    },
+    yearGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      marginTop: theme.space[2],
+    },
+    yearCell: {
+      width: '27%',
+      marginVertical: theme.space[2],
+      alignItems: 'center',
+      padding: theme.space[3],
+      borderWidth: parseInt(theme.borderWidths[1], 10),
+      borderRadius: theme.radii.xl,
+      borderColor: theme.colors.secondary[100],
+    },
+    selectedCell: {
+      ...theme.shadows[3],
+      shadowColor: theme.colors.primary[300],
+      backgroundColor: theme.colors.primary[400],
+    },
+    selectedYear: {
+      color: theme.colors.secondary[50],
+      fontWeight: `${theme.fontWeights.bold}` as TextStyle['fontWeight'],
+    },
+    yearTextCell: {
+      color: theme.colors.primary[700],
+    },
+  });
+};
+
+export const useClockStyles = (ITEM_HEIGHT: number) => {
+  const theme = useTheme();
+  return StyleSheet.create({
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      padding: theme.space[5],
+    },
+    modalContent: {
+      ...theme.shadows[4],
+      shadowColor: theme.colors.secondary[600],
+      backgroundColor: theme.colors.white,
+      borderRadius: theme.radii.xl,
+      padding: theme.space[5],
+      alignSelf: 'center',
+      width: width * 0.8,
+      maxHeight: height * 0.4,
     },
     headerText: {
-      color: '#333',
-      fontSize: 12,
-      marginBottom: 10,
+      color: theme.colors.primary[800],
+      fontSize: theme.fontSizes.md,
+      marginBottom: theme.space[5],
+      textAlign: 'center',
     },
-    clockLabel: {
-      color: '#333',
-      marginBottom: 10,
-      fontSize: 16,
-    },
-    clockItem: {
-      position: 'absolute',
-      width: 30,
-      height: 30,
-      borderRadius: 15,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    clockHand: {
-      position: 'absolute',
-      height: 2,
-      backgroundColor: '#4d8bf5',
-    },
-    amPmModalContent: {
-      backgroundColor: '#fff',
-      padding: 20,
-      borderRadius: 10,
-      maxHeight: 200,
-    },
-    amPmGrid: {
+    pickerRow: {
       flexDirection: 'row',
-      justifyContent: 'center',
-      marginTop: 10,
-    },
-    amPmCell: {
-      paddingVertical: 12,
-      paddingHorizontal: 20,
-      marginHorizontal: 10,
-      backgroundColor: '#f0f0f0',
-      borderRadius: 10,
+      justifyContent: 'space-evenly',
       alignItems: 'center',
     },
-    amPmSelectedCell: {
-      backgroundColor: '#4d8bf5',
-    },
-    amPmText: {
-      color: '#000',
-      fontSize: 16,
-    },
-    amPmSelectedText: {
-      color: '#fff',
-      fontWeight: 'bold',
-      fontSize: 16,
+    separator: {
+      width: StyleSheet.hairlineWidth,
+      backgroundColor: theme.colors.secondary[300],
+      height: ITEM_HEIGHT * 3,
     },
     actionRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginTop: 10,
+      alignItems: 'flex-end',
     },
     actionText: {
-      color: '#4d8bf5',
-      fontSize: 16,
+      minWidth: width * 0.2,
     },
   });
 };

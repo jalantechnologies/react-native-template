@@ -3,10 +3,10 @@ import { Modal } from 'react-native';
 
 import { DatePickerProps } from '../../types/date-picker';
 
-import Calendar from './Calendar';
-import YearPicker from './YearPicker';
+import Calendar from './calendar';
+import YearPicker from './year-picker';
 
-const DatePicker: React.FC<DatePickerProps> = ({ tempDate, onChange, onCancel, label }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ tempDate, onChange, onCancel }) => {
   const [calendarMonth, setCalendarMonth] = useState(tempDate.getMonth());
   const [calendarYear, setCalendarYear] = useState(tempDate.getFullYear());
   const [showYearPicker, setShowYearPicker] = useState(false);
@@ -40,12 +40,11 @@ const DatePicker: React.FC<DatePickerProps> = ({ tempDate, onChange, onCancel, l
 
   return (
     <>
-      <Modal visible={!showYearPicker} transparent animationType="fade">
+      <Modal visible transparent animationType="fade">
         <Calendar
           tempDate={selectedDate}
           calendarMonth={calendarMonth}
           calendarYear={calendarYear}
-          label={label}
           onDateSelect={handleDateSelect}
           onMonthChange={handleMonthChange}
           onYearPress={() => setShowYearPicker(true)}

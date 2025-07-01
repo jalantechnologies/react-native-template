@@ -38,11 +38,9 @@ jobs:
         shell: bash
 
       - name: Setup signing - App Store for Preview
-        run: |
-          cd ios
-          fastlane match appstore --app_identifier "$PREVIEW_APP_ID" --api_key_path ../auth_key.json
+        working_directory: ios
+        run: fastlane match appstore --app_identifier "$PREVIEW_APP_ID" --api_key_path ../auth_key.json
 
       - name: Setup signing - Development for Preview
-        run: |
-          cd ios
-          fastlane match development --app_identifier "$PREVIEW_APP_ID" --api_key_path ../auth_key.json
+        working_directory: ios
+        run: fastlane match development --app_identifier "$PREVIEW_APP_ID" --api_key_path ../auth_key.json

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Pressable, Image } from 'react-native';
+import { View, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { DateTimePickerMode, DateTimePickerProps } from '../../types/date-picker';
@@ -8,7 +8,7 @@ import { Input } from '../inputs';
 import DatePicker from './date-picker';
 import TimePicker from './time-picker';
 
-export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange, mode, label }) => {
+export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange, mode}) => {
   const [selectedDate, setSelectedDate] = useState<Date>(value);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);

@@ -74,9 +74,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.bettrsw.boilerplate"
+    namespace "com.bettrsw.boilerplate.app"
     defaultConfig {
-        applicationId "com.bettrsw.boilerplate"
+        applicationId "com.bettrsw.boilerplate.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 7

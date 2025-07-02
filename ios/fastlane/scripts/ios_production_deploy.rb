@@ -116,6 +116,10 @@ def ios_app_store_deploy!(options = {})
     submit_for_review: true,
     automatic_release: false,
     skip_metadata: true,
-    skip_screenshots: true
+    skip_screenshots: true,
+    submission_information: {
+      export_compliance_uses_encryption: false,
+      add_id_info_uses_idfa: false
+    }
   )
 end

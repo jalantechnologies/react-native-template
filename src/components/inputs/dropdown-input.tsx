@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  LayoutRectangle,
   TouchableWithoutFeedback,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -25,8 +24,8 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
   children,
 }) => {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [dropdownTop, setDropdownTop] = useState(0);
   const containerRef = useRef<View>(null);
-  const [layout, setLayout] = useState<LayoutRectangle | null>(null);
 
   const styles = useDropdownInputStyles();
   const theme = useTheme();
@@ -39,12 +38,20 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
     return theme.colors.secondary[200];
   };
 
+  const toggleDropdown = () => {
+    if (disabled) return;
+
+    if (!isDropdownVisible) {
+      containerRef.current?.measure((x, y, width, height, pageX, pageY) => {
+        setDropdownTop(height);
+      });
+    }
+
+    setDropdownVisible(!isDropdownVisible);
+  };
+
   return (
-    <View
-      ref={containerRef}
-      onLayout={({ nativeEvent }) => setLayout(nativeEvent.layout)}
-      style={styles.wrapper}
-    >
+    <View ref={containerRef} style={styles.wrapper}>
       {label && (
         <Text
           style={[
@@ -58,7 +65,7 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
 
       <TouchableOpacity
         activeOpacity={0.7}
-        onPress={() => !disabled && setDropdownVisible(!isDropdownVisible)}
+        onPress={toggleDropdown}
         style={[
           styles.inputContainer,
           {
@@ -83,14 +90,14 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
           {value || 'Select an option'}
         </Text>
         <Text style={styles.inputText}>
-          <Icon name="angle-down" size={24} color={theme.colors.secondary[900]} />
+          <Icon name="angle-down" size={theme.sizes[6]} color={theme.colors.secondary[900]} />
         </Text>
       </TouchableOpacity>
 
       {isDropdownVisible && (
         <TouchableWithoutFeedback onPress={() => setDropdownVisible(false)}>
           <View style={styles.overlay}>
-            <View style={[styles.dropdown, { top: (layout?.height || 50) + 4 }]}>
+            <View style={[styles.dropdown, { top: dropdownTop }]}>
               <FlatList
                 data={options}
                 keyExtractor={(_, index) => index.toString()}
@@ -116,11 +123,11 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
         </TouchableWithoutFeedback>
       )}
 
-      {status === 'error' && !!errorMessage && (
+      {status === InputStatus.ERROR && !!errorMessage && (
         <Text style={styles.errorMessage}>{errorMessage}</Text>
       )}
 
-      {status === 'success' && !!successMessage && (
+      {status === InputStatus.SUCCESS && !!successMessage && (
         <Text style={styles.successMessage}>{successMessage}</Text>
       )}
     </View>

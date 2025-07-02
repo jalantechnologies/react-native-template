@@ -27,7 +27,9 @@ const Input = forwardRef<TextInput, InputProps>(
     const theme = useTheme();
     const styles = useInputStyles();
     const [isFocused, setIsFocused] = useState(false);
-    const [showMsg, setShowMsg] = useState(status === 'error' || status === 'success');
+    const [showMsg, setShowMsg] = useState(
+      status === InputStatus.ERROR || status === InputStatus.SUCCESS,
+    );
 
     useEffect(() => {
       if (status === InputStatus.ERROR || status === InputStatus.SUCCESS) {

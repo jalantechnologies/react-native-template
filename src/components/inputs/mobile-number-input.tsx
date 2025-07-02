@@ -2,7 +2,7 @@ import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { View, Text, TextInput } from 'react-native';
 
-import { InputStatus, MobileNumberInputProps } from '../../types';
+import { InputStatus, KeyboardTypes, MobileNumberInputProps } from '../../types';
 
 import DropdownInput from './dropdown-input';
 import { useMobileInputStyles } from './input.styles';
@@ -133,7 +133,7 @@ const MobileNumberInput: React.FC<MobileNumberInputProps> = ({
             placeholderTextColor={
               disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
             }
-            keyboardType="phone-pad"
+            keyboardType={KeyboardTypes.PHONE_PAD}
             editable={!disabled}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}

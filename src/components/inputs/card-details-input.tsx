@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 
-import { InputStatus, CardDetailsInputProps } from '../../types';
+import { InputStatus, CardDetailsInputProps, KeyboardTypes } from '../../types';
 
 import { useCardDetailsInputStyles } from './input.styles';
 
@@ -157,7 +157,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           placeholderTextColor={
             disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
           }
-          keyboardType="number-pad"
+          keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
           onFocus={() => setFocusedField('card')}
           onBlur={() => setFocusedField(null)}
@@ -187,7 +187,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           placeholderTextColor={
             disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
           }
-          keyboardType="number-pad"
+          keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
           onFocus={() => setFocusedField('expiry')}
           onBlur={() => setFocusedField(null)}
@@ -214,7 +214,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           placeholderTextColor={
             disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
           }
-          keyboardType="number-pad"
+          keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
           maxLength={3}
           onFocus={() => setFocusedField('cvv')}

@@ -53,13 +53,7 @@ def ios_testflight_deploy!(options = {})
     clean: true,
     scheme: scheme,
     export_method: "app-store",
-    xcargs: %(
-      CODE_SIGN_STYLE=Manual
-      CODE_SIGN_IDENTITY="Apple Distribution"
-      DEVELOPMENT_TEAM=#{team_id}
-      PROVISIONING_PROFILE_SPECIFIER="match AppStore #{app_identifier}"
-      PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}
-    ).strip,
+    xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER=\"match AppStore #{app_identifier}\" PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
     export_options: {
       compileBitcode: false,# Bitcode is stripped manually below due to Hermes compatibility issues.
       signingStyle: "manual",

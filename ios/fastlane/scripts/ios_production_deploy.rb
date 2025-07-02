@@ -27,7 +27,7 @@ def ios_app_store_deploy!(options = {})
   # Set the build number using current datetime + PR number to ensure uniqueness across PR builds.
   increment_build_number(
     xcodeproj: xcodeproj,
-    build_number: Time.now.strftime('%Y%m%d%H%M')
+    build_number: "#{Time.now.strftime('%Y%m%d.%H%M')}.#{pr_number}"
   )
 
   app_store_connect_api_key(
@@ -112,7 +112,7 @@ def ios_app_store_deploy!(options = {})
     BASH
   # Upload the build to TestFlight (internal only) with a changelog indicating the PR number.
   deliver(
-    skip_precheck: true,
+    run_precheck_before_submit: false,
     submit_for_review: true,
     automatic_release: false,
     skip_metadata: true,

@@ -1,12 +1,6 @@
 import { useTheme } from 'native-base';
 import React, { useState, useRef } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { DropdownInputProps, DropdownOptionProps, InputStatus } from '../../types';
@@ -39,10 +33,12 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
   };
 
   const toggleDropdown = () => {
-    if (disabled) return;
+    if (disabled) {
+      return;
+    }
 
     if (!isDropdownVisible) {
-      containerRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      containerRef.current?.measure((x, y, width, height) => {
         setDropdownTop(height);
       });
     }

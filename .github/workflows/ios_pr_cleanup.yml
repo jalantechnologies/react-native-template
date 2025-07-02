@@ -16,7 +16,8 @@ jobs:
       IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
       IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
       IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-
+      IOS_APP_IDENTIFIER_PREVIEW: ${{ secrets.IOS_APP_IDENTIFIER_PREVIEW }}
+      
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4

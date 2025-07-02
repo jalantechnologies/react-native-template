@@ -51,12 +51,6 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
-      
-      # Remove Flipper-related native modules that cause iOS CI build failures
-      - name: Remove Flipper dependencies (hard cleanup)
-        run: |
-          rm -rf node_modules/react-native-flipper ios/Pods/Flipper* || true
-          yarn install --check-files || true
 
       # Patch Boost podspec to use a stable source and checksum to prevent flaky builds
       - name: Patch Boost Podspec with Custom Source

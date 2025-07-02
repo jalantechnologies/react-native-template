@@ -112,6 +112,7 @@ def ios_app_store_deploy!(options = {})
     BASH
   # Upload the build to TestFlight (internal only) with a changelog indicating the PR number.
   deliver(
+    skip_precheck: true,
     submit_for_review: true,
     automatic_release: false,
     skip_metadata: true,

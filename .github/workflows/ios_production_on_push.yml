@@ -3,7 +3,7 @@ name: iOS PR Deploy
 on:
   push:
     branches:
-      - feature/my-branch
+      - shivam/feat/ios-production-deploy
 
 jobs:
   build:

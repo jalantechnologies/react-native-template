@@ -1,0 +1,26 @@
+default_platform(:ios)
+
+platform :ios do
+    desc "Fetch certificates for CI"
+    lane :ci_signing_setup do
+        match(type: "appstore", readonly: true, keychain_name: "ci.keychain", keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"])
+        match(type: "development", readonly: true, keychain_name: "ci.keychain", keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"])
+    end    
+
+    desc "Build and upload production build to TestFlight"
+    lane :prod_deploy do
+        require_relative "scripts/ios_production_deploy"
+        ios_app_store_deploy!(
+            app_identifier: ENV["IOS_APP_IDENTIFIER"],
+            xcodeproj: "Boilerplate.xcodeproj",
+            scheme: "Boilerplate",
+            team_id: ENV["IOS_APP_STORE_TEAM_ID"],
+            api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
+            issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
+            api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64'],
+            keychain_name: "ci.keychain",
+            keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
+            username: ENV["FASTLANE_USER"]
+        )
+    end
+end

@@ -36,10 +36,6 @@ jobs:
 
       - name: Install Bundler
         run: gem install bundler
-
-      - name: Install CocoaPods 1.13+
-        # ensure xcodeproj gem is also bumped so objectVersion 60 is supported
-        run: gem install cocoapods --version "~> 1.13.0"
       
       - name: Install Ruby dependencies
         working-directory: ios

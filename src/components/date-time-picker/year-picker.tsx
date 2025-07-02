@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, Modal, Pressable } from 'reac
 
 import { YearPickerProps } from '../../types/date-time-picker';
 
-import { useYearPickerStyles } from './date-picker.styles';
+import { useYearPickerStyles } from './date-time-picker.styles';
 
 const YearPicker: React.FC<YearPickerProps> = ({ calendarYear, onYearSelect, onCancel }) => {
   const styles = useYearPickerStyles();

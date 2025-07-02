@@ -6,7 +6,7 @@ import { ButtonKind } from '../../types/button';
 import { TimePickerProps } from '../../types/date-time-picker';
 import Button from '../button/button';
 
-import { useTimePickerStyles } from './date-picker.styles';
+import { useTimePickerStyles } from './date-time-picker.styles';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const ITEM_HEIGHT = SCREEN_HEIGHT * 0.07;

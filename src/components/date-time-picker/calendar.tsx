@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { CalendarProps, DateSelectionMode, PresetOption } from '../../types/date-time-picker';
 import Button from '../button/button';
 
-import { useCalendarStyles } from './date-picker.styles';
+import { useCalendarStyles } from './date-time-picker.styles';
 
 const monthNames = [
   'January',

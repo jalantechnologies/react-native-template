@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { Modal } from 'react-native';
 
-import { DatePickerProps } from '../../types/date-picker';
+import { DatePickerProps } from '../../types/date-time-picker';
 
 import Calendar from './calendar';
 import YearPicker from './year-picker';
 
-const DatePicker: React.FC<DatePickerProps> = ({ tempDate, onChange, onCancel }) => {
+const DatePicker: React.FC<DatePickerProps> = ({
+  tempDate,
+  onChange,
+  onCancel,
+  dateSelectionMode,
+  blockedDates,
+}) => {
   const [calendarMonth, setCalendarMonth] = useState(tempDate.getMonth());
   const [calendarYear, setCalendarYear] = useState(tempDate.getFullYear());
   const [showYearPicker, setShowYearPicker] = useState(false);
@@ -38,17 +44,26 @@ const DatePicker: React.FC<DatePickerProps> = ({ tempDate, onChange, onCancel })
     setShowYearPicker(false);
   };
 
-  const confirmDate = () => {
-    onChange(selectedDate);
+  const confirmDate = (date: Date | { startDate: Date | null; endDate: Date | null }) => {
+    if (date instanceof Date) {
+      setSelectedDate(date);
+      onChange(date);
+    } else {
+      if (date.startDate && date.endDate) {
+        onChange({ start: date.startDate, end: date.endDate });
+      }
+    }
   };
 
   return (
     <>
       <Modal visible transparent animationType="fade">
         <Calendar
+          blockedDates={blockedDates}
           tempDate={selectedDate}
           calendarMonth={calendarMonth}
           calendarYear={calendarYear}
+          dateSelectionMode={dateSelectionMode}
           onDateSelect={handleDateSelect}
           onMonthChange={handleMonthChange}
           onYearPress={() => setShowYearPicker(true)}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Modal, Pressable } from 'react-native';
 
-import { YearPickerProps } from '../../types/date-picker';
+import { YearPickerProps } from '../../types/date-time-picker';
 
 import { useYearPickerStyles } from './date-picker.styles';
 

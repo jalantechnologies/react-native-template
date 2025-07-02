@@ -23,6 +23,7 @@ export const useCalendarStyles = () => {
     headerCont: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'space-between',
     },
     header: {
       backgroundColor: theme.colors.primary[400],
@@ -65,6 +66,7 @@ export const useCalendarStyles = () => {
     },
     calendarGrid: {
       flexDirection: 'column',
+      minHeight: height * 0.3,
     },
     calendarRow: {
       flexDirection: 'row',
@@ -91,8 +93,28 @@ export const useCalendarStyles = () => {
       color: theme.colors.primary[800],
       fontSize: theme.fontSizes.md,
     },
+    rangeCell: {
+      backgroundColor: theme.colors.primary[100],
+      borderRadius: 0,
+    },
+    rangeDateText: {
+      color: theme.colors.primary[700],
+    },
+    todayCell: {
+      backgroundColor: theme.colors.primary[100],
+    },
+    todayCellText: {
+      color: theme.colors.primary[400],
+    },
+    blockedCell: {
+      backgroundColor: theme.colors.secondary[200],
+    },
+    blockedCellText: {
+      color: theme.colors.secondary[700],
+    },
     actionRow: {
       alignItems: 'flex-end',
+      alignSelf: 'flex-end',
     },
     actionText: {
       minWidth: width * 0.2,
@@ -108,7 +130,7 @@ export const useCalendarStyles = () => {
       borderColor: theme.colors.secondary[100],
       paddingHorizontal: theme.space[3],
       borderRadius: theme.radii.md,
-      backgroundColor: theme.colors.secondary[50],
+      backgroundColor: theme.colors.white,
     },
     monthYear: {
       flexDirection: 'row',
@@ -117,6 +139,42 @@ export const useCalendarStyles = () => {
     monthYearText: {
       fontSize: theme.fontSizes.lg,
       color: theme.colors.primary[800],
+    },
+    selectByButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    selectByText: {
+      fontSize: theme.fontSizes.md,
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+    },
+    headerIcon: {
+      marginLeft: theme.space[1],
+    },
+    presetOverlay: {
+      position: 'absolute',
+      top: theme.space[10],
+      left: theme.space[0],
+      right: theme.space[4],
+      bottom: theme.space[0],
+      justifyContent: 'flex-start',
+      alignItems: 'flex-end',
+      zIndex: 9999,
+    },
+    presetCont: {
+      ...theme.shadows[5],
+      shadowColor: theme.colors.secondary[600],
+      backgroundColor: theme.colors.white,
+      borderRadius: theme.radii.lg,
+      paddingVertical: theme.space[4],
+      paddingHorizontal: theme.space[5],
+    },
+    presetOption: {
+      paddingVertical: theme.space[2],
+    },
+    presetOptionText: {
+      fontSize: theme.fontSizes.md,
+      textAlign: 'center',
     },
   });
 };
@@ -131,7 +189,7 @@ export const useYearPickerStyles = () => {
       padding: theme.space[5],
     },
     modalContent: {
-      ...theme.shadows[4],
+      ...theme.shadows[5],
       shadowColor: theme.colors.secondary[600],
       backgroundColor: theme.colors.white,
       padding: theme.space[5],
@@ -171,7 +229,7 @@ export const useYearPickerStyles = () => {
   });
 };
 
-export const useClockStyles = (ITEM_HEIGHT: number) => {
+export const useTimePickerStyles = (ITEM_HEIGHT: number) => {
   const theme = useTheme();
   return StyleSheet.create({
     modalContainer: {
@@ -180,7 +238,7 @@ export const useClockStyles = (ITEM_HEIGHT: number) => {
       padding: theme.space[5],
     },
     modalContent: {
-      ...theme.shadows[4],
+      ...theme.shadows[5],
       shadowColor: theme.colors.secondary[600],
       backgroundColor: theme.colors.white,
       borderRadius: theme.radii.xl,
@@ -210,10 +268,13 @@ export const useClockStyles = (ITEM_HEIGHT: number) => {
       height: ITEM_HEIGHT * 3,
     },
     actionRow: {
-      alignItems: 'flex-end',
+      paddingTop: theme.space[3],
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      gap: theme.space[5],
     },
     actionText: {
-      minWidth: width * 0.2,
+      flex: 1,
     },
   });
 };

@@ -1,18 +1,19 @@
 import { useTheme } from 'native-base';
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Modal, FlatList, Dimensions, Pressable } from 'react-native';
+import { View, Text, Modal, FlatList, Dimensions } from 'react-native';
 
-import { TimePickerProps } from '../../types/date-picker';
+import { ButtonKind } from '../../types/button';
+import { TimePickerProps } from '../../types/date-time-picker';
 import Button from '../button/button';
 
-import { useClockStyles } from './date-picker.styles';
+import { useTimePickerStyles } from './date-picker.styles';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const ITEM_HEIGHT = SCREEN_HEIGHT * 0.07;
 
 const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel }) => {
   const theme = useTheme();
-  const styles = useClockStyles(ITEM_HEIGHT);
+  const styles = useTimePickerStyles(ITEM_HEIGHT);
 
   const [selectedAmPm, setSelectedAmPm] = useState(tempDate.getHours() >= 12 ? 1 : 0);
   const [selectedHour, setSelectedHour] = useState(tempDate.getHours() % 12 || 12);
@@ -62,8 +63,8 @@ const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel })
 
   return (
     <Modal visible transparent animationType="fade">
-      <Pressable onPress={onCancel} style={styles.modalContainer}>
-        <Pressable onPress={() => {}} style={styles.modalContent}>
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
           <Text style={styles.headerText}>SELECT TIME</Text>
 
           <View style={styles.pickerRow}>
@@ -137,11 +138,16 @@ const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel })
 
           <View style={styles.actionRow}>
             <View style={styles.actionText}>
+              <Button onClick={onCancel} kind={ButtonKind.SECONDARY}>
+                Cancel
+              </Button>
+            </View>
+            <View style={styles.actionText}>
               <Button onClick={confirmTime}>Apply</Button>
             </View>
           </View>
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 };

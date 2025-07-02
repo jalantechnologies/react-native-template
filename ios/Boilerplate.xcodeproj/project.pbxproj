@@ -465,10 +465,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				CODE_SIGN_STYLE = Manual;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate.preview";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate.preview;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Boilerplate.app/Boilerplate";
 			};
@@ -492,10 +489,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				CODE_SIGN_STYLE = Manual;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate.preview";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate.preview;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Boilerplate.app/Boilerplate";
 			};
@@ -508,7 +502,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XZR5WR7DNR;
+				DEVELOPMENT_TEAM = HH673SN3QR;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Boilerplate/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -522,10 +516,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				CODE_SIGN_STYLE = Manual;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate.preview";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate.preview;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Boilerplate;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -540,7 +531,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XZR5WR7DNR;
+				DEVELOPMENT_TEAM = HH673SN3QR;
 				INFOPLIST_FILE = Boilerplate/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -553,10 +544,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				CODE_SIGN_STYLE = Manual;
-				CODE_SIGN_IDENTITY = "Apple Distribution";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.bettrsw.boilerplate.preview";
-				PRODUCT_BUNDLE_IDENTIFIER = com.bettrsw.boilerplate.preview;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Boilerplate;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

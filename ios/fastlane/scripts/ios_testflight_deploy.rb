@@ -16,7 +16,7 @@ def ios_testflight_deploy!(options = {})
   keychain_password = options.fetch(:keychain_password)
   apple_id = options.fetch(:apple_id)
   username = options.fetch(:username)
-
+  team_id = options.fetch(:team_id)
   # Use match in readonly mode to fetch existing App Store signing certificates and provisioning profiles.
   match(
     type: "appstore",
@@ -53,6 +53,13 @@ def ios_testflight_deploy!(options = {})
     clean: true,
     scheme: scheme,
     export_method: "app-store",
+    xcargs: %(
+      CODE_SIGN_STYLE=Manual
+      CODE_SIGN_IDENTITY="Apple Distribution"
+      DEVELOPMENT_TEAM=#{team_id}
+      PROVISIONING_PROFILE_SPECIFIER="match AppStore #{app_identifier}"
+      PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}
+    ).strip,
     export_options: {
       compileBitcode: false,# Bitcode is stripped manually below due to Hermes compatibility issues.
       signingStyle: "manual",

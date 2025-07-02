@@ -171,7 +171,6 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   const handlePresetSelection = (preset: PresetOption) => {
-    const today = new Date();
     let start: Date;
     let end: Date;
 

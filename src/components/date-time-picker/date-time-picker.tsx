@@ -1,3 +1,4 @@
+import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { View, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -12,7 +13,6 @@ import { Input } from '../inputs';
 
 import DatePicker from './date-picker';
 import TimePicker from './time-picker';
-import { useTheme } from 'native-base';
 
 function isRangePickerProps(props: DateTimePickerProps): props is RangeDateTimePickerProps {
   return props.dateSelectionMode === DateSelectionMode.RANGE;
@@ -51,9 +51,15 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = props => {
 
     return format
       .map(part => {
-        if (part.type === 'day') return 'DD';
-        if (part.type === 'month') return 'MM';
-        if (part.type === 'year') return 'YYYY';
+        if (part.type === 'day') {
+          return 'DD';
+        }
+        if (part.type === 'month') {
+          return 'MM';
+        }
+        if (part.type === 'year') {
+          return 'YYYY';
+        }
         return part.value;
       })
       .join('');

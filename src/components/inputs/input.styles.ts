@@ -135,3 +135,62 @@ export const useTextAreaInputStyles = () => {
     },
   });
 };
+
+export const useDropdownInputStyles = () => {
+  const theme = useTheme();
+  return StyleSheet.create({
+    wrapper: {
+      gap: theme.space[2],
+    },
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 1000,
+    },
+    label: {
+      fontWeight: '500',
+      fontSize: theme.fontSizes.sm,
+      fontFamily: 'Inter',
+      lineHeight: Number(theme.lineHeights.sm),
+      letterSpacing: -0.02 * theme.fontSizes.sm,
+    },
+    inputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      borderRadius: theme.radii.md,
+      paddingHorizontal: theme.space[3],
+      paddingVertical: theme.space[3],
+      justifyContent: 'space-between',
+    },
+    inputText: {
+      fontSize: theme.fontSizes.md,
+    },
+    errorMessage: {
+      fontSize: theme.fontSizes.xs,
+      color: theme.colors.danger[500],
+    },
+    successMessage: {
+      fontSize: theme.fontSizes.xs,
+      color: theme.colors.success[500],
+    },
+    option: {
+      padding: theme.space[4],
+      borderBottomWidth: parseInt(theme.borderWidths['1'], 10),
+      borderBottomColor: theme.colors.secondary[200],
+    },
+    dropdown: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      backgroundColor: theme.colors.white,
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      borderColor: theme.colors.secondary[200],
+      borderRadius: theme.radii.md,
+      zIndex: 1000,
+    },
+  });
+};

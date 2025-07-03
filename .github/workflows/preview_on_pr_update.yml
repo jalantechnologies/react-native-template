@@ -208,7 +208,7 @@ jobs:
     runs-on: macos-14 
     timeout-minutes: 30
     env:
-      NO_FLIPPER: 1
+      NO_FLIPPER: 1 # When set to 1, skips installing all Flipper-related dependencies so they’re removed from the build
       IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
       IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
       IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
@@ -250,12 +250,6 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
-      
-      # Remove Flipper-related native modules that cause iOS CI build failures
-      - name: Remove Flipper dependencies (hard cleanup)
-        run: |
-          rm -rf node_modules/react-native-flipper ios/Pods/Flipper* || true
-          yarn install --check-files || true
 
       # Patch Boost podspec to use a stable source and checksum to prevent flaky builds
       - name: Patch Boost Podspec with Custom Source

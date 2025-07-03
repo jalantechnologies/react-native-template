@@ -1,0 +1,15 @@
+name: Setup Fastlane
+description: Installs Ruby dependencies and Fastlane plugins
+runs:
+  using: "composite"
+  steps:
+    - name: Install bundler
+      run: gem install bundler
+      shell: bash
+
+    - name: Install gems and Fastlane plugins
+      working-directory: android
+      run: |
+        bundle install
+        bundle exec fastlane install_plugins
+      shell: bash

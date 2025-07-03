@@ -5,7 +5,7 @@ export class AccessToken {
   token: string;
 
   constructor(json: any) {
-    this.accountId = json.accountId as string;
+    this.accountId = json.account_id;
     this.token = json.token as string;
   }
 }

@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { KeyboardTypeOptions, TextInput, TextInputProps, TextStyle } from 'react-native';
 
 export enum KeyboardTypes {

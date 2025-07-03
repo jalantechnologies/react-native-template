@@ -20,7 +20,6 @@ import React, { useState } from 'react';
 
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError, PhoneNumber } from '../../../types';
-import ChangeApiUrlButton from '../change-api-url/change-api-url';
 
 import usePhoneAuthForm from './phone-auth-form-hook';
 import { usePhoneAuthFormStyles } from './phone-auth-form.styles';
@@ -158,7 +157,6 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
       >
         Send OTP
       </Button>
-      <ChangeApiUrlButton />
     </Box>
   );
 };

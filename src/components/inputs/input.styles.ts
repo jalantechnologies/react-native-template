@@ -135,3 +135,48 @@ export const useTextAreaInputStyles = () => {
     },
   });
 };
+
+export const useCardDetailsInputStyles = () => {
+  const theme = useTheme();
+  return StyleSheet.create({
+    wrapper: {
+      gap: theme.space[2],
+    },
+    label: {
+      fontSize: theme.fontSizes.sm,
+      fontWeight: '500',
+      fontFamily: 'Inter',
+      lineHeight: Number(theme.lineHeights.sm),
+      letterSpacing: -0.02 * theme.fontSizes.sm,
+    },
+    container: {
+      flexDirection: 'row',
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      borderRadius: theme.radii.md,
+      overflow: 'hidden',
+      alignItems: 'center',
+      paddingHorizontal: theme.space[3],
+    },
+    inputField: {
+      fontFamily: 'Inter',
+      fontWeight: '400',
+      fontSize: theme.fontSizes.md,
+      lineHeight: Number(theme.lineHeights.sm),
+      paddingHorizontal: theme.space[2],
+    },
+    cardInput: {
+      flex: 2,
+      borderRightWidth: 0,
+    },
+    expiryInput: {
+      borderRightWidth: 0,
+      textAlign: 'center',
+    },
+    cvvInput: {
+      textAlign: 'center',
+    },
+    message: {
+      fontSize: theme.fontSizes.xs,
+    },
+  });
+};

@@ -4,15 +4,25 @@ export class Account {
   id: string;
   firstName: string;
   lastName: string;
-  phoneNumber: PhoneNumber;
+  phoneNumber: PhoneNumber | null;
   username: string;
 
   constructor(json: any) {
     this.id = json.id as string;
-    this.firstName = json.firstName as string;
-    this.lastName = json.lastName as string;
-    this.phoneNumber = new PhoneNumber(json.phoneNumber);
+    this.firstName = json.first_name;
+    this.lastName = json.last_name;
     this.username = json.username as string;
+
+    if (json.phone_number) {
+      this.phoneNumber = new PhoneNumber({
+        countryCode: json.phone_number.country_code ?? json.phone_number.countryCode,
+        phoneNumber: json.phone_number.phone_number ?? json.phone_number.phoneNumber,
+      });
+    } else if (json.phoneNumber) {
+      this.phoneNumber = new PhoneNumber(json.phoneNumber);
+    } else {
+      this.phoneNumber = null;
+    }
   }
 
   displayName(): string {

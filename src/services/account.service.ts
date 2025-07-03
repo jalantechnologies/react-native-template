@@ -20,8 +20,6 @@ export class AccountService extends APIService {
       last_name: lastName,
     };
 
-    console.log('Updating account with payload:', payload);
-
     const response = await this.patch(
       `/accounts/${userAccessToken.accountId}`,
       payload,

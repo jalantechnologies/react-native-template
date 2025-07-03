@@ -14,7 +14,6 @@ export class AuthService extends APIService {
         },
       };
 
-      console.log('SendOTP payload:', payload);
       return this.post('/accounts', payload);
     } catch (error) {
       console.error('SendOTP service error:', error);

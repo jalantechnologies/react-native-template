@@ -19,6 +19,7 @@ export const useCalendarStyles = () => {
       padding: theme.space[3],
       gap: theme.space[2],
       minHeight: height * 0.6,
+      overflow: 'hidden',
     },
     headerCont: {
       flexDirection: 'row',
@@ -232,6 +233,9 @@ export const useYearPickerStyles = () => {
 export const useTimePickerStyles = (ITEM_HEIGHT: number) => {
   const theme = useTheme();
   return StyleSheet.create({
+    position: {
+      position: 'absolute',
+    },
     modalContainer: {
       flex: 1,
       justifyContent: 'center',

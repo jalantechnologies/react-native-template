@@ -9,9 +9,9 @@ import Button from '../button/button';
 import { useTimePickerStyles } from './date-time-picker.styles';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const ITEM_HEIGHT = SCREEN_HEIGHT * 0.07;
+const ITEM_HEIGHT = SCREEN_HEIGHT * 0.05;
 
-const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel }) => {
+const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel, triggerLayout }) => {
   const theme = useTheme();
   const styles = useTimePickerStyles(ITEM_HEIGHT);
 
@@ -41,7 +41,7 @@ const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel })
     <View style={[styles.timerItem, { height: ITEM_HEIGHT }]}>
       <Text
         style={{
-          fontSize: theme.fontSizes['3xl'],
+          fontSize: theme.fontSizes.lg,
           color: index === selectedIndex ? theme.colors.primary[800] : theme.colors.secondary[400],
         }}
       >
@@ -61,9 +61,17 @@ const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel })
     onChange(newDate);
   };
 
+  const pickerTop = triggerLayout.y + triggerLayout.height - 16;
+
   return (
     <Modal visible transparent animationType="fade">
-      <View style={styles.modalContainer}>
+      <View
+        style={[
+          styles.modalContainer,
+          styles.position,
+          { top: pickerTop, left: triggerLayout.x, width: triggerLayout.width },
+        ]}
+      >
         <View style={styles.modalContent}>
           <Text style={styles.headerText}>SELECT TIME</Text>
 

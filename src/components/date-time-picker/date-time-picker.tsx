@@ -1,6 +1,6 @@
 import { useTheme } from 'native-base';
-import React, { useState } from 'react';
-import { View, Pressable } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Pressable, LayoutRectangle } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import {
@@ -23,8 +23,26 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = props => {
 
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [triggerLayout, setTriggerLayout] = useState<LayoutRectangle | null>(null);
 
   const isRangeMode = isRangePickerProps(props);
+
+  const inputRef = useRef<View>(null);
+  const measureInput = () => {
+    inputRef.current?.measureInWindow((x, y, width, height) => {
+      setTriggerLayout({ x, y, width, height });
+    });
+  };
+
+  const handleDatePress = () => {
+    measureInput();
+    setShowDatePicker(true);
+  };
+
+  const handleTimePress = () => {
+    measureInput();
+    setShowTimePicker(true);
+  };
 
   const handleDateChange = (date: Date | { start: Date; end: Date }) => {
     if (isRangeMode) {
@@ -68,7 +86,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = props => {
   return (
     <View>
       {(props.mode === DateTimePickerMode.DATE || props.mode === DateTimePickerMode.DATETIME) && (
-        <Pressable onPress={() => setShowDatePicker(true)}>
+        <Pressable ref={inputRef} onLayout={measureInput} onPress={() => setShowDatePicker(true)}>
           <Input
             value={
               isRangeMode
@@ -87,14 +105,14 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = props => {
                 <Icon name="calendar-alt" size={theme.sizes[5]} />
               </Pressable>
             }
-            onPressIn={() => setShowDatePicker(true)}
+            onPressIn={handleDatePress}
           />
         </Pressable>
       )}
 
       {(props.mode === DateTimePickerMode.TIME || props.mode === DateTimePickerMode.DATETIME) &&
         !isRangeMode && (
-          <Pressable onPress={() => setShowTimePicker(true)}>
+          <Pressable ref={inputRef} onLayout={measureInput} onPress={() => setShowTimePicker(true)}>
             <Input
               value={props.value.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               editable={false}
@@ -104,26 +122,28 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = props => {
                   <Icon name="clock" size={theme.sizes[5]} />
                 </Pressable>
               }
-              onPressIn={() => setShowTimePicker(true)}
+              onPressIn={handleTimePress}
             />
           </Pressable>
         )}
 
-      {showDatePicker && (
+      {showDatePicker && triggerLayout && (
         <DatePicker
           blockedDates={props.blockedDates}
           tempDate={isRangeMode ? new Date() : props.value}
           dateSelectionMode={props.dateSelectionMode}
           onChange={handleDateChange}
           onCancel={() => setShowDatePicker(false)}
+          triggerLayout={triggerLayout}
         />
       )}
 
-      {!isRangeMode && showTimePicker && (
+      {!isRangeMode && showTimePicker && triggerLayout && (
         <TimePicker
           tempDate={props.value}
           onChange={handleTimeChange}
           onCancel={() => setShowTimePicker(false)}
+          triggerLayout={triggerLayout}
         />
       )}
     </View>

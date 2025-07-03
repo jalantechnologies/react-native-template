@@ -1,3 +1,5 @@
+import { LayoutRectangle } from 'react-native';
+
 export enum DateTimePickerMode {
   DATE = 'date',
   DATETIME = 'datetime',
@@ -31,6 +33,7 @@ export interface CalendarProps {
   onMonthChange: (increment: number) => void;
   onYearPress: () => void;
   tempDate: Date;
+  onYearLayout: (layout: LayoutRectangle) => void;
 }
 
 export interface DatePickerProps {
@@ -39,6 +42,7 @@ export interface DatePickerProps {
   onCancel: () => void;
   onChange: (date: Date | { start: Date; end: Date }) => void;
   tempDate: Date;
+  triggerLayout: LayoutRectangle;
 }
 
 interface BaseDateTimePickerProps {
@@ -66,10 +70,10 @@ export interface TimePickerProps {
   onCancel: () => void;
   onChange: (date: Date) => void;
   tempDate: Date;
+  triggerLayout: LayoutRectangle;
 }
 
 export interface YearPickerProps {
   calendarYear: number;
-  onCancel: () => void;
   onYearSelect: (year: number) => void;
 }

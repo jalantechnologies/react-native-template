@@ -1,5 +1,6 @@
+import { theme } from 'native-base';
 import React, { useState } from 'react';
-import { Modal } from 'react-native';
+import { Modal, Pressable, View } from 'react-native';
 
 import { DatePickerProps } from '../../types/date-time-picker';
 
@@ -7,6 +8,7 @@ import Calendar from './calendar';
 import YearPicker from './year-picker';
 
 const DatePicker: React.FC<DatePickerProps> = ({
+  triggerLayout,
   tempDate,
   onChange,
   onCancel,
@@ -17,6 +19,13 @@ const DatePicker: React.FC<DatePickerProps> = ({
   const [calendarYear, setCalendarYear] = useState(tempDate.getFullYear());
   const [showYearPicker, setShowYearPicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(tempDate);
+
+  const [yearLayout, setYearLayout] = useState<{
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null>(null);
 
   const handleDateSelect = (day: number) => {
     const updatedDate = new Date(selectedDate);
@@ -55,29 +64,58 @@ const DatePicker: React.FC<DatePickerProps> = ({
     }
   };
 
+  const pickerTop = triggerLayout.y + triggerLayout.height - theme.space[4];
+
   return (
     <>
       <Modal visible transparent animationType="fade">
-        <Calendar
-          blockedDates={blockedDates}
-          tempDate={selectedDate}
-          calendarMonth={calendarMonth}
-          calendarYear={calendarYear}
-          dateSelectionMode={dateSelectionMode}
-          onDateSelect={handleDateSelect}
-          onMonthChange={handleMonthChange}
-          onYearPress={() => setShowYearPicker(true)}
-          onCancel={onCancel}
-          onConfirm={confirmDate}
-        />
+        <Pressable style={{ flex: 1 }} onPress={onCancel}>
+          <View
+            style={{
+              position: 'absolute',
+              top: pickerTop,
+              left: triggerLayout.x,
+              width: triggerLayout.width,
+            }}
+          >
+            <Calendar
+              blockedDates={blockedDates}
+              tempDate={selectedDate}
+              calendarMonth={calendarMonth}
+              calendarYear={calendarYear}
+              dateSelectionMode={dateSelectionMode}
+              onDateSelect={handleDateSelect}
+              onMonthChange={handleMonthChange}
+              onYearPress={() => setShowYearPicker(true)}
+              onYearLayout={layout => setYearLayout(layout)}
+              onCancel={onCancel}
+              onConfirm={confirmDate}
+            />
+          </View>
+        </Pressable>
       </Modal>
 
       {showYearPicker && (
-        <YearPicker
-          calendarYear={calendarYear}
-          onYearSelect={handleYearSelect}
-          onCancel={() => setShowYearPicker(false)}
-        />
+        <Modal visible transparent animationType="fade">
+          <Pressable
+            style={{ flex: 1 }}
+            onPress={() => {
+              setShowYearPicker(false);
+            }}
+          >
+            <View
+              style={{
+                position: 'absolute',
+                top: yearLayout?.y! + yearLayout?.height! + 4,
+                left: yearLayout?.x,
+              }}
+            >
+              <Pressable style={{ flex: 1 }} onPress={() => {}}>
+                <YearPicker calendarYear={calendarYear} onYearSelect={handleYearSelect} />
+              </Pressable>
+            </View>
+          </Pressable>
+        </Modal>
       )}
     </>
   );

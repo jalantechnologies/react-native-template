@@ -8,6 +8,8 @@ import {
   PanResponder,
   Animated,
   TextStyle,
+  findNodeHandle,
+  UIManager,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -42,6 +44,7 @@ const Calendar: React.FC<CalendarProps> = ({
   onYearPress,
   onCancel,
   onConfirm,
+  onYearLayout,
 }) => {
   const [selectedDate, setSelectedDate] = useState<number | null>(tempDate.getDate());
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -240,11 +243,31 @@ const Calendar: React.FC<CalendarProps> = ({
     }
   };
 
+  const yearRef = useRef<TouchableOpacity>(null);
+
+  const measureYearPosition = () => {
+    if (yearRef.current) {
+      const handle = findNodeHandle(yearRef.current);
+      if (handle) {
+        UIManager.measure(handle, (x, y, width, height, pageX, pageY) => {
+          onYearLayout({ x: pageX, y: pageY, width, height });
+        });
+      }
+    }
+  };
+
   return (
     <Pressable onPress={onCancel} style={styles.modalContainer}>
       <Pressable onPress={() => {}} style={styles.modalContent}>
         <View style={styles.headerCont}>
-          <TouchableOpacity onPress={onYearPress} style={styles.header}>
+          <TouchableOpacity
+            ref={yearRef}
+            onPress={() => {
+              measureYearPosition();
+              onYearPress();
+            }}
+            style={styles.header}
+          >
             <Text style={styles.headerText}>{calendarYear}</Text>
             <Icon name="angle-down" style={[styles.headerIcon, styles.headerText]} />
           </TouchableOpacity>

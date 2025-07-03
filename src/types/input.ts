@@ -17,45 +17,6 @@ export enum KeyboardTypes {
   WEB_SEARCH = 'web-search',
 }
 
-export interface CardDetailsInputProps {
-  cardNumber: string;
-  cvv: string;
-  disabled?: boolean;
-  errorMessage?: string;
-  expiry: string;
-  label?: string;
-  onCardNumberChange: (value: string) => void;
-  onCvvChange: (value: string) => void;
-  onExpiryChange: (value: string) => void;
-  onValidate?: (
-    result: { cardNumber: string; expiry: string; cvv: string } | '',
-    status: InputStatus,
-  ) => void;
-  status?: InputStatus;
-  successMessage?: string;
-}
-
-export interface CountryOption {
-  label: ReactNode;
-  value: string;
-}
-
-export interface DropdownInputProps {
-  children: React.ReactElement<DropdownOptionProps>[];
-  disabled?: boolean;
-  errorMessage?: string;
-  label?: string;
-  onValueChange: (value: string) => void;
-  status?: InputStatus;
-  successMessage?: string;
-  value?: ReactNode;
-}
-
-export interface DropdownOptionProps {
-  children: ReactNode;
-  value: string;
-}
-
 export enum InputStatus {
   DEFAULT = 'default',
   ERROR = 'error',
@@ -75,20 +36,6 @@ export interface InputProps extends Omit<TextInputProps, 'style | multiline'> {
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
 }
 
-export interface MobileNumberInputProps {
-  country: string;
-  countryOptions: CountryOption[];
-  disabled?: boolean;
-  errorMessage?: string;
-  label?: string;
-  mobileNumber: string;
-  onCountryChange: (value: string) => void;
-  onMobileNumberChange: (value: string) => void;
-  onValidate: (finalNumber: string, status: InputStatus) => void;
-  status?: InputStatus;
-  successMessage?: string;
-}
-
 export interface PasswordInputProps extends InputProps {}
 
 export interface TextAreaInputProps extends Omit<TextInputProps, 'style | multiline'> {
@@ -101,15 +48,4 @@ export interface TextAreaInputProps extends Omit<TextInputProps, 'style | multil
   startEnhancer?: React.ReactElement | string;
   testId?: string;
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
-}
-
-export interface WebsiteUrlInputProps {
-  disabled?: boolean;
-  errorMessage?: string;
-  label?: string;
-  onUrlChange: (value: string) => void;
-  onValidate: (finalUrl: string, status: InputStatus) => void;
-  status?: InputStatus;
-  successMessage?: string;
-  url: string;
 }

@@ -15,18 +15,14 @@ export class AccountService extends APIService {
     lastName: string,
     userAccessToken: AccessToken,
   ): Promise<APIResponse> => {
-    const payload = {
-      first_name: firstName,
-      last_name: lastName,
-    };
-
-    const response = await this.patch(
+    return this.patch(
       `/accounts/${userAccessToken.accountId}`,
-      payload,
+      {
+        first_name: firstName,
+        last_name: lastName,
+      },
       this.getAuthorizationHeader(userAccessToken.token),
     );
-
-    return response;
   };
 
   deleteAccount = async (userAccessToken: AccessToken): Promise<APIResponse> => {

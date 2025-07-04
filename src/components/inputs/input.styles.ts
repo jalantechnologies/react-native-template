@@ -1,5 +1,5 @@
 import { useTheme } from 'native-base';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextStyle } from 'react-native';
 
 export const useInputStyles = () => {
   const theme = useTheme();
@@ -132,6 +132,49 @@ export const useTextAreaInputStyles = () => {
     },
     disabled: {
       color: colors.coolGray[400],
+    },
+  });
+};
+
+export const useCardDetailsInputStyles = () => {
+  const theme = useTheme();
+  return StyleSheet.create({
+    wrapper: {
+      gap: theme.space[2],
+    },
+    label: {
+      fontSize: theme.fontSizes.sm,
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      lineHeight: Number(theme.lineHeights.sm),
+      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
+    },
+    container: {
+      flexDirection: 'row',
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      borderRadius: theme.radii.md,
+      overflow: 'hidden',
+      alignItems: 'center',
+      paddingHorizontal: theme.space[3],
+    },
+    inputField: {
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      fontSize: theme.fontSizes.md,
+      lineHeight: Number(theme.lineHeights.sm),
+      paddingHorizontal: theme.space[2],
+    },
+    cardInput: {
+      flex: 2,
+      borderRightWidth: theme.borderWidths[0],
+    },
+    expiryInput: {
+      borderRightWidth: theme.borderWidths[0],
+      textAlign: 'center',
+    },
+    cvvInput: {
+      textAlign: 'center',
+    },
+    message: {
+      fontSize: theme.fontSizes.xs,
     },
   });
 };

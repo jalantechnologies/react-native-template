@@ -8,8 +8,16 @@ platform :ios do
     # 2. Clear watchman (Metro) and yarn caches
     sh "watchman watch-del-all"
     sh "yarn cache clean"
+    sh "pwd"  # This will print the current directory for debugging
+  
+    # Change to the correct directory (ios)
+    sh "cd .."
+  
+    # Debug: Check the current directory after changing
+    sh "pwd"  # This will confirm that we're in the correct 'ios' directory
+
     # 3. Reinstall pods (ensures your .env gets pulled into the xcconfig)
-    sh "pod deintegrate --project-directory=.. && pod install --project-directory=.."
+    sh "pod deintegrate && pod install"
     # 4. Actually build with react-native-config injection
     sh "ENVFILE=../.env bundle exec fastlane run cocoapods"
     sh "xcodebuild -workspace ios/MyApp.xcworkspace -scheme MyApp \\

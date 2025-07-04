@@ -1,0 +1,84 @@
+name: iOS Clean-Build QA
+
+on:
+  push:
+    branches:
+      - shivam/bug/env-update-ios-build
+    paths:
+      - .env*
+
+jobs:
+  validate-clean-build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+
+      - name: Select Xcode 16.0
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+
+      - name: Install Bundler
+        run: gem install bundler
+      
+      - name: Install Ruby dependencies
+        working-directory: ios
+        run: bundle install
+      
+      - name: Set Node Version
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.17
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      # Patch Boost podspec to use a stable source and checksum to prevent flaky builds
+      - name: Patch Boost Podspec with Custom Source
+        working-directory: node_modules/react-native/third-party-podspecs
+        run: |
+          awk '
+          /spec.source/ {
+          print "  spec.source = { :http => '\''https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.gz'\'', :sha256 => '\''7bd7ddceec1a1dfdcbdb3e609b60d01739c38390a5f956385a12f3122049f0ca'\'' }";
+          skip=1; next
+          }
+          skip && /\}/ { skip=0; next }
+          skip && /:sha256/ { next }
+          { print }
+          ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
+
+      - name: Install CocoaPods dependencies
+        working-directory: ios
+        run: |
+          bundle exec pod install --repo-update
+
+      - name: Run fastlane clean_build
+        run: bundle exec fastlane ios clean_build
+
+      - name: Unzip IPA and check Info.plist
+        run: |
+          # adjust path if your lane exports .ipa somewhere else
+          IPA="build/MyApp.ipa"
+          UNZIPPED="build/unzipped"
+          mkdir -p "$UNZIPPED"
+          unzip -q "$IPA" -d "$UNZIPPED"
+
+          # Info.plist is in Payload/MyApp.app/Info.plist
+          PLIST="$UNZIPPED/Payload/MyApp.app/Info.plist"
+
+          # Convert binary plist to XML (plutil is available on macOS runner)
+          plutil -convert xml1 "$PLIST" -o - \
+            | grep -A1 "TEST_INJECTION"
+
+      - name: Upload logs as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ios-clean-build-logs
+          path: build/

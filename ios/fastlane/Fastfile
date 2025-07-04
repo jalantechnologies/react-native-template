@@ -1,0 +1,21 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Clean caches, inject .env, and build the app"
+  lane :clean_build do
+    # 1. Remove Xcode derived data
+    sh "rm -rf ~/Library/Developer/Xcode/DerivedData"
+    # 2. Clear watchman (Metro) and yarn caches
+    sh "watchman watch-del-all"
+    sh "yarn cache clean"
+    # 3. Reinstall pods (ensures your .env gets pulled into the xcconfig)
+    sh "cd ios && pod deintegrate && pod install && cd .."
+    # 4. Actually build with react-native-config injection
+    sh "ENVFILE=../.env bundle exec fastlane run cocoapods"
+    sh "xcodebuild -workspace ios/MyApp.xcworkspace -scheme MyApp \\
+          -configuration Release \\
+          -derivedDataPath build/DerivedData \\
+          -allowProvisioningUpdates \\
+          clean build"
+  end
+end

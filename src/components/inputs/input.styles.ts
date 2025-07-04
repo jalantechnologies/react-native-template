@@ -1,5 +1,5 @@
 import { useTheme } from 'native-base';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextStyle } from 'react-native';
 
 export const useInputStyles = () => {
   const theme = useTheme();
@@ -144,18 +144,17 @@ export const useDropdownInputStyles = () => {
     },
     overlay: {
       position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
+      top: theme.space[0],
+      left: theme.space[0],
+      right: theme.space[0],
+      bottom: theme.space[0],
       zIndex: 1000,
     },
     label: {
-      fontWeight: '500',
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       fontSize: theme.fontSizes.sm,
-      fontFamily: 'Inter',
       lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing: -0.02 * theme.fontSizes.sm,
+      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
     inputContainer: {
       flexDirection: 'row',
@@ -184,8 +183,8 @@ export const useDropdownInputStyles = () => {
     },
     dropdown: {
       position: 'absolute',
-      left: 0,
-      right: 0,
+      left: theme.space[0],
+      right: theme.space[0],
       backgroundColor: theme.colors.white,
       borderWidth: parseInt(theme.borderWidths['1'], 10),
       borderColor: theme.colors.secondary[200],

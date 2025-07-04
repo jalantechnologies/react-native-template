@@ -1,5 +1,5 @@
 import { useTheme } from 'native-base';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextStyle } from 'react-native';
 
 export const useInputStyles = () => {
   const theme = useTheme();
@@ -144,10 +144,9 @@ export const useCardDetailsInputStyles = () => {
     },
     label: {
       fontSize: theme.fontSizes.sm,
-      fontWeight: '500',
-      fontFamily: 'Inter',
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing: -0.02 * theme.fontSizes.sm,
+      letterSpacing:  parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
     container: {
       flexDirection: 'row',
@@ -158,18 +157,17 @@ export const useCardDetailsInputStyles = () => {
       paddingHorizontal: theme.space[3],
     },
     inputField: {
-      fontFamily: 'Inter',
-      fontWeight: '400',
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       fontSize: theme.fontSizes.md,
       lineHeight: Number(theme.lineHeights.sm),
       paddingHorizontal: theme.space[2],
     },
     cardInput: {
       flex: 2,
-      borderRightWidth: 0,
+      borderRightWidth: theme.borderWidths[0],
     },
     expiryInput: {
-      borderRightWidth: 0,
+      borderRightWidth: theme.borderWidths[0],
       textAlign: 'center',
     },
     cvvInput: {

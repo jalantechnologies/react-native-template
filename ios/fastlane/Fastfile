@@ -9,7 +9,7 @@ platform :ios do
     sh "watchman watch-del-all"
     sh "yarn cache clean"
     # 3. Reinstall pods (ensures your .env gets pulled into the xcconfig)
-    sh "pod deintegrate --project-directory=ios && pod install --project-directory=ios"
+    sh "pod deintegrate --project-directory=.. && pod install --project-directory=.."
     # 4. Actually build with react-native-config injection
     sh "ENVFILE=../.env bundle exec fastlane run cocoapods"
     sh "xcodebuild -workspace ios/MyApp.xcworkspace -scheme MyApp \\

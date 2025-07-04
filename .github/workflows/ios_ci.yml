@@ -64,6 +64,7 @@ jobs:
           bundle exec pod install --repo-update
 
       - name: Run fastlane clean_build
+        working-directory: ios
         run: bundle exec fastlane ios clean_build
 
       - name: Unzip IPA and check Info.plist

@@ -1,5 +1,5 @@
 import { useTheme } from 'native-base';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextStyle } from 'react-native';
 
 export const useInputStyles = () => {
   const theme = useTheme();
@@ -44,12 +44,12 @@ export const useInputStyles = () => {
       color: colors.secondary[600],
     },
     label: {
-      fontWeight: '500',
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       color: colors.secondary[900],
       fontSize: theme.fontSizes.sm,
-      fontFamily: 'Inter',
+
       lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing: -0.02 * theme.fontSizes.sm,
+      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
     focusedBorder: {
       borderColor: colors.primary[300],
@@ -94,16 +94,15 @@ export const useTextAreaInputStyles = () => {
       flex: 1,
       fontSize: theme.fontSizes.md,
       color: colors.secondary[900],
-      padding: 0,
-      margin: 0,
+      padding: theme.space[0],
+      margin: theme.space[0],
       minHeight: theme.sizes[20],
     },
     label: {
-      fontWeight: '500',
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       fontSize: theme.fontSizes.sm,
-      fontFamily: 'Inter',
       lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing: -0.02 * theme.fontSizes.sm,
+      letterSpacing:  parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
     enhancer: {
       marginHorizontal: spacing[1],

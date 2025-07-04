@@ -1,5 +1,5 @@
 import { useTheme } from 'native-base';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextStyle } from 'react-native';
 
 export const useInputStyles = () => {
   const theme = useTheme();
@@ -145,14 +145,13 @@ export const useWebsiteInputStyles = () => {
     },
     label: {
       fontSize: theme.fontSizes.sm,
-      fontWeight: '500',
-      fontFamily: 'Inter',
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing: -0.02 * theme.fontSizes.sm,
+      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
     container: {
       flexDirection: 'row',
-      borderWidth: 0,
+      borderWidth: theme.borderWidths['0'],
     },
     protocolContainer: {
       width: theme.sizes[20],
@@ -162,17 +161,16 @@ export const useWebsiteInputStyles = () => {
       borderTopLeftRadius: theme.radii.md,
       borderBottomLeftRadius: theme.radii.md,
       borderWidth: parseInt(theme.borderWidths['1'], 10),
-      borderRightWidth: 0,
+      borderRightWidth: theme.borderWidths['0'],
       borderColor: theme.colors.secondary[200],
       paddingHorizontal: theme.space[3],
       paddingVertical: theme.space[2],
     },
     text: {
-      fontFamily: 'Inter',
-      fontWeight: '400',
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       fontSize: theme.fontSizes.md,
       lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing: -0.02 * theme.fontSizes.sm,
+      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
     inputContainer: {
       flex: 1,

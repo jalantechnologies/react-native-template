@@ -13,7 +13,8 @@ export class AuthService extends APIService {
         },
       };
 
-      return this.post('/accounts', payload);
+      const response = await this.post('/accounts', payload);
+      return typeof response === 'string' ? JSON.parse(response) : response;
     } catch (error) {
       logger.error(`SendOTP service error: ${error}`);
       throw error;
@@ -30,7 +31,8 @@ export class AuthService extends APIService {
         otp_code: otp,
       };
 
-      return this.post<AccessToken>('/access-tokens', payload);
+      const response = await this.post<AccessToken>('/access-tokens', payload);
+      return typeof response === 'string' ? JSON.parse(response) : response;
     } catch (error) {
       logger.error(`VerifyOTP service error: ${error}`);
       throw error;

@@ -122,8 +122,9 @@ end
     
     upload_to_play_store(
       track: "internal",
+      release_status: "completed",
       json_key: ENV["ANDROID_JSON_KEY_FILE"],
-      skip_upload_apk: true,
+      skip_upload_apk: false,
     )
   end
   desc "Deploy APK to Google Play Internal Track App Distribution"

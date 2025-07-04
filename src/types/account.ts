@@ -9,9 +9,12 @@ export class Account {
 
   constructor(json: any) {
     this.id = json.id as string;
-    this.firstName = json.firstName as string;
-    this.lastName = json.lastName as string;
-    this.phoneNumber = new PhoneNumber(json.phoneNumber);
+    this.firstName = json.first_name;
+    this.lastName = json.last_name;
+    this.phoneNumber = new PhoneNumber({
+      countryCode: json.phone_number.country_code,
+      phoneNumber: json.phone_number.phone_number,
+    });
     this.username = json.username as string;
   }
 

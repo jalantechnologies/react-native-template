@@ -6,3 +6,4 @@ export * from './common';
 export * from './task';
 export * from './avatar';
 export * from './alert';
+export * from './radio-button';

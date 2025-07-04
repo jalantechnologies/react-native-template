@@ -1,27 +1,21 @@
 import { PhoneNumber } from './auth';
-import { Nullable } from './common';
 
 export class Account {
   id: string;
   firstName: string;
   lastName: string;
-  phoneNumber: Nullable<PhoneNumber>;
+  phoneNumber: PhoneNumber;
   username: string;
 
   constructor(json: any) {
     this.id = json.id as string;
     this.firstName = json.first_name;
     this.lastName = json.last_name;
+    this.phoneNumber = new PhoneNumber({
+      countryCode: json.phone_number.country_code,
+      phoneNumber: json.phone_number.phone_number,
+    });
     this.username = json.username as string;
-
-    if (json.phone_number) {
-      this.phoneNumber = new PhoneNumber({
-        countryCode: json.phone_number.country_code,
-        phoneNumber: json.phone_number.phone_number,
-      });
-    } else {
-      this.phoneNumber = null;
-    }
   }
 
   displayName(): string {

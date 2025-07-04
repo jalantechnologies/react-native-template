@@ -1,10 +1,11 @@
 import { PhoneNumber } from './auth';
+import { Nullable } from './common';
 
 export class Account {
   id: string;
   firstName: string;
   lastName: string;
-  phoneNumber: PhoneNumber | null;
+  phoneNumber: Nullable<PhoneNumber>;
   username: string;
 
   constructor(json: any) {

@@ -102,7 +102,7 @@ export const useTextAreaInputStyles = () => {
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       fontSize: theme.fontSizes.sm,
       lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing:  parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
+      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
     enhancer: {
       marginHorizontal: spacing[1],

@@ -78,7 +78,7 @@ jobs:
             | grep -A1 "TEST_INJECTION"
 
       - name: Upload logs as artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ios-clean-build-logs
           path: build/

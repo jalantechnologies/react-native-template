@@ -57,6 +57,7 @@ jobs:
       - name: Install CocoaPods dependencies
         working-directory: ios
         run: |
+          rm -f Podfile.lock
           bundle exec pod install --repo-update
 
       - name: Run fastlane clean_build

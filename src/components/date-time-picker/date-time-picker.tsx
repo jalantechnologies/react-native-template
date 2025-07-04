@@ -102,7 +102,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = props => {
             showSoftInputOnFocus={false}
             endEnhancer={
               <Pressable onPress={() => setShowDatePicker(true)}>
-                <Icon name="calendar-alt" size={theme.sizes[5]} />
+                <Icon name="calendar-alt" size={theme.sizes[4]} />
               </Pressable>
             }
             onPressIn={handleDatePress}
@@ -112,14 +112,19 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = props => {
 
       {(props.mode === DateTimePickerMode.TIME || props.mode === DateTimePickerMode.DATETIME) &&
         !isRangeMode && (
-          <Pressable ref={inputRef} onLayout={measureInput} onPress={() => setShowTimePicker(true)}>
+          <Pressable
+            ref={inputRef}
+            onLayout={measureInput}
+            onPress={() => setShowTimePicker(true)}
+            style={props.mode === DateTimePickerMode.DATETIME && { marginTop: 2 }}
+          >
             <Input
               value={props.value.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               editable={false}
               showSoftInputOnFocus={false}
               endEnhancer={
                 <Pressable onPress={() => setShowTimePicker(true)}>
-                  <Icon name="clock" size={theme.sizes[5]} />
+                  <Icon name="clock" size={theme.sizes[4]} />
                 </Pressable>
               }
               onPressIn={handleTimePress}

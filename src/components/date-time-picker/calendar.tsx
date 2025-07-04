@@ -309,15 +309,12 @@ const Calendar: React.FC<CalendarProps> = ({
           })}
         </Text>
 
-        <Animated.View
-          {...panResponder.panHandlers}
-          style={[styles.calendarCont, { transform: [{ translateX }] }]}
-        >
+        <Animated.View {...panResponder.panHandlers} style={{ transform: [{ translateX }] }}>
           <View style={styles.monthYearRow}>
             <TouchableOpacity onPress={() => onMonthChange(-1)} style={styles.monthYearItems}>
-              <Icon name="angle-left" style={styles.monthYearText} />
+              <Icon name="angle-left" style={styles.monthYearRowIcons} />
             </TouchableOpacity>
-            <View style={[styles.monthYear, styles.monthYearItems]}>
+            <View style={styles.monthYearItems}>
               <Text
                 style={[
                   styles.monthYearText,
@@ -326,7 +323,7 @@ const Calendar: React.FC<CalendarProps> = ({
               >{`${monthNames[calendarMonth]} ${calendarYear}`}</Text>
             </View>
             <TouchableOpacity onPress={() => onMonthChange(1)} style={styles.monthYearItems}>
-              <Icon name="angle-right" style={styles.monthYearText} />
+              <Icon name="angle-right" style={styles.monthYearRowIcons} />
             </TouchableOpacity>
           </View>
 

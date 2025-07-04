@@ -9,14 +9,14 @@ export const useCalendarStyles = () => {
     modalContainer: {
       flex: 1,
       justifyContent: 'center',
-      padding: theme.space[5],
+      padding: theme.space[4],
     },
     modalContent: {
       ...theme.shadows[5],
       shadowColor: theme.colors.secondary[600],
       backgroundColor: theme.colors.white,
       borderRadius: theme.radii.md,
-      padding: theme.space[3],
+      padding: theme.space[5],
       gap: theme.space[2],
       minHeight: height * 0.6,
       overflow: 'hidden',
@@ -27,7 +27,7 @@ export const useCalendarStyles = () => {
       justifyContent: 'space-between',
     },
     header: {
-      backgroundColor: theme.colors.primary[400],
+      backgroundColor: theme.colors.primary[500],
       borderWidth: parseInt(theme.borderWidths[1], 10),
       borderColor: theme.colors.secondary[50],
       borderRadius: theme.radii.md,
@@ -37,14 +37,17 @@ export const useCalendarStyles = () => {
       alignItems: 'center',
     },
     headerText: {
-      color: theme.colors.secondary[50],
+      color: theme.colors.white,
       fontSize: theme.fontSizes.md,
-      fontWeight: `${theme.fontWeights.medium}` as TextStyle['fontWeight'],
+      fontWeight: `${theme.fontWeights.semibold}` as TextStyle['fontWeight'],
+    },
+    headerIcon: {
+      marginLeft: theme.space[1],
     },
     selectedDateHeader: {
       fontSize: theme.fontSizes['3xl'],
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
-      color: theme.colors.primary[800],
+      color: theme.colors.secondary[800],
     },
     daysRow: {
       flexDirection: 'row',
@@ -52,18 +55,13 @@ export const useCalendarStyles = () => {
       marginBottom: theme.space[2],
     },
     dayLabel: {
-      color: theme.colors.primary[700],
+      color: theme.colors.secondary[500],
+      lineHeight: Number(theme.lineHeights.md),
+      letterSpacing: theme.letterSpacings.md,
+      fontWeight: `${theme.fontWeights.semibold}` as TextStyle['fontWeight'],
       width: theme.sizes[8],
       textAlign: 'center',
       fontSize: theme.fontSizes.lg,
-    },
-    calendarCont: {
-      borderWidth: parseInt(theme.borderWidths[1], 10),
-      borderRadius: theme.radii['3xl'],
-      padding: theme.space[4],
-      backgroundColor: theme.colors.secondary[50],
-      borderColor: theme.colors.secondary[50],
-      minHeight: height * 0.46,
     },
     calendarGrid: {
       flexDirection: 'column',
@@ -79,39 +77,42 @@ export const useCalendarStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       marginVertical: theme.space[1],
-      borderRadius: theme.radii.xl,
+      borderRadius: theme.radii.lg,
     },
     selectedCell: {
       ...theme.shadows[3],
-      shadowColor: theme.colors.primary[300],
-      backgroundColor: theme.colors.primary[400],
+      shadowColor: theme.colors.primary[400],
+      backgroundColor: theme.colors.primary[500],
     },
     selectedDate: {
-      color: theme.colors.secondary[50],
-      fontWeight: `${theme.fontWeights.bold}` as TextStyle['fontWeight'],
+      color: theme.colors.white,
+      fontWeight: `${theme.fontWeights.semibold}` as TextStyle['fontWeight'],
     },
     dateTextCell: {
-      color: theme.colors.primary[800],
-      fontSize: theme.fontSizes.md,
+      color: theme.colors.secondary[900],
+      fontSize: theme.fontSizes.lg,
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      lineHeight: Number(theme.lineHeights.md),
+      letterSpacing: theme.letterSpacings.md,
     },
     rangeCell: {
       backgroundColor: theme.colors.primary[100],
-      borderRadius: 0,
     },
     rangeDateText: {
-      color: theme.colors.primary[700],
+      color: theme.colors.primary[500],
     },
     todayCell: {
-      backgroundColor: theme.colors.primary[100],
+      borderColor: theme.colors.primary[500],
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
     },
     todayCellText: {
-      color: theme.colors.primary[400],
+      color: theme.colors.primary[500],
     },
     blockedCell: {
-      backgroundColor: theme.colors.secondary[200],
+      backgroundColor: theme.colors.secondary[100],
     },
     blockedCellText: {
-      color: theme.colors.secondary[700],
+      color: theme.colors.secondary[400],
     },
     actionRow: {
       alignItems: 'flex-end',
@@ -128,18 +129,21 @@ export const useCalendarStyles = () => {
     },
     monthYearItems: {
       borderWidth: parseInt(theme.borderWidths[1], 10),
-      borderColor: theme.colors.secondary[100],
+      borderColor: theme.colors.primary[50],
       paddingHorizontal: theme.space[3],
-      borderRadius: theme.radii.md,
-      backgroundColor: theme.colors.white,
-    },
-    monthYear: {
-      flexDirection: 'row',
-      gap: theme.space[1],
+      borderRadius: theme.radii.lg,
     },
     monthYearText: {
       fontSize: theme.fontSizes.lg,
-      color: theme.colors.primary[800],
+      fontWeight: `${theme.fontWeights.semibold}` as TextStyle['fontWeight'],
+      color: theme.colors.primary[500],
+      lineHeight: Number(theme.lineHeights.md),
+      letterSpacing: theme.letterSpacings.md,
+      textAlign: 'center',
+    },
+    monthYearRowIcons: {
+      fontSize: theme.fontSizes.lg,
+      color: theme.colors.secondary[500],
     },
     selectByButton: {
       flexDirection: 'row',
@@ -149,12 +153,9 @@ export const useCalendarStyles = () => {
       fontSize: theme.fontSizes.md,
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
     },
-    headerIcon: {
-      marginLeft: theme.space[1],
-    },
     presetOverlay: {
       position: 'absolute',
-      top: theme.space[10],
+      top: theme.space[12],
       left: theme.space[0],
       right: theme.space[4],
       bottom: theme.space[0],
@@ -210,22 +211,27 @@ export const useYearPickerStyles = () => {
       width: '27%',
       marginVertical: theme.space[2],
       alignItems: 'center',
+      justifyContent: 'center',
       padding: theme.space[3],
       borderWidth: parseInt(theme.borderWidths[1], 10),
-      borderRadius: theme.radii.xl,
-      borderColor: theme.colors.secondary[100],
+      borderRadius: theme.radii.lg,
+      borderColor: theme.colors.primary[50],
     },
     selectedCell: {
       ...theme.shadows[3],
-      shadowColor: theme.colors.primary[300],
-      backgroundColor: theme.colors.primary[400],
+      shadowColor: theme.colors.primary[400],
+      backgroundColor: theme.colors.primary[500],
     },
     selectedYear: {
-      color: theme.colors.secondary[50],
-      fontWeight: `${theme.fontWeights.bold}` as TextStyle['fontWeight'],
+      color: theme.colors.white,
+      fontWeight: `${theme.fontWeights.semibold}` as TextStyle['fontWeight'],
     },
     yearTextCell: {
-      color: theme.colors.primary[700],
+      color: theme.colors.secondary[900],
+      fontSize: theme.fontSizes.md,
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      lineHeight: Number(theme.lineHeights.md),
+      letterSpacing: theme.letterSpacings.md,
     },
   });
 };
@@ -252,14 +258,10 @@ export const useTimePickerStyles = (ITEM_HEIGHT: number) => {
       maxHeight: height * 0.4,
     },
     headerText: {
-      color: theme.colors.primary[800],
-      fontSize: theme.fontSizes.md,
+      color: theme.colors.primary[500],
+      fontSize: theme.fontSizes.lg,
       marginBottom: theme.space[5],
       textAlign: 'center',
-    },
-    timerItem: {
-      justifyContent: 'center',
-      alignItems: 'center',
     },
     pickerRow: {
       flexDirection: 'row',
@@ -268,8 +270,35 @@ export const useTimePickerStyles = (ITEM_HEIGHT: number) => {
     },
     separator: {
       width: StyleSheet.hairlineWidth,
-      backgroundColor: theme.colors.secondary[300],
+      backgroundColor: theme.colors.secondary[400],
       height: ITEM_HEIGHT * 3,
+    },
+    pickerContainer: {
+      height: ITEM_HEIGHT * 3,
+      overflow: 'hidden',
+    },
+    pickerContent: {
+      paddingVertical: ITEM_HEIGHT,
+    },
+    timerItem: {
+      height: ITEM_HEIGHT,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    timerItemText: {
+      fontSize: theme.fontSizes.lg,
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      lineHeight: Number(theme.lineHeights.md),
+      letterSpacing: theme.letterSpacings.md,
+    },
+    highlight: {
+      position: 'absolute',
+      top: ITEM_HEIGHT,
+      height: ITEM_HEIGHT,
+      width: '100%',
+      borderTopWidth: 1,
+      borderBottomWidth: 1,
+      borderColor: '#ccc',
     },
     actionRow: {
       paddingTop: theme.space[3],

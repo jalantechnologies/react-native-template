@@ -19,8 +19,6 @@ export class Account {
         countryCode: json.phone_number.country_code,
         phoneNumber: json.phone_number.phone_number,
       });
-    } else if (json.phoneNumber) {
-      this.phoneNumber = new PhoneNumber(json.phoneNumber);
     } else {
       this.phoneNumber = null;
     }

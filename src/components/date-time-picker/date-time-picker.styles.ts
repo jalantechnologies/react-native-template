@@ -296,9 +296,9 @@ export const useTimePickerStyles = (ITEM_HEIGHT: number) => {
       top: ITEM_HEIGHT,
       height: ITEM_HEIGHT,
       width: '100%',
-      borderTopWidth: 1,
-      borderBottomWidth: 1,
-      borderColor: '#ccc',
+      borderTopWidth: parseInt(theme.borderWidths['1'],10),
+      borderBottomWidth: parseInt(theme.borderWidths['1'],10),
+      borderColor: theme.colors.secondary[300],
     },
     actionRow: {
       paddingTop: theme.space[3],

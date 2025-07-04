@@ -146,7 +146,7 @@ export const useCardDetailsInputStyles = () => {
       fontSize: theme.fontSizes.sm,
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing:  parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
+      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
     container: {
       flexDirection: 'row',

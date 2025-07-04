@@ -258,7 +258,7 @@ export const useTimePickerStyles = (ITEM_HEIGHT: number) => {
       maxHeight: height * 0.4,
     },
     headerText: {
-      color: theme.colors.primary[500],
+      color: theme.colors.secondary[900],
       fontSize: theme.fontSizes.lg,
       marginBottom: theme.space[5],
       textAlign: 'center',

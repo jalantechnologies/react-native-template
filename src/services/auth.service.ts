@@ -8,9 +8,7 @@ export class AuthService extends APIService {
     try {
       const payload = {
         phone_number: {
-          country_code: phoneNumber.countryCode.startsWith('+')
-            ? phoneNumber.countryCode
-            : `+${phoneNumber.countryCode}`,
+          country_code: phoneNumber.countryCode,
           phone_number: phoneNumber.phoneNumber,
         },
       };
@@ -26,9 +24,7 @@ export class AuthService extends APIService {
     try {
       const payload = {
         phone_number: {
-          country_code: phoneNumber.countryCode.startsWith('+')
-            ? phoneNumber.countryCode
-            : `+${phoneNumber.countryCode}`,
+          country_code: phoneNumber.countryCode,
           phone_number: phoneNumber.phoneNumber,
         },
         otp_code: otp,

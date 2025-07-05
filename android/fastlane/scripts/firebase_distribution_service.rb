@@ -61,6 +61,30 @@ class FirebaseDistributionService
     UI.user_error!("❌ APK not found at #{apk}") unless File.exist?(apk)
   end
 
+  def build_aab
+    ENV["GRADLE_OPTS"] = "-Xmx6g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"
+
+    Actions::GradleAction.run(
+      task: "bundle",
+      build_type: "Release",
+      properties: {
+        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
+        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
+        "org.gradle.daemon" => "false",
+        "org.gradle.workers.max" => "2"
+      },
+      project_dir: File.expand_path("../..", __dir__),
+      gradle_path: "gradlew",
+      print_command: true,
+      print_command_output: true
+    )
+
+    aab = aab_path
+    UI.user_error!("❌ AAB not found at #{aab}") unless File.exist?(aab)
+  end
+
   # Uploads an APK file to Firebase App Distribution.
   # @param apk_path [String] Absolute path to the APK file
   # @return [String] Operation name used for polling the release
@@ -174,5 +198,10 @@ class FirebaseDistributionService
   # This method exists to encapsulate assumptions about the project structure.
   def apk_path
     File.expand_path("../../app/build/outputs/apk/debug/app-debug.apk", __dir__)
+  end
+  def aab_path
+
+    File.expand_path("../../app/build/outputs/bundle/release/app-release.aab", __dir__)
+
   end
 end

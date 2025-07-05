@@ -13,7 +13,7 @@ require_relative './firebase_distribution_service'
 # @param project_number [String] Firebase project number
 # @param app_id [String] Firebase app ID
 # @param service_account_path [String] Path to the GCP service account JSON key
-def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_account_path:, json_key_file:)
+def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_account_path:, package_name:, json_key_file:)
   firebase = FirebaseDistributionService.new(
     project_number: project_number,
     app_id: app_id,
@@ -22,6 +22,34 @@ def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_
   sh("mkdir -p android/app/src/main/assets")
   sh("mkdir -p android/app/src/main/res")
   sh("npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res")
+
+  internal_codes = google_play_track_version_codes(
+    package_name:  package_name,
+    json_key:      json_key_file,
+    track:         "internal",
+    timeout:       300
+  )
+  UI.message("Internal track codes: #{internal_codes}")
+
+  # 2) Fetch all versionCodes on the production track
+  production_codes = google_play_track_version_codes(
+    package_name:  package_name,
+    json_key:      json_key_file,
+    track:         "production",
+    timeout:       300
+  )
+  UI.message("Production track codes: #{production_codes}")
+
+  # 3) Combine, find max, bump
+  all_codes = (internal_codes + production_codes).map(&:to_i)
+  next_code = (all_codes.max || 0) + 1
+  final_code = "#{next_code}#{pr_number}".to_i
+
+  gradle_path = File.expand_path("../../app/build.gradle", __dir__)
+  increment_version_code(
+    version_code:   final_code,
+    gradle_file_path: gradle_path
+  )
 
   firebase.build_apk
 
@@ -34,14 +62,22 @@ def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_
   release_name = firebase.poll_for_release(operation_name)
 
   firebase.add_release_notes(release_name, pr_number, pr_title)
+  
+  firebase.build_aab
+
+  aab_path = File.expand_path("../../app/build/outputs/bundle/release/app-release.aab", __dir__)
+  unless File.exist?(aab_path)
+    UI.user_error!("❌ AAB file not found at #{aab_path}")
+  end
   upload_to_play_store(
     track: "internal",
     json_key: json_key_file,
+    skip_upload_apk: true, 
     skip_upload_metadata: true,
     skip_upload_images: true,
     skip_upload_screenshots: true,
     release_status: "draft",
-    apk: apk_path
+    aab: aab_path
   )
 
   UI.message("✅ Uploaded to Google Play Internal Track")

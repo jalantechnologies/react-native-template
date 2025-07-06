@@ -85,6 +85,58 @@ class FirebaseDistributionService
     UI.user_error!("❌ AAB not found at #{aab}") unless File.exist?(aab)
   end
 
+  # Removes a PR-specific .aab bundle from a Google Play track via the Android Publisher API.
+  # - Starts an atomic edit session
+  # - Fetches existing track releases
+  # - Filters out any version codes ending with the given PR number
+  # - Cleans up empty releases to avoid leftover entries
+  # - Commits the edit to apply the removal
+  def remove_pr_bundle_from_track(package_name:, pr_number:, json_key_file:, track_name:)
+    key_json = File.read(json_key_file)
+    androidpublisher = Google::Apis::AndroidpublisherV3::AndroidPublisherService.new
+      androidpublisher.authorization =
+        Google::Auth::ServiceAccountCredentials.make_creds(
+          json_key_io: StringIO.new(key_json),
+          scope: ["https://www.googleapis.com/auth/androidpublisher"]
+        )
+
+    # === 1. start an edit ===
+    edit = androidpublisher.insert_edit(package_name)
+    UI.message("Started edit #{edit.id}")
+
+    # === 2. fetch the existing track ===
+    track = androidpublisher.get_edit_track(package_name, edit.id, track_name)
+    UI.message("Track internal has #{track.releases.flat_map(&:version_codes).size} versionCodes")
+
+    # === 3. remove any release entries matching your PR suffix ===
+    track.releases.each do |release|
+      before = release.version_codes.dup
+      release.version_codes.reject! { |vc| vc.to_s.end_with?(pr_number) }
+      if before.size != release.version_codes.size
+        UI.success("➖ Stripped out versionCodes #{before - release.version_codes}")
+      end
+    end
+
+    # If you ended up with no releases at all, you can also clear the list:
+    track.releases.reject! { |r| r.version_codes.empty? }
+
+    # === 4. push the updated track back ===
+    track_req = Google::Apis::AndroidpublisherV3::Track.new(
+      releases: track.releases
+    )
+    androidpublisher.update_edit_track(
+      package_name,
+      edit.id,
+      track_name,
+      track_req
+    )
+    UI.message("Uploaded updated track “#{track_name}”")
+
+    # === 5. commit ===
+    androidpublisher.commit_edit(package_name, edit.id)
+    UI.success("✅ Committed edit, draft release removed.")
+  end
+
   # Uploads an APK file to Firebase App Distribution.
   # @param apk_path [String] Absolute path to the APK file
   # @return [String] Operation name used for polling the release

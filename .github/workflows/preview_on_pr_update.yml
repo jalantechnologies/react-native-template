@@ -183,7 +183,7 @@ jobs:
         working-directory: android
         env:
           FIREBASE_API_KEY: ${{ env.ANDROID_FIREBASE_API_KEY }}
-        run: bundle exec fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" pr_title:"${{ github.event.pull_request.title }}" project_number:"${{ env.ANDROID_FIREBASE_PROJECT_NUMBER }}" app_id:"${{ env.ANDROID_FIREBASE_APP_ID }}" json_key_file:"${{ env.ANDROID_JSON_KEY_FILE }}" package_name:"${{ env.FIREBASE_APP_PACKAGE }}"
+        run: bundle exec fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" pr_title:"${{ github.event.pull_request.title }}" project_number:"${{ env.ANDROID_FIREBASE_PROJECT_NUMBER }}" app_id:"${{ env.ANDROID_FIREBASE_APP_ID }}" json_key_file:"${{ env.ANDROID_JSON_KEY_FILE }}" package_name:"${{ env.ANDROID_FIREBASE_APP_PACKAGE }}"
 
       - name: Cleanup GCP key file
         if: always()

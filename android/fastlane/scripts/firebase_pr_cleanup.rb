@@ -23,4 +23,10 @@ def firebase_pr_cleanup(pr_number:, project_number:, app_id:, service_account_pa
   else
     service.delete_releases(releases_to_delete)
   end
+
+  service.remove_pr_bundle_from_track(
+    package_name:  package_name,
+    pr_number:     pr_number,      
+    json_key_file: json_key_file,
+    track_name:    "internal")
 end

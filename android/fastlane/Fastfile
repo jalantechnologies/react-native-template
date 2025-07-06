@@ -147,6 +147,8 @@ end
   lane :pr_cleanup do |options|
     # Load the cleanup script
     load './scripts/firebase_pr_cleanup.rb'
+    raw_package = options[:package_name]
+    clean_package = raw_package.delete_prefix("android:")
     firebase_pr_cleanup(
       pr_number: options[:pr_number],
       project_number: options[:project_number],

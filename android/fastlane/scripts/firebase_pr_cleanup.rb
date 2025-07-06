@@ -9,7 +9,7 @@ require_relative './firebase_distribution_service'
 # @param project_number [String] Firebase project number
 # @param app_id [String] Firebase app ID
 # @param service_account_path [String] Path to the GCP service account JSON
-def firebase_pr_cleanup(pr_number:, project_number:, app_id:, service_account_path:)
+def firebase_pr_cleanup(pr_number:, project_number:, app_id:, service_account_path:, package_name:, json_key_file:)
   service = FirebaseDistributionService.new(
     project_number: project_number,
     app_id: app_id,

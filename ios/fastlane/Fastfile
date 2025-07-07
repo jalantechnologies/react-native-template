@@ -20,6 +20,7 @@ platform :ios do
       app = File.basename(ws, ".xcworkspace")           # e.g. "MyApp"
 
       sh %(
+        ENVFILE=#{envfile} \
         xcodebuild \
           -workspace #{ws} \
           -scheme #{app} \

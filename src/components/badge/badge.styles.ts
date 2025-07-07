@@ -38,7 +38,7 @@ export const useColorStyles = (type: BadgeType) => {
       text: {
         color:
           type === BadgeType.TEXT || type === BadgeType.LIGHT
-            ? theme.colors.secondary['500']
+            ? theme.colors.secondary['600']
             : theme.colors.white,
       },
     }),
@@ -72,15 +72,15 @@ export const useColorStyles = (type: BadgeType) => {
     }),
     [BadgeColor.WARNING]: StyleSheet.create({
       solid: {
-        backgroundColor: theme.colors.warning['600'],
+        backgroundColor: theme.colors.warning['500'],
       },
       light: {
-        backgroundColor: theme.colors.warning['100'],
+        backgroundColor: theme.colors.warning['50'],
       },
       text: {
         color:
           type === BadgeType.TEXT || type === BadgeType.LIGHT
-            ? theme.colors.warning['600']
+            ? theme.colors.warning['500']
             : theme.colors.white,
       },
     }),
@@ -132,7 +132,7 @@ export const useSizeStyles = () => {
     [BadgeSize.SMALL]: StyleSheet.create({
       base: {
         paddingVertical: theme.space[1],
-        paddingHorizontal: theme.space[1],
+        paddingHorizontal: theme.space[2],
       },
       text: {
         fontSize: theme.fontSizes.xs,

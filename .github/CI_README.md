@@ -14,36 +14,36 @@ This ensures contributors and QA can quickly test PR builds without manually com
 
 These environment variables are used by the GitHub Actions workflows and Fastlane scripts to authenticate, configure builds, and upload to Firebase or Google Play.
 
-| Name                            | Source                | Description                                                                                                                                         |
-|---------------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `ANDROID_FIREBASE_PROJECT_NUMBER`       | GitHub Secret  | Firebase project number. Used in Firebase API endpoints for uploading and managing app distribution releases.                                      |
-| `ANDROID_FIREBASE_APP_ID`               | GitHub Secret | Unique Firebase Android App ID. Used in Firebase App Distribution API calls to associate the build with the correct app.                           |
-| `ANDROID_FIREBASE_PROJECT_ID`           | GitHub Secret | Firebase project ID. Used in Firebase CLI and Firebase Console URLs. Also helpful for identifying the correct project context in scripts.          |
-| `ANDROID_FIREBASE_APP_PACKAGE`          | GitHub Secret | Android app package name (e.g., `com.example.app`). Used during Gradle builds and as an identifier when uploading builds to Firebase.              |
-| `ANDROID_GCP_JSON_BASE64`               | GitHub Secret         | Base64-encoded GCP service account JSON. Decoded and written to `/tmp/gcp_key.json` to authenticate `gcloud` and Firebase App Distribution APIs.   |                                                                |
-| `ANDROID_FIREBASE_API_KEY`             | GitHub Secret         | Firebase Web API key used by the push notification system (e.g., FCM). Typically accessed by the app or backend to interact with Firebase services like messaging. |
-| `ANDROID_KEYSTORE_FILE`           | GitHub Secret  | Base64-encoded Android keystore file. Decoded and used to sign Android builds during Firebase and Play Store deployments. |
-| `ANDROID_KEYSTORE_PASSWORD`       | GitHub Secret  | Password for the Android keystore file used in signing builds. |
-| `ANDROID_KEY_ALIAS`               | GitHub Secret  | Alias used inside the keystore to refer to the signing key. |
-| `ANDROID_KEY_PASSWORD`            | GitHub Secret  | Password for the key alias used in Android app signing. |
-| `DOPPLER_PREVIEW_TOKEN`           | GitHub Secret  | Used to inject preview environment secrets via Doppler during PR builds and checks. |
-| `DOPPLER_PRODUCTION_TOKEN`        | GitHub Secret  | Used to inject production environment secrets via Doppler during production builds and checks. |
-| `DOCKER_PASSWORD`                 | GitHub Secret  | Docker registry password used for authenticating image pulls and pushes in CI. |
-| `GPLAY_SERVICE_ACCOUNT_KEY_JSON`  | GitHub Secret  | Google Play service account key for uploading Android production builds via Fastlane and GitHub Action. |
-| `SONAR_TOKEN`                     | GitHub Secret  | Authentication token for SonarQube analysis API access. |
-| `SONAR_HOST_URL`                  | GitHub Secret  | URL of your SonarQube server used in PR and branch scan jobs. |
-| `IOS_APPLE_ID`                            | GitHub Secret    | Apple Developer App-specific Apple ID. Used by Fastlane and App Store Connect APIs for identifying the app owner.                                    |
-| `IOS_KEYCHAIN_PASSWORD`                  | GitHub Secret    | Password for the temporary macOS CI keychain used to store signing certificates during iOS builds.                                                   |
-| `IOS_APP_STORE_CONNECT_API_KEY_ID`       | GitHub Secret    | App Store Connect API Key ID. Used by Fastlane to authenticate securely with App Store Connect.                                                      |
-| `IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID`| GitHub Secret    | App Store Connect API Issuer ID. Used in conjunction with API Key ID and Base64 key to authenticate.                                                 |
-| `IOS_APP_STORE_CONNECT_API_KEY_B64`      | GitHub Secret    | Base64-encoded contents of your App Store Connect API key (.p8 file). Used by Fastlane for secure authentication with Apple APIs.                    |
-| `IOS_MATCH_PASSWORD`                     | GitHub Secret    | Password for the Match encryption repo (used by Fastlane Match to decrypt signing certificates and provisioning profiles).                           |
-| `IOS_MATCH_DEPLOY_KEY`                   | GitHub Secret    | SSH private key with read access to your Match certificate repository. Used to fetch provisioning profiles during CI.                                |
-| `IOS_APP_IDENTIFIER`                | GitHub Secret    | iOS app bundle identifier. Used during iOS build and upload processes.
-| `IOS_MATCH_PASSWORD`         | GitHub Secret  | The password used to encrypt/decrypt certificates and profiles in the Match repository. |
-| `IOS_MATCH_REPOSITORY_URL`  | GitHub Secret  | The Git URL of the private repository used by Fastlane Match to store signing certificates and provisioning profiles. |
-| `IOS_APP_STORE_TEAM_ID`      | GitHub Secret  | Your App Store Connect Team ID (can be found in App Store Connect or developer.apple.com). Required for uploading builds and managing certificates. |
-| `IOS_DEV_EMAIL`              | GitHub Secret  | Apple Developer account email used for authentication or account identification in Fastlane. |                         |
+| Name                                   | Source        | Description                                                                                                                                           |
+|----------------------------------------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ANDROID_FIREBASE_APP_ID`              | GitHub Secret | Unique Firebase Android App ID. Used in Firebase App Distribution API calls to associate the build with the correct app.                               |
+| `ANDROID_FIREBASE_APP_PACKAGE`         | GitHub Secret | Android app package name (e.g., `com.example.app`). Used during Gradle builds and as an identifier when uploading builds to Firebase.                |
+| `ANDROID_FIREBASE_API_KEY`             | GitHub Secret | Firebase Web API key used by the push notification system (e.g., FCM). Typically accessed by the app or backend to interact with Firebase services like messaging. |
+| `ANDROID_FIREBASE_PROJECT_ID`          | GitHub Secret | Firebase project ID. Used in Firebase CLI and Firebase Console URLs. Also helpful for identifying the correct project context in scripts.            |
+| `ANDROID_FIREBASE_PROJECT_NUMBER`      | GitHub Secret | Firebase project number. Used in Firebase API endpoints for uploading and managing app distribution releases.                                         |
+| `ANDROID_GCP_JSON_BASE64`              | GitHub Secret | Base64-encoded GCP service account JSON. Decoded and written to `/tmp/gcp_key.json` to authenticate `gcloud` and Firebase App Distribution APIs.     |
+| `ANDROID_KEY_ALIAS`                    | GitHub Secret | Alias used inside the keystore to refer to the signing key.                                                                                            |
+| `ANDROID_KEY_PASSWORD`                 | GitHub Secret | Password for the key alias used in Android app signing.                                                                                                |
+| `ANDROID_KEYSTORE_FILE`                | GitHub Secret | Base64-encoded Android keystore file. Decoded and used to sign Android builds during Firebase and Play Store deployments.                              |
+| `ANDROID_KEYSTORE_PASSWORD`            | GitHub Secret | Password for the Android keystore file used in signing builds.                                                                                         |
+| `DOCKER_PASSWORD`                      | GitHub Secret | Docker registry password used for authenticating image pulls and pushes in CI.                                                                        |
+| `DOPPLER_PREVIEW_TOKEN`                | GitHub Secret | Used to inject preview environment secrets via Doppler during PR builds and checks.                                                                   |
+| `DOPPLER_PRODUCTION_TOKEN`             | GitHub Secret | Used to inject production environment secrets via Doppler during production builds and checks.                                                        |
+| `GPLAY_SERVICE_ACCOUNT_KEY_JSON`       | GitHub Secret | Google Play service account key for uploading Android production builds via Fastlane and GitHub Action.                                                |
+| `IOS_APPLE_ID`                         | GitHub Secret | Apple Developer App-specific Apple ID. Used by Fastlane and App Store Connect APIs for identifying the app owner.                                       |
+| `IOS_APP_IDENTIFIER`                   | GitHub Secret | iOS app bundle identifier. Used during iOS build and upload processes.                                                                                |
+| `IOS_APP_STORE_CONNECT_API_KEY_B64`    | GitHub Secret | Base64-encoded contents of your App Store Connect API key (.p8 file). Used by Fastlane for secure authentication with Apple APIs.                    |
+| `IOS_APP_STORE_CONNECT_API_KEY_ID`     | GitHub Secret | App Store Connect API Key ID. Used by Fastlane to authenticate securely with App Store Connect.                                                       |
+| `IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID` | GitHub Secret | App Store Connect API Issuer ID. Used in conjunction with API Key ID and Base64 key to authenticate.                                                  |
+| `IOS_APP_STORE_TEAM_ID`                | GitHub Secret | Your App Store Connect Team ID (can be found in App Store Connect or developer.apple.com). Required for uploading builds and managing certificates. |
+| `IOS_DEV_EMAIL`                        | GitHub Secret | Apple Developer account email used for authentication or account identification in Fastlane.                                                          |
+| `IOS_KEYCHAIN_PASSWORD`                | GitHub Secret | Password for the temporary macOS CI keychain used to store signing certificates during iOS builds.                                                    |
+| `IOS_MATCH_DEPLOY_KEY`                 | GitHub Secret | SSH private key with read access to your Match certificate repository. Used to fetch provisioning profiles during CI.                                 |
+| `IOS_MATCH_PASSWORD`                   | GitHub Secret | Password for the Match encryption repo (used by Fastlane Match to decrypt signing certificates and provisioning profiles).                            |
+| `IOS_MATCH_REPOSITORY_URL`             | GitHub Secret | The Git URL of the private repository used by Fastlane Match to store signing certificates and provisioning profiles.                                 |
+| `SONAR_HOST_URL`                       | GitHub Secret | URL of your SonarQube server used in PR and branch scan jobs.                                                                                         |
+| `SONAR_TOKEN`                          | GitHub Secret | Authentication token for SonarQube analysis API access.                                                                                               |
+
 
 These variables are decoded and written to disk during the CI process so tools like Fastlane or the Firebase CLI can use them.
 

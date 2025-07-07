@@ -31,7 +31,9 @@ platform :ios do
         -workspace #{ws} \
         -scheme #{app} \
         -configuration Release \
-        -showBuildSettings | grep TEST_INJECTION
+        -sdk iphoneos \
+        -showBuildSettings \
+        | grep TEST_INJECTION || true
       )
 
       sh %(

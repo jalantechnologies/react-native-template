@@ -68,7 +68,7 @@ jobs:
         working-directory: ios
         run: bundle exec fastlane ios clean_build
 
-      - name: Check Info.plist for TEST_INJECTION
+      - name: Check Info.plist for NEW_TEST_VARIABLE
         run: |
           # The .app lives under ios/build/DerivedData/Build/Products/Release-iphoneos/
           APP_PATH="ios/build/DerivedData/Build/Products/Release-iphoneos/Boilerplate.app"
@@ -81,12 +81,12 @@ jobs:
           fi
 
           echo "✅ Found .app bundle."
-          echo "🔍 Checking Info.plist for TEST_INJECTION:"
+          echo "🔍 Checking Info.plist for NEW_TEST_VARIABLE:"
           plutil -convert xml1 "$PLIST" -o - \
-            | grep -A1 "TEST_INJECTION" \
-            || (echo "❌ TEST_INJECTION not found in Info.plist" && exit 1)
+            | grep -A1 "NEW_TEST_VARIABLE" \
+            || (echo "❌ NEW_TEST_VARIABLE not found in Info.plist" && exit 1)
 
-          echo "✅ TEST_INJECTION key is present!"
+          echo "✅ NEW_TEST_VARIABLE key is present!"
 
       - name: Upload logs as artifact
         uses: actions/upload-artifact@v4

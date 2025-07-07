@@ -13,7 +13,6 @@ export const useBadgeStyles = () => {
     content: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: theme.space[1],
     },
     label: {
       fontWeight: `${theme.fontWeights.medium}` as TextStyle['fontWeight'],
@@ -142,7 +141,7 @@ export const useSizeStyles = () => {
     [BadgeSize.MEDIUM]: StyleSheet.create({
       base: {
         paddingVertical: theme.space[1],
-        paddingHorizontal: theme.space[2],
+        paddingHorizontal: theme.space[3],
       },
       text: {
         fontSize: theme.fontSizes.sm,
@@ -151,8 +150,8 @@ export const useSizeStyles = () => {
     }),
     [BadgeSize.LARGE]: StyleSheet.create({
       base: {
-        paddingVertical: theme.space[2],
-        paddingHorizontal: theme.space[3],
+        paddingVertical: theme.space[1],
+        paddingHorizontal: theme.space[4],
       },
       text: {
         fontSize: theme.fontSizes.md,

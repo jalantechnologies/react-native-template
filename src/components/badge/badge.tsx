@@ -45,7 +45,7 @@ const Badge: React.FC<BadgeProps> = ({
 
   return (
     <View style={containerStyles}>
-      <View style={[styles.content, sizeStyle.base]}>
+      <View style={[styles.content, type !== BadgeType.TEXT && sizeStyle.base]}>
         {startEnhancer && <View style={styles.enhancer}>{renderEnhancer(startEnhancer)}</View>}
         <Text style={[styles.label, sizeStyle.text, colorStyle.text]}>{label}</Text>
         {endEnhancer && <View style={styles.enhancer}>{renderEnhancer(endEnhancer)}</View>}

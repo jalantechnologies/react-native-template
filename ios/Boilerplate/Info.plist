@@ -48,10 +48,6 @@
 	<array>
 		<string>armv7</string>
 	</array>
-	<key>TEST_INJECTION</key>
-	<string>$(TEST_INJECTION)</string>
-	<key>NEW_TEST_VARIABLE</key>
-	<string>$(NEW_TEST_VARIABLE)</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

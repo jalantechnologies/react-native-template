@@ -19,6 +19,7 @@ export const useSliderStyles = (isVertical: boolean) => {
       height: theme.sizes['2'],
       borderRadius: theme.radii.full,
       justifyContent: 'center',
+      backgroundColor: theme.colors.primary['50'],
     },
     horizontalTrack: {
       width: screenWidth * 0.8,
@@ -35,6 +36,7 @@ export const useSliderStyles = (isVertical: boolean) => {
     filledTrack: {
       position: 'absolute',
       borderRadius: theme.radii.full,
+      backgroundColor: theme.colors.primary['500'],
     },
     filledHorizontal: {
       height: theme.sizes['2'],
@@ -49,8 +51,10 @@ export const useSliderStyles = (isVertical: boolean) => {
       position: 'absolute',
       width: theme.sizes['5'],
       height: theme.sizes['5'],
+      backgroundColor: theme.colors.primary['500'],
       borderRadius: theme.radii.full,
-      borderWidth: parseInt(theme.borderWidths['1']),
+      borderWidth: parseInt(theme.borderWidths['4']),
+      borderColor: theme.colors.white,
     },
     valueText: {
       marginTop: theme.space[2],

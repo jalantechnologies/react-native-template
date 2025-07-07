@@ -2,21 +2,18 @@ import { useTheme } from 'native-base';
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, PanResponder, Animated, Dimensions } from 'react-native';
 
-import { CustomSliderProps, SliderOrientation } from '../../types/slider';
+import { SliderProps, SliderOrientation } from '../../types/slider';
 
 import { useSliderStyles } from './slider.styles';
 
 const Slider = ({
   value = 0,
   step = 1,
-  minimumTrackTintColor,
-  maximumTrackTintColor,
-  thumbTintColor,
   lowerLimit = 0,
   upperLimit = 100,
   orientation = SliderOrientation.HORIZONTAL,
   onValueChange,
-}: CustomSliderProps) => {
+}: SliderProps) => {
   const { colors, sizes } = useTheme();
 
   const isVertical = orientation === SliderOrientation.VERTICAL;
@@ -26,25 +23,30 @@ const Slider = ({
   const handleSize = Number(sizes['5']);
   const trackThickness = Number(sizes['2']);
 
-  const _minimumTrackColor = minimumTrackTintColor ?? colors.primary[500];
-  const _maximumTrackColor = maximumTrackTintColor ?? colors.gray[300];
-  const _thumbColor = thumbTintColor ?? colors.white;
-  const _borderColor = minimumTrackTintColor ?? colors.primary[500];
-
   const styles = useSliderStyles(isVertical);
 
   const calculatePositionFromValue = (val: number) => {
     if (isVertical) {
-      return (1 - (val - lowerLimit) / (upperLimit - lowerLimit)) * (trackLength - handleSize);
+      return (
+        (1 - (val - lowerLimit) / (upperLimit - lowerLimit)) * (trackLength - handleSize) -
+        handleSize / 2
+      );
     }
-    return ((val - lowerLimit) / (upperLimit - lowerLimit)) * (trackLength - handleSize);
+    return (
+      ((val - lowerLimit) / (upperLimit - lowerLimit)) * (trackLength - handleSize) - handleSize / 2
+    );
   };
 
   const calculateValueFromPosition = (pos: number): number => {
     if (isVertical) {
-      return lowerLimit + (upperLimit - lowerLimit) * (1 - pos / (trackLength - handleSize));
+      return (
+        lowerLimit +
+        (upperLimit - lowerLimit) * (1 - (pos + handleSize / 2) / (trackLength - handleSize))
+      );
     }
-    return lowerLimit + (upperLimit - lowerLimit) * (pos / (trackLength - handleSize));
+    return (
+      lowerLimit + (upperLimit - lowerLimit) * ((pos + handleSize / 2) / (trackLength - handleSize))
+    );
   };
 
   const initialPosition = calculatePositionFromValue(value);
@@ -72,11 +74,11 @@ const Slider = ({
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderMove: (event, gestureState) => {
-        const SENSITIVITY = 0.1;
+        const SENSITIVITY = 0.3;
         const delta = (isVertical ? gestureState.dy : gestureState.dx) * SENSITIVITY;
         const newPos = Math.max(
-          0,
-          Math.min(lastPosition.current + delta, trackLength - handleSize),
+          -handleSize / 2,
+          Math.min(lastPosition.current + delta, trackLength - handleSize + handleSize / 2),
         );
         const rawValue = calculateValueFromPosition(newPos);
         const steppedValue = applyStep(rawValue);
@@ -87,11 +89,11 @@ const Slider = ({
         onValueChange?.(steppedValue);
       },
       onPanResponderRelease: (event, gestureState) => {
-        const SENSITIVITY = 0.1;
+        const SENSITIVITY = 0.3;
         const delta = (isVertical ? gestureState.dy : gestureState.dx) * SENSITIVITY;
         const newPos = Math.max(
-          0,
-          Math.min(lastPosition.current + delta, trackLength - handleSize),
+          -handleSize / 2,
+          Math.min(lastPosition.current + delta, trackLength - handleSize + handleSize / 2),
         );
         const rawValue = calculateValueFromPosition(newPos);
         const steppedValue = applyStep(rawValue);
@@ -115,35 +117,24 @@ const Slider = ({
           left: handlePosition,
           top: -(handleSize - trackThickness) / 2,
         }),
-    backgroundColor: _thumbColor,
-    borderColor: _borderColor,
   };
 
   return (
     <View style={styles.container}>
-      <View
-        style={[
-          styles.track,
-          isVertical ? styles.verticalTrack : styles.horizontalTrack,
-          { backgroundColor: _maximumTrackColor },
-        ]}
-      >
+      <View style={[styles.track, isVertical ? styles.verticalTrack : styles.horizontalTrack]}>
         <Animated.View
           style={[
             styles.filledTrack,
             isVertical
               ? {
                   height: Animated.add(
-                    new Animated.Value(trackLength - handleSize),
+                    new Animated.Value(trackLength),
                     Animated.multiply(handlePosition, -1),
                   ),
                 }
               : {
                   width: Animated.add(handlePosition, new Animated.Value(handleSize / 2)),
                 },
-            {
-              backgroundColor: _minimumTrackColor,
-            },
             isVertical ? styles.filledVertical : styles.filledHorizontal,
           ]}
         />

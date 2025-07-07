@@ -1,5 +1,5 @@
 require 'dotenv'
-Dotenv.load("../../.env")
+Dotenv.load("../../.env")  # Load .env file from the root directory
 
 default_platform(:ios)
 
@@ -7,25 +7,23 @@ platform :ios do
   desc "Clean caches, inject .env, and build the app"
   lane :clean_build do
     # 1. Remove Xcode derived data
+    # This step ensures that any old cache from previous builds is cleared
     sh "rm -rf ~/Library/Developer/Xcode/DerivedData"
-    # 2. Clear watchman (Metro) and yarn caches
+
+    # 2. Clear Watchman (Metro) and Yarn caches
+    # This will ensure any cached assets or dependencies are removed
     sh "watchman watch-del-all"
     sh "yarn cache clean"
-    sh "pwd"  # This will print the current directory for debugging
 
+    # 3. Navigate to the parent directory and find the .env file
     Dir.chdir("../") do
-      # NOTE: Fastfile lives in ios/fastlane, so ../ → ios/
-      sh "pwd"
-      envfile = "../.env"
-      test_val = File.readlines(envfile)
-                     .find { |l| l.start_with?("TEST_INJECTION=") }
-                     &.split("=", 2)[1]
-                     &.strip
-      UI.user_error!("❌ Couldn't find TEST_INJECTION in #{envfile}") unless test_val && !test_val.empty?
-      UI.message("🔍 TEST_INJECTION=#{test_val}")
+      # 1. Deintegrate and reinstall CocoaPods dependencies
+      # This ensures that the project is in a clean state with updated pods
       sh "pod deintegrate"
       sh "pod install --repo-update"
 
+      # 2. Build the project using xcodebuild
+      # This will perform a clean build of the project, incorporating the latest .env variables
       ws  = Dir.glob("*.xcworkspace").first            # e.g. "MyApp.xcworkspace"
       app = File.basename(ws, ".xcworkspace")           # e.g. "MyApp"
 
@@ -41,12 +39,6 @@ platform :ios do
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGN_STYLE=Manual
       )
-      # app_dir = "build/DerivedData/Build/Products/Release-iphoneos/#{app}.app"
-      # sh "echo"
-      # sh "echo \"🔍 Built .app bundle path:\""
-      # sh "echo \"  #{File.expand_path(app_dir)}\""
-      # sh "ls -ld #{app_dir}"  # list the bundle directory
-      # sh "echo"
     end
   end
 end

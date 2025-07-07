@@ -44,8 +44,8 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
     setIsAccountLoading(true);
     const { data, error } = await accountService.getAccount(getAccessToken());
     if (data) {
-      setAccountDetails(data);
-      if (!data.firstName) {
+      setAccountDetails(new Account({ ...data }));
+      if (!data.first_name) {
         setIsNewUser(true);
       } else {
         setIsNewUser(false);
@@ -65,7 +65,7 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
       getAccessToken(),
     );
     if (data) {
-      setAccountDetails(data);
+      setAccountDetails(new Account({ ...data }));
       setIsUpdateAccountLoading(false);
     } else {
       setIsUpdateAccountLoading(false);

@@ -1,30 +1,21 @@
-import { AccessToken, APIResponse, Account, AccountResponse } from '../types';
+import { AccessToken, APIResponse } from '../types';
 
 import { APIService } from './api-service';
 
 export class AccountService extends APIService {
-  getAccount = async (userAccessToken: AccessToken): Promise<AccountResponse> => {
-    const response = await this.get(
+  getAccount = async (userAccessToken: AccessToken): Promise<APIResponse> => {
+    return this.get(
       `/accounts/${userAccessToken.accountId}`,
       this.getAuthorizationHeader(userAccessToken.token),
     );
-
-    if (response.data) {
-      return {
-        data: new Account({ ...response.data }),
-        error: response.error,
-      };
-    }
-
-    return { error: response.error };
   };
 
   updateAccount = async (
     firstName: string,
     lastName: string,
     userAccessToken: AccessToken,
-  ): Promise<AccountResponse> => {
-    const response = await this.patch(
+  ): Promise<APIResponse> => {
+    return this.patch(
       `/accounts/${userAccessToken.accountId}`,
       {
         first_name: firstName,
@@ -32,15 +23,6 @@ export class AccountService extends APIService {
       },
       this.getAuthorizationHeader(userAccessToken.token),
     );
-
-    if (response.data) {
-      return {
-        data: new Account({ ...response.data }),
-        error: response.error,
-      };
-    }
-
-    return { error: response.error };
   };
 
   deleteAccount = async (userAccessToken: AccessToken): Promise<APIResponse> => {

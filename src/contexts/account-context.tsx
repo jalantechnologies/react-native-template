@@ -66,8 +66,7 @@ export const AccountContextProvider: React.FC<PropsWithChildren> = ({ children }
       getAccessToken(),
     );
     if (data) {
-      const account = new Account({ ...data });
-      setAccountDetails(account);
+      setAccountDetails(new Account({ ...data }));
       setIsUpdateAccountLoading(false);
     } else {
       setIsUpdateAccountLoading(false);

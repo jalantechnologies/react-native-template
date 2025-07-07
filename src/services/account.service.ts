@@ -1,11 +1,9 @@
-import { AccessToken, APIResponse, Account, APIError } from '../types';
+import { AccessToken, APIResponse, Account, AccountResponse } from '../types';
 
 import { APIService } from './api-service';
 
 export class AccountService extends APIService {
-  getAccount = async (
-    userAccessToken: AccessToken,
-  ): Promise<{ data?: Account; error?: APIError }> => {
+  getAccount = async (userAccessToken: AccessToken): Promise<AccountResponse> => {
     const response = await this.get(
       `/accounts/${userAccessToken.accountId}`,
       this.getAuthorizationHeader(userAccessToken.token),
@@ -25,7 +23,7 @@ export class AccountService extends APIService {
     firstName: string,
     lastName: string,
     userAccessToken: AccessToken,
-  ): Promise<{ data?: Account; error?: APIError }> => {
+  ): Promise<AccountResponse> => {
     const response = await this.patch(
       `/accounts/${userAccessToken.accountId}`,
       {

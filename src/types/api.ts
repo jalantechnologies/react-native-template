@@ -1,3 +1,5 @@
+import { Account } from '../types';
+
 import { AsyncError, AsyncResult } from './async';
 
 export class APIError implements AsyncError {
@@ -20,4 +22,9 @@ export class APIResponse<T = any> implements AsyncResult<T> {
     this.data = data;
     this.error = error;
   }
+}
+
+export interface AccountResponse {
+  data?: Account;
+  error?: APIError;
 }

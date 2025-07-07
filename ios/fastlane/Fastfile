@@ -31,6 +31,12 @@ platform :ios do
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGN_STYLE=Manual
       )
+      app_dir = "build/DerivedData/Build/Products/Release-iphoneos/#{app}.app"
+      sh "echo"
+      sh "echo \"🔍 Built .app bundle path:\""
+      sh "echo \"  #{File.expand_path(app_dir)}\""
+      sh "ls -ld #{app_dir}"  # list the bundle directory
+      sh "echo"
     end
   end
 end

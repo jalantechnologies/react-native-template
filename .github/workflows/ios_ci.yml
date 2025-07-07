@@ -68,20 +68,22 @@ jobs:
         working-directory: ios
         run: bundle exec fastlane ios clean_build
 
-      - name: Unzip IPA and check Info.plist
+      - name: Check Info.plist for TEST_INJECTION
         run: |
-          # adjust path if your lane exports .ipa somewhere else
-          IPA="build/Boilerplate.ipa"
-          UNZIPPED="build/unzipped"
-          mkdir -p "$UNZIPPED"
-          unzip -q "$IPA" -d "$UNZIPPED"
+          APP_PATH="build/DerivedData/Build/Products/Release-iphoneos/Boilerplate.app"
+          PLIST="$APP_PATH/Info.plist"
 
-          # Info.plist is in Payload/Boilerplate.app/Info.plist
-          PLIST="$UNZIPPED/Payload/Boilerplate.app/Info.plist"
+          if [ ! -f "$PLIST" ]; then
+            echo "❌ Cannot find built .app at $APP_PATH"
+            exit 1
+          fi
 
-          # Convert binary plist to XML (plutil is available on macOS runner)
+          echo "🔍 Dumping $PLIST to check TEST_INJECTION:"
           plutil -convert xml1 "$PLIST" -o - \
-            | grep -A1 "TEST_INJECTION"
+            | grep -A1 "TEST_INJECTION" \
+            || (echo "❌ TEST_INJECTION not found in Info.plist" && exit 1)
+
+          echo "✅ TEST_INJECTION key found!"
 
       - name: Upload logs as artifact
         uses: actions/upload-artifact@v4

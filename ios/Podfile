@@ -79,7 +79,8 @@ target 'Boilerplate' do
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
 
     installer.pods_project.targets.each do |target|
-      if target.product_type == "com.apple.product-type.application"
+        next unless target.isa == "PBXNativeTarget"
+        next unless target.product_type == "com.apple.product-type.application"
         phase = target.new_shell_script_build_phase("[CP] Bundle env variables")
         phase.shell_script = <<~SCRIPT
           export ENVFILE="${SRCROOT}/../.env"
@@ -89,7 +90,6 @@ target 'Boilerplate' do
         # Insert it just before the “Compile Sources” phase
         src_index = target.build_phases.index { |p| p.isa == "PBXSourcesBuildPhase" }
         target.build_phases.move(phase, before: target.build_phases[src_index])
-      end
     end
   end
 end

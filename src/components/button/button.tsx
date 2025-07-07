@@ -2,19 +2,19 @@ import { useTheme } from 'native-base';
 import React, { PropsWithChildren, useState } from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
 
-import { ButtonClass, ButtonKind, ButtonProps, ButtonShape, ButtonSize } from '../../types';
+import { ButtonColor, ButtonKind, ButtonProps, ButtonShape, ButtonSize } from '../../types';
 import { SpinnerTypes } from '../../types/spinner';
 import Spinner from '../spinner/spinner';
 
-import { useButtonStyles, useKindStyles, useSizeStyles, useClassStyles } from './button.styles';
+import { useButtonStyles, useKindStyles, useSizeStyles, useColorStyles } from './button.styles';
 
 const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   children,
   disabled = false,
   endEnhancer = undefined,
   isLoading = false,
-  kind = ButtonKind.PRIMARY,
-  buttonClass = ButtonClass.NORMAL,
+  kind = ButtonKind.CONTAINED,
+  color = ButtonColor.PRIMARY,
   onClick = undefined,
   shape = ButtonShape.REGULAR,
   size = ButtonSize.DEFAULT,
@@ -23,12 +23,12 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
   const [isPressed, setIsPressed] = useState(false);
 
   const kindStyles = useKindStyles();
-  const classStyles = useClassStyles(isPressed || isLoading);
+  const colorStyles = useColorStyles(isPressed || isLoading);
   const sizeStyles = useSizeStyles();
   const theme = useTheme();
 
   const kindStyle = kindStyles[kind];
-  const classStyle = classStyles[buttonClass];
+  const colorStyle = colorStyles[color];
   const sizeStyle = sizeStyles[size];
   const styles = useButtonStyles();
 
@@ -36,7 +36,7 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
     <TouchableOpacity
       style={[
         styles.button,
-        classStyle.base,
+        colorStyle.base,
         kindStyle.base,
         disabled ? kindStyle.disabled : {},
         sizeStyle.container,
@@ -74,9 +74,9 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
             style={[
               disabled
                 ? kindStyle.disabled
-                : kind === ButtonKind.PRIMARY
+                : kind === ButtonKind.CONTAINED
                 ? kindStyle.text
-                : classStyle.text,
+                : colorStyle.text,
               sizeStyle.text,
               styles.text,
             ]}
@@ -87,7 +87,7 @@ const Button: React.FC<PropsWithChildren<ButtonProps>> = ({
 
         {isLoading ? (
           <Spinner
-            type={kind === ButtonKind.PRIMARY ? SpinnerTypes.SECONDARY : SpinnerTypes.PRIMARY}
+            type={kind === ButtonKind.CONTAINED ? SpinnerTypes.SECONDARY : SpinnerTypes.PRIMARY}
           />
         ) : null}
 

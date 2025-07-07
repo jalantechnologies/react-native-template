@@ -70,20 +70,23 @@ jobs:
 
       - name: Check Info.plist for TEST_INJECTION
         run: |
-          APP_PATH="build/DerivedData/Build/Products/Release-iphoneos/Boilerplate.app"
+          # The .app lives under ios/build/DerivedData/Build/Products/Release-iphoneos/
+          APP_PATH="ios/build/DerivedData/Build/Products/Release-iphoneos/Boilerplate.app"
           PLIST="$APP_PATH/Info.plist"
 
-          if [ ! -f "$PLIST" ]; then
-            echo "❌ Cannot find built .app at $APP_PATH"
+          echo "🔍 Looking for built .app at: $APP_PATH"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "❌ Cannot find built .app bundle at $APP_PATH"
             exit 1
           fi
 
-          echo "🔍 Dumping $PLIST to check TEST_INJECTION:"
+          echo "✅ Found .app bundle."
+          echo "🔍 Checking Info.plist for TEST_INJECTION:"
           plutil -convert xml1 "$PLIST" -o - \
             | grep -A1 "TEST_INJECTION" \
             || (echo "❌ TEST_INJECTION not found in Info.plist" && exit 1)
 
-          echo "✅ TEST_INJECTION key found!"
+          echo "✅ TEST_INJECTION key is present!"
 
       - name: Upload logs as artifact
         uses: actions/upload-artifact@v4

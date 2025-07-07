@@ -1,4 +1,4 @@
-import { AccessToken, Account, APIError } from '../types';
+import { AccessToken, APIResponse, Account, APIError } from '../types';
 
 import { APIService } from './api-service';
 
@@ -45,21 +45,7 @@ export class AccountService extends APIService {
     return { error: response.error };
   };
 
-  deleteAccount = async (
-    userAccessToken: AccessToken,
-  ): Promise<{ data?: boolean; error?: APIError }> => {
-    const response = await this.delete(
-      `/accounts/${userAccessToken.accountId}`,
-      this.getAuthorizationHeader(userAccessToken.token),
-    );
-
-    if (!response.error) {
-      return {
-        data: true,
-        error: response.error,
-      };
-    }
-
-    return { error: response.error };
+  deleteAccount = async (userAccessToken: AccessToken): Promise<APIResponse> => {
+    return this.delete(`/accounts/${userAccessToken.accountId}`);
   };
 }

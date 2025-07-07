@@ -109,9 +109,8 @@ export const useKindStyles = () => {
     }),
     [ButtonKind.OUTLINED]: StyleSheet.create({
       base: {
-        ...appTheme.shadows[1],
         borderRadius: appTheme.radii.sm,
-        backgroundColor: appTheme.colors.white,
+        backgroundColor: 'transparent',
         borderWidth: parseInt(appTheme.borderWidths['1'], 10),
       },
       disabled: {

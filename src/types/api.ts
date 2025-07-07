@@ -23,8 +23,3 @@ export class APIResponse<T = any> implements AsyncResult<T> {
     this.error = error;
   }
 }
-
-export interface AccountResponse {
-  data?: Account;
-  error?: APIError;
-}

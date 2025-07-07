@@ -71,13 +71,13 @@ jobs:
       - name: Unzip IPA and check Info.plist
         run: |
           # adjust path if your lane exports .ipa somewhere else
-          IPA="build/MyApp.ipa"
+          IPA="build/Boilerplate.ipa"
           UNZIPPED="build/unzipped"
           mkdir -p "$UNZIPPED"
           unzip -q "$IPA" -d "$UNZIPPED"
 
-          # Info.plist is in Payload/MyApp.app/Info.plist
-          PLIST="$UNZIPPED/Payload/MyApp.app/Info.plist"
+          # Info.plist is in Payload/Boilerplate.app/Info.plist
+          PLIST="$UNZIPPED/Payload/Boilerplate.app/Info.plist"
 
           # Convert binary plist to XML (plutil is available on macOS runner)
           plutil -convert xml1 "$PLIST" -o - \

@@ -9,21 +9,23 @@ platform :ios do
     sh "watchman watch-del-all"
     sh "yarn cache clean"
     sh "pwd"  # This will print the current directory for debugging
-  
-    # Change to the correct directory (ios)
-    sh "cd .."
-  
-    # Debug: Check the current directory after changing
-    sh "pwd"  # This will confirm that we're in the correct 'ios' directory
+    
+    Dir.chdir("../") do
+      # NOTE: Fastfile lives in ios/fastlane, so ../ → ios/
+      envfile = "../.env"
+      sh "pod deintegrate"
+      sh "ENVFILE=#{envfile} pod install --repo-update"
+    end
 
-    # 3. Reinstall pods (ensures your .env gets pulled into the xcconfig)
-    sh "pod deintegrate && pod install"
-    # 4. Actually build with react-native-config injection
-    sh "ENVFILE=../.env bundle exec fastlane run cocoapods"
-    sh "xcodebuild -workspace ios/MyApp.xcworkspace -scheme MyApp \\
-          -configuration Release \\
-          -derivedDataPath build/DerivedData \\
-          -allowProvisioningUpdates \\
-          clean build"
+    # 4. Build from the repo root (you can stay in fastlane dir)
+    sh %(
+      xcodebuild \
+        -workspace ios/MyApp.xcworkspace \
+        -scheme MyApp \
+        -configuration Release \
+        -derivedDataPath ios/build/DerivedData \
+        -allowProvisioningUpdates \
+        clean build
+    )
   end
 end

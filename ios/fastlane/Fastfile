@@ -25,19 +25,10 @@ platform :ios do
 
       ws  = Dir.glob("*.xcworkspace").first            # e.g. "MyApp.xcworkspace"
       app = File.basename(ws, ".xcworkspace")           # e.g. "MyApp"
-      
-      sh %Q(
-        xcodebuild \
-        -workspace #{ws} \
-        -scheme #{app} \
-        -configuration Release \
-        -sdk iphoneos \
-        -showBuildSettings \
-        | grep TEST_INJECTION || true
-      )
 
       sh %(
         ENVFILE=#{envfile} \
+        TEST_INJECTION=#{test_val} \
         xcodebuild \
           -workspace #{ws} \
           -scheme #{app} \

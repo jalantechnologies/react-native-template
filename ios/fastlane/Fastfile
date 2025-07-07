@@ -15,17 +15,19 @@ platform :ios do
       envfile = "../.env"
       sh "pod deintegrate"
       sh "ENVFILE=#{envfile} pod install --repo-update"
-    end
 
-    # 4. Build from the repo root (you can stay in fastlane dir)
-    sh %(
-      xcodebuild \
-        -workspace ios/MyApp.xcworkspace \
-        -scheme MyApp \
-        -configuration Release \
-        -derivedDataPath ios/build/DerivedData \
-        -allowProvisioningUpdates \
-        clean build
-    )
+      ws  = Dir.glob("*.xcworkspace").first            # e.g. "MyApp.xcworkspace"
+      app = File.basename(ws, ".xcworkspace")           # e.g. "MyApp"
+
+      sh %(
+        xcodebuild \
+          -workspace #{ws} \
+          -scheme #{app} \
+          -configuration Release \
+          -derivedDataPath build/DerivedData \
+          -allowProvisioningUpdates \
+          clean build
+      )
+    end
   end
 end

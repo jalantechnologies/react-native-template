@@ -14,7 +14,7 @@ const Slider = ({
   orientation = SliderOrientation.HORIZONTAL,
   onValueChange,
 }: SliderProps) => {
-  const { colors, sizes } = useTheme();
+  const { sizes } = useTheme();
 
   const isVertical = orientation === SliderOrientation.VERTICAL;
   const screenWidth = Dimensions.get('window').width;

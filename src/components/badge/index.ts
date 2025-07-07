@@ -1,2 +1,2 @@
 export { default } from './badge';
-export * from '../../types'
+export * from '../../types';

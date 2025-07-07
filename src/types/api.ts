@@ -1,5 +1,3 @@
-import { Account } from '../types';
-
 import { AsyncError, AsyncResult } from './async';
 
 export class APIError implements AsyncError {

@@ -10,7 +10,8 @@ on:
 jobs:
   validate-clean-build:
     runs-on: macos-14
-
+    env:
+      NO_FLIPPER: 1
     steps:
       - uses: actions/checkout@v3
 
@@ -58,9 +59,7 @@ jobs:
           ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
 
       - name: Install CocoaPods dependencies
-        working-directory: ios
-        env:
-          NO_FLIPPER: "1"         
+        working-directory: ios        
         run: |
           rm -f Podfile.lock
           bundle exec pod install --repo-update

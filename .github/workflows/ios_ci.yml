@@ -59,6 +59,8 @@ jobs:
 
       - name: Install CocoaPods dependencies
         working-directory: ios
+        env:
+          NO_FLIPPER: "1"         
         run: |
           rm -f Podfile.lock
           bundle exec pod install --repo-update

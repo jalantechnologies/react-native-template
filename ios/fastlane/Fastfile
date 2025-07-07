@@ -25,20 +25,28 @@ platform :ios do
 
       ws  = Dir.glob("*.xcworkspace").first            # e.g. "MyApp.xcworkspace"
       app = File.basename(ws, ".xcworkspace")           # e.g. "MyApp"
+      
+      sh %Q(
+        xcodebuild \
+        -workspace #{ws} \
+        -scheme #{app} \
+        -configuration Release \
+        -showBuildSettings | grep TEST_INJECTION
+      )
 
-      # sh %(
-      #   ENVFILE=#{envfile} \
-      #   xcodebuild \
-      #     -workspace #{ws} \
-      #     -scheme #{app} \
-      #     -configuration Release \
-      #     -derivedDataPath build/DerivedData \
-      #     -allowProvisioningUpdates \
-      #     clean build \
-      #     CODE_SIGNING_ALLOWED=NO \
-      #     CODE_SIGNING_REQUIRED=NO \
-      #     CODE_SIGN_STYLE=Manual
-      # )
+      sh %(
+        ENVFILE=#{envfile} \
+        xcodebuild \
+          -workspace #{ws} \
+          -scheme #{app} \
+          -configuration Release \
+          -derivedDataPath build/DerivedData \
+          -allowProvisioningUpdates \
+          clean build \
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGN_STYLE=Manual
+      )
       # app_dir = "build/DerivedData/Build/Products/Release-iphoneos/#{app}.app"
       # sh "echo"
       # sh "echo \"🔍 Built .app bundle path:\""

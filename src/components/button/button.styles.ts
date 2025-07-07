@@ -25,9 +25,7 @@ export const useButtonStyles = () => {
     },
     text: {
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
-      fontSize: theme.fontSizes.sm,
-      lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing: theme.letterSpacings.md
+      letterSpacing: theme.letterSpacings.md,
     },
   });
 };
@@ -143,28 +141,28 @@ export const useSizeStyles = () => {
         paddingVertical: appTheme.space[1],
         paddingHorizontal: appTheme.space[2],
       },
-      text: { fontSize: appTheme.fontSizes.sm },
+      text: { fontSize: appTheme.fontSizes.sm, lineHeight: Number(appTheme.lineHeights.sm) },
     }),
     [ButtonSize.DEFAULT]: StyleSheet.create({
       container: {
         paddingHorizontal: appTheme.space[4],
         paddingVertical: appTheme.space[2],
       },
-      text: { fontSize: appTheme.fontSizes.md },
+      text: { fontSize: appTheme.fontSizes.md, lineHeight: Number(appTheme.lineHeights.md) },
     }),
     [ButtonSize.LARGE]: StyleSheet.create({
       container: {
         paddingVertical: appTheme.space[2],
         paddingHorizontal: appTheme.space[4],
       },
-      text: { fontSize: appTheme.fontSizes.lg },
+      text: { fontSize: appTheme.fontSizes.lg, lineHeight: Number(appTheme.lineHeights.lg) },
     }),
     [ButtonSize.MINI]: StyleSheet.create({
       container: {
         paddingVertical: appTheme.space[1],
         paddingHorizontal: appTheme.space[2],
       },
-      text: { fontSize: appTheme.fontSizes.xs },
+      text: { fontSize: appTheme.fontSizes.xs, lineHeight: Number(appTheme.lineHeights.xs) },
     }),
   } as Record<ButtonSize, { container: ViewStyle; text: TextStyle }>;
 };

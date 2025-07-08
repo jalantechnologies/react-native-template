@@ -36,4 +36,3 @@ jobs:
         working-directory: android
         continue-on-error: true
         run: bundle exec fastlane android pr_cleanup pr_number:"${{ github.event.pull_request.number }}" json_key_file:"${{ env.ANDROID_JSON_KEY_FILE }}" package_name:"${{ env.ANDROID_APP_PACKAGE }}"
-

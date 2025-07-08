@@ -155,10 +155,13 @@ jobs:
           echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
           echo "ANDROID_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> $GITHUB_ENV
           echo "ANDROID_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> $GITHUB_ENV
-          echo "ANDROID_JSON_KEY_FILE=$(pwd)/play_store.json" >> $GITHUB_ENV
+          echo "ANDROID_JSON_KEY_FILE=/tmp/keys/play_store.json" >> $GITHUB_ENV
       
       - name: Decode Google Play JSON Key
-        run: echo "${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}" | base64 --decode > play_store.json
+        run: |
+          mkdir -p /tmp/keys
+          echo "${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}" \
+            | base64 --decode > /tmp/keys/play_store.json
 
       - name: Create bundle assets directories
         run: |

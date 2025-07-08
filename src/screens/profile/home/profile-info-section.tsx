@@ -30,11 +30,7 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({
         justifyContent={'center'}
       >
         <Heading mr={2}>{accountDetails?.displayName()}</Heading>
-        <Button
-          onClick={handleEditProfilePress}
-          kind={ButtonKind.TERTIARY}
-          size={ButtonSize.COMPACT}
-        >
+        <Button onClick={handleEditProfilePress} kind={ButtonKind.LINK} size={ButtonSize.COMPACT}>
           <EditIcon width={20} height={20} fill={theme.colors.primary['500']} />
         </Button>
       </Box>

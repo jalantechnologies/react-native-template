@@ -57,7 +57,7 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
       </Modal.Body>
       <Modal.Footer>
         <Box flex={1} mr={2}>
-          <Button onClick={handleModalClose} kind={ButtonKind.SECONDARY}>
+          <Button onClick={handleModalClose} kind={ButtonKind.OUTLINED}>
             Cancel
           </Button>
         </Box>

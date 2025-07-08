@@ -153,7 +153,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
         disabled={!isChecked}
         isLoading={isSendOTPLoading}
         onClick={() => formik.handleSubmit()}
-        kind={ButtonKind.PRIMARY}
+        kind={ButtonKind.CONTAINED}
       >
         Send OTP
       </Button>

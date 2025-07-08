@@ -29,10 +29,10 @@ class GooglePlayInternalTrack
       task: "bundle",
       build_type: "Release", # Using Release build type
       properties: {
-        "android.injected.signing.store.file" => ENV["KEYSTORE_FILE"], # Keystore file for signing
-        "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"], # Keystore password
-        "android.injected.signing.key.alias" => ENV["KEY_ALIAS"], # Key alias for signing
-        "android.injected.signing.key.password" => ENV["KEY_PASSWORD"], # Key password for signing
+        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"], # Keystore file for signing
+        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"], # Keystore password
+        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"], # Key alias for signing
+        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"], # Key password for signing
         "org.gradle.daemon" => "false", # Disable Gradle daemon for CI
         "org.gradle.workers.max" => "2" # Limit the number of workers for Gradle
       },
@@ -44,7 +44,11 @@ class GooglePlayInternalTrack
 
     # Check if the AAB was successfully generated
     aab = aab_path
-    UI.user_error!("❌ AAB not found at #{aab}") unless File.exist?(aab)
+    if File.exist?(aab)
+      UI.message("✅ AAB file generated successfully at #{aab}")
+    else
+      UI.user_error!("❌ AAB not found at #{aab}")
+    end
   end
 
   ##
@@ -106,6 +110,15 @@ class GooglePlayInternalTrack
     UI.success("✅ Committed edit, draft release removed.")
   end
 
+  def fetch_version_codes_for_tracks(package_name:, json_key_file:, track:, timeout: 300)
+    google_play_track_version_codes(
+      package_name: package_name,
+      json_key: json_key_file,
+      track: track,
+      timeout: timeout
+    )
+  end
+
   private
 
   ##
@@ -113,6 +126,7 @@ class GooglePlayInternalTrack
   #
   # @return [String] The absolute path to the release AAB
   def aab_path
-    File.expand_path("../../app/build/outputs/bundle/release/app-release.aab", __dir__) # The path to the built AAB
+    relative_path = ENV["AAB_PATH"] || "app/build/outputs/bundle/release/app-release.aab"
+    File.expand_path("../../#{relative_path}", __dir__) # The path to the built AAB
   end
 end

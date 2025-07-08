@@ -5,5 +5,6 @@ export * from './auth';
 export * from './common';
 export * from './task';
 export * from './avatar';
+export * from './button';
 export * from './spinner';
 export * from './radio-button';

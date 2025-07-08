@@ -1,6 +1,7 @@
-import { ButtonKind } from './button';
+import { ButtonColor, ButtonKind } from './button';
 
 export enum AlertType {
+  DANGER = 'danger',
   DELETE = 'delete',
   INFO = 'info',
   SAVED = 'saved',
@@ -18,6 +19,7 @@ export interface AlertCloseButtonProps {
 }
 
 export interface AlertActionButtonProps {
+  color: ButtonColor;
   label: string;
   type: ButtonKind;
   onPress: () => void;

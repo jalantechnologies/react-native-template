@@ -2,13 +2,14 @@ import { useTheme } from 'native-base';
 import React, { useEffect, useRef } from 'react';
 import { Modal, TouchableWithoutFeedback, View, Animated, Dimensions } from 'react-native';
 
+import DangerIcon from '../../../assets/img/danger.svg';
 import DeleteIcon from '../../../assets/img/delete.svg';
 import InfoIcon from '../../../assets/img/info.svg';
 import SavedIcon from '../../../assets/img/saved.svg';
 import SuccessIcon from '../../../assets/img/success.svg';
 import WarningIcon from '../../../assets/img/warning.svg';
 import { AlertProps, AlertType, AlertBodyProps, AlertTitleProps, AlertPosition } from '../../types';
-import { ButtonKind } from '../../types/button';
+import { ButtonColor, ButtonKind } from '../../types/button';
 
 import { AlertActionButton } from './alert-action-button';
 import { AlertCloseButton } from './alert-close-button';
@@ -18,6 +19,7 @@ import { useAlertStyles } from './alert.styles';
 const { height } = Dimensions.get('window');
 
 const SYMBOL = {
+  [AlertType.DANGER]: <DangerIcon width={28} height={28} />,
   [AlertType.DELETE]: <DeleteIcon width={28} height={28} />,
   [AlertType.INFO]: <InfoIcon width={28} height={28} />,
   [AlertType.SUCCESS]: <SuccessIcon width={28} height={28} />,
@@ -43,7 +45,7 @@ const Alert: React.FC<AlertProps> & {
   const slideAnim = useRef(new Animated.Value(height)).current;
 
   const getIconBgColors = () => {
-    if (type === AlertType.DELETE) {
+    if (type === AlertType.DANGER || type === AlertType.DELETE) {
       return colors.danger[50];
     } else if (type === AlertType.SUCCESS) {
       return colors.success[50];
@@ -52,24 +54,28 @@ const Alert: React.FC<AlertProps> & {
     } else if (type === AlertType.SAVED) {
       return colors.secondary[50];
     } else {
-      return colors.info[50];
+      return colors.primary[50];
     }
   };
   const bgColor = getIconBgColors();
 
-  const getButtonTypeFromAlertType = () => {
-    if (type === AlertType.DELETE) {
-      return ButtonKind.DANGER;
+  const getButtonColorFromAlertType = () => {
+    if (type === AlertType.DANGER || type === AlertType.DELETE) {
+      return ButtonColor.DANGER;
     } else if (type === AlertType.SUCCESS) {
-      return ButtonKind.SECONDARY;
+      return ButtonColor.SUCCESS;
     } else if (type === AlertType.WARNING) {
-      return ButtonKind.TERTIARY;
+      return ButtonColor.WARNING;
+    } else if (type === AlertType.SAVED) {
+      return ButtonColor.SECONDARY;
+    } else if (type === AlertType.INFO) {
+      return ButtonColor.PRIMARY;
     } else {
-      return ButtonKind.PRIMARY;
+      return ButtonColor.PRIMARY;
     }
   };
 
-  const buttonType = getButtonTypeFromAlertType();
+  const buttonColor = getButtonColorFromAlertType();
 
   useEffect(() => {
     Animated.spring(slideAnim, {
@@ -110,14 +116,20 @@ const Alert: React.FC<AlertProps> & {
                       <AlertActionButton
                         label={cancelText}
                         onPress={onCancel}
-                        type={ButtonKind.SECONDARY}
+                        type={ButtonKind.OUTLINED}
+                        color={ButtonColor.SECONDARY}
                       />
                     </View>
                     <View style={styles.buttonSpacing} />
                   </>
                 )}
                 <View style={styles.buttonWrapper}>
-                  <AlertActionButton label={confirmText} onPress={onConfirm} type={buttonType} />
+                  <AlertActionButton
+                    label={confirmText}
+                    onPress={onConfirm}
+                    type={ButtonKind.CONTAINED}
+                    color={buttonColor}
+                  />
                 </View>
               </View>
             </Animated.View>

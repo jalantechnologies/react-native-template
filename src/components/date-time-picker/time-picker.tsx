@@ -2,7 +2,7 @@ import { useTheme } from 'native-base';
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Modal, ScrollView, Dimensions } from 'react-native';
 
-import { ButtonKind } from '../../types/button';
+import { ButtonColor, ButtonKind } from '../../types/button';
 import { TimePickerProps } from '../../types/date-time-picker';
 import Button from '../button/button';
 
@@ -115,7 +115,7 @@ const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel, t
 
           <View style={styles.actionRow}>
             <View style={styles.actionText}>
-              <Button onClick={onCancel} kind={ButtonKind.SECONDARY}>
+              <Button onClick={onCancel} kind={ButtonKind.OUTLINED} color={ButtonColor.SECONDARY}>
                 Cancel
               </Button>
             </View>

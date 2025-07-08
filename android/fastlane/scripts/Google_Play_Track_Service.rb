@@ -111,12 +111,13 @@ class GooglePlayInternalTrack
   end
 
   def fetch_version_codes_for_tracks(package_name:, json_key_file:, track:, timeout: 300)
-    google_play_track_version_codes(
+    version_codes = Fastlane::Actions::GooglePlayTrackVersionCodesAction.run(
       package_name: package_name,
       json_key: json_key_file,
       track: track,
       timeout: timeout
     )
+    return version_codes
   end
 
   private

@@ -14,9 +14,9 @@ export class PhoneNumber {
   countryCode: string;
   phoneNumber: string;
 
-  constructor(json: { countryCode: string; phoneNumber: string }) {
-    this.countryCode = json.countryCode;
-    this.phoneNumber = json.phoneNumber;
+  constructor(json: { country_code: string; phone_number: string }) {
+    this.countryCode = json.country_code;
+    this.phoneNumber = json.phone_number;
   }
 
   getFormattedPhoneNumber(): string {

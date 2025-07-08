@@ -1,6 +1,6 @@
 export enum BadgeType {
-  SOLID = 'solid',
   LIGHT = 'light',
+  SOLID = 'solid',
   TEXT = 'text',
 }
 

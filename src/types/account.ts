@@ -11,10 +11,7 @@ export class Account {
     this.id = json.id as string;
     this.firstName = json.first_name as string;
     this.lastName = json.last_name as string;
-    this.phoneNumber = new PhoneNumber({
-      countryCode: json.phone_number.country_code,
-      phoneNumber: json.phone_number.phone_number,
-    });
+    this.phoneNumber = new PhoneNumber(json.phone_number);
     this.username = json.username as string;
   }
 

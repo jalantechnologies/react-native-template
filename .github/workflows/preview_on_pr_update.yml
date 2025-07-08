@@ -146,8 +146,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Decode Keystore file
-        run: echo "${{ secrets.ANDROID_KEYSTORE_FILE }}" | base64 --decode > keystore.jks
+      - name: Decode Keystore file and AAB path
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_FILE }}" | base64 --decode > keystore.jks
+          echo "AAB_PATH=app/build/outputs/bundle/release/app-release.aab" >> $GITHUB_ENV
 
       - name: Set Gradle signing environment variables
         run: |

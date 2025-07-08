@@ -14,27 +14,27 @@ def gplay_pr_deploy(pr_number:, package_name:, json_key_file:)
   service = GooglePlayInternalTrack.new()
 
   # 1) Fetch all version codes on the internal track
-  internal_codes = google_play_track_version_codes(
-    package_name:  package_name, # Package name of the app
-    json_key:      json_key_file, # Path to Google Play service account JSON key
-    track:         "internal", # Track name: internal (for testing or preview)
-    timeout:       300 # Timeout duration for the request
+  internal_codes = service.fetch_version_codes_for_tracks(
+    package_name: package_name,
+    json_key_file: json_key_file,
+    track: "internal",
+    timeout: 300
   )
-  UI.message("Internal track codes: #{internal_codes}") # Output internal track codes for reference
+  UI.message("Internal track codes: #{internal_codes}")
 
-  # 2) Fetch all version codes on the production track
-  production_codes = google_play_track_version_codes(
-    package_name:  package_name, # Package name of the app
-    json_key:      json_key_file, # Path to Google Play service account JSON key
-    track:         "production", # Track name: production (final release)
-    timeout:       300 # Timeout duration for the request
+  # Fetch version codes for production track
+  production_codes = service.fetch_version_codes_for_tracks(
+    package_name: package_name,
+    json_key_file: json_key_file,
+    track: "production",
+    timeout: 300
   )
   UI.message("Production track codes: #{production_codes}") # Output production track codes for reference
 
   # 3) Combine the version codes from both tracks (internal + production), find the max version code,
   #    and bump it for the new release version.
   all_codes = (internal_codes + production_codes).map(&:to_i) # Combine and convert to integers
-  next_code = (all_codes.max || 0) + 1 # Find max version code and increment by 1
+  next_code = (all_codes.empty? ? 1 : all_codes.max + 1) # Find max version code and increment by 1
   final_code = "#{next_code}#{pr_number}".to_i # Append the PR number to the version code
 
   # Specify the Gradle build file for version code increment
@@ -63,7 +63,7 @@ def gplay_pr_deploy(pr_number:, package_name:, json_key_file:)
     skip_upload_metadata: true, # Skip uploading metadata
     skip_upload_images: true, # Skip uploading images
     skip_upload_screenshots: true, # Skip uploading screenshots
-    release_status: "draft", # Set the release status to "draft"
+    release_status: "completed", # Set the release status to "completed"
     aab: aab_path # Path to the built AAB
   )
 

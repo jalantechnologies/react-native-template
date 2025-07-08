@@ -111,13 +111,25 @@ class GooglePlayInternalTrack
   end
 
   def fetch_version_codes_for_tracks(package_name:, json_key_file:, track:, timeout: 300)
-    codes = google_play_track_version_codes(
-      package_name: package_name,
-      json_key: json_key_file,
-      track: track,
-      timeout: timeout
+    # Authenticate and create the AndroidPublisher service
+    key_json = File.read(json_key_file)
+    androidpublisher = Google::Apis::AndroidpublisherV3::AndroidPublisherService.new
+    androidpublisher.authorization = Google::Auth::ServiceAccountCredentials.make_creds(
+      json_key_io: StringIO.new(key_json),
+      scope: ["https://www.googleapis.com/auth/androidpublisher"]
     )
-    return codes
+
+    # Start an edit session
+    edit = androidpublisher.insert_edit(package_name)
+  
+    # Fetch the track information
+    track_info = androidpublisher.get_edit_track(package_name, edit.id, track)
+
+    # Get the version codes
+    version_codes = track_info.releases.flat_map(&:version_codes)
+
+    # Return the version codes
+    return version_codes
   end
 
   private

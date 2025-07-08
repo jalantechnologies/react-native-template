@@ -1,2 +1,2 @@
 export { default } from './button';
-export { ButtonKind, ButtonSize, ButtonClass, ButtonShape } from '../../types';
+export { ButtonKind, ButtonSize, ButtonColor, ButtonShape } from '../../types';

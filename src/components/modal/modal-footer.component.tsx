@@ -30,14 +30,14 @@ const ModalFooter: React.FC<ModalFooterProps> = ({
     <View style={[styles.footerContainer]}>
       {onCancel && (
         <View style={styles.button}>
-          <Button kind={ButtonKind.SECONDARY} onClick={onCancel}>
+          <Button kind={ButtonKind.OUTLINED} onClick={onCancel}>
             {cancelText}
           </Button>
         </View>
       )}
       {onConfirm && (
         <View style={styles.button}>
-          <Button onClick={onConfirm} kind={ButtonKind.PRIMARY} disabled={isConfirmDisabled}>
+          <Button onClick={onConfirm} kind={ButtonKind.CONTAINED} disabled={isConfirmDisabled}>
             {confirmText}
           </Button>
         </View>

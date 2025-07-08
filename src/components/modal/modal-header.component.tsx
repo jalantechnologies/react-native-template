@@ -23,7 +23,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({ title, onClose, textAlign }) 
     <View style={styles.headerContainer}>
       <Text style={[styles.headerTitle, { textAlign }]}>{title}</Text>
       {onClose && (
-        <Button kind={ButtonKind.TERTIARY} onClick={onClose}>
+        <Button kind={ButtonKind.LINK} onClick={onClose}>
           <Close fill={theme.colors.primary['500']} />
         </Button>
       )}

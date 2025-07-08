@@ -1,24 +1,8 @@
-import { GestureResponderEvent } from 'react-native';
-
-export enum ButtonColor {
-  DANGER = 'danger',
-  INFO = 'info',
+export enum ButtonKind {
   PRIMARY = 'primary',
   SECONDARY = 'secondary',
-  SUCCESS = 'success',
-  WARNING = 'warning',
-}
-
-export enum ButtonKind {
-  CONTAINED = 'contained',
-  OUTLINED = 'outlined',
-  DASHED = 'dashed',
-  LINK = 'link',
-}
-
-export enum ButtonShape {
-  CAPSULE = 'capsule',
-  REGULAR = 'regular',
+  TERTIARY = 'tertiary',
+  DANGER = 'danger',
 }
 
 export enum ButtonSize {
@@ -27,25 +11,3 @@ export enum ButtonSize {
   LARGE = 'large',
   MINI = 'mini',
 }
-
-interface StandardButton {
-  kind?: ButtonKind.CONTAINED | ButtonKind.OUTLINED | ButtonKind.DASHED;
-  color?: ButtonColor;
-}
-
-interface LinkButton {
-  kind?: ButtonKind.LINK;
-  color?: ButtonColor.PRIMARY;
-}
-
-interface CommonButtonProps {
-  disabled?: boolean;
-  endEnhancer?: React.ReactNode;
-  isLoading?: boolean;
-  onClick?: (event: GestureResponderEvent) => void;
-  shape?: ButtonShape;
-  size?: ButtonSize;
-  startEnhancer?: React.ReactNode;
-}
-
-export type ButtonProps = (StandardButton | LinkButton) & CommonButtonProps;

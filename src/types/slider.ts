@@ -1,13 +1,12 @@
-export enum SliderOrientation {
-  HORIZONTAL = 'horizontal',
-  VERTICAL = 'vertical',
-}
-
 export interface SliderProps {
+  disabled?: boolean;
+  internalMarkerStep?: number;
+  isRange?: boolean;
   lowerLimit?: number;
-  onValueChange?: (val: number) => void;
-  orientation?: SliderOrientation;
+  onValueChange?: (val: number | [number, number]) => void;
+  showEndMarkers?: boolean;
+  showValueInput?: boolean;
   step?: number;
   upperLimit?: number;
-  value?: number;
+  value: number | [number, number];
 }

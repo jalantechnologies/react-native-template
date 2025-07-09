@@ -1,51 +1,29 @@
 import { useTheme } from 'native-base';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, TextStyle } from 'react-native';
 
-export const useSliderStyles = (isVertical: boolean) => {
+export const useSliderStyles = (trackLength: number) => {
   const theme = useTheme();
-  const screenWidth = Dimensions.get('window').width;
-  const screenHeight = Dimensions.get('window').height;
 
   return StyleSheet.create({
     container: {
-      margin: theme.space[5],
-      flexDirection: isVertical ? 'row' : 'column',
-      gap: isVertical ? theme.space['3'] : 0,
+      flexDirection: 'row',
+      gap: theme.space['0'],
       justifyContent: 'center',
       alignItems: 'center',
     },
-    track: {
-      width: isVertical ? screenHeight * 0.3 : screenWidth * 0.8,
+    horizontalTrack: {
+      width: trackLength,
+      marginTop: theme.space[2],
       height: theme.sizes['2'],
       borderRadius: theme.radii.full,
       justifyContent: 'center',
       backgroundColor: theme.colors.primary['50'],
     },
-    horizontalTrack: {
-      width: screenWidth * 0.8,
-      height: theme.sizes['2'],
-      borderRadius: theme.radii.full,
-      justifyContent: 'center',
-    },
-    verticalTrack: {
-      height: screenHeight * 0.3,
-      width: theme.sizes['2'],
-      borderRadius: theme.radii.full,
-      justifyContent: 'flex-start',
-    },
     filledTrack: {
       position: 'absolute',
       borderRadius: theme.radii.full,
       backgroundColor: theme.colors.primary['500'],
-    },
-    filledHorizontal: {
       height: theme.sizes['2'],
-    },
-    filledVertical: {
-      width: theme.sizes['2'],
-      position: 'absolute',
-      left: 0,
-      bottom: 0,
     },
     handle: {
       position: 'absolute',
@@ -56,12 +34,83 @@ export const useSliderStyles = (isVertical: boolean) => {
       borderWidth: parseInt(theme.borderWidths['4']),
       borderColor: theme.colors.white,
     },
-    valueText: {
-      marginTop: theme.space[2],
-      fontSize: theme.fontSizes.md,
-      fontWeight: `${theme.fontWeights.bold}` as any,
+    valueBubbleWrapper: {
+      position: 'absolute',
+      alignItems: 'center',
+      zIndex: 10,
+    },
+    valueBubble: {
+      ...theme.shadows['7'],
+      backgroundColor: theme.colors.white,
+      paddingHorizontal: theme.space['2.5'],
+      paddingVertical: theme.space[1.5],
+      borderRadius: theme.radii.sm,
+      borderWidth: parseInt(theme.borderWidths['2'], 10),
+      borderColor: theme.colors.white,
       minWidth: theme.sizes['10'],
-      textAlign: 'center',
+      minHeight: theme.sizes['10'],
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+    },
+    bubbleText: {
+      fontSize: theme.fontSizes.md,
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      color: theme.colors.secondary['500'],
+    },
+    pointer: {
+      backgroundColor: theme.colors.white,
+      position: 'absolute',
+      bottom: -theme.sizes['2.5'],
+      borderLeftWidth: theme.borderWidths[0],
+      borderTopWidth: theme.borderWidths[0],
+      width: theme.sizes['4'],
+      height: theme.sizes['4'],
+      transform: [{ rotate: '45deg' }],
+      zIndex: -1,
+    },
+    endMarkersRow: {
+      width: trackLength,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: theme.space['1'],
+      alignItems: 'center',
+    },
+    markerText: {
+      fontSize: theme.fontSizes.xs,
+      color: theme.colors.secondary['500'],
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      letterSpacing: Number(theme.letterSpacings.lg),
+    },
+    internalMarker: {
+      position: 'absolute',
+      bottom: -theme.sizes['5'],
+      transform: [{ translateX: -theme.sizes[2] }],
+      alignItems: 'center',
+    },
+    sliderWithInputRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      width: trackLength,
+    },
+    inputRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    inputBox: {
+      alignSelf: 'flex-end',
+    },
+    disabledTrack: {
+      backgroundColor: theme.colors.secondary['100'],
+    },
+    disabledHandle: {
+      backgroundColor: theme.colors.secondary['200'],
+      borderWidth: parseInt(theme.borderWidths['4']),
+      borderColor: theme.colors.secondary['200'],
+    },
+    disabledMarkers: {
+      color: theme.colors.secondary['200'],
     },
   });
 };

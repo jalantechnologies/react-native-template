@@ -52,7 +52,9 @@ const Slider = ({
   };
 
   const internalMarkers = (() => {
-    if (!internalMarkerStep || internalMarkerStep <= 0) return [];
+    if (!internalMarkerStep || internalMarkerStep <= 0) {
+      return [];
+    }
     const markers = [];
     for (let i = lowerLimit + internalMarkerStep; i < upperLimit; i += internalMarkerStep) {
       markers.push(i);
@@ -121,7 +123,9 @@ const Slider = ({
     const input = type === SubmitType.MIN ? inputMin : inputMax;
     const parsed = parseFloat(input);
 
-    if (isNaN(parsed)) return;
+    if (isNaN(parsed)) {
+      return;
+    }
 
     const stepped = applyStep(parsed);
 
@@ -178,11 +182,15 @@ const Slider = ({
 
         if (handleType === BubbleHandle.LEFT && getCurrentRange) {
           const [, right] = getCurrentRange();
-          if (stepped > right) return;
+          if (stepped > right) {
+            return;
+          }
         }
         if (handleType === BubbleHandle.RIGHT && getCurrentRange) {
           const [left] = getCurrentRange();
-          if (stepped < left) return;
+          if (stepped < left) {
+            return;
+          }
         }
 
         if ((handleType === BubbleHandle.LEFT || handleType === BubbleHandle.SINGLE) && inputMin) {
@@ -240,7 +248,9 @@ const Slider = ({
   ).current;
 
   const renderBubble = (handle: BubbleHandle, position: Animated.Value, value: number | null) => {
-    if (!isSliding || typeof value !== 'number' || activeHandle !== handle) return null;
+    if (!isSliding || typeof value !== 'number' || activeHandle !== handle) {
+      return null;
+    }
 
     return (
       <Animated.View
@@ -274,9 +284,9 @@ const Slider = ({
                   placeholder={`${lowerLimit}`}
                   keyboardType="numeric"
                   disabled={disabled}
-                  textAlign='center'
+                  textAlign="center"
                   numberOfLines={1}
-                  multiline={true}
+                  multiline={false}
                 />
               </View>
               {isRange && (
@@ -288,7 +298,9 @@ const Slider = ({
                     placeholder={`${upperLimit}`}
                     keyboardType="numeric"
                     disabled={disabled}
-                    textAlign='center'
+                    textAlign="center"
+                    numberOfLines={1}
+                    multiline={false}
                   />
                 </View>
               )}

@@ -31,7 +31,7 @@ export const useSliderStyles = (trackLength: number) => {
       height: theme.sizes['5'],
       backgroundColor: theme.colors.primary['500'],
       borderRadius: theme.radii.full,
-      borderWidth: parseInt(theme.borderWidths['4']),
+      borderWidth: parseInt(theme.borderWidths['4'], 10),
       borderColor: theme.colors.white,
     },
     valueBubbleWrapper: {
@@ -106,7 +106,7 @@ export const useSliderStyles = (trackLength: number) => {
     },
     disabledHandle: {
       backgroundColor: theme.colors.secondary['200'],
-      borderWidth: parseInt(theme.borderWidths['4']),
+      borderWidth: parseInt(theme.borderWidths['4'], 10),
       borderColor: theme.colors.secondary['200'],
     },
     disabledMarkers: {

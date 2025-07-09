@@ -268,17 +268,21 @@ jobs:
       - name: Install CocoaPods dependencies
         working-directory: ios
         run: |
-          rm -f Podfile.lock
           bundle exec pod install --repo-update
 
       # Set up SSH key so Match can pull signing identities from private Git repo
       - name: Set up SSH for Match
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
+
+      - name: Add GitHub to known hosts
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.IOS_MATCH_DEPLOY_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          echo "GIT_SSH_COMMAND=ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" >> $GITHUB_ENV
+
+      - name: Set GIT_SSH_COMMAND
+        run: echo "GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no" >> $GITHUB_ENV
 
       - name: Setup Keychain
         run: |

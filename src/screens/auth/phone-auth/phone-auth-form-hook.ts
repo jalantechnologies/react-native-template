@@ -44,14 +44,7 @@ const usePhoneAuthForm = ({ onSendOTPSuccess, onError }: PhoneAuthFormProps) => 
         return;
       }
 
-      const formattedPhoneNumber = parsedPhoneNumber?.getNationalNumber()?.toString();
-
-      if (!formattedPhoneNumber) {
-        onError({
-          message: t('error:phoneValidation') as string,
-        } as AsyncError);
-        return;
-      }
+      const formattedPhoneNumber = parsedPhoneNumber.getNationalNumber()!.toString();
 
       sendOTP(
         new PhoneNumber({

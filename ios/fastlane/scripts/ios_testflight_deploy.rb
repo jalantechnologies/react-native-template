@@ -112,11 +112,31 @@ def ios_testflight_deploy!(options = {})
       rm -rf temp_payload
     BASH
   # Upload the build to TestFlight (internal only) with a changelog indicating the PR number.
-  upload_to_testflight(
-    changelog: "PR ##{pr_number} Build - automated upload",
-    distribute_external: false,
-    username: username,
-    apple_id: apple_id,
-    app_identifier: app_identifier
-  )
+  begin  
+    upload_to_testflight(
+      changelog: "PR ##{pr_number} Build - automated upload",
+      distribute_external: false,
+      username: username,
+      apple_id: apple_id,
+      app_identifier: app_identifier
+    )
+  rescue => e
+    # In case of failure, cleanup any temp IPA directories
+    sh("rm -rf #{ipa_path}")  # Clean up the IPA file or temp directory if it exists
+
+    # Alert the user that upload failed
+    UI.error("Upload to TestFlight failed: #{e.message}")
+
+    # trigger ios_testflight_cleanup to remove stale builds
+    require_relative "ios_testflight_cleanup"
+    ios_testflight_cleanup!(
+      pr_number: ENV["PR_NUMBER"],
+      app_identifier: ENV["IOS_APP_IDENTIFIER_PREVIEW"],
+      api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
+      issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
+      api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64']
+    )
+    # Re-raise the error to ensure the failure is properly logged in Fastlane
+    raise e
+  end
 end

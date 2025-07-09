@@ -266,7 +266,7 @@ const Slider = ({
         <View style={{ flex: 1 }}>
           {showValueInput && (
             <View style={isRange && styles.inputRow}>
-              <View style={[styles.inputBox, { width: trackLength * 0.2 }]}>
+              <View style={[styles.inputBox, { minWidth: trackLength * 0.2 }]}>
                 <Input
                   value={inputMin}
                   onChangeText={text => setInputMin(text)}
@@ -274,10 +274,13 @@ const Slider = ({
                   placeholder={`${lowerLimit}`}
                   keyboardType="numeric"
                   disabled={disabled}
+                  textAlign='center'
+                  numberOfLines={1}
+                  multiline={true}
                 />
               </View>
               {isRange && (
-                <View style={{ width: trackLength * 0.2 }}>
+                <View style={{ minWidth: trackLength * 0.2 }}>
                   <Input
                     value={inputMax}
                     onChangeText={text => setInputMax(text)}
@@ -285,6 +288,7 @@ const Slider = ({
                     placeholder={`${upperLimit}`}
                     keyboardType="numeric"
                     disabled={disabled}
+                    textAlign='center'
                   />
                 </View>
               )}

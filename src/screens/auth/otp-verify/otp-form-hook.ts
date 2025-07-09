@@ -34,7 +34,7 @@ const useOTPForm = ({
     onSubmit: values => {
       const otp = values.otp.join('');
 
-      verifyOTP(otp, new PhoneNumber({ countryCode, phoneNumber }))
+      verifyOTP(otp, new PhoneNumber({ country_code: countryCode, phone_number: phoneNumber }))
         .then(() => {
           onVerifyOTPSuccess();
         })
@@ -45,7 +45,7 @@ const useOTPForm = ({
   });
 
   const handleResendOTP = () => {
-    sendOTP(new PhoneNumber({ countryCode, phoneNumber }))
+    sendOTP(new PhoneNumber({ country_code: countryCode, phone_number: phoneNumber }))
       .then(async () => {
         onResendOTPSuccess();
       })

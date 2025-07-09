@@ -42,7 +42,7 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
         <Card.Actions>
           <View style={styles.container}>
             <Button
-              kind={ButtonKind.TERTIARY}
+              kind={ButtonKind.LINK}
               startEnhancer={<EditIcon width={16} height={16} fill={theme.colors.primary[500]} />}
               onClick={() => handleEditTask(task)}
             >
@@ -50,7 +50,7 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
             </Button>
 
             <Button
-              kind={ButtonKind.TERTIARY}
+              kind={ButtonKind.LINK}
               startEnhancer={<DeleteIcon width={16} height={16} fill={theme.colors.danger[600]} />}
               onClick={handleDeleteTask}
             >

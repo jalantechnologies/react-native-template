@@ -97,10 +97,11 @@ jobs:
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
 
-  firebase_deploy:
+  google_play_deploy:
     name: Google Play Internal Track Preview Deploy
     needs: [checks]
-    if: github.event.action != 'closed'
+    if: false
+    # if: github.event.action != 'closed'
     runs-on: ubuntu-latest
 
     env:

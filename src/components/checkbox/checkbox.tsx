@@ -41,7 +41,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
           shape === CheckboxShape.CIRCLE && styles.circle,
           checked && styles.checkedBox,
           focused && styles.focusedShadow,
-          disabled && styles.disabledBox,
+          disabled && (checked || indeterminate ? styles.disabledBox : styles.disabledBorder),
         ]}
       >
         {checked && indeterminate ? (

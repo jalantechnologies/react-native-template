@@ -35,6 +35,9 @@ export const useCheckboxStyles = (size: CheckboxSize) => {
       backgroundColor: theme.colors.secondary['200'],
       borderColor: theme.colors.secondary['200'],
     },
+    disabledBorder: {
+      borderColor: theme.colors.secondary['200'],
+    },
     label: {
       fontSize: size === CheckboxSize.SMALL ? theme.fontSizes.sm : theme.fontSizes.lg,
       color: theme.colors.secondary['900'],

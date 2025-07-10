@@ -23,7 +23,7 @@ platform :android do
 
     version_codes = google_play_track_version_codes(
       package_name: app_identifier,
-      track: "internal",
+      track: "production",
       json_key: ENV["ANDROID_JSON_KEY_FILE"]
     )
     
@@ -121,10 +121,9 @@ end
     )
     
     upload_to_play_store(
-      track: "internal",
-      release_status: "completed",
+      track: "production",
       json_key: ENV["ANDROID_JSON_KEY_FILE"],
-      skip_upload_apk: false,
+      skip_upload_apk: true,
     )
   end
   desc "Deploy APK to Google Play Internal Track App Distribution"

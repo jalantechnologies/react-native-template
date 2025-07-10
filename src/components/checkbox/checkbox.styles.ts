@@ -1,6 +1,7 @@
-import { CheckboxSize } from 'boilerplate-react-native/src/types/checkbox';
 import { useTheme } from 'native-base';
 import { StyleSheet } from 'react-native';
+
+import { CheckboxSize } from '../../types/checkbox';
 
 export const useCheckboxStyles = (size: CheckboxSize) => {
   const theme = useTheme();

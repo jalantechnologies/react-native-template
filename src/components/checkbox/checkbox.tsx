@@ -1,11 +1,11 @@
-import { CheckboxProps, CheckboxSize } from 'boilerplate-react-native/src/types/checkbox';
 import { useTheme } from 'native-base';
 import React, { useState } from 'react';
-import { View, Text, GestureResponderEvent, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 
+import { CheckboxProps, CheckboxSize, CheckboxShape } from '../../types/checkbox';
+
 import { useCheckboxStyles } from './checkbox.styles';
-import { CheckboxShape } from '../../types/checkbox';
 
 const Checkbox: React.FC<CheckboxProps> = ({
   shape = CheckboxShape.SQUARE,
@@ -18,7 +18,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
 }) => {
   const [focused, setFocused] = useState(false);
 
-  const handlePress = (event: GestureResponderEvent) => {
+  const handlePress = () => {
     if (!disabled) {
       onPress(label);
     }

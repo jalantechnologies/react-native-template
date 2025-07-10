@@ -1,4 +1,4 @@
-package com.bettrsw.boilerplate;
+package com.bettrsw.boilerplate.app;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;

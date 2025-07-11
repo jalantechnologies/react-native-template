@@ -10,3 +10,4 @@ export * from './spinner';
 export * from './radio-button';
 export * from './button';
 export * from './badge';
+export * from './checkbox';

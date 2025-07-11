@@ -1,3 +1,4 @@
+import React from 'react';
 import { KeyboardTypeOptions, TextInput, TextInputProps, TextStyle } from 'react-native';
 
 export enum KeyboardTypes {
@@ -24,12 +25,12 @@ export enum InputStatus {
 
 export interface InputProps extends Omit<TextInputProps, 'style | multiline'> {
   disabled?: boolean;
-  endEnhancer?: React.ReactElement | string;
+  endEnhancer?: React.ReactNode;
   handleInputRef?: (ref: TextInput) => void;
   keyboardType?: KeyboardTypeOptions;
   label?: string;
   message?: string;
-  startEnhancer?: React.ReactElement | string;
+  startEnhancer?: React.ReactNode;
   status?: InputStatus;
   testId?: string;
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
@@ -39,12 +40,12 @@ export interface PasswordInputProps extends InputProps {}
 
 export interface TextAreaInputProps extends Omit<TextInputProps, 'style | multiline'> {
   disabled?: boolean;
-  endEnhancer?: React.ReactElement | string;
+  endEnhancer?: React.ReactNode;
   handleInputRef?: (ref: TextInput) => void;
   keyboardType?: KeyboardTypeOptions;
   label?: string;
   numberOfLines?: number;
-  startEnhancer?: React.ReactElement | string;
+  startEnhancer?: React.ReactNode;
   testId?: string;
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
 }

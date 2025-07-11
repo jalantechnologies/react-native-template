@@ -30,9 +30,8 @@ export interface AlertIconProps {
   bgColor: string;
 }
 
-export interface AlertProps {
+export interface AlertProps extends React.PropsWithChildren {
   cancelText?: string;
-  children: React.ReactNode;
   confirmText?: string;
   onClose: () => void;
   onCancel?: () => void;
@@ -41,10 +40,6 @@ export interface AlertProps {
   type: AlertType;
 }
 
-export interface AlertTitleProps {
-  children: React.ReactNode;
-}
+export interface AlertTitleProps extends React.PropsWithChildren {}
 
-export interface AlertBodyProps {
-  children: React.ReactNode;
-}
+export interface AlertBodyProps extends React.PropsWithChildren {}

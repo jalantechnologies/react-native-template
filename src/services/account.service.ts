@@ -18,8 +18,8 @@ export class AccountService extends APIService {
     return this.patch(
       `/accounts/${userAccessToken.accountId}`,
       {
-        firstName,
-        lastName,
+        first_name: firstName,
+        last_name: lastName,
       },
       this.getAuthorizationHeader(userAccessToken.token),
     );

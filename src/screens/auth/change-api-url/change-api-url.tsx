@@ -23,7 +23,7 @@ const ChangeApiUrlButton = () => {
     isNonProdEnv && (
       <>
         <View style={styles.buttonContainer}>
-          <Button onClick={() => setIsChangeAPIUrlModalOpen(true)} kind={ButtonKind.TERTIARY}>
+          <Button onClick={() => setIsChangeAPIUrlModalOpen(true)} kind={ButtonKind.LINK}>
             <GearIcon width={24} height={24} fill={colors.secondary[100]} />
           </Button>
         </View>

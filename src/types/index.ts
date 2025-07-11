@@ -6,4 +6,7 @@ export * from './common';
 export * from './task';
 export * from './avatar';
 export * from './inputs';
+export * from './spinner';
 export * from './radio-button';
+export * from './button';
+export * from './badge';

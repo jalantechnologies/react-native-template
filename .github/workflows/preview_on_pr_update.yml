@@ -97,19 +97,18 @@ jobs:
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
 
-  firebase_deploy:
-    name: Firebase Preview Deploy
+  google_play_deploy:
+    name: Google Play Internal Track Preview Deploy
     needs: [checks]
-    if: github.event.action != 'closed'
+    if: false
+    # if: github.event.action != 'closed'
     runs-on: ubuntu-latest
 
     env:
-      ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
-      ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
-      ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
-      ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
-      ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
-
+      ANDROID_APP_PACKAGE: ${{ secrets.ANDROID_APP_PACKAGE }}
+      GPLAY_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
+      PLAY_DEVELOPER_ID: ${{ secrets.ANDROID_PLAY_DEVELOPER_ID }}
+      PLAY_APP_ID: ${{ secrets.ANDROID_PLAY_APP_ID }}
     steps:
       - uses: actions/checkout@v3
 
@@ -134,11 +133,9 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
+          bundler-cache: true
 
       - uses: ./.github/actions/setup-fastlane
-
-      - name: Decode and save GCP service account key
-        run: echo "${{ secrets.ANDROID_GCP_JSON_BASE64 }}" | base64 --decode > /tmp/gcp_key.json
 
       - name: Cache Gradle
         uses: actions/cache@v3
@@ -150,8 +147,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Decode Keystore file
-        run: echo "${{ secrets.ANDROID_KEYSTORE_FILE }}" | base64 --decode > keystore.jks
+      - name: Decode Keystore file and AAB path
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_FILE }}" | base64 --decode > keystore.jks
+          echo "AAB_PATH=app/build/outputs/bundle/release/app-release.aab" >> $GITHUB_ENV
 
       - name: Set Gradle signing environment variables
         run: |
@@ -159,6 +158,13 @@ jobs:
           echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
           echo "ANDROID_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> $GITHUB_ENV
           echo "ANDROID_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> $GITHUB_ENV
+          echo "ANDROID_JSON_KEY_FILE=/tmp/keys/play_store.json" >> $GITHUB_ENV
+      
+      - name: Decode Google Play JSON Key
+        run: |
+          mkdir -p /tmp/keys
+          echo "${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}" \
+            | base64 --decode > /tmp/keys/play_store.json
 
       - name: Create bundle assets directories
         run: |
@@ -176,27 +182,161 @@ jobs:
 
       - name: Build & Deploy to Firebase App Distribution
         working-directory: android
-        env:
-          FIREBASE_API_KEY: ${{ env.ANDROID_FIREBASE_API_KEY }}
-        run: bundle exec fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" pr_title:"${{ github.event.pull_request.title }}" project_number:"${{ env.ANDROID_FIREBASE_PROJECT_NUMBER }}" app_id:"${{ env.ANDROID_FIREBASE_APP_ID }}"
-
-      - name: Cleanup GCP key file
-        if: always()
-        run: rm -f /tmp/gcp_key.json
+        run: bundle exec fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" json_key_file:"${{ env.ANDROID_JSON_KEY_FILE }}" package_name:"${{ env.ANDROID_APP_PACKAGE }}"
 
       - name: Comment on PR
         uses: actions/github-script@v7
         with:
           script: |
             const prNumber = context.issue.number;
-            const projectId = process.env.ANDROID_FIREBASE_PROJECT_ID;
-            const appPackage = process.env.ANDROID_FIREBASE_APP_PACKAGE;
-            const releaseUrl = `https://console.firebase.google.com/project/${projectId}/appdistribution/app/${appPackage}/releases`;
+            const devId       = process.env.PLAY_DEVELOPER_ID;
+            const playAppId   = process.env.PLAY_APP_ID;
+            const playUrl     = `https://play.google.com/console/u/0/developers/${devId}/app/${playAppId}/bundle-explorer-selector`;
             github.rest.issues.createComment({
               issue_number: prNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `🚀 Deployed PR #${prNumber} to Firebase App Distribution.
+              body: `🚀 Deployed PR #${prNumber} to Google Play Internal Track.
 
-              🔗 [View Release in Firebase Console](${releaseUrl})`
+              🏁 [View Release in Google Play Internal Track](${playUrl})`
             });
+
+  testflight_deploy:
+    name: TestFlight Preview Deploy
+    needs: [checks]
+    if: github.event.action != 'closed'
+    runs-on: macos-14 
+    timeout-minutes: 30
+    env:
+      NO_FLIPPER: 1 # When set to 1, skips installing all Flipper-related dependencies so they’re removed from the build
+      IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
+      IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
+      IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
+      IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
+      IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+      IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
+      IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
+      IOS_APP_IDENTIFIER_PREVIEW: ${{ secrets.IOS_APP_IDENTIFIER_PREVIEW }}
+      IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
+      IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+
+      - name: Select Xcode 16.0
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+
+      - name: Install Bundler
+        run: gem install bundler
+      
+      - name: Install Ruby dependencies
+        working-directory: ios
+        run: bundle install
+      
+      - name: Set Node Version
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      # Patch Boost podspec to use a stable source and checksum to prevent flaky builds
+      - name: Patch Boost Podspec with Custom Source
+        working-directory: node_modules/react-native/third-party-podspecs
+        run: |
+          awk '
+          /spec.source/ {
+          print "  spec.source = { :http => '\''https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.gz'\'', :sha256 => '\''7bd7ddceec1a1dfdcbdb3e609b60d01739c38390a5f956385a12f3122049f0ca'\'' }";
+          skip=1; next
+          }
+          skip && /\}/ { skip=0; next }
+          skip && /:sha256/ { next }
+          { print }
+          ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
+
+      - name: Install CocoaPods dependencies
+        working-directory: ios
+        run: |
+          rm -f Podfile.lock
+          bundle exec pod install --repo-update
+
+      # Set up SSH key so Match can pull signing identities from private Git repo
+      - name: Set up SSH for Match
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
+
+      - name: Add GitHub to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Set GIT_SSH_COMMAND
+        run: echo "GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no" >> $GITHUB_ENV
+
+      - name: Setup Keychain
+        run: |
+          security create-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
+          security set-keychain-settings -lut 21600 ci.keychain
+          security unlock-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
+          security default-keychain -d user -s ci.keychain
+      
+      - name: Export Match password
+        run: echo "MATCH_PASSWORD=${{ secrets.IOS_MATCH_PASSWORD }}" >> $GITHUB_ENV
+
+      # Pull certificates and provisioning profiles using Fastlane Match
+      - name: Install code signing certificates via Match
+        working-directory: ios
+        run: |
+          echo "🔐 Installing certs..."
+          bundle exec fastlane ci_signing_setup
+
+      - name: Clear Derived Data
+        run: |
+          rm -rf ~/Library/Developer/Xcode/DerivedData
+
+      - name: Bundle React Native for iOS
+        run: |
+          echo "Working directory: $(pwd)"
+          ls -la ..
+          ENVFILE=.env.preview NODE_ENV=production npx react-native bundle \
+            --entry-file index.js \
+            --platform ios \
+            --dev false \
+            --bundle-output ios/main.jsbundle \
+            --assets-dest . \
+
+      - name: iOS PR Deploy to TestFlight
+        working-directory: ios 
+        run: |
+          bundle exec fastlane ios pr_deploy
+
+      # Comment on the PR with a link to the TestFlight build in App Store Connect
+      - name: Post PR comment with TestFlight link
+        if: ${{ github.event.pull_request }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BUILD_HASH: ${{ github.sha }}
+        run: |
+          brew install gh # Only needed if gh CLI is not pre-installed
+          gh auth setup-git
+          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$IOS_APPLE_ID/testflight/ios"
+          gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
+
+          - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
+          - 🆔 App ID: \`com.bettrsw.boilerplate.preview\`
+          - 🧱 Build Hash: \`$BUILD_HASH\`
+
+          _This build was deployed by CI using Fastlane._"         

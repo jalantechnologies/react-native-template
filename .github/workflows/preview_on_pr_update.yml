@@ -100,8 +100,7 @@ jobs:
   google_play_deploy:
     name: Google Play Internal Track Preview Deploy
     needs: [checks]
-    if: false
-    # if: github.event.action != 'closed'
+    
     runs-on: ubuntu-latest
 
     env:

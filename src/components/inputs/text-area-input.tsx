@@ -1,18 +1,10 @@
-import { Text } from 'native-base';
-import React, { forwardRef } from 'react';
-import { TextInput, TextInputProps, TextStyle, View } from 'react-native';
+import { Text, useTheme } from 'native-base';
+import React, { forwardRef, useState } from 'react';
+import { NativeSyntheticEvent, TextInput, TextInputFocusEventData, View } from 'react-native';
+
+import { KeyboardTypes, TextAreaInputProps } from '../../types';
 
 import { useTextAreaInputStyles } from './input.styles';
-
-interface TextAreaInputProps extends Omit<TextInputProps, 'style | multiline'> {
-  disabled?: boolean;
-  endEnhancer?: React.ReactElement | string;
-  handleInputRef?: (ref: TextInput) => void;
-  startEnhancer?: React.ReactElement | string;
-  testId?: string;
-  textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
-  numberOfLines?: number;
-}
 
 const TextAreaInput = forwardRef<TextInput | null, TextAreaInputProps>(
   (
@@ -21,67 +13,89 @@ const TextAreaInput = forwardRef<TextInput | null, TextAreaInputProps>(
       testId,
       startEnhancer,
       endEnhancer,
+      keyboardType = KeyboardTypes.DEFAULT,
       handleInputRef,
       textAlign,
       numberOfLines,
+      label,
       ...props
     },
     ref,
   ) => {
+    const theme = useTheme();
     const styles = useTextAreaInputStyles();
+    const [isFocused, setIsFocused] = useState(false);
+
+    const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+      setIsFocused(true);
+      props.onFocus?.(e);
+    };
+    const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
+      setIsFocused(false);
+      props.onBlur?.(e);
+    };
 
     return (
-      <View
-        style={[
-          styles.container,
-          styles.defaultBorder,
-          disabled ? styles.disabledBackground : styles.enabledBackground,
-        ]}
-        testID={testId}
-      >
-        {startEnhancer && (
-          <View style={styles.enhancer}>
-            {typeof startEnhancer === 'string' ? <Text>{startEnhancer}</Text> : startEnhancer}
-          </View>
+      <View style={styles.wrapper}>
+        {label && (
+          <Text
+            style={[
+              styles.label,
+              { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
+            ]}
+          >
+            {label}
+          </Text>
         )}
-        <TextInput
-          {...props}
-          ref={input => {
-            if (handleInputRef && input) {
-              handleInputRef(input);
+        <View
+          style={[
+            styles.container,
+            styles.defaultBorder,
+            isFocused ? styles.focusedBorder : {},
+            disabled ? styles.disabledBackground : styles.enabledBackground,
+          ]}
+          testID={testId}
+        >
+          {startEnhancer && (
+            <View style={styles.enhancer}>
+              {typeof startEnhancer === 'string' ? <Text>{startEnhancer}</Text> : startEnhancer}
+            </View>
+          )}
+          <TextInput
+            {...props}
+            ref={input => {
+              if (handleInputRef && input) {
+                handleInputRef(input);
+              }
+              if (typeof ref === 'function') {
+                ref(input);
+              } else if (ref && typeof ref === 'object') {
+                ref.current = input;
+              }
+            }}
+            editable={!disabled}
+            style={[styles.input, disabled && styles.disabled, textAlign && { textAlign }]}
+            autoCorrect={false}
+            autoCapitalize="none"
+            multiline={true}
+            numberOfLines={numberOfLines}
+            textAlignVertical="top"
+            keyboardType={keyboardType}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            placeholderTextColor={
+              disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
             }
-            if (typeof ref === 'function') {
-              ref(input);
-            } else if (ref && typeof ref === 'object') {
-              ref.current = input;
-            }
-          }}
-          editable={!disabled}
-          style={[styles.input, disabled && styles.disabled, textAlign && { textAlign }]}
-          autoCorrect={false}
-          autoCapitalize="none"
-          multiline={true}
-          numberOfLines={numberOfLines}
-          textAlignVertical="top"
-        />
-        {endEnhancer && (
-          <View style={styles.enhancer}>
-            {typeof endEnhancer === 'string' ? <Text>{endEnhancer}</Text> : endEnhancer}
-          </View>
-        )}
+          />
+          {endEnhancer && (
+            <View style={styles.enhancer}>
+              {typeof endEnhancer === 'string' ? <Text>{endEnhancer}</Text> : endEnhancer}
+            </View>
+          )}
+        </View>
       </View>
     );
   },
 );
-
-TextAreaInput.defaultProps = {
-  disabled: false,
-  handleInputRef: undefined,
-  startEnhancer: undefined,
-  endEnhancer: undefined,
-  testId: undefined,
-  textAlign: 'left',
-  numberOfLines: 4,
-};
 
 export default TextAreaInput;

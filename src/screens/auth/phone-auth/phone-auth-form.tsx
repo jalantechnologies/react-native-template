@@ -88,13 +88,13 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
   };
 
   const phoneNumber = new PhoneNumber({
-    countryCode: formik.values.countryCode.replace('+', ''),
-    phoneNumber: formik.values.phoneNumber,
+    country_code: formik.values.countryCode.replace('+', ''),
+    phone_number: formik.values.phoneNumber,
   });
 
   const phoneNumberPlaceholder = new PhoneNumber({
-    countryCode: formik.values.countryCode.replace('+', ''),
-    phoneNumber: '9999999999',
+    country_code: formik.values.countryCode.replace('+', ''),
+    phone_number: '9999999999',
   }).getFormattedWithoutCountryCode();
 
   return (
@@ -153,7 +153,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
         disabled={!isChecked}
         isLoading={isSendOTPLoading}
         onClick={() => formik.handleSubmit()}
-        kind={ButtonKind.PRIMARY}
+        kind={ButtonKind.CONTAINED}
       >
         Send OTP
       </Button>

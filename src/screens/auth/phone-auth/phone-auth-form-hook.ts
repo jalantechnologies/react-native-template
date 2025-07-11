@@ -44,12 +44,12 @@ const usePhoneAuthForm = ({ onSendOTPSuccess, onError }: PhoneAuthFormProps) => 
         return;
       }
 
-      const formattedPhoneNumber = parsedPhoneNumber?.getNationalNumber()?.toString();
+      const formattedPhoneNumber = parsedPhoneNumber.getNationalNumber()!.toString();
 
       sendOTP(
         new PhoneNumber({
-          countryCode: values.countryCode,
-          phoneNumber: formattedPhoneNumber,
+          country_code: values.countryCode,
+          phone_number: formattedPhoneNumber,
         }),
       )
         .then(() => {

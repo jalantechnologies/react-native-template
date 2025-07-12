@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 
 import { InputStatus, KeyboardTypes, WebsiteUrlInputProps } from '../../types';
-import { useWebsiteInputStyles } from './input.styles';
+
 import Input from './input';
+import { useWebsiteInputStyles } from './input.styles';
 
 const WebsiteUrlInput: React.FC<WebsiteUrlInputProps> = ({
   label,

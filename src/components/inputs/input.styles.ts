@@ -141,7 +141,6 @@ export const useWebsiteInputStyles = () => {
       width: parseInt(theme.borderWidths['1'], 10),
       marginHorizontal: theme.space[2],
       marginVertical: -theme.space[3],
-      
     },
   });
 };

@@ -130,49 +130,17 @@ export const useWebsiteInputStyles = () => {
   const theme = useTheme();
 
   return StyleSheet.create({
-    wrapper: {
-      gap: theme.space[2],
-    },
-    label: {
-      fontSize: theme.fontSizes.sm,
-      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
-      lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
-    },
-    container: {
-      flexDirection: 'row',
-      borderWidth: theme.borderWidths['0'],
-    },
-    protocolContainer: {
-      width: theme.sizes[20],
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: theme.colors.white,
-      borderTopLeftRadius: theme.radii.md,
-      borderBottomLeftRadius: theme.radii.md,
-      borderWidth: parseInt(theme.borderWidths['1'], 10),
-      borderRightWidth: theme.borderWidths['0'],
-      borderColor: theme.colors.secondary[200],
-      paddingHorizontal: theme.space[3],
-      paddingVertical: theme.space[2],
-    },
     text: {
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       fontSize: theme.fontSizes.md,
       lineHeight: Number(theme.lineHeights.sm),
       letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
-    inputContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      paddingHorizontal: theme.space[3],
-      paddingVertical: theme.space[1],
-      borderWidth: parseInt(theme.borderWidths['1'], 10),
-      borderTopRightRadius: theme.radii.md,
-      borderBottomRightRadius: theme.radii.md,
-    },
-    message: {
-      fontSize: theme.fontSizes.xs,
+    divider: {
+      alignSelf: 'stretch',
+      width: 1,
+      marginHorizontal: 8,
+      marginVertical: -13,
     },
   });
 };

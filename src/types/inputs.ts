@@ -22,17 +22,19 @@ export enum KeyboardTypes {
   WEB_SEARCH = 'web-search',
 }
 
-export interface InputProps extends Omit<TextInputProps, 'style | multiline'> {
+export interface InputProps extends Omit<TextInputProps, 'style' | 'multiline'> {
   disabled?: boolean;
   endEnhancer?: React.ReactNode;
   handleInputRef?: (ref: TextInput) => void;
   keyboardType?: KeyboardTypeOptions;
   label?: string;
   message?: string;
+  onValidate?: (text: string, status: InputStatus) => void;
   startEnhancer?: React.ReactNode;
   status?: InputStatus;
   testId?: string;
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
+  validationRegex?: RegExp;
 }
 
 export interface PasswordInputProps extends InputProps {}
@@ -54,7 +56,8 @@ export interface WebsiteUrlInputProps {
   errorMessage?: string;
   label?: string;
   onUrlChange: (value: string) => void;
-  onValidate: (finalUrl: string, status: InputStatus) => void;
+  onValidate?: (finalUrl: string, status: InputStatus) => void;
+  protocol?: string;
   status?: InputStatus;
   successMessage?: string;
   url: string;

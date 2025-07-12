@@ -25,7 +25,7 @@ When cloning the app and using it for projects, a few things need to be updated 
 
 ## Setup Environment
 
-> ⚠️ **Important:** On **Windows**, ensure all installations (**Node, JDK, NVM, Watchman**, etc.) are done in the **`C:\` drive** to avoid path and permission issues during Android builds.
+> ⚠️ important: on windows, ensure all required tools (such as node, jdk, nvm, and watchman) are installed in the c:\ drive to prevent path and permission-related issues during android builds.
 
 - Install Node v22:
     - For macOS: 

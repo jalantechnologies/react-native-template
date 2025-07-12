@@ -138,9 +138,10 @@ export const useWebsiteInputStyles = () => {
     },
     divider: {
       alignSelf: 'stretch',
-      width: 1,
-      marginHorizontal: 8,
-      marginVertical: -13,
+      width: parseInt(theme.borderWidths['1'], 10),
+      marginHorizontal: theme.space[2],
+      marginVertical: -theme.space[3],
+      
     },
   });
 };

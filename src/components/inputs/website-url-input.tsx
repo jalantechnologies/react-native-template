@@ -53,7 +53,7 @@ const WebsiteUrlInput: React.FC<WebsiteUrlInputProps> = ({
 
   const getDividerColor = () => {
     if (isFocused && currentStatus === InputStatus.DEFAULT) {
-      return theme.colors.primary[500];
+      return theme.colors.primary[300];
     }
     if (currentStatus === InputStatus.ERROR) {
       return theme.colors.danger[500];

@@ -1,7 +1,7 @@
 import { useTheme } from 'native-base';
 import { StyleSheet, TextStyle } from 'react-native';
 
-export const useSliderStyles = (trackLength: number) => {
+export const useSliderStyles = () => {
   const theme = useTheme();
 
   return StyleSheet.create({

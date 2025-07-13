@@ -34,7 +34,7 @@ const Slider = ({
   const handleSize = Number(sizes['5']);
   const [trackLength, setTrackLength] = useState(0);
 
-  const styles = useSliderStyles(trackLength);
+  const styles = useSliderStyles();
 
   const calculatePositionFromValue = (val: number) =>
     trackLength > 0 ? ((val - lowerLimit) / (upperLimit - lowerLimit)) * trackLength : 0;
@@ -49,17 +49,6 @@ const Slider = ({
     }
     return val;
   };
-
-  // const internalMarkers = (() => {
-  //   if (!internalMarkerStep || internalMarkerStep <= 0) {
-  //     return [];
-  //   }
-  //   const markers = [];
-  //   for (let i = lowerLimit + internalMarkerStep; i < upperLimit; i += internalMarkerStep) {
-  //     markers.push(i);
-  //   }
-  //   return markers;
-  // })();
 
   const internalMarkers = useMemo(() => {
     if (!internalMarkerStep || internalMarkerStep <= 0) return [];

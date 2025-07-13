@@ -10,9 +10,10 @@ export const useSliderStyles = (trackLength: number) => {
       gap: theme.space['0'],
       justifyContent: 'center',
       alignItems: 'center',
+      width: '100%',
     },
     horizontalTrack: {
-      width: trackLength,
+      width: '100%',
       marginTop: theme.space[2],
       height: theme.sizes['2'],
       borderRadius: theme.radii.full,
@@ -70,7 +71,7 @@ export const useSliderStyles = (trackLength: number) => {
       zIndex: -1,
     },
     endMarkersRow: {
-      width: trackLength,
+      width: '100%',
       flexDirection: 'row',
       justifyContent: 'space-between',
       marginTop: theme.space['1'],
@@ -91,7 +92,7 @@ export const useSliderStyles = (trackLength: number) => {
     sliderWithInputRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      width: trackLength,
+      width: '100%',
     },
     inputRow: {
       flexDirection: 'row',
@@ -100,6 +101,8 @@ export const useSliderStyles = (trackLength: number) => {
     },
     inputBox: {
       alignSelf: 'flex-end',
+      minWidth: theme.sizes['12'],
+      maxWidth: theme.sizes['20'],
     },
     disabledTrack: {
       backgroundColor: theme.colors.secondary['100'],

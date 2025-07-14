@@ -1,6 +1,6 @@
+import { Box, Pressable, ScrollView, Text, useTheme } from 'native-base';
 import React, { useState } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import { Box, Text, useTheme, ScrollView, Pressable } from 'native-base';
+import { Dimensions, StyleSheet, View } from 'react-native';
 
 interface TooltipProps {
   title?: string;
@@ -16,41 +16,48 @@ interface TooltipProps {
   width?: number;
 }
 
-const Tooltip: React.FC<TooltipProps> = ({
-  title,
-  text,
-  footer,
-  pointer = true,
-  position = 'bottom',
-  triangleAlign = 'middle',
-  variant = 'white',
-  pressedText,
-  pointerColor,
-  height,
-  width,
-}) => {
+const Tooltip: React.FC<TooltipProps> = props => {
+  const {
+    title,
+    text,
+    footer,
+    pointer,
+    position,
+    triangleAlign,
+    variant,
+    pressedText,
+    pointerColor,
+    height,
+    width,
+  } = props;
+
   const theme = useTheme();
   const [visible, setVisible] = useState(false);
 
-  const isDefaultWhite = !variant || variant === 'white';
+  const resolvedPointer = pointer ?? true;
+  const resolvedPosition = position ?? 'bottom';
+  const resolvedAlign = triangleAlign ?? 'middle';
+  const resolvedVariant = variant ?? 'white';
+  const resolvedPressedText = pressedText ?? 'pressed!';
+
+  const isDefaultWhite = !resolvedVariant || resolvedVariant === 'white';
   const textColor = isDefaultWhite ? 'black' : 'white';
 
-  const bgColor =
-    isDefaultWhite
-      ? theme.colors.white
-      : typeof theme.colors[variant] === 'object'
-        ? (theme.colors[variant] as any)['500']
-        : theme.colors.gray?.['500'] || '#000';
+  const bgColor = isDefaultWhite
+    ? theme.colors.white
+    : typeof theme.colors[resolvedVariant] === 'object'
+    ? (theme.colors[resolvedVariant] as any)['500']
+    : theme.colors.gray?.['500'] || '#000';
 
-  const isVertical = position === 'top' || position === 'bottom';
-  const isReverse = position === 'top' || position === 'left';
+  const isVertical = resolvedPosition === 'top' || resolvedPosition === 'bottom';
+  const isReverse = resolvedPosition === 'top' || resolvedPosition === 'left';
 
   const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
   const MAX_WIDTH = width ?? screenWidth * 0.6;
   const MAX_HEIGHT = height ?? screenHeight * 0.25;
 
-  const triangle = pointer ? (
-    <View style={[styles.triangle, triangleStyles[position](bgColor, triangleAlign)]} />
+  const triangle = resolvedPointer ? (
+    <View style={[styles.triangle, triangleStyles[resolvedPosition](bgColor, resolvedAlign)]} />
   ) : null;
 
   const renderMainBox = () => (
@@ -61,18 +68,12 @@ const Tooltip: React.FC<TooltipProps> = ({
       overflow="hidden"
       maxWidth={MAX_WIDTH}
       maxHeight={MAX_HEIGHT}
-      style={{
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-        elevation: 14,
-      }}
+      style={styles.shadow}
     >
       <ScrollView
         persistentScrollbar
         showsVerticalScrollIndicator
-        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+        contentContainerStyle={styles.scrollContent}
         scrollIndicatorInsets={{ right: -10 }}
       >
         {title && (
@@ -85,15 +86,11 @@ const Tooltip: React.FC<TooltipProps> = ({
         </Text>
         {footer && (
           <Box flexDirection="row" alignItems="center" mt={1}>
-            <Box
-              width={2}
-              height={2}
-              rounded="full"
-              bg={pointerColor || 'cyan.400'}
-              mr={2}
-            />
+            <Box width={2} height={2} rounded="full" bg={pointerColor || 'cyan.400'} mr={2} />
             {typeof footer === 'string' ? (
-              <Text color={textColor} fontSize="xs">{footer}</Text>
+              <Text color={textColor} fontSize="xs">
+                {footer}
+              </Text>
             ) : (
               footer
             )}
@@ -106,7 +103,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   const renderPressedText = () => (
     <Box px={3} py={2} bg="coolGray.700" rounded="md" shadow={10}>
       <Text color={textColor} fontSize="sm">
-        {pressedText || 'pressed!'}
+        {resolvedPressedText}
       </Text>
     </Box>
   );
@@ -116,24 +113,37 @@ const Tooltip: React.FC<TooltipProps> = ({
       <Box alignItems="center" justifyContent="center" pointerEvents="box-none">
         {isVertical ? (
           <Box alignItems="center">
-            {position === 'top' && visible && renderPressedText()}
+            {resolvedPosition === 'top' && visible && renderPressedText()}
             {isReverse && triangle}
             {renderMainBox()}
             {!isReverse && triangle}
-            {position === 'bottom' && visible && renderPressedText()}
+            {resolvedPosition === 'bottom' && visible && renderPressedText()}
           </Box>
         ) : (
           <Box flexDirection="row" alignItems="center">
-            {position === 'left' && visible && renderPressedText()}
+            {resolvedPosition === 'left' && visible && renderPressedText()}
             {isReverse && triangle}
             {renderMainBox()}
             {!isReverse && triangle}
-            {position === 'right' && visible && renderPressedText()}
+            {resolvedPosition === 'right' && visible && renderPressedText()}
           </Box>
         )}
       </Box>
     </Pressable>
   );
+};
+
+Tooltip.defaultProps = {
+  title: undefined,
+  footer: undefined,
+  pointer: true,
+  position: 'bottom',
+  triangleAlign: 'middle',
+  variant: 'white',
+  pressedText: 'pressed!',
+  pointerColor: undefined,
+  height: undefined,
+  width: undefined,
 };
 
 export default Tooltip;
@@ -143,11 +153,22 @@ const styles = StyleSheet.create({
     width: 0,
     height: 0,
   },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  shadow: {
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 14,
+  },
 });
 
 const triangleStyles: Record<
   NonNullable<TooltipProps['position']>,
-  (color: string, align: TooltipProps['triangleAlign']) => any
+  (color: string, align?: TooltipProps['triangleAlign']) => any
 > = {
   top: (color, align = 'middle') => ({
     borderLeftWidth: 6,

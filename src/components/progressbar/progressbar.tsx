@@ -1,11 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  Animated,
-  StyleSheet,
-} from 'react-native';
 import { useTheme } from 'native-base';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, Animated, StyleSheet } from 'react-native';
 
 export interface ProgressBarProps {
   progress: number;
@@ -49,25 +44,18 @@ const themeColors = {
   info: true,
 };
 
-const ProgressBar: React.FC<ProgressBarProps> = ({
-  progress,
-  color = 'primary',
-}) => {
+const ProgressBar: React.FC<ProgressBarProps> = ({ progress, color = 'primary' }) => {
   const theme = useTheme();
-
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   const clampedProgress = Math.min(Math.max(progress, 0), 100);
   const normalizedProgress = clampedProgress / 100;
   const displayLabel = Math.round(clampedProgress);
 
-
   const fillColor =
-  ((theme.colors as unknown) as Record<string, Record<string, string>>)?.[color]?.['500'] ??
-  theme.colors.primary['500'] ??
-  '#007AFF';
-
-
+    (theme.colors as unknown as Record<string, Record<string, string>>)?.[color]?.['500'] ??
+    theme.colors.primary['500'] ??
+    '#007AFF';
 
   useEffect(() => {
     Animated.timing(animatedValue, {
@@ -87,15 +75,16 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       <View style={styles.container}>
         <Animated.View
           testID="progress-fill"
-          style={[
-            styles.fill,
-            { backgroundColor: fillColor, width: animatedWidth },
-          ]}
+          style={[styles.fill, { backgroundColor: fillColor, width: animatedWidth }]}
         />
       </View>
       <Text style={styles.label}>{`${displayLabel}%`}</Text>
     </View>
   );
+};
+
+ProgressBar.defaultProps = {
+  color: 'primary',
 };
 
 export default ProgressBar;

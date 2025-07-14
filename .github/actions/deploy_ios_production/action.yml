@@ -1,0 +1,96 @@
+name: "Deploy iOS App on App Store"
+description: "Build and deploy the iOS app to Production using Fastlane"
+
+inputs:
+  APP_STORE_CONNECT_API_KEY_CONTENTS:
+    required: true
+    description: "API Key contents for App Store Connect"
+  APP_STORE_CONNECT_API_KEY_ID:
+    required: true
+    description: "API Key ID for App Store Connect"
+  APP_STORE_CONNECT_ISSUER_ID:
+    required: true
+    description: "Issuer ID for App Store Connect"
+  MATCH_GIT_BASIC_AUTHORIZATION:
+    required: true
+    description: "Basic Authorization for Match"
+  MATCH_KEYCHAIN_PASSWORD:
+    required: true
+    description: "Keychain password for Match"
+  MATCH_PASSWORD:
+    required: true
+    description: "Password for Match"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: "22.13.1"
+    - name: Cache node modules
+      uses: actions/cache@v4
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node-modules-v2-
+
+    - name: Restore Pods cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ios/Pods
+          ~/Library/Caches/CocoaPods
+          ~/.cocoapods
+        key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pods-
+
+    - name: Install node modules
+      run: |
+        yarn cache clean
+        yarn install --force
+        patch -p1 < patches/boost.podspec.patch
+      shell: bash
+      env:
+        CI: true
+
+    - name: Install CocoaPods
+      run: |
+        gem install cocoapods
+        LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+        cd ios
+        pod install
+      shell: bash
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.3.4"
+        bundler-cache: true
+
+    - name: Install Fastlane
+      run: |
+        gem install bundler
+        cd ios
+        bundle install
+      shell: bash
+      env:
+        CI: true
+
+    - name: Build and deploy the iOS app to Production
+      run: |
+        cd ios
+        bundle exec fastlane deploy_ios_production
+      shell: bash
+      env:
+        CI: true
+        IOS_APP_STORE_CONNECT_API_KEY_CONTENTS: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_CONTENTS }}
+        IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+        IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+        MATCH_GIT_BASIC_AUTHORIZATION: ${{ inputs.MATCH_GIT_BASIC_AUTHORIZATION }}
+        IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
+        IOS_MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}

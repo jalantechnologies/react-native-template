@@ -81,6 +81,23 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
+  deploy-ios:
+    needs: build
+    runs-on: macos-15
+    steps:
+      - name: Checkout (app)
+        uses: actions/checkout@v3
+
+      - name: Build App and Deploy to AppStore
+        uses: ./.github/actions/deploy_ios_production
+        with:
+          IOS_APP_STORE_CONNECT_API_KEY_CONTENTS: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_CONTENTS }}
+          IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+          IOS_APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_ISSUER_ID }}
+          IOS_MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.IOS_MATCH_GIT_BASIC_AUTHORIZATION }}
+          IOS_MATCH_KEYCHAIN_PASSWORD: ${{ secrets.IOS_MATCH_KEYCHAIN_PASSWORD }}
+          IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
+
   checks:
     needs: build
     runs-on: ubuntu-latest

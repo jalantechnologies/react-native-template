@@ -1,17 +1,19 @@
-import React from 'react';
 import { render, act } from '@testing-library/react-native';
-import ProgressBar from './progressbar';
 import { NativeBaseProvider } from 'native-base';
+import React from 'react';
+
 import appTheme from '../../app-theme';
 
+import ProgressBar from './progressbar';
 
 jest.mock('react-native-safe-area-context', () => {
-  const React = require('react');
+  const ReactLib = require('react'); 
   return {
     SafeAreaProvider: ({ children }: { children: React.ReactNode }) => children,
     useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
   };
 });
+
 
 jest.useFakeTimers();
 
@@ -33,7 +35,7 @@ describe('ProgressBar component', () => {
 
   it('clamps progress less than 0 to 0%', async () => {
     const { findByText } = renderWithTheme(<ProgressBar progress={-10} />);
-    
+
     act(() => {
       jest.runAllTimers();
     });
@@ -43,7 +45,7 @@ describe('ProgressBar component', () => {
 
   it('clamps progress greater than 100 to 100%', async () => {
     const { findByText } = renderWithTheme(<ProgressBar progress={150} />);
-    
+
     act(() => {
       jest.runAllTimers();
     });

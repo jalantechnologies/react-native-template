@@ -1,0 +1,133 @@
+name: 'Deploy iOS App to App Store (Production)'
+description: 'Build and deploy the iOS app to the App Store using Fastlane'
+inputs:
+  IOS_MATCH_PASSWORD:
+    required: true
+    description: 'Match password for signing'
+  IOS_MATCH_REPOSITORY_URL:
+    required: true
+    description: 'Match repository URL for certs'
+  IOS_APPLE_ID:
+    required: true
+    description: 'Apple App ID for app'
+  IOS_KEYCHAIN_PASSWORD:
+    required: true
+    description: 'Keychain password for Fastlane'
+  IOS_APP_STORE_CONNECT_API_KEY_ID:
+    required: true
+    description: 'API Key ID for App Store Connect'
+  IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID:
+    required: true
+    description: 'Issuer ID for App Store Connect'
+  IOS_APP_STORE_CONNECT_API_KEY_B64:
+    required: true
+    description: 'Base64 encoded API key for App Store Connect'
+  IOS_APP_IDENTIFIER:
+    required: true
+    description: 'Bundle ID for the app'
+  IOS_APP_STORE_TEAM_ID:
+    required: true
+    description: 'App Store Team ID'
+  IOS_DEV_EMAIL:
+    required: true
+    description: 'Developer Apple email'
+  IOS_MATCH_DEPLOY_KEY:
+    required: true
+    description: 'SSH private key for Match repo'
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.1
+        bundler-cache: true
+
+    - name: Install Bundler
+      run: gem install bundler
+      shell: bash
+
+    - name: Install Ruby dependencies
+      working-directory: ios
+      run: bundle install
+      shell: bash
+
+    - name: Set Node Version
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .nvmrc
+
+    - name: Install Yarn
+      run: npm install -g yarn
+      shell: bash
+
+    - name: Install dependencies
+      run: yarn install
+      shell: bash
+
+    - name: Install CocoaPods dependencies
+      working-directory: ios
+      run: |
+        bundle exec pod install --deployment
+      shell: bash
+
+    - name: Set up SSH for Match
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ inputs.IOS_MATCH_DEPLOY_KEY }}
+
+    - name: Add GitHub to known hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+      shell: bash
+
+    - name: Export Match password
+      run: echo "MATCH_PASSWORD=${{ inputs.IOS_MATCH_PASSWORD }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Install code signing certificates via Match
+      working-directory: ios
+      run: bundle exec fastlane ci_signing_setup
+      shell: bash
+
+    - name: Clear Derived Data
+      run: rm -rf ~/Library/Developer/Xcode/DerivedData
+      shell: bash
+
+    - name: Bundle React Native for iOS
+      run: |
+        ENVFILE=.env.production NODE_ENV=production npx react-native bundle \
+          --entry-file index.js \
+          --platform ios \
+          --dev false \
+          --bundle-output ios/main.jsbundle \
+          --assets-dest .
+      shell: bash
+
+    - name: Deploy the iOS app to Production
+      working-directory: ios
+      run: bundle exec fastlane ios production_deploy
+      shell: bash
+      env:
+          MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}
+          IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
+          IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}
+          IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
+          IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+          IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+          IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
+          IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
+          IOS_APP_STORE_TEAM_ID: ${{ inputs.IOS_APP_STORE_TEAM_ID }}
+          IOS_DEV_EMAIL: ${{ inputs.IOS_DEV_EMAIL }}
+          IOS_MATCH_DEPLOY_KEY: ${{ inputs.IOS_MATCH_DEPLOY_KEY }}
+
+    - name: Upload Xcode build logs
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: xcode-build-logs
+        path: /Users/runner/Library/Logs/gym/*.log

@@ -51,14 +51,9 @@ export interface TextAreaInputProps extends Omit<TextInputProps, 'style | multil
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
 }
 
-export interface WebsiteUrlInputProps {
-  disabled?: boolean;
-  errorMessage?: string;
-  label?: string;
-  onUrlChange: (value: string) => void;
-  onValidate?: (finalUrl: string, status: InputStatus) => void;
+export interface WebsiteUrlInputProps
+  extends Omit<InputProps, 'onValidate' | 'status' | 'message'> {
+  onValidatedUrl?: (finalUrl: string | null) => void;
   protocol?: string;
-  status?: InputStatus;
-  successMessage?: string;
   url: string;
 }

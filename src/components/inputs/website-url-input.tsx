@@ -10,55 +10,39 @@ import { useWebsiteInputStyles } from './input.styles';
 const WebsiteUrlInput: React.FC<WebsiteUrlInputProps> = ({
   label,
   url,
-  onUrlChange,
-  status,
-  errorMessage,
-  successMessage,
+  onChangeText,
+  onValidatedUrl,
   disabled = false,
-  onValidate,
   protocol,
 }) => {
   const theme = useTheme();
-  const [localStatus, setLocalStatus] = useState<InputStatus>(InputStatus.DEFAULT);
-  const [localErrorMessage, setLocalErrorMessage] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [status, setStatus] = useState<InputStatus>(InputStatus.DEFAULT);
   const finalProtocol = protocol ?? 'https://';
 
   const styles = useWebsiteInputStyles();
-
-  const currentStatus = status ?? localStatus;
-  const currentErrorMessage = status !== undefined ? errorMessage : localErrorMessage;
-
-  const resetValidation = () => {
-    if (status === undefined) {
-      setLocalStatus(InputStatus.DEFAULT);
-      setLocalErrorMessage('');
-    }
-  };
 
   const handleValidation = (
     value: any,
     status: InputStatus | ((prevState: InputStatus) => InputStatus),
   ) => {
-    if (status === InputStatus.ERROR) {
-      setLocalStatus(InputStatus.ERROR);
-      setLocalErrorMessage('Enter a valid website URL');
-    } else {
+    setStatus(status);
+    if (status === InputStatus.SUCCESS) {
       const fullUrl = `${finalProtocol}${value.trim().toLowerCase()}`;
-      setLocalStatus(InputStatus.SUCCESS);
-      setLocalErrorMessage('');
-      onValidate?.(fullUrl, InputStatus.SUCCESS);
+      onValidatedUrl?.(fullUrl);
+    } else {
+      onValidatedUrl?.(null);
     }
   };
 
   const getDividerColor = () => {
-    if (isFocused && currentStatus === InputStatus.DEFAULT) {
+    if (isFocused && status === InputStatus.DEFAULT) {
       return theme.colors.primary[300];
     }
-    if (currentStatus === InputStatus.ERROR) {
+    if (status === InputStatus.ERROR) {
       return theme.colors.danger[500];
     }
-    if (currentStatus === InputStatus.SUCCESS) {
+    if (status === InputStatus.SUCCESS) {
       return theme.colors.success[500];
     }
     return theme.colors.secondary[200];
@@ -69,8 +53,8 @@ const WebsiteUrlInput: React.FC<WebsiteUrlInputProps> = ({
       disabled={disabled}
       value={url}
       onChangeText={text => {
-        resetValidation();
-        onUrlChange?.(text);
+        setStatus(InputStatus.DEFAULT);
+        onChangeText?.(text);
       }}
       keyboardType={KeyboardTypes.URL}
       onFocus={() => setIsFocused(true)}
@@ -92,14 +76,8 @@ const WebsiteUrlInput: React.FC<WebsiteUrlInputProps> = ({
       }
       placeholder="Website URL"
       placeholderTextColor={disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]}
-      status={currentStatus}
-      message={
-        currentStatus === InputStatus.ERROR
-          ? currentErrorMessage
-          : currentStatus === InputStatus.SUCCESS
-          ? successMessage
-          : ''
-      }
+      status={status}
+      message={status === InputStatus.ERROR ? 'Enter a valid website URL' : ''}
       label={label}
       validationRegex={
         new RegExp(/^(www\.)?[a-zA-Z0-9.-]+\.[a-z]{2,6}(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/)

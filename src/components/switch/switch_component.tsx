@@ -1,3 +1,4 @@
+import { useTheme } from 'native-base';
 import React from 'react';
 import { Pressable, Text, Animated } from 'react-native';
 
@@ -22,6 +23,8 @@ const SwitchComponent: React.FC<SwitchProps> = ({
   size = 'md',
   loading = false,
 }) => {
+  const theme = useTheme();
+
   const [internalValue, setInternalValue] = React.useState(value);
   const [isLoading, setIsLoading] = React.useState(false);
   const animatedValue = React.useRef(new Animated.Value(value ? 1 : 0)).current;
@@ -32,14 +35,10 @@ const SwitchComponent: React.FC<SwitchProps> = ({
     lg: { width: 64, height: 32, thumb: 28, labelSize: 13, padding: 2 },
   }[size];
 
-  const colorSets = {
-    primary: { active: '#007AFF', inactive: '#E5E5EA' },
-    secondary: { active: '#5AC8FA', inactive: '#E5E5EA' },
-    success: { active: '#34C759', inactive: '#E5E5EA' },
-    danger: { active: '#FF3B30', inactive: '#E5E5EA' },
+  const colorSet = {
+    active: theme.colors[variant][500],
+    inactive: theme.colors.secondary[200],
   };
-
-  const colorSet = colorSets[variant];
 
   const getLabel = () => {
     if (size === 'sm' && labelType === 'text') return '';
@@ -49,12 +48,12 @@ const SwitchComponent: React.FC<SwitchProps> = ({
   };
 
   const getLabelColor = () => {
-    if (labelType === 'icon' && internalValue) return '#000';
-    return '#fff';
+    if (labelType === 'icon' && internalValue) return theme.colors.black;
+    return theme.colors.white;
   };
 
   const getThumbColor = () => {
-    return disabled ? '#f5f5f5' : '#fff';
+    return disabled ? theme.colors.secondary[100] : theme.colors.white;
   };
 
   const thumbTranslateX = animatedValue.interpolate({
@@ -117,7 +116,11 @@ const SwitchComponent: React.FC<SwitchProps> = ({
           width: sizeConfig.width,
           height: sizeConfig.height,
           borderRadius: sizeConfig.height / 2,
-          backgroundColor: disabled ? (internalValue ? '#ccc' : '#eee') : backgroundColorAnimated,
+          backgroundColor: disabled
+            ? internalValue
+              ? theme.colors.secondary[400]
+              : theme.colors.secondary[200]
+            : backgroundColorAnimated,
           position: 'absolute',
         }}
       />
@@ -131,7 +134,7 @@ const SwitchComponent: React.FC<SwitchProps> = ({
           position: 'absolute',
           left: thumbTranslateX,
           top: sizeConfig.padding,
-          shadowColor: '#000',
+          shadowColor: theme.colors.black,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.25,
           shadowRadius: 3.84,
@@ -145,7 +148,7 @@ const SwitchComponent: React.FC<SwitchProps> = ({
             size={sizeConfig.thumb * 0.6}
             color={colorSet.active}
             strokeWidth={2}
-            backgroundColor="#e0e0e0"
+            backgroundColor={theme.colors.secondary[200]}
           />
         )}
       </Animated.View>

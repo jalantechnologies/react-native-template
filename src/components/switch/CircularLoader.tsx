@@ -1,20 +1,22 @@
+import { useTheme } from 'native-base';
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Easing } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 export interface CircularLoaderProps {
-  size?: number;
+  size: number;
   color?: string;
   strokeWidth?: number;
   backgroundColor?: string;
 }
 
 const CircularLoader: React.FC<CircularLoaderProps> = ({
-  size = 60,
-  color = '#007AFF',
+  size,
+  color,
   strokeWidth = 6,
-  backgroundColor = '#E5E5EA',
+  backgroundColor,
 }) => {
+  const theme = useTheme();
   const rotation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -39,6 +41,9 @@ const CircularLoader: React.FC<CircularLoaderProps> = ({
   const circumference = 2 * Math.PI * radius;
   const arcLength = circumference * 0.75;
 
+  const loaderColor = color || theme.colors.primary[500];
+  const bgColor = backgroundColor || theme.colors.secondary[200];
+
   return (
     <Animated.View
       testID="circular-loader"
@@ -56,7 +61,7 @@ const CircularLoader: React.FC<CircularLoaderProps> = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={backgroundColor}
+          stroke={bgColor}
           strokeWidth={strokeWidth}
           fill="transparent"
         />
@@ -64,7 +69,7 @@ const CircularLoader: React.FC<CircularLoaderProps> = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke={color}
+          stroke={loaderColor}
           strokeWidth={strokeWidth}
           fill="transparent"
           strokeDasharray={`${arcLength} ${circumference - arcLength}`}
@@ -75,18 +80,17 @@ const CircularLoader: React.FC<CircularLoaderProps> = ({
   );
 };
 
+CircularLoader.defaultProps = {
+  color: undefined,
+  strokeWidth: 6,
+  backgroundColor: undefined,
+};
+
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
   },
 });
-
-CircularLoader.defaultProps = {
-  size: 60,
-  color: '#007AFF',
-  strokeWidth: 6,
-  backgroundColor: '#E5E5EA',
-};
 
 export default CircularLoader;

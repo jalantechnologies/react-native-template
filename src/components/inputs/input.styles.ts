@@ -1,5 +1,5 @@
 import { useTheme } from 'native-base';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextStyle } from 'react-native';
 
 export const useInputStyles = () => {
   const theme = useTheme();
@@ -8,22 +8,22 @@ export const useInputStyles = () => {
   const colors = theme.colors;
 
   return StyleSheet.create({
+    wrapper: {
+      gap: spacing[2],
+    },
     container: {
       flexDirection: 'row',
       alignItems: 'center',
       borderRadius: theme.radii.md,
       paddingHorizontal: spacing[3],
       paddingVertical: spacing[2],
-      minHeight: 44,
-      borderWidth: 1,
-      borderColor: colors.coolGray[200],
+      minHeight: theme.sizes['12'],
     },
     input: {
       flex: 1,
       fontSize: theme.fontSizes.md,
-      color: colors.coolGray[800],
-      padding: 0,
-      margin: 0,
+      padding: spacing[0],
+      margin: spacing[0],
     },
     enhancer: {
       marginHorizontal: spacing[1],
@@ -31,63 +31,44 @@ export const useInputStyles = () => {
       alignItems: 'center',
     },
     defaultBorder: {
-      borderWidth: 1,
-      borderColor: colors.coolGray[200],
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      borderColor: colors.secondary[200],
     },
     disabledBackground: {
-      backgroundColor: colors.coolGray[100],
+      backgroundColor: colors.secondary[50],
     },
     enabledBackground: {
-      backgroundColor: 'transparent',
+      backgroundColor: colors.white,
     },
     disabled: {
-      color: colors.coolGray[400],
+      color: colors.secondary[600],
     },
-  });
-};
-
-export const usePasswordInputStyles = () => {
-  const theme = useTheme();
-
-  const spacing = theme.space;
-  const colors = theme.colors;
-
-  return StyleSheet.create({
     label: {
-      marginBottom: spacing[1],
-      color: colors.coolGray[800],
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      color: colors.secondary[900],
       fontSize: theme.fontSizes.sm,
-      fontWeight: '500',
+
+      lineHeight: Number(theme.lineHeights.sm),
+      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
-    inputWrapper: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: 'transparent',
-      position: 'relative',
+    focusedBorder: {
+      borderColor: colors.primary[300],
     },
-    input: {
-      flex: 1,
-      height: 48,
-      fontSize: theme.fontSizes.md,
-      color: colors.coolGray[800],
-    },
-    iconButton: {
-      padding: spacing[2],
-      position: 'absolute',
-      right: 8,
-      top: '50%',
-      transform: [{ translateY: -16 }],
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    inputError: {
-      borderColor: colors.danger[600],
-    },
-    errorText: {
-      color: colors.danger[600],
+    errorMessage: {
+      color: colors.danger[500],
       fontSize: theme.fontSizes.xs,
-      marginTop: spacing[1],
-      marginLeft: spacing[1],
+    },
+    errorBorder: {
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      borderColor: colors.danger[500],
+    },
+    successBorder: {
+      borderColor: colors.success[500],
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+    },
+    successMessage: {
+      color: colors.success[500],
+      fontSize: theme.fontSizes.xs,
     },
   });
 };
@@ -99,39 +80,48 @@ export const useTextAreaInputStyles = () => {
   const colors = theme.colors;
 
   return StyleSheet.create({
+    wrapper: {
+      gap: spacing[2],
+    },
     container: {
       flexDirection: 'row',
       alignItems: 'center',
       borderRadius: theme.radii.md,
       paddingHorizontal: spacing[3],
       paddingVertical: spacing[2],
-      minHeight: 44,
-      borderWidth: 1,
-      borderColor: colors.coolGray[200],
     },
     input: {
       flex: 1,
       fontSize: theme.fontSizes.md,
-      color: colors.coolGray[800],
-      padding: 0,
-      margin: 0,
-      minHeight: 76,
+      color: colors.secondary[900],
+      padding: theme.space[0],
+      margin: theme.space[0],
+      minHeight: theme.sizes[20],
+    },
+    label: {
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      fontSize: theme.fontSizes.sm,
+      lineHeight: Number(theme.lineHeights.sm),
+      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
     enhancer: {
       marginHorizontal: spacing[1],
     },
     defaultBorder: {
-      borderWidth: 1,
-      borderColor: colors.coolGray[200],
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      borderColor: colors.secondary[200],
     },
     disabledBackground: {
-      backgroundColor: colors.coolGray[100],
+      backgroundColor: colors.secondary[50],
     },
     enabledBackground: {
-      backgroundColor: 'transparent',
+      backgroundColor: colors.white,
     },
     disabled: {
-      color: colors.coolGray[400],
+      color: colors.secondary[500],
+    },
+    focusedBorder: {
+      borderColor: colors.primary[300],
     },
   });
 };

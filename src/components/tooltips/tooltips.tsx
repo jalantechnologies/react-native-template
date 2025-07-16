@@ -14,6 +14,10 @@ interface TooltipProps {
   pointerColor?: string;
   height?: number;
   width?: number;
+  pressedTextColor?: string;
+  pressedTextHeight?: number;
+  pressedTextWidth?: number;
+  pressedTextBackground?: string;
 }
 
 const Tooltip: React.FC<TooltipProps> = props => {
@@ -39,6 +43,10 @@ const Tooltip: React.FC<TooltipProps> = props => {
   const resolvedAlign = triangleAlign ?? 'middle';
   const resolvedVariant = variant ?? 'white';
   const resolvedPressedText = pressedText ?? 'pressed!';
+  const resolvedPressedTextColor = props.pressedTextColor ?? 'black';
+  const resolvedPressedTextHeight = props.pressedTextHeight ?? 90;
+  const resolvedPressedTextWidth = props.pressedTextWidth ?? 150;
+  const resolvedPressedTextBackground = props.pressedTextBackground ?? 'white';
 
   const isDefaultWhite = !resolvedVariant || resolvedVariant === 'white';
   const textColor = isDefaultWhite ? 'black' : 'white';
@@ -66,8 +74,8 @@ const Tooltip: React.FC<TooltipProps> = props => {
       rounded="md"
       shadow={15}
       overflow="hidden"
-      maxWidth={MAX_WIDTH}
-      maxHeight={MAX_HEIGHT}
+      width={MAX_WIDTH}
+      height={MAX_HEIGHT}
       style={styles.shadow}
     >
       <ScrollView
@@ -101,8 +109,18 @@ const Tooltip: React.FC<TooltipProps> = props => {
   );
 
   const renderPressedText = () => (
-    <Box px={3} py={2} bg="coolGray.700" rounded="md" shadow={10}>
-      <Text color={textColor} fontSize="sm">
+    <Box
+      px={3}
+      py={2}
+      bg={resolvedPressedTextBackground}
+      rounded="md"
+      shadow={10}
+      width={resolvedPressedTextWidth}
+      height={resolvedPressedTextHeight}
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Text color={resolvedPressedTextColor} fontSize="sm">
         {resolvedPressedText}
       </Text>
     </Box>
@@ -144,6 +162,10 @@ Tooltip.defaultProps = {
   pointerColor: undefined,
   height: undefined,
   width: undefined,
+  pressedTextColor: undefined,
+  pressedTextHeight: undefined,
+  pressedTextWidth: undefined,
+  pressedTextBackground: undefined,
 };
 
 export default Tooltip;

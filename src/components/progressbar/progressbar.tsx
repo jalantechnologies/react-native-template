@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     overflow: 'hidden',
     height: 10,
+    width: 212
   },
   fill: {
     height: '100%',
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
   label: {
     minWidth: 35,
     fontSize: 18,
-    color: '#333',
+    fontWeight: '500',
     textAlign: 'right',
   },
 });

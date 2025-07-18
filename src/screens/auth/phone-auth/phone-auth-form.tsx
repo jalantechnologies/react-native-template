@@ -140,7 +140,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
             By continuing, you agree to our
             <Link
               _text={{ color: 'primary.500', underline: true, marginLeft: 1 }}
-              href="https://jalantechnologies.github.io/boilerplate-react-native/"
+              href="https://jalantechnologies.github.io/react-native-template/"
               isExternal
             >
               Privacy Policy

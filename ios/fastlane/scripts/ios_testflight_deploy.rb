@@ -5,18 +5,24 @@ def ios_testflight_deploy!(options = {})
   require 'fastlane_core/ui/ui'
 
   # Required inputs passed from the Fastlane lane or script that invokes this deploy logic.
-  pr_number = options.fetch(:pr_number)
-  app_identifier = options.fetch(:app_identifier)
-  xcodeproj = options.fetch(:xcodeproj)
-  scheme = options.fetch(:scheme)
-  api_key_id = options.fetch(:api_key_id)
-  issuer_id = options.fetch(:issuer_id)
-  api_key_b64 = options.fetch(:api_key_b64)
-  keychain_name = options.fetch(:keychain_name)
+  pr_number         = options.fetch(:pr_number)
+  xcodeproj         = options.fetch(:xcodeproj)
+  scheme            = options.fetch(:scheme)
+  api_key_id        = options.fetch(:api_key_id)
+  issuer_id         = options.fetch(:issuer_id)
+  api_key_b64       = options.fetch(:api_key_b64)
+  keychain_name     = options.fetch(:keychain_name)
   keychain_password = options.fetch(:keychain_password)
-  apple_id = options.fetch(:apple_id)
-  username = options.fetch(:username)
-  team_id = options.fetch(:team_id)
+  username          = options.fetch(:username)
+  team_id           = options.fetch(:team_id)
+
+  # Use values specific to preview environment
+  app_identifier = ENV["IOS_APP_IDENTIFIER_PREVIEW"]
+  apple_id       = ENV["IOS_APPLE_ID_PREVIEW"]
+
+  UI.user_error!("❌ Missing IOS_APP_IDENTIFIER_PREVIEW") unless app_identifier
+  UI.user_error!("❌ Missing IOS_APPLE_ID_PREVIEW") unless apple_id
+
   # Use match in readonly mode to fetch existing App Store signing certificates and provisioning profiles.
   match(
     type: "appstore",
@@ -71,48 +77,48 @@ def ios_testflight_deploy!(options = {})
   # Strip bitcode manually from Hermes binary to avoid App Store submission errors.
   # Hermes framework often includes bitcode sections that aren't removed by default tools.
   sh <<~BASH
-      echo "🔍 Stripping bitcode from Hermes binary before uploading to TestFlight..."
+    echo "🔍 Stripping bitcode from Hermes binary before uploading to TestFlight..."
 
-      if [ -f "#{hermes_bin}" ]; then
-        echo "📦 Found Hermes binary. Stripping bitcode..."
-        xcrun bitcode_strip -r "#{hermes_bin}" -o "#{hermes_bin}"
+    if [ -f "#{hermes_bin}" ]; then
+      echo "📦 Found Hermes binary. Stripping bitcode..."
+      xcrun bitcode_strip -r "#{hermes_bin}" -o "#{hermes_bin}"
 
-        echo "🔬 Verifying..."
-        if otool -l "#{hermes_bin}" | grep -i bitcode; then
-          echo "❌ Bitcode still present! Failing the build."
-          exit 1
-        else
-          echo "✅ Bitcode successfully stripped."
-        fi
-
-        echo "🔐 Re-signing .app after modification..."
-        CERT_ID=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n1 | awk '{print $2}')
-
-        for FRAMEWORK in "#{app_path}/Frameworks/"*; do
-          if [ -d "$FRAMEWORK" ]; then
-            /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none "$FRAMEWORK"
-          fi
-        done
-
-        /usr/bin/codesign --force --sign "$CERT_ID" \
-          --timestamp=none \
-          --preserve-metadata=entitlements \
-          "#{app_path}"
-
-        echo "✅ Code signing complete."
+      echo "🔬 Verifying..."
+      if otool -l "#{hermes_bin}" | grep -i bitcode; then
+        echo "❌ Bitcode still present! Failing the build."
+        exit 1
       else
-        echo "⚠️ Hermes binary not found at expected path: #{hermes_bin}"
-        echo "Skipping bitcode stripping."
+        echo "✅ Bitcode successfully stripped."
       fi
 
-      echo "📦 Repacking IPA..."
-      cd temp_payload && zip -r -y ../fixed.ipa * >/dev/null && cd ..
-      mv fixed.ipa "#{ipa_path}"
+      echo "🔐 Re-signing .app after modification..."
+      CERT_ID=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n1 | awk '{print $2}')
 
-      rm -rf temp_payload
-    BASH
+      for FRAMEWORK in "#{app_path}/Frameworks/"*; do
+        if [ -d "$FRAMEWORK" ]; then
+          /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none "$FRAMEWORK"
+        fi
+      done
+
+      /usr/bin/codesign --force --sign "$CERT_ID" \
+        --timestamp=none \
+        --preserve-metadata=entitlements \
+        "#{app_path}"
+
+      echo "✅ Code signing complete."
+    else
+      echo "⚠️ Hermes binary not found at expected path: #{hermes_bin}"
+      echo "Skipping bitcode stripping."
+    fi
+
+    echo "📦 Repacking IPA..."
+    cd temp_payload && zip -r -y ../fixed.ipa * >/dev/null && cd ..
+    mv fixed.ipa "#{ipa_path}"
+
+    rm -rf temp_payload
+  BASH
   # Upload the build to TestFlight (internal only) with a changelog indicating the PR number.
-  begin  
+  begin
     upload_to_testflight(
       changelog: "PR ##{pr_number} Build - automated upload",
       distribute_external: false,

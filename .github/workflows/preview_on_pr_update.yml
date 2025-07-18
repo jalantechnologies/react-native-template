@@ -208,15 +208,15 @@ jobs:
     runs-on: macos-14 
     timeout-minutes: 30
     env:
+      ENV: preview
       NO_FLIPPER: 1 # When set to 1, skips installing all Flipper-related dependencies so they’re removed from the build
       IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
       IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
-      IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID_PREVIEW }}
+      IOS_APPLE_ID_PREVIEW: ${{ secrets.IOS_APPLE_ID_PREVIEW }}
       IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
       IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
       IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
       IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
-      IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
       IOS_APP_IDENTIFIER_PREVIEW: ${{ secrets.IOS_APP_IDENTIFIER_PREVIEW }}
       IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
       IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}

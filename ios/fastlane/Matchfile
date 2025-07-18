@@ -1,2 +1,12 @@
 git_url(ENV["IOS_MATCH_REPOSITORY_URL"])
-app_identifier(ENV['IOS_APP_IDENTIFIER_PREVIEW'])
+
+env = ENV["ENV"]
+
+app_identifier case env
+when "preview"
+  ENV["IOS_APP_IDENTIFIER_PREVIEW"]
+when "production"
+  ENV["IOS_APP_IDENTIFIER_PRODUCTION"]
+else
+  UI.user_error!("❌ Invalid ENV value: #{env}")
+end

@@ -1,3 +1,23 @@
-app_identifier(ENV['IOS_APP_IDENTIFIER_PREVIEW'])
-apple_id(ENV['IOS_DEV_EMAIL'])               
-team_id(ENV['IOS_APP_STORE_TEAM_ID'])
+env = ENV["ENV"]
+
+selected_app_identifier = case env
+when "preview"
+  ENV["IOS_APP_IDENTIFIER_PREVIEW"]
+when "production"
+  ENV["IOS_APP_IDENTIFIER_PRODUCTION"]
+else
+  UI.user_error!("❌ Invalid ENV value: #{env}")
+end
+
+selected_apple_id = case env
+when "preview"
+  ENV["IOS_APPLE_ID_PREVIEW"]
+when "production"
+  ENV["IOS_APPLE_ID_PRODUCTION"]
+else
+  UI.user_error!("❌ Invalid ENV value: #{env}")
+end
+
+app_identifier(selected_app_identifier)
+apple_id(selected_apple_id)
+team_id(ENV["IOS_TEAM_ID"])

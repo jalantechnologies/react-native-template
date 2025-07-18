@@ -211,7 +211,7 @@ jobs:
       NO_FLIPPER: 1 # When set to 1, skips installing all Flipper-related dependencies so they’re removed from the build
       IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
       IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
-      IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
+      IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID_PREVIEW }}
       IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
       IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
       IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
@@ -332,11 +332,11 @@ jobs:
         run: |
           brew install gh # Only needed if gh CLI is not pre-installed
           gh auth setup-git
-          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$IOS_APPLE_ID/testflight/ios"
+          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$IOS_APPLE_ID_PREVIEW/testflight/ios"
           gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
 
           - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
-          - 🆔 App ID: \`com.bettrsw.boilerplate.preview\`
+          - 🆔 App ID: \`com.bettrsw.boilerplate.app.preview\`
           - 🧱 Build Hash: \`$BUILD_HASH\`
 
           _This build was deployed by CI using Fastlane._"         

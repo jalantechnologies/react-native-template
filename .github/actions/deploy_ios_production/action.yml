@@ -20,6 +20,12 @@ inputs:
   IOS_MATCH_PASSWORD:
     required: true
     description: "Password for Match"
+  IOS_APPLE_ID_PRODUCTION:
+    required: true
+    description: "Apple ID for production deployment"
+  IOS_APP_IDENTIFIER_PRODUCTION:
+    required: true
+    description: "App Identifier for production deployment"
 
 runs:
   using: "composite"
@@ -94,3 +100,5 @@ runs:
         IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
         IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
         IOS_MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}
+        IOS_APPLE_ID_PRODUCTION: ${{ secrets.IOS_APPLE_ID_PRODUCTION }}
+        IOS_APP_IDENTIFIER_PRODUCTION: ${{ secrets.IOS_APP_IDENTIFIER_PRODUCTION }}

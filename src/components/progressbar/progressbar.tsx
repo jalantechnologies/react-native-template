@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#ECECEC',
+    backgroundColor: 'secondary.50',
     borderRadius: 4,
     overflow: 'hidden',
     height: 10,
@@ -56,7 +56,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress, color = 'primary' }
   const fillColor =
     (theme.colors as unknown as Record<string, Record<string, string>>)?.[color]?.['500'] ??
     theme.colors.primary['500'] ??
-    '#007AFF';
+    'primary.700';
 
   useEffect(() => {
     Animated.timing(animatedValue, {

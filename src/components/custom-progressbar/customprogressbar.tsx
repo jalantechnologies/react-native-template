@@ -477,8 +477,8 @@ const CustomProgressBar = ({
 
 Wrapper.defaultProps = {
   title: '',
-  bgCard: '#F5F5F5',
-  primaryText: '#000000',
+  bgCard: 'secondary.50',
+  primaryText: 'secondary.900',
 };
 
 export default CustomProgressBar;

@@ -76,7 +76,7 @@ const Stepper: React.FC<StepperProps> = ({
 
             const bgColor = isFailed ? resolvedFailed : isCompleted ? resolvedSuccess : 'white';
 
-            const borderColor = isFailed || isCompleted ? bgColor : '#9ca3af';
+            const borderColor = isFailed || isCompleted ? bgColor : 'secondary.500';
             const stepText = isFailed ? '✕' : isCompleted ? '✓' : `${i + 1}`;
 
             return (
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#374151',
+    color: 'secondary.700',
     lineHeight: 20,
   },
   container: {
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    color: '#6b7280',
+    color: 'secondary.600',
     fontWeight: '500',
     fontSize: 14,
     textAlign: 'center',
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     height: 1,
     borderStyle: 'dotted',
     borderWidth: 1,
-    borderColor: '#9ca3af',
+    borderColor: 'secondary.500',
     marginHorizontal: 4,
   },
   tooltipContainer: {
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     minWidth: 100,
     maxWidth: 150,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: 'secondary.900',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,

@@ -47,11 +47,11 @@ const LinearProgressBar: React.FC<LinearProgressProps> = props => {
               w="8"
               h="8"
               rounded="full"
-              bg="#087122"
+              bg="success.700"
               alignItems="center"
               justifyContent="center"
             >
-              <Text fontSize="18px" color="#FFFFFF">
+              <Text fontSize="18px" color="secondary.50">
                 ✔
               </Text>
             </Box>

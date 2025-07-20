@@ -55,7 +55,7 @@ const Tooltip: React.FC<TooltipProps> = props => {
     ? theme.colors.white
     : typeof theme.colors[resolvedVariant] === 'object'
     ? (theme.colors[resolvedVariant] as any)['500']
-    : theme.colors.gray?.['500'] || '#000';
+    : theme.colors.gray?.['500'] || 'secondary.900';
 
   const isVertical = resolvedPosition === 'top' || resolvedPosition === 'bottom';
   const isReverse = resolvedPosition === 'top' || resolvedPosition === 'left';

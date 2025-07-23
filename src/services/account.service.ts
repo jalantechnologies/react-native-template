@@ -1,5 +1,4 @@
 import { AccessToken, APIResponse } from '../types';
-
 import { APIService } from './api-service';
 
 export class AccountService extends APIService {
@@ -26,6 +25,9 @@ export class AccountService extends APIService {
   };
 
   deleteAccount = async (userAccessToken: AccessToken): Promise<APIResponse> => {
-    return this.delete(`/accounts/${userAccessToken.accountId}`);
+    return this.delete(
+      `/accounts/${userAccessToken.accountId}`,
+      this.getAuthorizationHeader(userAccessToken.token),
+    );
   };
 }

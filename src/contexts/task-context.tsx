@@ -44,7 +44,7 @@ export const TaskContextProvider: React.FC<PropsWithChildren> = ({ children }) =
     setIsTasksLoading(true);
     const { data, error } = await taskService.getAllTasks(getAccessToken());
     if (data) {
-      setTasks(data.map((task: Task) => new Task({ ...task })));
+      setTasks(data.items.map((task: Task) => new Task({ ...task })));
     }
     if (error) {
       setIsTasksLoading(false);

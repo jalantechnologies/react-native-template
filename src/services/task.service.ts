@@ -10,29 +10,38 @@ export class TaskService extends APIService {
     userAccessToken: AccessToken,
   ): Promise<APIResponse> => {
     return this.post(
-      '/tasks',
+      `/accounts/${userAccessToken.accountId}/tasks`,
       { title, description },
       this.getAuthorizationHeader(userAccessToken.token),
     );
   };
 
   getAllTasks = async (userAccessToken: AccessToken): Promise<APIResponse> => {
-    return this.get('/tasks', this.getAuthorizationHeader(userAccessToken.token));
+    return this.get(
+      `/accounts/${userAccessToken.accountId}/tasks`,
+      this.getAuthorizationHeader(userAccessToken.token),
+    );
   };
 
   getTask = async (task: Task, userAccessToken: AccessToken): Promise<APIResponse> => {
-    return this.get(`/tasks/${task.id}`, this.getAuthorizationHeader(userAccessToken.token));
+    return this.get(
+      `/accounts/${userAccessToken.accountId}/tasks/${task.id}`,
+      this.getAuthorizationHeader(userAccessToken.token),
+    );
   };
 
   updateTask = async (task: Task, userAccessToken: AccessToken): Promise<APIResponse> => {
     return this.patch(
-      `/tasks/${task.id}`,
+      `/accounts/${userAccessToken.accountId}/tasks/${task.id}`,
       task,
       this.getAuthorizationHeader(userAccessToken.token),
     );
   };
 
   deleteTask = async (task: Task, userAccessToken: AccessToken): Promise<APIResponse> => {
-    return this.delete(`/tasks/${task.id}`, this.getAuthorizationHeader(userAccessToken.token));
+    return this.delete(
+      `/accounts/${userAccessToken.accountId}/tasks/${task.id}`,
+      this.getAuthorizationHeader(userAccessToken.token),
+    );
   };
 }

@@ -290,6 +290,7 @@ jobs:
           security create-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
           security set-keychain-settings -lut 21600 ci.keychain
           security unlock-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
+          security list-keychains -s ci.keychain
           security default-keychain -d user -s ci.keychain
       
       - name: Export Match password

@@ -4,9 +4,14 @@ platform :ios do
   # Fetch App Store and Development signing certificates for CI environment.
   # Both are required to unlock build and test capabilities in GitHub Actions.
   desc "Fetch certificates for CI"
-  lane :ci_signing_setup do
-    match(type: "appstore", readonly: false, keychain_name: "ci.keychain", keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"])
-  end
+lane :ci_signing_setup do
+  match(
+    type: "appstore",
+    readonly: false,
+    keychain_name: "ci.keychain",
+    keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"]
+  )
+end
   # Deploys a PR build to TestFlight (internal testers only).
   # This lane is triggered from CI and uses environment variables to stay generic.
   # Upload fails if required env vars or bundle outputs are missing.

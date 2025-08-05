@@ -211,7 +211,7 @@ jobs:
       ENV: preview
       NO_FLIPPER: 1 # When set to 1, skips installing all Flipper-related dependencies so they’re removed from the build
       IOS_MATCH_PASSWORD_PREVIEW: ${{ secrets.IOS_MATCH_PASSWORD_PREVIEW }}
-      IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
+      IOS_MATCH_REPOSITORY_URL_PREVIEW: ${{ secrets.IOS_MATCH_REPOSITORY_URL_PREVIEW }}
       IOS_APPLE_ID_PREVIEW: ${{ secrets.IOS_APPLE_ID_PREVIEW }}
       IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
       IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
@@ -275,7 +275,7 @@ jobs:
       - name: Set up SSH for Match
         uses: webfactory/ssh-agent@v0.7.0
         with:
-          ssh-private-key: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
+          ssh-private-key: ${{ secrets.IOS_MATCH_DEPLOY_KEY_PREVIEW }}
 
       - name: Add GitHub to known hosts
         run: |

@@ -201,26 +201,20 @@ jobs:
               🏁 [View Release in Google Play Internal Track](${playUrl})`
             });
 
-  testflight_deploy:
-    name: TestFlight Preview Deploy
+  ios_build_artifact:
+    name: iOS Build (Downloadable)
     needs: [checks]
-    if: github.event.action != 'closed'
-    runs-on: macos-14 
+    runs-on: macos-14
     timeout-minutes: 30
     env:
-      NO_FLIPPER: 1 # When set to 1, skips installing all Flipper-related dependencies so they’re removed from the build
-      IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
-      IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
-      IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
+      NO_FLIPPER: 1
+      IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD_PRODUCTION }}
+      IOS_MATCH_REPOSITORY_URL_PRODUCTION: ${{ secrets.IOS_MATCH_REPOSITORY_URL_PRODUCTION }}
+      IOS_APPLE_ID_PRODUCTION: ${{ secrets.IOS_APPLE_ID_PRODUCTION }}
       IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
-      IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
-      IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-      IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
-      IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
-      IOS_APP_IDENTIFIER_PREVIEW: ${{ secrets.IOS_APP_IDENTIFIER_PREVIEW }}
+      IOS_APP_IDENTIFIER_PRODUCTION: ${{ secrets.IOS_APP_IDENTIFIER_PRODUCTION }}
       IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
       IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
-      PR_NUMBER: ${{ github.event.pull_request.number }}
 
     steps:
       - uses: actions/checkout@v3
@@ -230,16 +224,16 @@ jobs:
         with:
           ruby-version: 3.1
 
-      - name: Select Xcode 16.0
+      - name: Select Xcode 16.2
         run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
       - name: Install Bundler
         run: gem install bundler
-      
+
       - name: Install Ruby dependencies
         working-directory: ios
         run: bundle install
-      
+
       - name: Set Node Version
         uses: actions/setup-node@v4
         with:
@@ -271,7 +265,7 @@ jobs:
           rm -f Podfile.lock
           bundle exec pod install --repo-update
 
-      # Set up SSH key so Match can pull signing identities from private Git repo
+      # Set up SSH so Match can pull certs
       - name: Set up SSH for Match
         uses: webfactory/ssh-agent@v0.7.0
         with:
@@ -282,61 +276,38 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Set GIT_SSH_COMMAND
-        run: echo "GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no" >> $GITHUB_ENV
-
-      - name: Setup Keychain
+      - name: Set up keychain
         run: |
           security create-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
           security set-keychain-settings -lut 21600 ci.keychain
           security unlock-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
           security default-keychain -d user -s ci.keychain
-      
-      - name: Export Match password
-        run: echo "MATCH_PASSWORD=${{ secrets.IOS_MATCH_PASSWORD }}" >> $GITHUB_ENV
 
-      # Pull certificates and provisioning profiles using Fastlane Match
-      - name: Install code signing certificates via Match
+      - name: Export Match password
+        run: echo "MATCH_PASSWORD=${{ secrets.IOS_MATCH_PASSWORD_PRODUCTION }}" >> $GITHUB_ENV
+
+      - name: Install signing certificates
         working-directory: ios
-        run: |
-          echo "🔐 Installing certs..."
-          bundle exec fastlane ci_signing_setup
+        run: bundle exec fastlane ci_signing_setup
 
       - name: Clear Derived Data
-        run: |
-          rm -rf ~/Library/Developer/Xcode/DerivedData
+        run: rm -rf ~/Library/Developer/Xcode/DerivedData
 
       - name: Bundle React Native for iOS
         run: |
-          echo "Working directory: $(pwd)"
-          ls -la ..
-          ENVFILE=.env.preview NODE_ENV=production npx react-native bundle \
+          NODE_ENV=production npx react-native bundle \
             --entry-file index.js \
             --platform ios \
             --dev false \
             --bundle-output ios/main.jsbundle \
-            --assets-dest . \
+            --assets-dest ios
 
-      - name: iOS PR Deploy to TestFlight
-        working-directory: ios 
-        run: |
-          bundle exec fastlane ios pr_deploy
+      - name: Build iOS app for App Store
+        working-directory: ios
+        run: bundle exec fastlane ios build_ipa
 
-      # Comment on the PR with a link to the TestFlight build in App Store Connect
-      - name: Post PR comment with TestFlight link
-        if: ${{ github.event.pull_request }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          BUILD_HASH: ${{ github.sha }}
-        run: |
-          brew install gh # Only needed if gh CLI is not pre-installed
-          gh auth setup-git
-          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$IOS_APPLE_ID/testflight/ios"
-          gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
-
-          - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
-          - 🆔 App ID: \`com.bettrsw.boilerplate.preview\`
-          - 🧱 Build Hash: \`$BUILD_HASH\`
-
-          _This build was deployed by CI using Fastlane._"         
+      - name: Upload IPA as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build
+          path: ios/*.ipa

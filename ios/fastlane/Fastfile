@@ -44,4 +44,26 @@ platform :ios do
       api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64']
     )
   end
+  desc "Build production IPA for manual upload"
+  lane :build_ipa do
+    match(
+      type: "appstore",
+      readonly: true,
+      keychain_name: "ci.keychain",
+      keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"]
+    )
+
+    build_app(
+      scheme: "Boilerplate",
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          ENV["IOS_APP_IDENTIFIER_PRODUCTION"] => "match AppStore #{ENV["IOS_APP_IDENTIFIER_PRODUCTION"]}"
+        }
+      },
+      output_directory: "./build",
+      output_name: "Boilerplate.ipa"
+    )
+  end
+
 end

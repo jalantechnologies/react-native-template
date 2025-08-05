@@ -1,2 +1,3 @@
 git_url(ENV["IOS_MATCH_REPOSITORY_URL"])
-app_identifier(ENV['IOS_APP_IDENTIFIER_PREVIEW'])
+app_identifier(ENV['IOS_APP_IDENTIFIER_PRODUCTION'])
+type ENV["MATCH_TYPE"] || "appstore"

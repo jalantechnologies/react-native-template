@@ -10,7 +10,8 @@ platform :ios do
     readonly: true,
     keychain_name: "ci.keychain",
     keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
-    app_identifier: ENV["IOS_APP_IDENTIFIER_PRODUCTION"]
+    app_identifier: ENV["IOS_APP_IDENTIFIER_PRODUCTION"],
+    platform: "ios"
   )
 
   match(
@@ -18,7 +19,8 @@ platform :ios do
     readonly: true,
     keychain_name: "ci.keychain",
     keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
-    app_identifier: ENV["IOS_APP_IDENTIFIER_PRODUCTION"]
+    app_identifier: ENV["IOS_APP_IDENTIFIER_PRODUCTION"],
+    platform: "ios"
   )
 end
 

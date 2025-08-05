@@ -7,7 +7,7 @@ platform :ios do
 lane :ci_signing_setup do
   match(
     type: "appstore",
-    readonly: false,
+    readonly: true,
     keychain_name: "ci.keychain",
     keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"]
   )

@@ -14,3 +14,4 @@ end
 
 keychain_name("ci.keychain")
 keychain_password(ENV["IOS_KEYCHAIN_PASSWORD"])
+type("appstore")

@@ -6,7 +6,6 @@ require 'fastlane_core/ui/ui'
 def ios_testflight_cleanup!(pr_number:, api_key_id:, issuer_id:, api_key_b64:)
   app_identifier = ENV["IOS_APP_IDENTIFIER_PREVIEW"]
   FastlaneCore::UI.user_error!("Missing IOS_APP_IDENTIFIER_PREVIEW") unless app_identifier
-
   # Decode API key
   decoded_key = Base64.decode64(api_key_b64)
 
@@ -29,7 +28,7 @@ def ios_testflight_cleanup!(pr_number:, api_key_id:, issuer_id:, api_key_b64:)
       FastlaneCore::UI.message("🧹 Expiring build #{build_version_str} (#{build.id}) for PR ##{pr_number}")
       begin
         build = Spaceship::ConnectAPI::Build.get(build_id: build.id)
-        
+
         unless build
           FastlaneCore::UI.user_error!("Build with ID #{build.id} not found.")
         end

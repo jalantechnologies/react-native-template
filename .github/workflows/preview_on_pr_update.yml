@@ -214,7 +214,11 @@ jobs:
       IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
       IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
       IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
-
+      IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+      IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
+      
+      
     steps:
       - uses: actions/checkout@v3
 
@@ -223,7 +227,7 @@ jobs:
         with:
           ruby-version: 3.1
 
-      - name: Select Xcode 16.2
+      - name: Select Xcode 16.0
         run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
       - name: Install Bundler
@@ -275,12 +279,15 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
+      - name: Set GIT_SSH_COMMAND
+        run: echo "GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no" >> $GITHUB_ENV
+
       - name: Set up keychain
         run: |
-          security create-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
-          security set-keychain-settings -lut 21600 ci.keychain
-          security unlock-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
-          security default-keychain -d user -s ci.keychain
+          security create-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ios.keychain
+          security set-keychain-settings -lut 21600 ios.keychain
+          security unlock-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ios.keychain
+          security default-keychain -d user -s ios.keychain
 
       - name: Export Match password
         run: echo "MATCH_PASSWORD=${{ secrets.IOS_MATCH_PASSWORD_PRODUCTION }}" >> $GITHUB_ENV

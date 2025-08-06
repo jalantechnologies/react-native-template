@@ -204,7 +204,7 @@ jobs:
   ios_build_artifact:
     name: iOS Build (Downloadable)
     needs: [checks]
-    runs-on: macos-16
+    runs-on: macos-14
     timeout-minutes: 30
     env:
       NO_FLIPPER: 1

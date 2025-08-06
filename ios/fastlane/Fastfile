@@ -9,22 +9,19 @@ platform :ios do
       keychain_name: "ios.keychain",
       keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"]
     )
-  end
-  
 
-  build_app(
-    clean: true,
-    scheme: scheme,
-    export_method: "app-store",
-    xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER=\"match AppStore #{app_identifier}\" PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
-    export_options: {
-      compileBitcode: false,# Bitcode is stripped manually below due to Hermes compatibility issues.
-      signingStyle: "manual",
-      provisioningProfiles: {
-        app_identifier => "match AppStore #{app_identifier}"
+    build_app(
+      clean: true,
+      scheme: scheme,
+      export_method: "app-store",
+      xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{ENV['IOS_TEAM_ID']} PROVISIONING_PROFILE_SPECIFIER=\"match AppStore #{ENV['IOS_APP_IDENTIFIER']}\" PRODUCT_BUNDLE_IDENTIFIER=#{ENV['IOS_APP_IDENTIFIER']}",
+      export_options: {
+        compileBitcode: false, # Bitcode is stripped manually below due to Hermes compatibility issues.
+        signingStyle: "manual",
+        provisioningProfiles: {
+          ENV['IOS_APP_IDENTIFIER'] => "match AppStore #{ENV['IOS_APP_IDENTIFIER']}"
+        }
       }
-    },
-  )
+    )
   end
-
 end

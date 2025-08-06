@@ -11,26 +11,20 @@ platform :ios do
     )
   end
   
-  desc "Build production IPA for manual upload"
-  lane :build_ipa do
-    match(
-      type: "appstore",
-      readonly: true,
-      keychain_name: "ios.keychain",
-      keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"]
-    )
 
-    build_app(
-      scheme: "Boilerplate",
-      export_method: "app-store",
-      export_options: {
-        provisioningProfiles: {
-          ENV["IOS_APP_IDENTIFIER_PRODUCTION"] => "match AppStore #{ENV["IOS_APP_IDENTIFIER_PRODUCTION"]}"
-        }
-      },
-      output_directory: "./build",
-      output_name: "Boilerplate.ipa"
-    )
+  build_app(
+    clean: true,
+    scheme: scheme,
+    export_method: "app-store",
+    xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER=\"match AppStore #{app_identifier}\" PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
+    export_options: {
+      compileBitcode: false,# Bitcode is stripped manually below due to Hermes compatibility issues.
+      signingStyle: "manual",
+      provisioningProfiles: {
+        app_identifier => "match AppStore #{app_identifier}"
+      }
+    },
+  )
   end
 
 end

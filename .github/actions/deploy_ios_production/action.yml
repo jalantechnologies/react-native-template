@@ -14,12 +14,12 @@ inputs:
   IOS_MATCH_REPOSITORY_URL:
     required: true
     description: "Repository URL for Match"
-  IOS_MATCH_KEYCHAIN_PASSWORD:
+  IOS_KEYCHAIN_PASSWORD:
     required: true
     description: "Keychain password for Match"
   IOS_MATCH_PASSWORD:
     required: true
-    description: "Password for Match"
+    description: "Password for Match for production deployment"
   IOS_APPLE_ID_PRODUCTION:
     required: true
     description: "Apple ID for production deployment"

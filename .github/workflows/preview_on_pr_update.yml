@@ -287,11 +287,11 @@ jobs:
 
       - name: Setup Keychain
         run: |
-          security create-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
-          security set-keychain-settings -lut 21600 ci.keychain
-          security unlock-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ci.keychain
-          security list-keychains -s ci.keychain
-          security default-keychain -d user -s ci.keychain
+          security create-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ios.keychain
+          security set-keychain-settings -lut 21600 ios.keychain
+          security unlock-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ios.keychain
+          security list-keychains -s ios.keychain
+          security default-keychain -d user -s ios.keychain
       
       - name: Export Match password
         run: echo "MATCH_PASSWORD=${{ secrets.IOS_MATCH_PASSWORD_PREVIEW }}" >> $GITHUB_ENV

@@ -1,7 +1,7 @@
 default_platform(:ios)
 
 platform :ios do
-  desc "Fetch certificates for CI"
+  desc "Setup code signing"
   lane :ci_signing_setup do
     match(
       type: "appstore",
@@ -9,14 +9,22 @@ platform :ios do
       keychain_name: "ios.keychain",
       keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"]
     )
+  end
 
+  desc "Build IPA for App Store"
+  lane :build_ipa do
     build_app(
       clean: true,
-      scheme: scheme,
+      scheme: ENV["IOS_SCHEME"] || "YourApp", # replace or set in secrets
       export_method: "app-store",
-      xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{ENV['IOS_TEAM_ID']} PROVISIONING_PROFILE_SPECIFIER=\"match AppStore #{ENV['IOS_APP_IDENTIFIER']}\" PRODUCT_BUNDLE_IDENTIFIER=#{ENV['IOS_APP_IDENTIFIER']}",
+      output_directory: "./", # output .ipa in ios/
+      xcargs: "CODE_SIGN_STYLE=Manual " \
+              "CODE_SIGN_IDENTITY=\"Apple Distribution\" " \
+              "DEVELOPMENT_TEAM=#{ENV['IOS_TEAM_ID']} " \
+              "PROVISIONING_PROFILE_SPECIFIER=\"match AppStore #{ENV['IOS_APP_IDENTIFIER']}\" " \
+              "PRODUCT_BUNDLE_IDENTIFIER=#{ENV['IOS_APP_IDENTIFIER']}",
       export_options: {
-        compileBitcode: false, # Bitcode is stripped manually below due to Hermes compatibility issues.
+        compileBitcode: false,
         signingStyle: "manual",
         provisioningProfiles: {
           ENV['IOS_APP_IDENTIFIER'] => "match AppStore #{ENV['IOS_APP_IDENTIFIER']}"

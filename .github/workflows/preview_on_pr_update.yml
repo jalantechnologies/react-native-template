@@ -206,18 +206,18 @@ jobs:
     needs: [checks]
     runs-on: macos-14
     timeout-minutes: 30
+
     env:
       NO_FLIPPER: 1
-      IOS_MATCH_PASSWORD_PRODUCTION: ${{ secrets.IOS_MATCH_PASSWORD_PRODUCTION }}
+      MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD_PRODUCTION }}
       IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
-      IOS_APP_IDENTIFIER_PRODUCTION: ${{ secrets.IOS_APP_IDENTIFIER_PRODUCTION }}
+      IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER_PRODUCTION }}
       IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
-      IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
+      IOS_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
       IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
-      IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
-      IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-      IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
-      
+      APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
       
     steps:
       - uses: actions/checkout@v3
@@ -227,7 +227,7 @@ jobs:
         with:
           ruby-version: 3.1
 
-      - name: Select Xcode 16.0
+      - name: Select Xcode 16.2
         run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
       - name: Install Bundler
@@ -237,7 +237,7 @@ jobs:
         working-directory: ios
         run: bundle install
 
-      - name: Set Node Version
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -245,10 +245,9 @@ jobs:
       - name: Install Yarn
         run: npm install -g yarn
 
-      - name: Install dependencies
+      - name: Install JS dependencies
         run: yarn install
 
-      # Patch Boost podspec to use a stable source and checksum to prevent flaky builds
       - name: Patch Boost Podspec with Custom Source
         working-directory: node_modules/react-native/third-party-podspecs
         run: |
@@ -262,13 +261,12 @@ jobs:
           { print }
           ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
 
-      - name: Install CocoaPods dependencies
+      - name: Install CocoaPods
         working-directory: ios
         run: |
           rm -f Podfile.lock
           bundle exec pod install --repo-update
 
-      # Set up SSH so Match can pull certs
       - name: Set up SSH for Match
         uses: webfactory/ssh-agent@v0.7.0
         with:
@@ -282,15 +280,12 @@ jobs:
       - name: Set GIT_SSH_COMMAND
         run: echo "GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no" >> $GITHUB_ENV
 
-      - name: Set up keychain
+      - name: Set up macOS keychain
         run: |
-          security create-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ios.keychain
+          security create-keychain -p $IOS_KEYCHAIN_PASSWORD ios.keychain
           security set-keychain-settings -lut 21600 ios.keychain
-          security unlock-keychain -p ${{ secrets.IOS_KEYCHAIN_PASSWORD }} ios.keychain
+          security unlock-keychain -p $IOS_KEYCHAIN_PASSWORD ios.keychain
           security default-keychain -d user -s ios.keychain
-
-      - name: Export Match password
-        run: echo "MATCH_PASSWORD=${{ secrets.IOS_MATCH_PASSWORD_PRODUCTION }}" >> $GITHUB_ENV
 
       - name: Install signing certificates
         working-directory: ios
@@ -299,7 +294,7 @@ jobs:
       - name: Clear Derived Data
         run: rm -rf ~/Library/Developer/Xcode/DerivedData
 
-      - name: Bundle React Native for iOS
+      - name: Bundle React Native JS
         run: |
           NODE_ENV=production npx react-native bundle \
             --entry-file index.js \
@@ -308,11 +303,11 @@ jobs:
             --bundle-output ios/main.jsbundle \
             --assets-dest ios
 
-      - name: Build iOS app for App Store
+      - name: Build IPA for App Store
         working-directory: ios
-        run: bundle exec fastlane ios build_ipa
+        run: bundle exec fastlane build_ipa
 
-      - name: Upload IPA as artifact
+      - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
           name: ios-build

@@ -77,48 +77,48 @@ def ios_testflight_deploy!(options = {})
   # Strip bitcode manually from Hermes binary to avoid App Store submission errors.
   # Hermes framework often includes bitcode sections that aren't removed by default tools.
   sh <<~BASH
-    echo "🔍 Stripping bitcode from Hermes binary before uploading to TestFlight..."
+      echo "🔍 Stripping bitcode from Hermes binary before uploading to TestFlight..."
 
-    if [ -f "#{hermes_bin}" ]; then
-      echo "📦 Found Hermes binary. Stripping bitcode..."
-      xcrun bitcode_strip -r "#{hermes_bin}" -o "#{hermes_bin}"
+      if [ -f "#{hermes_bin}" ]; then
+        echo "📦 Found Hermes binary. Stripping bitcode..."
+        xcrun bitcode_strip -r "#{hermes_bin}" -o "#{hermes_bin}"
 
-      echo "🔬 Verifying..."
-      if otool -l "#{hermes_bin}" | grep -i bitcode; then
-        echo "❌ Bitcode still present! Failing the build."
-        exit 1
+        echo "🔬 Verifying..."
+        if otool -l "#{hermes_bin}" | grep -i bitcode; then
+          echo "❌ Bitcode still present! Failing the build."
+          exit 1
+        else
+          echo "✅ Bitcode successfully stripped."
+        fi
+
+        echo "🔐 Re-signing .app after modification..."
+        CERT_ID=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n1 | awk '{print $2}')
+
+        for FRAMEWORK in "#{app_path}/Frameworks/"*; do
+          if [ -d "$FRAMEWORK" ]; then
+            /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none "$FRAMEWORK"
+          fi
+        done
+
+        /usr/bin/codesign --force --sign "$CERT_ID" \
+          --timestamp=none \
+          --preserve-metadata=entitlements \
+          "#{app_path}"
+
+        echo "✅ Code signing complete."
       else
-        echo "✅ Bitcode successfully stripped."
+        echo "⚠️ Hermes binary not found at expected path: #{hermes_bin}"
+        echo "Skipping bitcode stripping."
       fi
 
-      echo "🔐 Re-signing .app after modification..."
-      CERT_ID=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n1 | awk '{print $2}')
+      echo "📦 Repacking IPA..."
+      cd temp_payload && zip -r -y ../fixed.ipa * >/dev/null && cd ..
+      mv fixed.ipa "#{ipa_path}"
 
-      for FRAMEWORK in "#{app_path}/Frameworks/"*; do
-        if [ -d "$FRAMEWORK" ]; then
-          /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none "$FRAMEWORK"
-        fi
-      done
-
-      /usr/bin/codesign --force --sign "$CERT_ID" \
-        --timestamp=none \
-        --preserve-metadata=entitlements \
-        "#{app_path}"
-
-      echo "✅ Code signing complete."
-    else
-      echo "⚠️ Hermes binary not found at expected path: #{hermes_bin}"
-      echo "Skipping bitcode stripping."
-    fi
-
-    echo "📦 Repacking IPA..."
-    cd temp_payload && zip -r -y ../fixed.ipa * >/dev/null && cd ..
-    mv fixed.ipa "#{ipa_path}"
-
-    rm -rf temp_payload
-  BASH
+      rm -rf temp_payload
+    BASH
   # Upload the build to TestFlight (internal only) with a changelog indicating the PR number.
-  begin
+  begin  
     upload_to_testflight(
       changelog: "PR ##{pr_number} Build - automated upload",
       distribute_external: false,

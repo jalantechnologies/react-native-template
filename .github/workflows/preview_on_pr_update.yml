@@ -204,11 +204,11 @@ jobs:
   ios_build_artifact:
     name: iOS Build (Downloadable)
     needs: [checks]
-    runs-on: macos-14
+    runs-on: macos-16
     timeout-minutes: 30
     env:
       NO_FLIPPER: 1
-      IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD_PRODUCTION }}
+      IOS_MATCH_PASSWORD_PRODUCTION: ${{ secrets.IOS_MATCH_PASSWORD_PRODUCTION }}
       IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
       IOS_APP_IDENTIFIER_PRODUCTION: ${{ secrets.IOS_APP_IDENTIFIER_PRODUCTION }}
       IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}

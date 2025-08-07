@@ -100,7 +100,6 @@ jobs:
   google_play_deploy:
     name: Google Play Internal Track Preview Deploy
     needs: [checks]
-    if: false
     # if: github.event.action != 'closed'
     runs-on: ubuntu-latest
 
@@ -179,8 +178,15 @@ jobs:
             --entry-file index.js \
             --bundle-output android/app/src/main/assets/index.android.bundle \
             --assets-dest android/app/src/main/res
+      - name: Install Android SDK Platform 35
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
 
-      - name: Build & Deploy to Firebase App Distribution
+      - name: List the Installed Android SDKs
+        run: |
+          ls -la $ANDROID_HOME/platforms
+
+      - name: Build & Deploy to Play Console Internal Testing
         working-directory: android
         run: bundle exec fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" json_key_file:"${{ env.ANDROID_JSON_KEY_FILE }}" package_name:"${{ env.ANDROID_APP_PACKAGE }}"
 
@@ -204,7 +210,8 @@ jobs:
   testflight_deploy:
     name: TestFlight Preview Deploy
     needs: [checks]
-    if: github.event.action != 'closed'
+    if: false
+    # if: github.event.action != 'closed'
     runs-on: macos-14 
     timeout-minutes: 30
     env:

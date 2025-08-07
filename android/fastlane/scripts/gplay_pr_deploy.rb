@@ -65,7 +65,7 @@ def gplay_pr_deploy(pr_number:, package_name:, json_key_file:)
     skip_upload_metadata: true, # Skip uploading metadata
     skip_upload_images: true, # Skip uploading images
     skip_upload_screenshots: true, # Skip uploading screenshots
-    release_status: "completed", # Set the release status to "completed"
+    release_status: "draft", # Set the release status to "draft"
     aab: aab_path # Path to the built AAB
   )
 

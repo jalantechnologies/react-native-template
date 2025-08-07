@@ -94,6 +94,7 @@ runs:
       shell: bash
       env:
         CI: true
+        ENV: production
         IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
         IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ID }}
         IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}

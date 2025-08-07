@@ -184,7 +184,7 @@ jobs:
       - name: Create bundle assets directories
         run: |
           mkdir -p android/app/src/main/assets
-          mkdir -p android/app/src/main/res
+          mkdir -p android/app/src/main/res_bundle
 
       - name: Generate JS bundle for preview APK
         run: |
@@ -193,7 +193,7 @@ jobs:
             --dev false \
             --entry-file index.js \
             --bundle-output android/app/src/main/assets/index.android.bundle \
-            --assets-dest android/app/src/main/res
+            --assets-dest android/app/src/main/res_bundle
 
       - name: Build & Deploy to Play Console Internal Testing
         working-directory: android

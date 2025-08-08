@@ -270,7 +270,7 @@ jobs:
       - name: Set up SSH for Match
         uses: webfactory/ssh-agent@v0.7.0
         with:
-          ssh-private-key: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
+          ssh-private-key: ${{ secrets.IOS_MATCH_DEPLOY_KEY_PRODUCTION }}
 
       - name: Add GitHub to known hosts
         run: |

@@ -303,9 +303,11 @@ jobs:
             --bundle-output ios/main.jsbundle \
             --assets-dest ios
 
-      - name: Build & Upload to TestFlight
+      - name: Build IPA & Upload to TestFlight
         working-directory: ios
-        run: bundle exec fastlane ci_build_and_upload
+        run: |
+          bundle exec fastlane build_ipa
+          IPA_OUTPUT_PATH=./YourApp.ipa bundle exec fastlane upload_existing_ipa
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4

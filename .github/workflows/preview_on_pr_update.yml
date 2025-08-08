@@ -325,15 +325,12 @@ jobs:
       APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
 
     steps:
-      - uses: actions/checkout@v3  # ✅ Get Fastfile
+      - uses: actions/checkout@v3
 
       - uses: actions/download-artifact@v4
         with:
           name: ios-build
-          path: ./  # download to root
-
-      - name: Move IPA into ios folder
-        run: mv ./*.ipa ios/
+          path: ./ios  # ⬅️ put it directly into ios/
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -341,6 +338,7 @@ jobs:
           ruby-version: 3.1
 
       - name: Install Bundler
+        working-directory: ios
         run: gem install bundler
 
       - name: Install Ruby dependencies

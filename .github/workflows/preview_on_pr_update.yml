@@ -303,48 +303,12 @@ jobs:
             --bundle-output ios/main.jsbundle \
             --assets-dest ios
 
-      - name: Build IPA for App Store
+      - name: Build & Upload to TestFlight
         working-directory: ios
-        run: bundle exec fastlane build_ipa
+        run: bundle exec fastlane ci_build_and_upload
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
           name: ios-build
           path: ios/*.ipa
-
-  ios_upload_testflight:
-    name: iOS Upload to TestFlight
-    needs: [ios_build_artifact]
-    runs-on: macos-14
-    timeout-minutes: 15
-
-    env:
-      APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
-      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-      APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: ios-build
-          path: ./ios  # ⬅️ put it directly into ios/
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.1
-
-      - name: Install Bundler
-        working-directory: ios
-        run: gem install bundler
-
-      - name: Install Ruby dependencies
-        working-directory: ios
-        run: bundle install
-
-      - name: Upload IPA to TestFlight
-        working-directory: ios
-        run: bundle exec fastlane upload_existing_ipa

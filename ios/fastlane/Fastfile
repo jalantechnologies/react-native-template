@@ -17,7 +17,8 @@ platform :ios do
       clean: true,
       scheme: ENV["IOS_SCHEME"] || "YourApp", # replace or set in secrets
       export_method: "app-store",
-      output_directory: "./",
+      output_directory: "./", # ensures ipa is in ios/ so upload_existing_ipa finds it
+      output_name: "#{ENV['IOS_SCHEME'] || 'YourApp'}.ipa",
       xcargs: "CODE_SIGN_STYLE=Manual " \
               "CODE_SIGN_IDENTITY=\"Apple Distribution\" " \
               "DEVELOPMENT_TEAM=#{ENV['IOS_TEAM_ID']} " \
@@ -35,9 +36,10 @@ platform :ios do
 
   desc "Upload existing IPA to TestFlight"
   lane :upload_existing_ipa do
-    ipa_path = Dir["./*.ipa"].first
+    # Explicitly check for ipa in the lane's working directory
+    ipa_path = Dir[File.join(File.dirname(__FILE__), "*.ipa")].first
     unless ipa_path
-      UI.user_error!("No IPA found in current directory")
+      UI.user_error!("No IPA found in current directory (#{File.dirname(__FILE__)})")
     end
 
     api_key = {
@@ -53,5 +55,11 @@ platform :ios do
       skip_submission: true,
       skip_waiting_for_build_processing: false
     )
+  end
+
+  desc "Build and upload in one go"
+  lane :ci_build_and_upload do
+    build_ipa
+    upload_existing_ipa
   end
 end

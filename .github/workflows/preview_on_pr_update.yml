@@ -320,19 +320,20 @@ jobs:
     timeout-minutes: 15
 
     env:
-      IOS_APP_IDENTIFIER_PRODUCTION: ${{ secrets.IOS_APP_IDENTIFIER_PRODUCTION }}
-      IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
       APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
       APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-      APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.APP_STORE_CONNECT_API_KEY_B64 }}
+      APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
 
     steps:
-      - uses: actions/checkout@v3  # ✅ Get the repo so ios/Fastfile exists
+      - uses: actions/checkout@v3  # ✅ Get Fastfile
 
       - uses: actions/download-artifact@v4
         with:
           name: ios-build
-          path: ios
+          path: ./  # download to root
+
+      - name: Move IPA into ios folder
+        run: mv ./*.ipa ios/
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1

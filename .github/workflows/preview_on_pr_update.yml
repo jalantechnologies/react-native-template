@@ -312,3 +312,39 @@ jobs:
         with:
           name: ios-build
           path: ios/*.ipa
+
+  ios_upload_testflight:
+    name: iOS Upload to TestFlight
+    needs: [ios_build_artifact]
+    runs-on: macos-14
+    timeout-minutes: 20
+
+    env:
+      IOS_APP_IDENTIFIER_PRODUCTION: ${{ secrets.IOS_APP_IDENTIFIER_PRODUCTION }}
+      IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
+      APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+      APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+      APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ios-build
+          path: .
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1
+
+      - name: Install Bundler
+        run: gem install bundler
+
+      - name: Install Ruby dependencies
+        working-directory: ios
+        run: bundle install
+
+      - name: Upload IPA to TestFlight
+        working-directory: ios
+        run: bundle exec fastlane upload_existing_ipa
+

@@ -17,7 +17,7 @@ platform :ios do
       clean: true,
       scheme: ENV["IOS_SCHEME"] || "YourApp", # replace or set in secrets
       export_method: "app-store",
-      output_directory: "./", # output .ipa in ios/
+      output_directory: "./",
       xcargs: "CODE_SIGN_STYLE=Manual " \
               "CODE_SIGN_IDENTITY=\"Apple Distribution\" " \
               "DEVELOPMENT_TEAM=#{ENV['IOS_TEAM_ID']} " \
@@ -30,6 +30,26 @@ platform :ios do
           ENV['IOS_APP_IDENTIFIER'] => "match AppStore #{ENV['IOS_APP_IDENTIFIER']}"
         }
       }
+    )
+  end
+
+  desc "Upload an existing IPA to TestFlight"
+  lane :upload_existing_ipa do
+    ipa_path = Dir["./*.ipa"].first
+    unless ipa_path
+      UI.user_error!("No IPA found in current directory")
+    end
+
+    upload_to_testflight(
+      app_identifier: ENV["IOS_APP_IDENTIFIER_PRODUCTION"],
+      ipa: ipa_path,
+      api_key: app_store_connect_api_key(
+        key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
+        issuer_id: ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
+        key_content: ENV['APP_STORE_CONNECT_API_KEY_B64'],
+        is_key_content_base64: true
+      ),
+      skip_waiting_for_build_processing: true
     )
   end
 end

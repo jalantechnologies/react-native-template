@@ -107,7 +107,7 @@ runs:
           const projectId = "${{ inputs.ANDROID_FIREBASE_PROJECT_ID }}";
           const appPackage = "${{ inputs.ANDROID_FIREBASE_APP_PACKAGE }}";
           const encodedAppPackage = encodeURIComponent(appPackage);
-          const releaseUrl = `https://console.firebase.google.com/u/0/project/${projectId}/appdistribution/app/${encodedAppPackage}/releases`;
+          const releaseUrl = `https://console.firebase.google.com/u/0/project/${projectId}/appdistribution/app/android:${encodedAppPackage}/releases`;
 
           github.rest.issues.createComment({
             issue_number: prNumber,

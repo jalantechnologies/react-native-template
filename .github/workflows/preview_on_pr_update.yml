@@ -102,13 +102,16 @@ jobs:
     needs: checks
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (app)
+      - name: Checkout (root for actions)
+        uses: actions/checkout@v3
+
+      - name: Checkout (app code)
         uses: actions/checkout@v3
         with:
           path: app
 
       - name: Deploy android app to Firebase App Distribution
-        uses: ./app/.github/actions/deploy_android_preview
+        uses: ./.github/actions/deploy_android_preview
         with:
           ANDROID_GCP_JSON_BASE64: ${{ secrets.ANDROID_GCP_JSON_BASE64 }}
           ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}

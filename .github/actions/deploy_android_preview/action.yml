@@ -96,7 +96,7 @@ runs:
     - name: Cleanup sensitive files
       shell: bash
       if: always()
-      run: rm -f /tmp/gcp_key.json keystore.jks
+      run: rm -f /tmp/gcp_key.json
 
     # 9. Comment on PR with Firebase link
     - name: Comment on PR with Firebase link

@@ -97,6 +97,27 @@ jobs:
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
 
+  deploy_android_preview:
+    name: Deploy Android to Firebase
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (app)
+        uses: actions/checkout@v3
+        with:
+          path: app
+
+      - name: Deploy android app to Firebase App Distribution
+        uses: ./app/.github/actions/deploy_android_preview
+        with:
+          ANDROID_GCP_JSON_BASE64: ${{ secrets.ANDROID_GCP_JSON_BASE64 }}
+          ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
+          ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
+          ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
+          ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
+          ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
 
   deploy_ios_preview:
     needs: [checks]

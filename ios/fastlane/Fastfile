@@ -24,7 +24,7 @@ platform :ios do
       api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64'],
       keychain_name: "ios.keychain",
       keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
-      apple_id: ENV["IOS_DEV_EMAIL"],
+      apple_id: ENV["IOS_APPLE_ID"],
       username: ENV["FASTLANE_USER"],
       team_id: ENV["IOS_APP_STORE_TEAM_ID"]
     )

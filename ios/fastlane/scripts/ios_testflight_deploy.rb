@@ -17,6 +17,18 @@ def ios_testflight_deploy!(options = {})
   apple_id = options.fetch(:apple_id)
   username = options.fetch(:username)
   team_id = options.fetch(:team_id)
+
+  # Remove old builds for this PR before deploying
+  require_relative "ios_testflight_cleanup"
+  FastlaneCore::UI.message("Checking for old builds for PR ##{pr_number}...")
+  ios_testflight_cleanup!(
+    pr_number: pr_number,
+    app_identifier: app_identifier,
+    api_key_id: api_key_id,
+    issuer_id: issuer_id,
+    api_key_b64: api_key_b64
+  )
+
   # Use match in readonly mode to fetch existing App Store signing certificates and provisioning profiles.
   match(
     type: "appstore",

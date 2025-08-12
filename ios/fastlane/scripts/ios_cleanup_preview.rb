@@ -3,7 +3,7 @@ require 'base64'
 require 'fastlane'
 require 'fastlane_core/ui/ui'
 
-def ios_testflight_cleanup!(pr_number:, app_identifier:, api_key_id:, issuer_id:, api_key_b64:)
+def ios_cleanup_preview!(pr_number:, app_identifier:, api_key_id:, issuer_id:, api_key_b64:)
   # Decode API key
   decoded_key = Base64.decode64(api_key_b64)
 

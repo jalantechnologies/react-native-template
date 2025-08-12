@@ -1,4 +1,4 @@
-def ios_testflight_deploy!(options = {})
+def ios_deploy_preview!(options = {})
   require 'fileutils'
   require 'base64'
   require 'fastlane'
@@ -19,9 +19,9 @@ def ios_testflight_deploy!(options = {})
   team_id = options.fetch(:team_id)
 
   # Remove old builds for this PR before deploying
-  require_relative "ios_testflight_cleanup"
+  require_relative "ios_cleanup_preview"
   FastlaneCore::UI.message("Checking for old builds for PR ##{pr_number}...")
-  ios_testflight_cleanup!(
+  ios_cleanup_preview!(
     pr_number: pr_number,
     app_identifier: app_identifier,
     api_key_id: api_key_id,

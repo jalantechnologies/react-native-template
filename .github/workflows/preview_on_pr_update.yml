@@ -210,14 +210,14 @@ jobs:
     env:
       ENV: preview
       NO_FLIPPER: 1 # When set to 1, skips installing all Flipper-related dependencies so they’re removed from the build
-      IOS_MATCH_PASSWORD_PREVIEW: ${{ secrets.IOS_MATCH_PASSWORD_PREVIEW }}
-      IOS_MATCH_REPOSITORY_URL_PREVIEW: ${{ secrets.IOS_MATCH_REPOSITORY_URL_PREVIEW }}
-      IOS_APPLE_ID_PREVIEW: ${{ secrets.IOS_APPLE_ID_PREVIEW }}
+      IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
+      IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
+      IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
       IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
       IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
       IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
       IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
-      IOS_APP_IDENTIFIER_PREVIEW: ${{ secrets.IOS_APP_IDENTIFIER_PREVIEW }}
+      IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
       IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
       IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -275,7 +275,7 @@ jobs:
       - name: Set up SSH for Match
         uses: webfactory/ssh-agent@v0.7.0
         with:
-          ssh-private-key: ${{ secrets.IOS_MATCH_DEPLOY_KEY_PREVIEW }}
+          ssh-private-key: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
 
       - name: Add GitHub to known hosts
         run: |
@@ -294,7 +294,7 @@ jobs:
           security default-keychain -d user -s ios.keychain
       
       - name: Export Match password
-        run: echo "MATCH_PASSWORD=${{ secrets.IOS_MATCH_PASSWORD_PREVIEW }}" >> $GITHUB_ENV
+        run: echo "MATCH_PASSWORD=${{ secrets.IOS_MATCH_PASSWORD }}" >> $GITHUB_ENV
 
       # Pull certificates and provisioning profiles using Fastlane Match
       - name: Install code signing certificates via Match
@@ -333,7 +333,7 @@ jobs:
         run: |
           brew install gh # Only needed if gh CLI is not pre-installed
           gh auth setup-git
-          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$IOS_APPLE_ID_PREVIEW/testflight/ios"
+          TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$IOS_APPLE_ID/testflight/ios"
           gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
 
           - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)

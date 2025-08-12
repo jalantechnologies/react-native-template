@@ -5,24 +5,18 @@ def ios_testflight_deploy!(options = {})
   require 'fastlane_core/ui/ui'
 
   # Required inputs passed from the Fastlane lane or script that invokes this deploy logic.
-  pr_number         = options.fetch(:pr_number)
-  xcodeproj         = options.fetch(:xcodeproj)
-  scheme            = options.fetch(:scheme)
-  api_key_id        = options.fetch(:api_key_id)
-  issuer_id         = options.fetch(:issuer_id)
-  api_key_b64       = options.fetch(:api_key_b64)
-  keychain_name     = options.fetch(:keychain_name)
+  pr_number = options.fetch(:pr_number)
+  app_identifier = options.fetch(:app_identifier)
+  xcodeproj = options.fetch(:xcodeproj)
+  scheme = options.fetch(:scheme)
+  api_key_id = options.fetch(:api_key_id)
+  issuer_id = options.fetch(:issuer_id)
+  api_key_b64 = options.fetch(:api_key_b64)
+  keychain_name = options.fetch(:keychain_name)
   keychain_password = options.fetch(:keychain_password)
-  username          = options.fetch(:username)
-  team_id           = options.fetch(:team_id)
-
-  # Use values specific to preview environment
-  app_identifier = ENV["IOS_APP_IDENTIFIER_PREVIEW"]
-  apple_id       = ENV["IOS_APPLE_ID_PREVIEW"]
-
-  UI.user_error!("❌ Missing IOS_APP_IDENTIFIER_PREVIEW") unless app_identifier
-  UI.user_error!("❌ Missing IOS_APPLE_ID_PREVIEW") unless apple_id
-
+  apple_id = options.fetch(:apple_id)
+  username = options.fetch(:username)
+  team_id = options.fetch(:team_id)
   # Use match in readonly mode to fetch existing App Store signing certificates and provisioning profiles.
   match(
     type: "appstore",

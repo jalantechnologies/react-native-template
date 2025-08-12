@@ -1,15 +1,3 @@
-env = ENV["ENV"]
-
-if env == "preview"
-  app_identifier(ENV["IOS_APP_IDENTIFIER_PREVIEW"])
-  git_url(ENV["IOS_MATCH_REPOSITORY_URL_PREVIEW"])
-  type("appstore")
-elsif env == "production"
-  app_identifier(ENV["IOS_APP_IDENTIFIER_PRODUCTION"])
-  git_url(ENV["IOS_MATCH_REPOSITORY_URL"])
-  type("appstore")
-else
-  UI.user_error!("❌ Invalid ENV: #{env}")
-end
-
+app_identifier(ENV["IOS_APP_IDENTIFIER"])
+git_url(ENV["IOS_MATCH_REPOSITORY_URL"])
 type("appstore")

@@ -16,7 +16,7 @@ platform :ios do
 
     ios_testflight_deploy!(
       pr_number: ENV["PR_NUMBER"],
-      app_identifier: ENV["IOS_APP_IDENTIFIER_PREVIEW"],
+      app_identifier: ENV["IOS_APP_IDENTIFIER"],
       xcodeproj: "Boilerplate.xcodeproj",
       scheme: "Boilerplate",
       api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
@@ -24,7 +24,7 @@ platform :ios do
       api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64'],
       keychain_name: "ios.keychain",
       keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
-      apple_id: ENV["IOS_APPLE_ID_PREVIEW"],
+      apple_id: ENV["IOS_APPLE_ID"],
       username: ENV["FASTLANE_USER"],
       team_id: ENV["IOS_APP_STORE_TEAM_ID"]
     )
@@ -37,7 +37,7 @@ platform :ios do
 
     ios_testflight_cleanup!(
       pr_number: ENV["PR_NUMBER"],
-      app_identifier: ENV["IOS_APP_IDENTIFIER_PREVIEW"],
+      app_identifier: ENV["IOS_APP_IDENTIFIER"],
       api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
       issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
       api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64']

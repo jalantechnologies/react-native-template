@@ -337,7 +337,7 @@ jobs:
           gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
 
           - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
-          - 🆔 App ID: \`com.bettrsw.boilerplate.app.preview\`
+          - 🆔 App ID: \`com.bettrsw.boilerplate.app\`
           - 🧱 Build Hash: \`$BUILD_HASH\`
 
           _This build was deployed by CI using Fastlane._"         

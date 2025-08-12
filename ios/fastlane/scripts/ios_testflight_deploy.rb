@@ -131,7 +131,7 @@ def ios_testflight_deploy!(options = {})
     require_relative "ios_testflight_cleanup"
     ios_testflight_cleanup!(
       pr_number: ENV["PR_NUMBER"],
-      app_identifier: ENV["IOS_APP_IDENTIFIER_PREVIEW"],
+      app_identifier: ENV["IOS_APP_IDENTIFIER"],
       api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
       issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
       api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64']
@@ -140,3 +140,4 @@ def ios_testflight_deploy!(options = {})
     raise e
   end
 end
+

@@ -98,7 +98,7 @@ runs:
     - name: Set up SSH for Match
       uses: webfactory/ssh-agent@v0.7.0
       with:
-        ssh-private-key: ${{ inputs.IOS_MATCH_DEPLOY_KEY }}
+        ssh-private-key: ${{ env.IOS_MATCH_DEPLOY_KEY }}
 
     - name: Add GitHub to known hosts
       run: |

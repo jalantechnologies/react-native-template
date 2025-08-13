@@ -17,23 +17,6 @@ default_platform(:android)
 
 platform :android do
 
-  desc "Fetches the latest version code from the Play Console and increments it by 1"
-  lane :fetch_and_increment_build_number do
-    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
-
-    version_codes = google_play_track_version_codes(
-      package_name: app_identifier,
-      track: "production",
-      json_key: ENV["ANDROID_JSON_KEY_FILE"]
-    )
-    
-    updated_version_code = version_codes[0] + 1
-    
-    increment_version_code(
-      version_code: updated_version_code
-    )
-  end
-
   desc "Deploy a new version to the Google Play"
   lane :deploy_android_production do
 

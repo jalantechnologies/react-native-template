@@ -1,0 +1,115 @@
+# Common lane to bump version in package.json
+desc "Bump package.json version and return new version"
+lane :bump_package_json_version do
+  require 'json'
+
+  package_json_path = File.expand_path("../package.json", __dir__)
+  unless File.exist?(package_json_path)
+    UI.user_error!("Error: package.json not found at #{package_json_path}")
+  end
+
+  package_json = JSON.parse(File.read(package_json_path))
+  current_version = package_json["version"]
+
+  if current_version.nil? || current_version.empty?
+    UI.user_error!("Error: Version not found in package.json")
+  end
+
+  major, minor, patch = current_version.split('.').map(&:to_i)
+  if patch < 9
+    patch += 1
+  else
+    patch = 0
+    minor += 1
+  end
+
+  new_version = "#{major}.#{minor}.#{patch}"
+  package_json["version"] = new_version
+  File.write(package_json_path, JSON.pretty_generate(package_json) + "\n")
+  UI.success("Updated package.json version from #{current_version} → #{new_version}")
+
+  new_version
+end
+
+platform :android do
+  desc "Sync Android versionName and increment versionCode"
+  lane :increment_android_build do |options|
+    new_version = options[:version]
+
+    gradle_file = File.expand_path("../android/app/build.gradle", __dir__)
+    if File.exist?(gradle_file)
+      gradle_content = File.read(gradle_file)
+      gradle_content.gsub!(/versionName\s+"[\d.]+"?/, "versionName \"#{new_version}\"")
+      File.write(gradle_file, gradle_content)
+      UI.success("[Android] Synced versionName to #{new_version}")
+    else
+      UI.error("Error: build.gradle not found at #{gradle_file}")
+    end
+
+    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+    version_codes = google_play_track_version_codes(
+      package_name: app_identifier,
+      track: "production",
+      json_key: ENV["ANDROID_JSON_KEY_FILE"]
+    )
+
+    updated_version_code = version_codes[0] + 1
+    increment_version_code(version_code: updated_version_code)
+    UI.success("[Android] Incremented versionCode to #{updated_version_code}")
+  end
+end
+
+platform :ios do
+  desc "Sync iOS CFBundleShortVersionString and increment CFBundleVersion"
+  lane :increment_ios_build do |options|
+    new_version = options[:version]
+
+    ios_plist_path = File.expand_path("../ios/Boilerplate/Info.plist", __dir__)
+    if File.exist?(ios_plist_path)
+      set_info_plist_value(
+        path: ios_plist_path,
+        key: "CFBundleShortVersionString",
+        value: new_version
+      )
+      UI.success("[iOS] Synced version to #{new_version}")
+    else
+      UI.error("Error: Info.plist not found at #{ios_plist_path}")
+    end
+
+    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+    begin
+      latest_build_number = app_store_build_number(
+        app_identifier: app_identifier,
+        version: new_version,
+        live: false
+      ).to_i
+
+      current_build_number = get_build_number(xcodeproj: "Boilerplate.xcodeproj").to_i
+
+      if current_build_number <= latest_build_number
+        new_build_number = latest_build_number + 1
+        increment_build_number(
+          xcodeproj: "Boilerplate.xcodeproj",
+          build_number: new_build_number.to_s
+        )
+        UI.success("[iOS] Incremented build number to #{new_build_number}")
+      else
+        UI.success("[iOS] Current build number (#{current_build_number}) is valid for upload.")
+      end
+
+    rescue => e
+      if e.to_s.include?("Could not find a build on App Store Connect")
+        UI.important("[iOS] No uploaded builds found for version #{new_version}. Proceeding with initial upload.")
+      else
+        raise e
+      end
+    end
+  end
+end
+
+desc "Increment version in package.json and sync to Android and iOS"
+lane :sync_versions do
+  new_version = bump_package_json_version
+  increment_android_build(version: new_version)
+  increment_ios_build(version: new_version)
+end

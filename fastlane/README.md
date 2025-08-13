@@ -27,7 +27,7 @@ Bump package.json version and return new version
 [bundle exec] fastlane increment_android_build
 ```
 
-Sync Android versionName
+Sync Android versionName and increment versionCode
 
 ### increment_ios_build
 
@@ -35,7 +35,7 @@ Sync Android versionName
 [bundle exec] fastlane increment_ios_build
 ```
 
-Sync iOS MARKETING_VERSION and CFBundleShortVersionString
+Sync iOS MARKETING_VERSION and increment CURRENT_PROJECT_VERSION
 
 ### sync_versions
 
@@ -43,7 +43,7 @@ Sync iOS MARKETING_VERSION and CFBundleShortVersionString
 [bundle exec] fastlane sync_versions
 ```
 
-Increment version in package.json and sync to Android and iOS
+Increment version in package.json and sync to Android/iOS version + build numbers
 
 ----
 

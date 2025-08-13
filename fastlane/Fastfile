@@ -16,11 +16,17 @@ lane :bump_package_json_version do
   end
 
   major, minor, patch = current_version.split('.').map(&:to_i)
+
   if patch < 9
     patch += 1
   else
     patch = 0
-    minor += 1
+    if minor < 9
+      minor += 1
+    else
+      minor = 0
+      major += 1
+    end
   end
 
   new_version = "#{major}.#{minor}.#{patch}"
@@ -31,50 +37,79 @@ lane :bump_package_json_version do
   new_version
 end
 
-# Sync Android versionName with package.json
-desc "Sync Android versionName"
+
+# Increment Android versionName and versionCode
+desc "Sync Android versionName and increment versionCode"
 lane :increment_android_build do |options|
   new_version = options[:version]
   gradle_file = File.expand_path("../android/app/build.gradle", __dir__)
+
   if File.exist?(gradle_file)
     gradle_content = File.read(gradle_file)
+
+    # Update versionName
     gradle_content.gsub!(/versionName\s+"[\d.]+"?/, "versionName \"#{new_version}\"")
+
+    # Read current versionCode
+    current_code_match = gradle_content.match(/versionCode\s+(\d+)/)
+    current_code = current_code_match ? current_code_match[1].to_i : 0
+
+    # Increment or start from 1
+    new_code = current_code > 0 ? current_code + 1 : 1
+    gradle_content.gsub!(/versionCode\s+\d+/, "versionCode #{new_code}")
+
     File.write(gradle_file, gradle_content)
-    UI.success("[Android] Synced versionName to #{new_version}")
+    UI.success("[Android] Synced versionName to #{new_version} and versionCode to #{new_code}")
+
+    new_code
   else
     UI.error("Error: build.gradle not found at #{gradle_file}")
+    nil
   end
 end
 
-# Sync iOS CFBundleShortVersionString with package.json
-desc "Sync iOS MARKETING_VERSION and CFBundleShortVersionString"
+# Increment iOS MARKETING_VERSION and CURRENT_PROJECT_VERSION
+desc "Sync iOS MARKETING_VERSION and increment CURRENT_PROJECT_VERSION"
 lane :increment_ios_build do |options|
   new_version = options[:version]
+  new_build_number = options[:build_number]
   pbxproj_path = "../ios/Boilerplate.xcodeproj/project.pbxproj"
 
-  content = File.read(pbxproj_path)
-  updated_content = content.gsub(/MARKETING_VERSION = [0-9.]+;/, "MARKETING_VERSION = #{new_version};")
-  File.write(pbxproj_path, updated_content)
-  UI.success("[iOS] Updated MARKETING_VERSION to #{new_version}")
-
-  # Update Info.plist
-  ios_plist_path = File.expand_path("../ios/Boilerplate/Info.plist", __dir__)
-  if File.exist?(ios_plist_path)
-    set_info_plist_value(
-      path: ios_plist_path,
-      key: "CFBundleShortVersionString",
-      value: new_version
-    )
-    UI.success("[iOS] Synced Info.plist CFBundleShortVersionString to #{new_version}")
-  else
-    UI.error("Error: Info.plist not found at #{ios_plist_path}")
+  unless File.exist?(pbxproj_path)
+    UI.user_error!("❌ project.pbxproj not found at path: #{pbxproj_path}")
   end
+
+  content = File.read(pbxproj_path)
+
+  # Ensure MARKETING_VERSION exists before replacing
+  unless content.match(/MARKETING_VERSION = [0-9.]+;/)
+    UI.user_error!("❌ MARKETING_VERSION entry not found in project.pbxproj")
+  end
+  content.gsub!(/MARKETING_VERSION = [0-9.]+;/, "MARKETING_VERSION = #{new_version};")
+
+  # Ensure CURRENT_PROJECT_VERSION exists before reading
+  current_build_match = content.match(/CURRENT_PROJECT_VERSION = (\d+);/)
+  unless current_build_match
+    UI.user_error!("❌ CURRENT_PROJECT_VERSION entry not found in project.pbxproj")
+  end
+
+  current_build = current_build_match[1].to_i
+  build_number = new_build_number || (current_build > 0 ? current_build + 1 : 1)
+
+  # Replace CURRENT_PROJECT_VERSION
+  content.gsub!(/CURRENT_PROJECT_VERSION = \d+;/, "CURRENT_PROJECT_VERSION = #{build_number};")
+
+  File.write(pbxproj_path, content)
+
+  UI.success("✅ [iOS] Updated MARKETING_VERSION to #{new_version} and CURRENT_PROJECT_VERSION to #{build_number}")
+
+  build_number
 end
 
-# Sync both android and iOS lanes
-desc "Increment version in package.json and sync to Android and iOS"
+# sync versions and builds across both Android and iOS
+desc "Increment version in package.json and sync to Android/iOS version + build numbers"
 lane :sync_versions do
   new_version = bump_package_json_version
-  increment_android_build(version: new_version)
-  increment_ios_build(version: new_version)
+  build_number = increment_android_build(version: new_version)
+  increment_ios_build(version: new_version, build_number: build_number)
 end

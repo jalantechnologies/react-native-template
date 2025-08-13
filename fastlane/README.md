@@ -13,6 +13,30 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+### bump_package_json_version
+
+```sh
+[bundle exec] fastlane bump_package_json_version
+```
+
+Bump package.json version and return new version
+
+### increment_android_build
+
+```sh
+[bundle exec] fastlane increment_android_build
+```
+
+Sync Android versionName
+
+### increment_ios_build
+
+```sh
+[bundle exec] fastlane increment_ios_build
+```
+
+Sync iOS MARKETING_VERSION and CFBundleShortVersionString
+
 ### sync_versions
 
 ```sh

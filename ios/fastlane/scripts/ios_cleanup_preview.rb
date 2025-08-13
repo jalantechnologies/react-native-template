@@ -18,23 +18,43 @@ def ios_cleanup_preview!(pr_number:, app_identifier:, api_key_id:, issuer_id:, a
   app = Spaceship::ConnectAPI::App.find(app_identifier)
   FastlaneCore::UI.user_error!("App '#{app_identifier}' not found!") unless app
 
-  # Fetch builds without includes
-  builds = app.get_builds(limit: 200)
-  builds.each do |build|
-    build_version_str = build.version.to_s
-    if build_version_str.end_with?(pr_number.to_s)
-      FastlaneCore::UI.message("🧹 Expiring build #{build_version_str} (#{build.id}) for PR ##{pr_number}")
-      begin
-        build = Spaceship::ConnectAPI::Build.get(build_id: build.id)
+  # Only fetch builds that match the PR number in build version
+  # NOTE: App Store Connect API does not allow direct substring filtering on build number
+  #       so we still fetch builds for the app but keep limit low
+  builds = app.get_builds(limit: 50) # reduced limit for speed
 
-        unless build
-          FastlaneCore::UI.user_error!("Build with ID #{build.id} not found.")
-        end
-        build.expire!
-        FastlaneCore::UI.success("Successfully expired build ID: #{build.id}")
-      rescue StandardError => e
-        FastlaneCore::UI.error("Failed to expire build ID #{build.id}: #{e.message}")
+  builds.select { |b| b.version.to_s.end_with?(".#{pr_number}") }.each do |build|
+    FastlaneCore::UI.message("Found old build #{build.version} (#{build.id}) for PR ##{pr_number}")
+    begin
+      build = Spaceship::ConnectAPI::Build.get(build_id: build.id)
+
+      unless build
+        FastlaneCore::UI.error("Build with ID #{build.id} not found.")
+        next
       end
+
+      # Expire older builds
+      begin
+        build.expire!
+        FastlaneCore::UI.success("Expired build #{build.id}")
+      rescue => e
+        FastlaneCore::UI.error("Failed to expire build #{build.id}: #{e.message}")
+      end
+
+      # Delete older builds if possible
+      if build.respond_to?(:delete!)
+        begin
+          build.delete!
+          FastlaneCore::UI.success("Deleted build #{build.id}")
+        rescue => e
+          FastlaneCore::UI.error("Failed to delete build #{build.id}: #{e.message}")
+        end
+      else
+        FastlaneCore::UI.message("API does not support deleting this build — expired only.")
+      end
+
+    rescue => e
+      FastlaneCore::UI.error("Error handling build #{build.id}: #{e.message}")
     end
   end
 end

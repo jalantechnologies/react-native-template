@@ -146,7 +146,7 @@ runs:
     - name: Post PR comment with TestFlight link
       if: ${{ inputs.PR_NUMBER != '' }}
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ inputs.GITHUB_TOKEN }}
         PR_NUMBER: ${{ inputs.PR_NUMBER }}
         BUILD_HASH: ${{ github.sha }}
         IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}

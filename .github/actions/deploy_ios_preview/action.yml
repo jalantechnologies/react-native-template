@@ -144,13 +144,13 @@ runs:
       shell: bash
 
     - name: Post PR comment with TestFlight link
-      if: ${{ inputs.PR_NUMBER != '' }}
+      if: ${{ env.PR_NUMBER != '' }}
       env:
-        GH_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        PR_NUMBER: ${{ inputs.PR_NUMBER }}
+        GH_TOKEN: ${{ env.GITHUB_TOKEN }}
+        PR_NUMBER: ${{ env.PR_NUMBER }}
         BUILD_HASH: ${{ github.sha }}
-        IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-        IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}
+        IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ env.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+        IOS_APPLE_ID: ${{ env.IOS_APPLE_ID }}
       run: |
         brew install gh
         gh auth setup-git
@@ -158,7 +158,7 @@ runs:
         gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
 
         - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
-        - 🆔 App ID: \`${{ inputs.IOS_APP_IDENTIFIER }}\`
+        - 🆔 App ID: \`${{ env.IOS_APP_IDENTIFIER }}\`
         - 🧱 Build Hash: \`$BUILD_HASH\`
 
         _This build was deployed by CI using Fastlane._"

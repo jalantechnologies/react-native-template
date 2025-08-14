@@ -213,6 +213,7 @@ jobs:
       - name: Deploy iOS Preview to TestFlight
         uses: ./.github/actions/deploy_ios_preview
         env:
+          NO_FLIPPER: 1 # When set to 1, skips installing all Flipper-related dependencies so they’re removed from the build
           MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
           IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
           IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}

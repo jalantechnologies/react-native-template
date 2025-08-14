@@ -148,12 +148,12 @@ runs:
       run: bundle exec fastlane ios pr_deploy
       shell: bash
 
-    - name: Upload build failed logs to artifact
+    - name: Upload Xcode build logs
       if: failure()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-         name: xcode-build-logs
-         path: ~/Library/Logs/gym/*.log
+        name: xcode-build-logs
+        path: /Users/runner/Library/Logs/gym/*.log
 
     - name: Post PR comment with TestFlight link
       if: ${{ env.PR_NUMBER != '' }}

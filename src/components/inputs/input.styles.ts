@@ -125,3 +125,22 @@ export const useTextAreaInputStyles = () => {
     },
   });
 };
+
+export const useWebsiteInputStyles = () => {
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    text: {
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      fontSize: theme.fontSizes.md,
+      lineHeight: Number(theme.lineHeights.sm),
+      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
+    },
+    divider: {
+      alignSelf: 'stretch',
+      width: parseInt(theme.borderWidths['1'], 10),
+      marginHorizontal: theme.space[2],
+      marginVertical: -theme.space[3],
+    },
+  });
+};

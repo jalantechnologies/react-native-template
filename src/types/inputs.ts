@@ -1,5 +1,10 @@
-import React from 'react';
 import { KeyboardTypeOptions, TextInput, TextInputProps, TextStyle } from 'react-native';
+
+export enum InputStatus {
+  DEFAULT = 'default',
+  ERROR = 'error',
+  SUCCESS = 'success',
+}
 
 export enum KeyboardTypes {
   ASCII_CAPABLE = 'ascii-capable',
@@ -17,23 +22,19 @@ export enum KeyboardTypes {
   WEB_SEARCH = 'web-search',
 }
 
-export enum InputStatus {
-  DEFAULT = 'default',
-  ERROR = 'error',
-  SUCCESS = 'success',
-}
-
-export interface InputProps extends Omit<TextInputProps, 'style | multiline'> {
+export interface InputProps extends Omit<TextInputProps, 'style' | 'multiline'> {
   disabled?: boolean;
   endEnhancer?: React.ReactNode;
   handleInputRef?: (ref: TextInput) => void;
   keyboardType?: KeyboardTypeOptions;
   label?: string;
   message?: string;
+  onValidate?: (text: string, status: InputStatus) => void;
   startEnhancer?: React.ReactNode;
   status?: InputStatus;
   testId?: string;
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
+  validationRegex?: RegExp;
 }
 
 export interface PasswordInputProps extends InputProps {}
@@ -48,4 +49,11 @@ export interface TextAreaInputProps extends Omit<TextInputProps, 'style | multil
   startEnhancer?: React.ReactNode;
   testId?: string;
   textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
+}
+
+export interface WebsiteUrlInputProps
+  extends Omit<InputProps, 'onValidate' | 'status' | 'message'> {
+  onValidatedUrl?: (finalUrl: string | null) => void;
+  protocol?: string;
+  url: string;
 }

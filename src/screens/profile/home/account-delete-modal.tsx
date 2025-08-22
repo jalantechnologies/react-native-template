@@ -1,6 +1,6 @@
-import DeleteIcon from 'boilerplate-react-native/assets/icons/delete.svg';
-import { Button, Modal } from 'boilerplate-react-native/src/components';
-import { ButtonKind, ButtonColor } from 'boilerplate-react-native/src/types/button';
+import DeleteIcon from '../../../../assets/icons/delete.svg';
+import { Button, Modal } from '../../../components';
+import { ButtonKind, ButtonColor } from '../../../types/button';
 import { Box, Text, useTheme } from 'native-base';
 import React from 'react';
 

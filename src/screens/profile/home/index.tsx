@@ -1,6 +1,6 @@
-import DeleteIcon from 'boilerplate-react-native/assets/icons/delete.svg';
-import LogoutIcon from 'boilerplate-react-native/assets/icons/logout.svg';
-import { Button } from 'boilerplate-react-native/src/components';
+import DeleteIcon from '../../../../assets/icons/delete.svg';
+import LogoutIcon from '../../../../assets/icons/logout.svg';
+import { Button } from '../../../components';
 import { Box, Divider, Toast, useTheme, VStack } from 'native-base';
 import React, { useState } from 'react';
 

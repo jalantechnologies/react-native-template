@@ -1,5 +1,5 @@
-import { Nullable } from 'boilerplate-react-native/src/types';
-import { ButtonKind } from 'boilerplate-react-native/src/types/button';
+import { Nullable } from '../../types';
+import { ButtonKind } from '../../types/button';
 import React from 'react';
 import { View } from 'react-native';
 

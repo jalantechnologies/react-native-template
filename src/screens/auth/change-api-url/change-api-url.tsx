@@ -1,6 +1,6 @@
-import GearIcon from 'boilerplate-react-native/assets/icons/gear.svg';
-import { Button } from 'boilerplate-react-native/src/components';
-import { ButtonKind } from 'boilerplate-react-native/src/types/button';
+import GearIcon from '../../../../assets/icons/gear.svg';
+import { Button } from '../../../components';
+import { ButtonKind } from '../../../types/button';
 import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';

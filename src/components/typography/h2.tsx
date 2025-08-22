@@ -1,5 +1,5 @@
-import { TypographyProps } from 'boilerplate-react-native/src/types/typography';
-import { useThemeColor } from 'boilerplate-react-native/src/utils';
+import { TypographyProps } from '../../types/typography';
+import { useThemeColor } from '../../utils';
 import React, { PropsWithChildren } from 'react';
 import { Text } from 'react-native';
 

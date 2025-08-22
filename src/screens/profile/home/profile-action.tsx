@@ -1,4 +1,4 @@
-import ChevronRightIcon from 'boilerplate-react-native/assets/icons/chevron-right.svg';
+import ChevronRightIcon from '../../../../assets/icons/chevron-right.svg';
 import { Pressable, HStack, Heading, IPressableProps, useTheme } from 'native-base';
 import React from 'react';
 

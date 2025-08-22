@@ -1,6 +1,6 @@
-import EditIcon from 'boilerplate-react-native/assets/icons/edit.svg';
-import { Avatar, Button } from 'boilerplate-react-native/src/components';
-import { ButtonKind, ButtonSize } from 'boilerplate-react-native/src/types/button';
+import EditIcon from '../../../../assets/icons/edit.svg';
+import { Avatar, Button } from '../../../components';
+import { ButtonKind, ButtonSize } from '../../../types/button';
 import { Box, Heading, Text, useTheme } from 'native-base';
 import React from 'react';
 

@@ -15,7 +15,14 @@ lane :bump_package_json_version do
     UI.user_error!("Error: Version not found in package.json")
   end
 
-  major, minor, patch = current_version.split('.').map(&:to_i)
+  # Normalize version (extract x.y.z, ignore pre-release like -beta.1)
+  match = current_version.match(/^(\d+\.\d+\.\d+)/)
+  unless match
+    UI.user_error!("Invalid version format in package.json: '#{current_version}'. Expected something like '1.2.3' or '1.2.3-beta.1'")
+  end
+
+  normalized_version = match[1] # take only x.y.z part
+  major, minor, patch = normalized_version.split('.').map(&:to_i)
 
   if patch < 9
     patch += 1
@@ -32,6 +39,7 @@ lane :bump_package_json_version do
   new_version = "#{major}.#{minor}.#{patch}"
   package_json["version"] = new_version
   File.write(package_json_path, JSON.pretty_generate(package_json) + "\n")
+  UI.message("Version: #{current_version} → #{new_version} (normalized from '#{normalized_version}')")
   UI.success("Updated package.json version from #{current_version} → #{new_version}")
 
   new_version

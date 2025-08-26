@@ -124,7 +124,7 @@ runs:
       shell: bash
 
     - name: Export Match password
-      run: echo "MATCH_PASSWORD=${{ env.IOS_MATCH_PASSWORD }}" >> $GITHUB_ENV
+      run: echo "MATCH_PASSWORD=${{ env.MATCH_PASSWORD }}" >> $GITHUB_ENV
       shell: bash
 
     - name: Install code signing certificates via Match

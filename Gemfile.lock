@@ -287,7 +287,7 @@ DEPENDENCIES
   fastlane-plugin-versioning_android
 
 RUBY VERSION
-   ruby 2.7.6p219
+   ruby 3.3.7p123
 
 BUNDLED WITH
    2.1.4

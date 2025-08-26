@@ -141,8 +141,8 @@ def ios_deploy_preview!(options = {})
     UI.error("Upload to TestFlight failed: #{e.message}")
 
     # trigger ios_testflight_cleanup to remove stale builds
-    require_relative "ios_testflight_cleanup"
-    ios_testflight_cleanup!(
+    require_relative "ios_cleanup_preview"
+    ios_cleanup_preview!(
       pr_number: ENV["PR_NUMBER"],
       app_identifier: ENV["IOS_APP_IDENTIFIER"],
       api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],

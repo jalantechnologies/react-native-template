@@ -63,8 +63,35 @@ jobs:
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
 
+  sync_versions:
+    needs: [build, checks]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Checkout (app)
+        uses: actions/checkout@v3
+        with:
+          path: app
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: true
+
+      - name: Install Fastlane and dependencies
+        shell: bash
+        run: |
+          bundle install
+
+      - name: Sync Versions (Fastlane)
+        shell: bash
+        run: bundle exec fastlane sync_versions
+
   deploy:
-    needs: build
+    needs: sync_versions
     runs-on: ubuntu-latest
     if: false
     steps:

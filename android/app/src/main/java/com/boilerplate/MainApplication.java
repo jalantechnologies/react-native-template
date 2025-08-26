@@ -39,7 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
         }
 
         @Override
-        protected boolean isHermesEnabled() {
+        protected Boolean isHermesEnabled() {
           return BuildConfig.IS_HERMES_ENABLED;
         }
       };

@@ -66,14 +66,9 @@ jobs:
   sync_versions:
     needs: [build, checks]
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v3
-        with:
-          path: app
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1

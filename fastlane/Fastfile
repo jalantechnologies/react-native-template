@@ -81,43 +81,24 @@ desc "Sync iOS MARKETING_VERSION and increment CURRENT_PROJECT_VERSION"
 lane :increment_ios_build do |options|
   new_version = options[:version]
   new_build_number = options[:build_number]
-  pbxproj_path = "../ios/Boilerplate.xcodeproj/project.pbxproj"
 
-  unless File.exist?(pbxproj_path)
-    UI.user_error!("❌ project.pbxproj not found at path: #{pbxproj_path}")
-  end
+  # MARKETING_VERSION (CFBundleShortVersionString)
+  increment_version_number(version_number: new_version)
 
-  content = File.read(pbxproj_path)
+  # CURRENT_PROJECT_VERSION (CFBundleVersion)
+  increment_build_number(build_number: new_build_number)
 
-  # Ensure MARKETING_VERSION exists before replacing
-  unless content.match(/MARKETING_VERSION = [0-9.]+;/)
-    UI.user_error!("❌ MARKETING_VERSION entry not found in project.pbxproj")
-  end
-  content.gsub!(/MARKETING_VERSION = [0-9.]+;/, "MARKETING_VERSION = #{new_version};")
-
-  # Ensure CURRENT_PROJECT_VERSION exists before reading
-  current_build_match = content.match(/CURRENT_PROJECT_VERSION = (\d+);/)
-  unless current_build_match
-    UI.user_error!("❌ CURRENT_PROJECT_VERSION entry not found in project.pbxproj")
-  end
-
-  current_build = current_build_match[1].to_i
-  build_number = new_build_number || (current_build > 0 ? current_build + 1 : 1)
-
-  # Replace CURRENT_PROJECT_VERSION
-  content.gsub!(/CURRENT_PROJECT_VERSION = \d+;/, "CURRENT_PROJECT_VERSION = #{build_number};")
-
-  File.write(pbxproj_path, content)
-
-  UI.success("✅ [iOS] Updated MARKETING_VERSION to #{new_version} and CURRENT_PROJECT_VERSION to #{build_number}")
-
-  build_number
+  UI.success("✅ [iOS] Updated MARKETING_VERSION to #{new_version} and CURRENT_PROJECT_VERSION to #{new_build_number}")
 end
 
-# sync versions and builds across both Android and iOS
+# Sync Versions and builds across both Android and iOS
 desc "Increment version in package.json and sync to Android/iOS version + build numbers"
 lane :sync_versions do
   new_version = bump_package_json_version
+
+  # Android build number drives iOS build number
   build_number = increment_android_build(version: new_version)
+
+  # iOS syncs to same build_number
   increment_ios_build(version: new_version, build_number: build_number)
 end

@@ -1,5 +1,42 @@
 name: 'Deploy iOS App to App Store (Production)'
 description: 'Build and deploy the iOS app to the App Store using Fastlane'
+inputs:
+  IOS_MATCH_PASSWORD:
+    required: true
+    description: 'Match password for signing'
+  IOS_MATCH_REPOSITORY_URL:
+    required: true
+    description: 'Match repository URL for certs'
+  IOS_APPLE_ID:
+    required: true
+    description: 'Apple App ID for app'
+  IOS_KEYCHAIN_PASSWORD:
+    required: true
+    description: 'Keychain password for Fastlane'
+  IOS_APP_STORE_CONNECT_API_KEY_ID:
+    required: true
+    description: 'API Key ID for App Store Connect'
+  IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID:
+    required: true
+    description: 'Issuer ID for App Store Connect'
+  IOS_APP_STORE_CONNECT_API_KEY_B64:
+    required: true
+    description: 'Base64 encoded API key for App Store Connect'
+  IOS_APP_IDENTIFIER:
+    required: true
+    description: 'Bundle ID for the app'
+  IOS_APP_STORE_TEAM_ID:
+    required: true
+    description: 'App Store Team ID'
+  IOS_DEV_EMAIL:
+    required: true
+    description: 'Developer Apple email'
+  IOS_MATCH_DEPLOY_KEY:
+    required: true
+    description: 'SSH private key for Match repo'
+  NO_FLIPPER:
+    required: false
+    description: 'Skip installing Flipper dependencies'
 
 runs:
   using: 'composite'

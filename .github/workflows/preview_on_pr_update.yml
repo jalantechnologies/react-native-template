@@ -97,109 +97,30 @@ jobs:
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
 
-  google_play_deploy:
-    name: Google Play Internal Track Preview Deploy
-    needs: [checks]
-    if: false
-    # if: github.event.action != 'closed'
+  deploy_android_preview:
+    name: Deploy Android to Firebase
+    needs: checks
     runs-on: ubuntu-latest
-
-    env:
-      ANDROID_APP_PACKAGE: ${{ secrets.ANDROID_APP_PACKAGE }}
-      GPLAY_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
-      PLAY_DEVELOPER_ID: ${{ secrets.ANDROID_PLAY_DEVELOPER_ID }}
-      PLAY_APP_ID: ${{ secrets.ANDROID_PLAY_APP_ID }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout (root for actions)
+        uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Checkout (app code)
+        uses: actions/checkout@v3
         with:
-          node-version-file: '.nvmrc'
+          path: app
 
-      - name: Install Yarn
-        run: npm install -g yarn
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - name: Deploy android app to Firebase App Distribution
+        uses: ./.github/actions/deploy_android_preview
         with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1'
-          bundler-cache: true
-
-      - uses: ./.github/actions/setup-fastlane
-
-      - name: Cache Gradle
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Decode Keystore file and AAB path
-        run: |
-          echo "${{ secrets.ANDROID_KEYSTORE_FILE }}" | base64 --decode > keystore.jks
-          echo "AAB_PATH=app/build/outputs/bundle/release/app-release.aab" >> $GITHUB_ENV
-
-      - name: Set Gradle signing environment variables
-        run: |
-          echo "ANDROID_KEYSTORE_FILE=$(pwd)/keystore.jks" >> $GITHUB_ENV
-          echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
-          echo "ANDROID_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> $GITHUB_ENV
-          echo "ANDROID_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> $GITHUB_ENV
-          echo "ANDROID_JSON_KEY_FILE=/tmp/keys/play_store.json" >> $GITHUB_ENV
-      
-      - name: Decode Google Play JSON Key
-        run: |
-          mkdir -p /tmp/keys
-          echo "${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}" \
-            | base64 --decode > /tmp/keys/play_store.json
-
-      - name: Create bundle assets directories
-        run: |
-          mkdir -p android/app/src/main/assets
-          mkdir -p android/app/src/main/res
-
-      - name: Generate JS bundle for preview APK
-        run: |
-          npx react-native bundle \
-            --platform android \
-            --dev false \
-            --entry-file index.js \
-            --bundle-output android/app/src/main/assets/index.android.bundle \
-            --assets-dest android/app/src/main/res
-
-      - name: Build & Deploy to Firebase App Distribution
-        working-directory: android
-        run: bundle exec fastlane android pr_deploy pr_number:"${{ github.event.pull_request.number }}" json_key_file:"${{ env.ANDROID_JSON_KEY_FILE }}" package_name:"${{ env.ANDROID_APP_PACKAGE }}"
-
-      - name: Comment on PR
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const prNumber = context.issue.number;
-            const devId       = process.env.PLAY_DEVELOPER_ID;
-            const playAppId   = process.env.PLAY_APP_ID;
-            const playUrl     = `https://play.google.com/console/u/0/developers/${devId}/app/${playAppId}/bundle-explorer-selector`;
-            github.rest.issues.createComment({
-              issue_number: prNumber,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `🚀 Deployed PR #${prNumber} to Google Play Internal Track.
-
-              🏁 [View Release in Google Play Internal Track](${playUrl})`
-            });
+          ANDROID_GCP_JSON_BASE64: ${{ secrets.ANDROID_GCP_JSON_BASE64 }}
+          ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
+          ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
+          ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
+          ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
+          ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
 
   deploy_ios_preview:
     needs: [checks]

@@ -20,15 +20,22 @@ def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_
     service_account_path: service_account_path
   )
 
-  firebase.build_apk
-
-  apk_path = File.expand_path("../../app/build/outputs/apk/debug/app-debug.apk", __dir__)
-  unless File.exist?(apk_path)
-    UI.user_error!("❌ APK file not found at #{apk_path}")
+  # Cleanup old builds for specific PR before creating a new one
+  old_releases = firebase.fetch_releases_by_pr_number(pr_number)
+  unless old_releases.empty?
+    UI.message("Cleaning up old releases for PR ##{pr_number} before uploading a new one...")
+    firebase.delete_releases(old_releases)
   end
 
+  # Build the new APK
+  firebase.build_apk
+  apk_path = File.expand_path("../../app/build/outputs/apk/debug/app-debug.apk", __dir__)
+  UI.user_error!("❌ APK file not found at #{apk_path}") unless File.exist?(apk_path)
+
+  # Upload and process
   operation_name = firebase.upload_apk(apk_path)
   release_name = firebase.poll_for_release(operation_name)
 
+  # Add PR metadata
   firebase.add_release_notes(release_name, pr_number, pr_title)
 end

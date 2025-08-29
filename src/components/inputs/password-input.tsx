@@ -1,5 +1,5 @@
-import VisibilityOffIcon from 'boilerplate-react-native/assets/icons/visibility-off.svg';
-import VisibilityIcon from 'boilerplate-react-native/assets/icons/visibility.svg';
+import VisibilityOffIcon from '../../../assets/icons/visibility-off.svg';
+import VisibilityIcon from '../../../assets/icons/visibility.svg';
 import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { View, TouchableOpacity } from 'react-native';

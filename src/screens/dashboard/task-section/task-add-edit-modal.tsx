@@ -1,4 +1,4 @@
-import { Button, FormControl, Input, Modal } from 'boilerplate-react-native/src/components';
+import { Button, FormControl, Input, Modal } from '../../../components';
 import { VStack } from 'native-base';
 import React from 'react';
 

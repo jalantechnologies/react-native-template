@@ -1,10 +1,37 @@
-# Add project specific ProGuard rules here.
-# By default, the flags in this file are appended to flags specified
-# in /usr/local/Cellar/android-sdk/24.3.3/tools/proguard/proguard-android.txt
-# You can edit the include path and order by changing the proguardFiles
-# directive in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# React Native
+-keep class com.facebook.hermes.unicode.** { *; }
+-keep class com.facebook.jni.** { *; }
+-keep class com.facebook.react.** { *; }
+-keep class com.facebook.soloader.** { *; }
 
-# Add any project specific keep options here:
+# Keep native libraries JNI methods
+-keep class com.facebook.** { *; }
+-keepclassmembers class * {
+    native <methods>;
+}
+
+# Prevent stripping Hermes runtime
+-keep class com.facebook.hermes.** { *; }
+-dontwarn com.facebook.hermes.**
+
+# Keep Flipper only in debug, safe to strip in release
+-assumenosideeffects class com.facebook.flipper.** { *; }
+-assumenosideeffects class com.facebook.react.flipper.** { *; }
+
+# Workaround for some reflection usage in RN
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @com.facebook.react.bridge.ReactMethod <methods>;
+}
+
+# Datadog RUM / Logs / Session Replay
+-keep class com.datadog.android.** { *; }
+-dontwarn com.datadog.android.**
+-keep class com.datadog.opentracing.** { *; }
+-dontwarn com.datadog.opentracing.**
+
+# Needed for Datadog native bridge
+-keep class com.datadog.reactnative.** { *; }
+-keepclassmembers class * {
+    @com.facebook.react.bridge.ReactMethod <methods>;
+}

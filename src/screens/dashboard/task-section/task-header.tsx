@@ -1,5 +1,5 @@
-import AddIcon from 'boilerplate-react-native/assets/icons/add.svg';
-import { Button } from 'boilerplate-react-native/src/components';
+import AddIcon from '../../../../assets/icons/add.svg';
+import { Button } from '../../../components';
 import { HStack, Heading, useTheme } from 'native-base';
 import React from 'react';
 

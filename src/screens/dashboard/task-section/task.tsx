@@ -1,8 +1,8 @@
-import DeleteIcon from 'boilerplate-react-native/assets/icons/delete.svg';
-import EditIcon from 'boilerplate-react-native/assets/icons/edit.svg';
-import { Button, Card } from 'boilerplate-react-native/src/components';
-import { Task } from 'boilerplate-react-native/src/types';
-import { ButtonKind } from 'boilerplate-react-native/src/types/button';
+import DeleteIcon from '../../../../assets/icons/delete.svg';
+import EditIcon from '../../../../assets/icons/edit.svg';
+import { Button, Card } from '../../../components';
+import { Task } from '../../../types';
+import { ButtonKind } from '../../../types/button';
 import { Text, useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { View } from 'react-native';

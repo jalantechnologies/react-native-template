@@ -1,7 +1,7 @@
-import CheckIcon from 'boilerplate-react-native/assets/icons/check.svg';
-import { FormControl, Input, Button } from 'boilerplate-react-native/src/components';
-import { ButtonKind } from 'boilerplate-react-native/src/types/button';
-import { useThemeColor } from 'boilerplate-react-native/src/utils';
+import CheckIcon from '../../../../assets/icons/check.svg';
+import { FormControl, Input, Button } from '../../../components';
+import { ButtonKind } from '../../../types/button';
+import { useThemeColor } from '../../../utils';
 import {
   VStack,
   Container,

@@ -1,8 +1,8 @@
 import { DdSdkReactNative } from '@datadog/mobile-react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeIcon from 'boilerplate-react-native/assets/icons/home.svg';
-import PersonIcon from 'boilerplate-react-native/assets/icons/person.svg';
+import HomeIcon from '../../assets/icons/home.svg';
+import PersonIcon from '../../assets/icons/person.svg';
 import { useTheme } from 'native-base';
 import React, { useEffect } from 'react';
 

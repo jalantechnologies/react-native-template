@@ -1,4 +1,4 @@
-import { AvatarSize } from 'boilerplate-react-native/src/types';
+import { AvatarSize } from '../../types';
 import { useTheme } from 'native-base';
 import { StyleSheet } from 'react-native';
 import type { ViewStyle, ImageStyle, TextStyle } from 'react-native';

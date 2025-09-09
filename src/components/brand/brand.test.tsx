@@ -9,7 +9,7 @@ const inset = {
   insets: { top: 0, left: 0, right: 0, bottom: 0 },
 };
 
-jest.mock('boilerplate-react-native/assets/img/logo.svg', () => {
+jest.mock('react-native-template/assets/img/logo.svg', () => {
   const TestReact = require('react');
   return () => TestReact.createElement('SvgMock');
 });

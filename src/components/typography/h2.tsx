@@ -1,7 +1,7 @@
-import { TypographyProps } from 'react-native-template/src/types/typography';
-import { useThemeColor } from 'react-native-template/src/utils';
 import React, { PropsWithChildren } from 'react';
 import { Text } from 'react-native';
+import { TypographyProps } from 'react-native-template/src/types/typography';
+import { useThemeColor } from 'react-native-template/src/utils';
 
 import { H2Styles as styles } from './typography.styles';
 

@@ -1,7 +1,7 @@
-import { Button, FormControl, Input } from 'react-native-template/src/components';
 import { KeyboardAvoidingView, Toast, VStack } from 'native-base';
 import React from 'react';
 import { Platform } from 'react-native';
+import { Button, FormControl, Input } from 'react-native-template/src/components';
 
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
 import { AsyncError } from '../../../types';

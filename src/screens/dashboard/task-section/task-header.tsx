@@ -1,7 +1,7 @@
-import AddIcon from 'react-native-template/assets/icons/add.svg';
-import { Button } from 'react-native-template/src/components';
 import { HStack, Heading, useTheme } from 'native-base';
 import React from 'react';
+import AddIcon from 'react-native-template/assets/icons/add.svg';
+import { Button } from 'react-native-template/src/components';
 
 interface TaskHeaderProps {
   onHeaderButtonPress: () => void;

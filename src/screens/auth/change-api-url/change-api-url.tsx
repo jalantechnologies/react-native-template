@@ -1,10 +1,10 @@
-import GearIcon from 'react-native-template/assets/icons/gear.svg';
-import { Button } from 'react-native-template/src/components';
-import { ButtonKind } from 'react-native-template/src/types/button';
 import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Config from 'react-native-config';
+import GearIcon from 'react-native-template/assets/icons/gear.svg';
+import { Button } from 'react-native-template/src/components';
+import { ButtonKind } from 'react-native-template/src/types/button';
 
 import ChangeApiUrlModal from './change-api-url-modal';
 

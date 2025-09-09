@@ -1,10 +1,10 @@
 import { DdSdkReactNative } from '@datadog/mobile-react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeIcon from 'react-native-template/assets/icons/home.svg';
-import PersonIcon from 'react-native-template/assets/icons/person.svg';
 import { useTheme } from 'native-base';
 import React, { useEffect } from 'react';
+import HomeIcon from 'react-native-template/assets/icons/home.svg';
+import PersonIcon from 'react-native-template/assets/icons/person.svg';
 
 import { AuthenticatedStackParamsList, AuthenticatedTabParamsList } from '../../@types/navigation';
 import { FullScreenSpinner } from '../components';

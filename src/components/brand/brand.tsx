@@ -1,8 +1,8 @@
-import BrandLogo from 'react-native-template/assets/img/logo.svg';
-import { SpinnerSize, SpinnerTypes } from 'react-native-template/src/types/spinner';
 import { useTheme, Box } from 'native-base';
 import React, { useRef, useEffect, useMemo } from 'react';
 import { Animated, Dimensions, Text, StyleSheet } from 'react-native';
+import BrandLogo from 'react-native-template/assets/img/logo.svg';
+import { SpinnerSize, SpinnerTypes } from 'react-native-template/src/types/spinner';
 
 import Spinner from '../spinner/spinner';
 

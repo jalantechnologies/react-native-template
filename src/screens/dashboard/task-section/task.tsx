@@ -1,11 +1,11 @@
+import { Text, useTheme } from 'native-base';
+import React, { useState } from 'react';
+import { View } from 'react-native';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import EditIcon from 'react-native-template/assets/icons/edit.svg';
 import { Button, Card } from 'react-native-template/src/components';
 import { Task } from 'react-native-template/src/types';
 import { ButtonKind } from 'react-native-template/src/types/button';
-import { Text, useTheme } from 'native-base';
-import React, { useState } from 'react';
-import { View } from 'react-native';
 
 import TaskDeleteModal from './task-delete-modal';
 import { useTaskStyles } from './task.style';

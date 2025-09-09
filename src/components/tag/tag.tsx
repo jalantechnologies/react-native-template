@@ -1,7 +1,7 @@
 // Tag.tsx
-import Close from 'react-native-template/assets/icons/close.svg';
 import { Box, Text, Pressable } from 'native-base';
 import React from 'react';
+import Close from 'react-native-template/assets/icons/close.svg';
 
 import { useTagStyles } from './tag.styles';
 

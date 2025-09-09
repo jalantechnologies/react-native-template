@@ -1,8 +1,8 @@
+import { Box, Divider, Toast, useTheme, VStack } from 'native-base';
+import React, { useState } from 'react';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import LogoutIcon from 'react-native-template/assets/icons/logout.svg';
 import { Button } from 'react-native-template/src/components';
-import { Box, Divider, Toast, useTheme, VStack } from 'native-base';
-import React, { useState } from 'react';
 
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
 import { useAccountContext, useAuthContext } from '../../../contexts';

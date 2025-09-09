@@ -1,7 +1,7 @@
-import { Nullable } from 'react-native-template/src/types';
-import { ButtonKind } from 'react-native-template/src//types/button';
 import React from 'react';
 import { View } from 'react-native';
+import { ButtonKind } from 'react-native-template/src//types/button';
+import { Nullable } from 'react-native-template/src/types';
 
 import Button from '../button/button';
 

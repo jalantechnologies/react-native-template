@@ -1,6 +1,6 @@
-import ChevronRightIcon from 'react-native-template/assets/icons/chevron-right.svg';
 import { Pressable, HStack, Heading, IPressableProps, useTheme } from 'native-base';
 import React from 'react';
+import ChevronRightIcon from 'react-native-template/assets/icons/chevron-right.svg';
 
 interface ProfileActionProps extends IPressableProps {
   title: string;

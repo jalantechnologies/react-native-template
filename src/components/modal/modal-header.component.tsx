@@ -1,5 +1,5 @@
-import Close from 'boilerplate-react-native/assets/icons/close.svg';
-import { ButtonKind } from 'boilerplate-react-native/src/types/button';
+import Close from 'react-native-template/assets/icons/close.svg';
+import { ButtonKind } from 'react-native-template/src/types/button';
 import { useTheme } from 'native-base';
 import React from 'react';
 import { View, Text, TextStyle } from 'react-native';

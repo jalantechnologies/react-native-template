@@ -1,6 +1,6 @@
-import { FormControl, Input, Modal } from 'boilerplate-react-native/src/components';
-import { ModalProps } from 'boilerplate-react-native/src/components/modal/modal';
-import { useLocalStorage } from 'boilerplate-react-native/src/utils';
+import { FormControl, Input, Modal } from 'react-native-template/src/components';
+import { ModalProps } from 'react-native-template/src/components/modal/modal';
+import { useLocalStorage } from 'react-native-template/src/utils';
 import { Toast } from 'native-base';
 import React, { useState } from 'react';
 import Config from 'react-native-config';

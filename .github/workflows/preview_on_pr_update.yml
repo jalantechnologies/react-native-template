@@ -177,7 +177,7 @@ jobs:
             --dev false \
             --entry-file index.js \
             --bundle-output android/app/src/main/assets/index.android.bundle \
-            --assets-dest android/app/src/main/res
+            --assets-dest android/app/src/main/assets
 
       - name: Build & Deploy to Firebase App Distribution
         working-directory: android

@@ -22,6 +22,7 @@ const config = {
     extraNodeModules: {
       // point react-dom to a shim instead of crashing
       'react-dom': path.resolve(__dirname, 'shim/react-dom.js'),
+      'react-native-template': path.resolve(__dirname),
     },
   },
 };

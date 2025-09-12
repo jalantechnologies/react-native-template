@@ -1,0 +1,104 @@
+# Common lane to bump version in package.json
+desc "Bump package.json version and return new version"
+lane :bump_package_json_version do
+  require 'json'
+
+  package_json_path = File.expand_path("../package.json", __dir__)
+  unless File.exist?(package_json_path)
+    UI.user_error!("Error: package.json not found at #{package_json_path}")
+  end
+
+  package_json = JSON.parse(File.read(package_json_path))
+  current_version = package_json["version"]
+
+  if current_version.nil? || current_version.empty?
+    UI.user_error!("Error: Version not found in package.json")
+  end
+
+  # Normalize version (extract x.y.z, ignore pre-release like -beta.1)
+  match = current_version.match(/^(\d+\.\d+\.\d+)/)
+  unless match
+    UI.user_error!("Invalid version format in package.json: '#{current_version}'. Expected something like '1.2.3' or '1.2.3-beta.1'")
+  end
+
+  normalized_version = match[1] # take only x.y.z part
+  major, minor, patch = normalized_version.split('.').map(&:to_i)
+
+  if patch < 9
+    patch += 1
+  else
+    patch = 0
+    if minor < 9
+      minor += 1
+    else
+      minor = 0
+      major += 1
+    end
+  end
+
+  new_version = "#{major}.#{minor}.#{patch}"
+  package_json["version"] = new_version
+  File.write(package_json_path, JSON.pretty_generate(package_json) + "\n")
+  UI.message("Version: #{current_version} → #{new_version} (normalized from '#{normalized_version}')")
+  UI.success("Updated package.json version from #{current_version} → #{new_version}")
+
+  new_version
+end
+
+
+# Increment Android versionName and versionCode
+desc "Sync Android versionName and increment versionCode"
+lane :increment_android_build do |options|
+  new_version = options[:version]
+  gradle_file = File.expand_path("../android/app/build.gradle", __dir__)
+
+  if File.exist?(gradle_file)
+    gradle_content = File.read(gradle_file)
+
+    # Update versionName
+    gradle_content.gsub!(/versionName\s+"[\d.]+"?/, "versionName \"#{new_version}\"")
+
+    # Read current versionCode
+    current_code_match = gradle_content.match(/versionCode\s+(\d+)/)
+    current_code = current_code_match ? current_code_match[1].to_i : 0
+
+    # Increment or start from 1
+    new_code = current_code > 0 ? current_code + 1 : 1
+    gradle_content.gsub!(/versionCode\s+\d+/, "versionCode #{new_code}")
+
+    File.write(gradle_file, gradle_content)
+    UI.success("[Android] Synced versionName to #{new_version} and versionCode to #{new_code}")
+
+    new_code
+  else
+    UI.error("Error: build.gradle not found at #{gradle_file}")
+    nil
+  end
+end
+
+# Increment iOS MARKETING_VERSION and CURRENT_PROJECT_VERSION
+desc "Sync iOS MARKETING_VERSION and increment CURRENT_PROJECT_VERSION"
+lane :increment_ios_build do |options|
+  new_version = options[:version]
+  new_build_number = options[:build_number]
+
+  # MARKETING_VERSION (CFBundleShortVersionString)
+  increment_version_number(version_number: new_version)
+
+  # CURRENT_PROJECT_VERSION (CFBundleVersion)
+  increment_build_number(build_number: new_build_number)
+
+  UI.success("✅ [iOS] Updated MARKETING_VERSION to #{new_version} and CURRENT_PROJECT_VERSION to #{new_build_number}")
+end
+
+# Sync Versions and builds across both Android and iOS
+desc "Increment version in package.json and sync to Android/iOS version + build numbers"
+lane :sync_versions do
+  new_version = bump_package_json_version
+
+  # Android build number drives iOS build number
+  build_number = increment_android_build(version: new_version)
+
+  # iOS syncs to same build_number
+  increment_ios_build(version: new_version, build_number: build_number)
+end

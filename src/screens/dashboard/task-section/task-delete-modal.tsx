@@ -1,11 +1,11 @@
-import DeleteIcon from 'boilerplate-react-native/assets/icons/delete.svg';
-import { Button, Modal } from 'boilerplate-react-native/src/components';
-import { useTaskContext } from 'boilerplate-react-native/src/contexts';
-import { AsyncError, Task } from 'boilerplate-react-native/src/types';
-import { ButtonKind, ButtonColor } from 'boilerplate-react-native/src/types/button';
 import { t } from 'i18next';
 import { Box, Text, Toast, useTheme } from 'native-base';
 import React from 'react';
+import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
+import { Button, Modal } from 'react-native-template/src/components';
+import { useTaskContext } from 'react-native-template/src/contexts';
+import { AsyncError, Task } from 'react-native-template/src/types';
+import { ButtonKind, ButtonColor } from 'react-native-template/src/types/button';
 
 interface TaskDeleteModalProps {
   handleModalClose: () => void;

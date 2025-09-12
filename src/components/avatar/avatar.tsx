@@ -1,7 +1,7 @@
-import { AvatarShape, AvatarSize } from 'boilerplate-react-native/src/types';
 import { Box, Text, Image } from 'native-base';
 import React, { useState } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
+import { AvatarShape, AvatarSize } from 'react-native-template/src/types';
 
 import { useAvatarStyles } from './avatar.styles';
 export interface AvatarProps {

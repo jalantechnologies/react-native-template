@@ -37,9 +37,6 @@ inputs:
   PR_NUMBER:
     required: false
     description: 'Pull request number for PR-specific builds'
-  NO_FLIPPER:
-    required: false
-    description: 'Skip installing Flipper dependencies'
 
 runs:
   using: 'composite'

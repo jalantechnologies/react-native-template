@@ -7717,11 +7717,6 @@ react-native-error-boundary@^1.2.4:
   resolved "https://registry.npmjs.org/react-native-error-boundary/-/react-native-error-boundary-1.2.9.tgz#ac504db7c0eeb95ec06a22d50de3674059a651bd"
   integrity sha512-G2C4hUpRjwVgQ1efQ6fVfxDvThG/Qhyr/uXhwvMqvIjqlpndvpuNyJc5wOeYfn/ePtgin30Pk7KhmxuHAkyiSQ==
 
-react-native-flipper@^0.202.0:
-  version "0.202.0"
-  resolved "https://registry.npmjs.org/react-native-flipper/-/react-native-flipper-0.202.0.tgz#4ae0dc6f3a050c8b15d9d039f0a2bffd08c80bd3"
-  integrity sha512-LlUmY6CvEBquWl6UmcEjXCOrVAdozGts6JBKGoGiKNk8Vl+tE9L5OkceDxDJjU9aeId071xifOO7B0eBTDH4gQ==
-
 react-native-gesture-handler@2.19.0:
   version "2.19.0"
   resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.19.0.tgz#16deaefcefe77d6b4b7fa48a82ef52be61ddbb07"

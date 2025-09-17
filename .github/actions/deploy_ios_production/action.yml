@@ -123,7 +123,6 @@ runs:
           IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
           IOS_APP_STORE_TEAM_ID: ${{ inputs.IOS_APP_STORE_TEAM_ID }}
           IOS_DEV_EMAIL: ${{ inputs.IOS_DEV_EMAIL }}
-          IOS_MATCH_DEPLOY_KEY: ${{ inputs.IOS_MATCH_DEPLOY_KEY }}
 
     - name: Upload Xcode build logs
       if: failure()

@@ -1,8 +1,6 @@
 def ios_deploy_production!(options = {})
-  require 'fileutils'
   require 'base64'
   require 'fastlane'
-  require 'fastlane_core/ui/ui'
 
   app_identifier = options.fetch(:app_identifier)
   workspace = options.fetch(:workspace)

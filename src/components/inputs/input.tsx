@@ -20,6 +20,8 @@ const Input = forwardRef<TextInput, InputProps>(
       message = '',
       label,
       onChangeText,
+      validationRegex,
+      onValidate,
       ...props
     },
     ref,
@@ -64,6 +66,19 @@ const Input = forwardRef<TextInput, InputProps>(
         setShowMsg(false);
       }
       onChangeText?.(text);
+    };
+
+    const handleValidation = () => {
+      const text = props.value ?? '';
+      if (validationRegex) {
+        const isValid = validationRegex.test(text);
+
+        if (!isValid) {
+          onValidate?.(text, InputStatus.ERROR);
+          return;
+        }
+      }
+      onValidate?.(text, InputStatus.SUCCESS);
     };
 
     return (
@@ -126,6 +141,10 @@ const Input = forwardRef<TextInput, InputProps>(
               placeholderTextColor={
                 disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
               }
+              onSubmitEditing={e => {
+                props.onSubmitEditing?.(e);
+                handleValidation();
+              }}
             />
 
             {endEnhancer && (

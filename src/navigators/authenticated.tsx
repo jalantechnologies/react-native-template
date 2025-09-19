@@ -1,10 +1,11 @@
 import { DdSdkReactNative } from '@datadog/mobile-react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { useTheme } from 'native-base';
 import React, { useEffect } from 'react';
 import HomeIcon from 'react-native-template/assets/icons/home.svg';
 import PersonIcon from 'react-native-template/assets/icons/person.svg';
+import { useTheme } from 'styled-components/native';
+
 
 import { AuthenticatedStackParamsList, AuthenticatedTabParamsList } from '../../@types/navigation';
 import { FullScreenSpinner } from '../components';
@@ -22,7 +23,6 @@ const getTabBarIcon = (routeName: string) => {
     const themeColor = useThemeColor(color);
 
     let icon;
-
     switch (routeName) {
       case 'Home':
         icon = <HomeIcon width={size} height={size} fill={themeColor} />;
@@ -42,7 +42,8 @@ const getTabBarIcon = (routeName: string) => {
 const AuthenticatedStack = () => {
   const { isNewUser, isAccountLoading, getAccountDetails, accountDetails } = useAccountContext();
   const { logout } = useAuthContext();
-  const { colors } = useTheme();
+  const theme = useTheme(); 
+  const { colors } = theme;
 
   useEffect(() => {
     getAccountDetails().catch(() => {
@@ -72,8 +73,8 @@ const AuthenticatedStack = () => {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: getTabBarIcon(route.name),
-        tabBarActiveTintColor: colors.primary[500],
-        tabBarInactiveTintColor: colors.muted[400],
+        tabBarActiveTintColor: colors.primary, 
+        tabBarInactiveTintColor: colors.muted, 
       })}
     >
       <Tab.Screen name="Home" component={Dashboard} />

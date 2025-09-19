@@ -29,18 +29,28 @@ export const Tag: React.FC<TagProps> = ({
   const textStyle =
     variant === TagVariant.OUTLINED ? styles.outlinedTextColor : styles.filledTextColor;
 
-  const Container = onClick ? Pressable : Box;
-  const containerProps = onClick ? { onPress: onClick } : {};
+  if (onClick) {
+    return (
+      <Pressable onPress={onClick} style={[styles.tag, variantStyle] as any}>
+        <Text style={[styles.text, textStyle]}>{label}</Text>
+        {onDeleted && (
+          <Pressable onPress={onDeleted} style={styles.iconWrapper} hitSlop={8}>
+            <Close width={16} height={16} fill={textStyle.color} />
+          </Pressable>
+        )}
+      </Pressable>
+    );
+  }
 
   return (
-    <Container style={[styles.tag, variantStyle]} {...containerProps}>
+    <Box style={[styles.tag, variantStyle] as any}>
       <Text style={[styles.text, textStyle]}>{label}</Text>
       {onDeleted && (
         <Pressable onPress={onDeleted} style={styles.iconWrapper} hitSlop={8}>
           <Close width={16} height={16} fill={textStyle.color} />
         </Pressable>
       )}
-    </Container>
+    </Box>
   );
 };
 

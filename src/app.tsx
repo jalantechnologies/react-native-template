@@ -4,6 +4,11 @@ import { NativeBaseProvider } from 'native-base';
 import React, { useCallback } from 'react';
 import ErrorBoundary from 'react-native-error-boundary';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
+import { ThemeProvider } from 'styled-components/native';
+import { lightTheme, darkTheme } from '../src/theme/theme';
+import  {useState } from 'react';
+
+
 
 import appTheme from './app-theme';
 import { ErrorFallback } from './components';
@@ -16,27 +21,29 @@ import DatadogConfig, { onDataDogSDKInitialized } from './services/datadog';
 const App = () => {
   Logger.initializeLoggers();
   const ErrorComponent = useCallback(() => <ErrorFallback />, []);
+  const [isDarkMode, setIsDarkMode] = useState(false); 
 
   return (
-    <NativeBaseProvider theme={appTheme}>
-      <ErrorBoundary
-        onError={(e, stack) => Logger.error(`App Error: ${e} ${stack}`)}
-        FallbackComponent={ErrorComponent}
-      >
-        <DatadogProvider configuration={DatadogConfig} onInitialization={onDataDogSDKInitialized}>
-          <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-            <AuthContextProvider>
-              <AccountContextProvider>
-                <TaskContextProvider>
-                  <ApplicationNavigator />
-                </TaskContextProvider>
-              </AccountContextProvider>
-            </AuthContextProvider>
-          </SafeAreaProvider>
-        </DatadogProvider>
-      </ErrorBoundary>
-    </NativeBaseProvider>
+    <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
+      <NativeBaseProvider theme={appTheme}>
+        <ErrorBoundary
+          onError={(e, stack) => Logger.error(`App Error: ${e} ${stack}`)}
+          FallbackComponent={ErrorComponent}
+        >
+          <DatadogProvider configuration={DatadogConfig} onInitialization={onDataDogSDKInitialized}>
+            <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+              <AuthContextProvider>
+                <AccountContextProvider>
+                  <TaskContextProvider>
+                    <ApplicationNavigator />
+                  </TaskContextProvider>
+                </AccountContextProvider>
+              </AuthContextProvider>
+            </SafeAreaProvider>
+          </DatadogProvider>
+        </ErrorBoundary>
+      </NativeBaseProvider>
+    </ThemeProvider>
   );
-};
-
+} 
 export default App;

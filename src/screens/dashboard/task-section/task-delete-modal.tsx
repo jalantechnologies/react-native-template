@@ -1,11 +1,11 @@
-import DeleteIcon from 'boilerplate-react-native/assets/icons/delete.svg';
-import { Button, Modal } from 'boilerplate-react-native/src/components';
-import { useTaskContext } from 'boilerplate-react-native/src/contexts';
-import { AsyncError, Task } from 'boilerplate-react-native/src/types';
-import { ButtonKind } from 'boilerplate-react-native/src/types/button';
 import { t } from 'i18next';
 import { Box, Text, Toast, useTheme } from 'native-base';
 import React from 'react';
+import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
+import { Button, Modal } from 'react-native-template/src/components';
+import { useTaskContext } from 'react-native-template/src/contexts';
+import { AsyncError, Task } from 'react-native-template/src/types';
+import { ButtonKind, ButtonColor } from 'react-native-template/src/types/button';
 
 interface TaskDeleteModalProps {
   handleModalClose: () => void;
@@ -57,7 +57,7 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
       </Modal.Body>
       <Modal.Footer>
         <Box flex={1} mr={2}>
-          <Button onClick={handleModalClose} kind={ButtonKind.SECONDARY}>
+          <Button onClick={handleModalClose} kind={ButtonKind.OUTLINED}>
             Cancel
           </Button>
         </Box>
@@ -65,7 +65,8 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
           <Button
             isLoading={isDeleteTaskLoading}
             onClick={handleDeleteTask}
-            kind={ButtonKind.DANGER}
+            kind={ButtonKind.CONTAINED}
+            color={ButtonColor.DANGER}
             startEnhancer={<DeleteIcon width={16} height={16} fill={theme.colors.secondary[50]} />}
           >
             Delete

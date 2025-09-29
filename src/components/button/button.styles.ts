@@ -1,123 +1,167 @@
-import { ButtonKind, ButtonSize } from 'boilerplate-react-native/src/types/button';
 import { useTheme } from 'native-base';
 import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
+
+import { ButtonKind, ButtonSize, ButtonColor } from '../../types';
 
 export const useButtonStyles = () => {
   const theme = useTheme();
 
   return StyleSheet.create({
-    activityIndicator: {
-      marginHorizontal: theme.space['1'],
-    },
     button: {
       alignItems: 'center',
-      borderRadius: theme.radii.md,
       flexDirection: 'row',
       gap: theme.space['2'],
       justifyContent: 'center',
-      minHeight: 40,
-    },
-    compact: {
-      padding: theme.space['2'],
-    },
-    danger: {
-      backgroundColor: theme.colors.danger['700'],
-      borderColor: theme.colors.danger['600'],
-    },
-    default: {
-      padding: theme.space['3'],
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
     },
     enhancer: {
       alignItems: 'center',
       justifyContent: 'center',
-      minWidth: 24,
     },
     horizontalStack: {
       alignItems: 'center',
       flexDirection: 'row',
-      gap: theme.space['1'],
+      gap: theme.space['2'],
     },
-    large: {
-      padding: theme.space['4'],
-    },
-    mini: {
-      padding: theme.space['1'],
-    },
-    primary: {
-      backgroundColor: theme.colors.primary['500'],
-      borderColor: theme.colors.primary['500'],
-    },
-    secondary: {
-      backgroundColor: theme.colors.secondary['500'],
-      borderColor: theme.colors.secondary['500'],
-    },
-    tertiary: {
-      backgroundColor: theme.colors.tertiary['500'],
-      borderColor: theme.colors.tertiary['500'],
+    text: {
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      letterSpacing: theme.letterSpacings.md,
     },
   });
+};
+
+export const useColorStyles = (isPressed: boolean) => {
+  const theme = useTheme();
+  return {
+    [ButtonColor.DANGER]: StyleSheet.create({
+      base: {
+        backgroundColor: isPressed ? theme.colors.danger[400] : theme.colors.danger[500],
+        borderColor: theme.colors.danger[500],
+      },
+      text: { color: isPressed ? theme.colors.danger[400] : theme.colors.danger[500] },
+    }),
+    [ButtonColor.INFO]: StyleSheet.create({
+      base: {
+        backgroundColor: isPressed ? theme.colors.info[400] : theme.colors.info[500],
+        borderColor: theme.colors.info[500],
+      },
+      text: { color: isPressed ? theme.colors.info[400] : theme.colors.info[500] },
+    }),
+    [ButtonColor.PRIMARY]: StyleSheet.create({
+      base: {
+        backgroundColor: theme.colors.primary[500],
+        borderColor: theme.colors.primary[500],
+      },
+      text: { color: isPressed ? theme.colors.primary[400] : theme.colors.primary[500] },
+    }),
+    [ButtonColor.SECONDARY]: StyleSheet.create({
+      base: {
+        backgroundColor: isPressed ? theme.colors.secondary[400] : theme.colors.secondary[500],
+        borderColor: theme.colors.secondary[500],
+      },
+      text: { color: isPressed ? theme.colors.secondary[400] : theme.colors.secondary[500] },
+    }),
+    [ButtonColor.SUCCESS]: StyleSheet.create({
+      base: {
+        backgroundColor: isPressed ? theme.colors.success[400] : theme.colors.success[500],
+        borderColor: theme.colors.success[500],
+      },
+      text: { color: isPressed ? theme.colors.success[400] : theme.colors.success[500] },
+    }),
+    [ButtonColor.WARNING]: StyleSheet.create({
+      base: {
+        backgroundColor: isPressed ? theme.colors.warning[400] : theme.colors.warning[500],
+        borderColor: theme.colors.warning[500],
+      },
+      text: { color: isPressed ? theme.colors.warning[400] : theme.colors.warning[500] },
+    }),
+  } as Record<ButtonColor, { base: ViewStyle; text: TextStyle }>;
 };
 
 export const useKindStyles = () => {
   const appTheme = useTheme();
   return {
-    [ButtonKind.PRIMARY]: StyleSheet.create({
+    [ButtonKind.CONTAINED]: StyleSheet.create({
       base: {
-        backgroundColor: appTheme.colors.primary['500'],
-        borderRadius: appTheme.radii.md,
+        ...appTheme.shadows[2],
+        borderRadius: appTheme.radii.sm,
       },
-      enabled: { opacity: 1 },
-      disabled: { opacity: 0.5 },
-      text: { color: appTheme.colors.lightText },
+      disabled: {
+        backgroundColor: appTheme.colors.secondary[100],
+        borderColor: appTheme.colors.secondary[300],
+        color: appTheme.colors.secondary[300],
+      },
+      text: { color: appTheme.colors.white },
     }),
-    [ButtonKind.SECONDARY]: StyleSheet.create({
+    [ButtonKind.DASHED]: StyleSheet.create({
       base: {
-        borderRadius: appTheme.radii.md,
-        borderColor: appTheme.colors.primary['500'],
-        borderWidth: 1,
+        backgroundColor: appTheme.colors.white,
+        borderRadius: appTheme.radii.sm,
+        borderWidth: parseInt(appTheme.borderWidths['1'], 10),
+        borderStyle: 'dashed',
       },
-      enabled: { opacity: 1 },
-      disabled: { opacity: 0.5 },
-      text: { color: appTheme.colors.primary['500'] },
+
+      disabled: {
+        backgroundColor: appTheme.colors.secondary[100],
+        borderColor: appTheme.colors.secondary[300],
+        color: appTheme.colors.secondary[300],
+      },
     }),
-    [ButtonKind.TERTIARY]: StyleSheet.create({
+    [ButtonKind.OUTLINED]: StyleSheet.create({
+      base: {
+        borderRadius: appTheme.radii.sm,
+        backgroundColor: 'transparent',
+        borderWidth: parseInt(appTheme.borderWidths['1'], 10),
+      },
+      disabled: {
+        backgroundColor: appTheme.colors.secondary[100],
+        borderColor: appTheme.colors.secondary[300],
+        color: appTheme.colors.secondary[300],
+      },
+    }),
+    [ButtonKind.LINK]: StyleSheet.create({
       base: {
         borderWidth: 0,
+        borderRadius: appTheme.radii.xs,
+        backgroundColor: 'transparent',
       },
-      enabled: { opacity: 1 },
-      disabled: { opacity: 0.5 },
-      text: { color: appTheme.colors.primary['500'] },
+      disabled: {
+        color: appTheme.colors.secondary['300'],
+      },
     }),
-    [ButtonKind.DANGER]: StyleSheet.create({
-      base: { backgroundColor: appTheme.colors.danger['700'], borderRadius: 8 },
-      enabled: { opacity: 1 },
-      disabled: { opacity: 0.5 },
-      text: { color: appTheme.colors.lightText },
-    }),
-  } as Record<
-    ButtonKind,
-    { base: ViewStyle; disabled: ViewStyle; enabled: ViewStyle; text: TextStyle }
-  >;
+  } as Record<ButtonKind, { base: ViewStyle; disabled: ViewStyle; text?: TextStyle }>;
 };
 
 export const useSizeStyles = () => {
   const appTheme = useTheme();
   return {
     [ButtonSize.COMPACT]: StyleSheet.create({
-      container: { padding: appTheme.space[1] },
-      text: { fontSize: appTheme.fontSizes.sm },
+      container: {
+        paddingVertical: appTheme.space[1],
+        paddingHorizontal: appTheme.space[2],
+      },
+      text: { fontSize: appTheme.fontSizes.sm, lineHeight: Number(appTheme.lineHeights.sm) },
     }),
     [ButtonSize.DEFAULT]: StyleSheet.create({
-      container: { padding: appTheme.space[2] },
-      text: { fontSize: appTheme.fontSizes.md },
+      container: {
+        paddingHorizontal: appTheme.space[4],
+        paddingVertical: appTheme.space[2],
+      },
+      text: { fontSize: appTheme.fontSizes.md, lineHeight: Number(appTheme.lineHeights.md) },
     }),
     [ButtonSize.LARGE]: StyleSheet.create({
-      container: { padding: appTheme.space[3] },
-      text: { fontSize: appTheme.fontSizes.lg },
+      container: {
+        paddingVertical: appTheme.space[2],
+        paddingHorizontal: appTheme.space[4],
+      },
+      text: { fontSize: appTheme.fontSizes.lg, lineHeight: Number(appTheme.lineHeights.lg) },
     }),
     [ButtonSize.MINI]: StyleSheet.create({
-      container: { padding: appTheme.space['0.5'] },
-      text: { fontSize: appTheme.fontSizes.xs },
+      container: {
+        paddingVertical: appTheme.space[1],
+        paddingHorizontal: appTheme.space[2],
+      },
+      text: { fontSize: appTheme.fontSizes.xs, lineHeight: Number(appTheme.lineHeights.xs) },
     }),
   } as Record<ButtonSize, { container: ViewStyle; text: TextStyle }>;
 };

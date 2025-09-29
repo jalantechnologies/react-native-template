@@ -1,7 +1,7 @@
-import { Nullable } from 'boilerplate-react-native/src/types';
-import { ButtonKind } from 'boilerplate-react-native/src/types/button';
 import React from 'react';
 import { View } from 'react-native';
+import { ButtonKind } from 'react-native-template/src//types/button';
+import { Nullable } from 'react-native-template/src/types';
 
 import Button from '../button/button';
 
@@ -30,14 +30,14 @@ const ModalFooter: React.FC<ModalFooterProps> = ({
     <View style={[styles.footerContainer]}>
       {onCancel && (
         <View style={styles.button}>
-          <Button kind={ButtonKind.SECONDARY} onClick={onCancel}>
+          <Button kind={ButtonKind.OUTLINED} onClick={onCancel}>
             {cancelText}
           </Button>
         </View>
       )}
       {onConfirm && (
         <View style={styles.button}>
-          <Button onClick={onConfirm} kind={ButtonKind.PRIMARY} disabled={isConfirmDisabled}>
+          <Button onClick={onConfirm} kind={ButtonKind.CONTAINED} disabled={isConfirmDisabled}>
             {confirmText}
           </Button>
         </View>

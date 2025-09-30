@@ -18,14 +18,17 @@ export class AccountService extends APIService {
     return this.patch(
       `/accounts/${userAccessToken.accountId}`,
       {
-        firstName,
-        lastName,
+        first_name: firstName,
+        last_name: lastName,
       },
       this.getAuthorizationHeader(userAccessToken.token),
     );
   };
 
   deleteAccount = async (userAccessToken: AccessToken): Promise<APIResponse> => {
-    return this.delete(`/accounts/${userAccessToken.accountId}`);
+    return this.delete(
+      `/accounts/${userAccessToken.accountId}`,
+      this.getAuthorizationHeader(userAccessToken.token),
+    );
   };
 }

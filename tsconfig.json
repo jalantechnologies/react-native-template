@@ -6,6 +6,8 @@
       "@types",
       "./node_modules/@types"
     ],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": "..",
     "paths": {
       "@/*": ["./src/*"],

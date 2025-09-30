@@ -6,6 +6,7 @@ import { Box } from 'native-base';
 import React from 'react';
 import { StatusBar } from 'react-native';
 
+
 import { ApplicationStackParamList } from '../../@types/navigation';
 import { Startup } from '../screens';
 
@@ -37,3 +38,5 @@ const ApplicationNavigator = () => {
 };
 
 export default ApplicationNavigator;
+
+

@@ -27,7 +27,7 @@ const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel, t
   const hourRef = useRef<ScrollView>(null);
   const minuteRef = useRef<ScrollView>(null);
 
-  const pickerTop = triggerLayout.y + triggerLayout.height - 16;
+  const pickerTop = triggerLayout.y + triggerLayout.height - theme.space[4];
 
   const confirmTime = () => {
     let hour = selectedHour % 12;

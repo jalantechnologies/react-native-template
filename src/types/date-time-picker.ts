@@ -40,7 +40,7 @@ export interface DatePickerProps {
   blockedDates?: Date[];
   dateSelectionMode?: DateSelectionMode;
   onCancel: () => void;
-  onChange: (date: Date | { start: Date; end: Date }) => void;
+  onChange: (date: Date | { start: Date | null; end: Date | null }) => void;
   tempDate: Date;
   triggerLayout: LayoutRectangle;
 }

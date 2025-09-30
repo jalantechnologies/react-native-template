@@ -58,11 +58,12 @@ const DatePicker: React.FC<DatePickerProps> = ({
       setSelectedDate(date);
       onChange(date);
     } else {
-      if (date.startDate && date.endDate) {
-        onChange({ start: date.startDate, end: date.endDate });
-      }
+      const start = date.startDate ?? null;
+      const end = date.endDate ?? null;
+      onChange({ start, end });
     }
   };
+  
 
   const pickerTop = triggerLayout.y + triggerLayout.height - theme.space[4];
 
@@ -106,8 +107,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
             <View
               style={{
                 position: 'absolute',
-                top: yearLayout?.y! + yearLayout?.height! + 4,
-                left: yearLayout?.x,
+                top: yearLayout ? yearLayout.y + yearLayout.height + theme.space[1] : 0,
+                left: yearLayout ? yearLayout.x : 0,
               }}
             >
               <Pressable style={{ flex: 1 }} onPress={() => {}}>

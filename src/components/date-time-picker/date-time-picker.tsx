@@ -44,15 +44,19 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = props => {
     setShowTimePicker(true);
   };
 
-  const handleDateChange = (date: Date | { start: Date; end: Date }) => {
+  const handleDateChange = (date: Date | { start: Date | null; end: Date | null }) => {
     if (isRangeMode) {
       if ('start' in date && 'end' in date) {
-        props.onChange(date);
+        const { start, end } = date;
+        if (start && end) {
+          props.onChange({ start, end });
+          setShowDatePicker(false);
+        }
       }
-    } else {
-      if (date instanceof Date) {
-        props.onChange(date);
-      }
+      return;
+    }
+    if (date instanceof Date) {
+      props.onChange(date);
     }
     setShowDatePicker(false);
   };
@@ -116,7 +120,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = props => {
             ref={inputRef}
             onLayout={measureInput}
             onPress={() => setShowTimePicker(true)}
-            style={props.mode === DateTimePickerMode.DATETIME && { marginTop: 2 }}
+            style={props.mode === DateTimePickerMode.DATETIME && { marginTop: theme.space[1] }}
           >
             <Input
               value={props.value.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

@@ -1,6 +1,6 @@
 import { theme } from 'native-base';
 import React, { useState } from 'react';
-import { Modal, Pressable, View } from 'react-native';
+import { Modal, Pressable, View, StyleSheet } from 'react-native';
 
 import { DatePickerProps } from '../../types/date-time-picker';
 
@@ -58,26 +58,34 @@ const DatePicker: React.FC<DatePickerProps> = ({
       setSelectedDate(date);
       onChange(date);
     } else {
-      if (date.startDate && date.endDate) {
-        onChange({ start: date.startDate, end: date.endDate });
-      }
+      const start = date.startDate ?? null;
+      const end = date.endDate ?? null;
+      onChange({ start, end });
     }
   };
-
   const pickerTop = triggerLayout.y + triggerLayout.height - theme.space[4];
+
+  const styles = StyleSheet.create({
+    modalPressable: { flex: 1 },
+    calendarContainer: {
+      position: 'absolute',
+      top: pickerTop,
+      left: triggerLayout.x,
+      width: triggerLayout.width,
+    },
+    yearPickerContainer: {
+      position: 'absolute',
+      top: yearLayout ? yearLayout.y + yearLayout.height + theme.space[1] : 0,
+      left: yearLayout ? yearLayout.x : 0,
+    },
+    yearPickerPressable: { flex: 1 },
+  });
 
   return (
     <>
       <Modal visible transparent animationType="fade">
-        <Pressable style={{ flex: 1 }} onPress={onCancel}>
-          <View
-            style={{
-              position: 'absolute',
-              top: pickerTop,
-              left: triggerLayout.x,
-              width: triggerLayout.width,
-            }}
-          >
+        <Pressable style={styles.modalPressable} onPress={onCancel}>
+          <View style={styles.calendarContainer}>
             <Calendar
               blockedDates={blockedDates}
               tempDate={selectedDate}
@@ -98,19 +106,13 @@ const DatePicker: React.FC<DatePickerProps> = ({
       {showYearPicker && (
         <Modal visible transparent animationType="fade">
           <Pressable
-            style={{ flex: 1 }}
+            style={styles.modalPressable}
             onPress={() => {
               setShowYearPicker(false);
             }}
           >
-            <View
-              style={{
-                position: 'absolute',
-                top: yearLayout?.y! + yearLayout?.height! + 4,
-                left: yearLayout?.x,
-              }}
-            >
-              <Pressable style={{ flex: 1 }} onPress={() => {}}>
+            <View style={styles.yearPickerContainer}>
+              <Pressable style={styles.yearPickerPressable} onPress={() => {}}>
                 <YearPicker calendarYear={calendarYear} onYearSelect={handleYearSelect} />
               </Pressable>
             </View>

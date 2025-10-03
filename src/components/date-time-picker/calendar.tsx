@@ -7,31 +7,20 @@ import {
   Pressable,
   PanResponder,
   Animated,
-  TextStyle,
   findNodeHandle,
   UIManager,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { CalendarProps, DateSelectionMode, PresetOption } from '../../types/date-time-picker';
+import { isSameDate, isDateInRange, isBlocked } from '../../utils/dateUtils';
+import MonthNavigator from '../../utils/MonthNavigator';
 import Button from '../button/button';
 
 import { useCalendarStyles } from './date-time-picker.styles';
 
-const monthNames = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
+const WEEK_DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+const DAYS_IN_WEEK = 7;
 
 const Calendar: React.FC<CalendarProps> = ({
   blockedDates,
@@ -52,6 +41,8 @@ const Calendar: React.FC<CalendarProps> = ({
   const [showSelectByOptions, setShowSelectByOptions] = useState(false);
 
   const today = new Date();
+  const styles = useCalendarStyles();
+  const theme = useTheme();
 
   const presetOptions = [
     { label: 'Last 3 Days', value: PresetOption.LAST_3_DAYS },
@@ -64,22 +55,36 @@ const Calendar: React.FC<CalendarProps> = ({
     { label: 'Next 14 Days', value: PresetOption.NEXT_14_DAYS },
   ];
 
-  const firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
-  const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+  const calendarDates = React.useMemo(() => {
+    const firstWeekday = new Date(calendarYear, calendarMonth, 1).getDay();
+    const totalDays = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+    const datesArray: (number | null)[] = [];
 
-  const styles = useCalendarStyles();
-  const theme = useTheme();
+    // Leading empty cells
+    for (let i = 0; i < firstWeekday; i++) {
+      datesArray.push(null);
+    }
 
-  const dates: (number | null)[] = [];
-  for (let i = 0; i < firstDay; i++) {
-    dates.push(null);
-  }
-  for (let i = 1; i <= daysInMonth; i++) {
-    dates.push(i);
-  }
-  while (dates.length % 7 !== 0) {
-    dates.push(null);
-  }
+    // Days of month
+    for (let i = 1; i <= totalDays; i++) {
+      datesArray.push(i);
+    }
+
+    // Trailing empty cells
+    while (datesArray.length % DAYS_IN_WEEK !== 0) {
+      datesArray.push(null);
+    }
+
+    return datesArray;
+  }, [calendarYear, calendarMonth]);
+
+  const calendarRows = React.useMemo(() => {
+    const rows: (number | null)[][] = [];
+    for (let i = 0; i < calendarDates.length; i += DAYS_IN_WEEK) {
+      rows.push(calendarDates.slice(i, i + DAYS_IN_WEEK));
+    }
+    return rows;
+  }, [calendarDates]);
 
   const translateX = useRef(new Animated.Value(0)).current;
 
@@ -118,60 +123,43 @@ const Calendar: React.FC<CalendarProps> = ({
     }),
   ).current;
 
-  const isBlocked = (day: number | null) => {
-    if (day === null || blockedDates === undefined) {
-      return false;
-    }
-    return blockedDates.some(
-      date =>
-        date.getDate() === day &&
-        date.getMonth() === calendarMonth &&
-        date.getFullYear() === calendarYear,
-    );
-  };
-
-  const isSameDate = (d1: Date, d2: Date) => {
-    return (
-      d1.getDate() === d2.getDate() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getFullYear() === d2.getFullYear()
-    );
-  };
-
-  const isDateInRange = (date: Date, start: Date, end: Date) => {
-    return date.getTime() > start.getTime() && date.getTime() < end.getTime();
-  };
-
-  const onDatePress = (day: number | null) => {
-    if (day === null || isBlocked(day)) {
-      return;
-    }
-
-    const selectedFullDate = new Date(calendarYear, calendarMonth, day);
-
-    if (dateSelectionMode === DateSelectionMode.RANGE) {
-      if (startDate === null) {
-        setStartDate(selectedFullDate);
-      } else if (
-        startDate !== null &&
-        endDate === null &&
-        selectedFullDate.getTime() > startDate.getTime()
-      ) {
-        setEndDate(selectedFullDate);
-      } else if (isSameDate(selectedFullDate, startDate)) {
-        setStartDate(null);
-        setEndDate(null);
-      } else if (endDate !== null && isSameDate(selectedFullDate, endDate)) {
-        setEndDate(null);
-      } else {
-        setStartDate(selectedFullDate);
-        setEndDate(null);
+  const onDatePress = React.useCallback(
+    (day: number | null) => {
+      if (day === null || isBlocked(day, blockedDates, calendarMonth, calendarYear)) {
+        return;
       }
-    } else {
-      setSelectedDate(day);
-      onDateSelect(day);
-    }
-  };
+
+      const selectedFullDate = new Date(calendarYear, calendarMonth, day);
+
+      if (dateSelectionMode === DateSelectionMode.RANGE) {
+        if (!startDate) {
+          setStartDate(selectedFullDate);
+        } else if (!endDate && selectedFullDate.getTime() > startDate.getTime()) {
+          setEndDate(selectedFullDate);
+        } else if (isSameDate(selectedFullDate, startDate)) {
+          setStartDate(null);
+          setEndDate(null);
+        } else if (endDate && isSameDate(selectedFullDate, endDate)) {
+          setEndDate(null);
+        } else {
+          setStartDate(selectedFullDate);
+          setEndDate(null);
+        }
+      } else {
+        setSelectedDate(day);
+        onDateSelect(day);
+      }
+    },
+    [
+      startDate,
+      endDate,
+      blockedDates,
+      calendarMonth,
+      calendarYear,
+      dateSelectionMode,
+      onDateSelect,
+    ],
+  );
 
   const handlePresetSelection = (preset: PresetOption) => {
     let start: Date;
@@ -183,47 +171,39 @@ const Calendar: React.FC<CalendarProps> = ({
         start.setDate(today.getDate() - 2);
         end = today;
         break;
-
       case PresetOption.LAST_7_DAYS:
         start = new Date(today);
         start.setDate(today.getDate() - 6);
         end = today;
         break;
-
       case PresetOption.LAST_14_DAYS:
         start = new Date(today);
         start.setDate(today.getDate() - 13);
         end = today;
         break;
-
       case PresetOption.LAST_MONTH:
         start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-        end = new Date(today.getFullYear(), today.getMonth(), 0); // last day of previous month
+        end = new Date(today.getFullYear(), today.getMonth(), 0);
         break;
-
       case PresetOption.THIS_MONTH:
         start = new Date(today.getFullYear(), today.getMonth(), 1);
-        end = new Date(today.getFullYear(), today.getMonth() + 1, 0); // last day of current month
+        end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
         break;
-
       case PresetOption.NEXT_3_DAYS:
         start = today;
         end = new Date(today);
         end.setDate(today.getDate() + 2);
         break;
-
       case PresetOption.NEXT_7_DAYS:
         start = today;
         end = new Date(today);
         end.setDate(today.getDate() + 6);
         break;
-
       case PresetOption.NEXT_14_DAYS:
         start = today;
         end = new Date(today);
         end.setDate(today.getDate() + 13);
         break;
-
       default:
         return;
     }
@@ -258,7 +238,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
   return (
     <Pressable onPress={onCancel} style={styles.modalContainer}>
-      <Pressable onPress={() => {}} style={styles.modalContent}>
+      <Pressable pointerEvents="box-none" style={styles.modalContent}>
         <View style={styles.headerCont}>
           <TouchableOpacity
             ref={yearRef}
@@ -271,6 +251,7 @@ const Calendar: React.FC<CalendarProps> = ({
             <Text style={styles.headerText}>{calendarYear}</Text>
             <Icon name="angle-down" style={[styles.headerIcon, styles.headerText]} />
           </TouchableOpacity>
+
           {dateSelectionMode === DateSelectionMode.RANGE && (
             <TouchableOpacity
               onPress={() => setShowSelectByOptions(true)}
@@ -284,7 +265,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
         {showSelectByOptions && (
           <Pressable style={styles.presetOverlay} onPress={() => setShowSelectByOptions(false)}>
-            <Pressable onPress={() => {}} style={styles.presetCont}>
+            <Pressable pointerEvents="box-none" style={styles.presetCont}>
               {presetOptions.map(option => (
                 <TouchableOpacity
                   key={option.value}
@@ -310,25 +291,15 @@ const Calendar: React.FC<CalendarProps> = ({
         </Text>
 
         <Animated.View {...panResponder.panHandlers} style={{ transform: [{ translateX }] }}>
-          <View style={styles.monthYearRow}>
-            <TouchableOpacity onPress={() => onMonthChange(-1)} style={styles.monthYearItems}>
-              <Icon name="angle-left" style={styles.monthYearRowIcons} />
-            </TouchableOpacity>
-            <View style={styles.monthYearItems}>
-              <Text
-                style={[
-                  styles.monthYearText,
-                  { fontWeight: `${theme.fontWeights.medium}` as TextStyle['fontWeight'] },
-                ]}
-              >{`${monthNames[calendarMonth]} ${calendarYear}`}</Text>
-            </View>
-            <TouchableOpacity onPress={() => onMonthChange(1)} style={styles.monthYearItems}>
-              <Icon name="angle-right" style={styles.monthYearRowIcons} />
-            </TouchableOpacity>
-          </View>
+          <MonthNavigator
+            month={calendarMonth}
+            year={calendarYear}
+            onMonthChange={onMonthChange}
+            styles={styles}
+          />
 
           <View style={styles.daysRow}>
-            {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day, index) => (
+            {WEEK_DAYS.map((day, index) => (
               <Text key={index} style={styles.dayLabel}>
                 {day}
               </Text>
@@ -336,14 +307,16 @@ const Calendar: React.FC<CalendarProps> = ({
           </View>
 
           <View style={styles.calendarGrid}>
-            {Array.from({ length: dates.length / 7 }).map((_, rowIndex) => (
+            {calendarRows.map((week, rowIndex) => (
               <View key={rowIndex} style={styles.calendarRow}>
-                {dates.slice(rowIndex * 7, rowIndex * 7 + 7).map((day, colIndex) => (
+                {week.map((day, colIndex) => (
                   <TouchableOpacity
                     key={colIndex}
                     style={[
                       styles.dateCell,
-                      isBlocked(day) ? styles.blockedCell : null,
+                      isBlocked(day, blockedDates, calendarMonth, calendarYear)
+                        ? styles.blockedCell
+                        : null,
                       day === today.getDate() &&
                       calendarMonth === today.getMonth() &&
                       calendarYear === today.getFullYear()
@@ -373,16 +346,14 @@ const Calendar: React.FC<CalendarProps> = ({
                         ? styles.rangeCell
                         : null,
                     ]}
-                    onPress={() => {
-                      if (day !== null) {
-                        onDatePress(day);
-                      }
-                    }}
+                    onPress={() => day !== null && onDatePress(day)}
                   >
                     <Text
                       style={[
                         styles.dateTextCell,
-                        isBlocked(day) ? styles.blockedCellText : null,
+                        isBlocked(day, blockedDates, calendarMonth, calendarYear)
+                          ? styles.blockedCellText
+                          : null,
                         day === today.getDate() &&
                         calendarMonth === today.getMonth() &&
                         calendarYear === today.getFullYear()

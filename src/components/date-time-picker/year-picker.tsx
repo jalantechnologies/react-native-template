@@ -7,6 +7,7 @@ import { useYearPickerStyles } from './date-time-picker.styles';
 
 const YearPicker: React.FC<YearPickerProps> = ({ calendarYear, onYearSelect }) => {
   const styles = useYearPickerStyles();
+  // generate year list centered on current year
   const years = Array.from({ length: 120 }, (_, i) => new Date().getFullYear() - 60 + i);
   return (
     <View style={styles.modalContent}>

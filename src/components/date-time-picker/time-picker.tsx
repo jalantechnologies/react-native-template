@@ -29,6 +29,7 @@ const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel, t
 
   const pickerTop = triggerLayout.y + triggerLayout.height - 16;
 
+  // confirm selected time
   const confirmTime = () => {
     let hour = selectedHour % 12;
     if (ampm[selectedAmPm] === 'PM') {

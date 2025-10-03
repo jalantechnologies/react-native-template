@@ -181,6 +181,7 @@ export const useCalendarStyles = () => {
   });
 };
 
+// Styles for Year Picker component
 export const useYearPickerStyles = () => {
   const theme = useTheme();
   return StyleSheet.create({

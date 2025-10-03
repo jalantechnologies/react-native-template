@@ -31,7 +31,9 @@ const Badge: React.FC<BadgeProps> = ({
     type === BadgeType.LIGHT || type === BadgeType.TEXT ? colorStyle.text : { color: 'white' };
 
   const renderEnhancer = (enhancer?: React.ReactNode) => {
-    if (!enhancer) return null;
+    if (!enhancer) {
+      return null;
+    }
 
     if (typeof enhancer === 'string' || typeof enhancer === 'number') {
       return <Text style={[styles.label, sizeStyle.text, textColorStyle]}>{enhancer}</Text>;

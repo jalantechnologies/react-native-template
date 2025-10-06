@@ -1,5 +1,5 @@
 import { useTheme } from 'native-base';
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { View, Text, PanResponder, Animated, LayoutChangeEvent } from 'react-native';
 
 import { SliderProps } from '../../types/slider';
@@ -7,13 +7,13 @@ import { Input } from '../inputs';
 
 import { useSliderStyles } from './slider.styles';
 
-enum BubbleHandle {
+enum SliderHandle {
   SINGLE = 'single',
   LEFT = 'left',
   RIGHT = 'right',
 }
 
-enum SubmitType {
+enum InputSubmitType {
   MIN = 'min',
   MAX = 'max',
 }
@@ -36,22 +36,33 @@ const Slider = ({
 
   const styles = useSliderStyles();
 
-  const calculatePositionFromValue = (val: number) =>
-    trackLength > 0 ? ((val - lowerLimit) / (upperLimit - lowerLimit)) * trackLength : 0;
+  const clamp = useCallback(
+    (val: number, min: number, max: number) => Math.min(Math.max(val, min), max),
+    [],
+  );
 
-  const calculateValueFromPosition = (pos: number) =>
-    trackLength > 0 ? lowerLimit + ((upperLimit - lowerLimit) * pos) / trackLength : lowerLimit;
+  const calculatePositionFromValue = useCallback(
+    (val: number) =>
+      trackLength > 0 ? ((val - lowerLimit) / (upperLimit - lowerLimit)) * trackLength : 0,
+    [trackLength, lowerLimit, upperLimit],
+  );
 
-  const applyStep = (val: number) => {
-    if (step > 0) {
-      const stepped = Math.round(val / step) * step;
-      return Math.min(Math.max(stepped, lowerLimit), upperLimit);
-    }
-    return val;
-  };
+  const calculateValueFromPosition = useCallback(
+    (pos: number) =>
+      trackLength > 0 ? lowerLimit + ((upperLimit - lowerLimit) * pos) / trackLength : lowerLimit,
+    [trackLength, lowerLimit, upperLimit],
+  );
+
+  const applyStep = useCallback(
+    (val: number) =>
+      step > 0 ? clamp(Math.round(val / step) * step, lowerLimit, upperLimit) : val,
+    [step, lowerLimit, upperLimit, clamp],
+  );
 
   const internalMarkers = useMemo(() => {
-    if (!internalMarkerStep || internalMarkerStep <= 0) return [];
+    if (!internalMarkerStep || internalMarkerStep <= 0) {
+      return [];
+    }
     const markers = [];
     for (let i = lowerLimit + internalMarkerStep; i < upperLimit; i += internalMarkerStep) {
       markers.push(i);
@@ -70,7 +81,7 @@ const Slider = ({
   const [inputMax, setInputMax] = useState(`${initialRange[1]}`);
   const [isSliding, setIsSliding] = useState(true);
   const [bubbleValue, setBubbleValue] = useState<number | null>(null);
-  const [activeHandle, setActiveHandle] = useState<BubbleHandle | null>(null);
+  const [activeHandle, setActiveHandle] = useState<SliderHandle | null>(null);
 
   const rangeLeftPos = useRef(
     new Animated.Value(calculatePositionFromValue(initialRange[0])),
@@ -103,80 +114,77 @@ const Slider = ({
   }, [trackLength]);
 
   useEffect(() => {
-    if (trackLength <= 0) return;
-    if (trackLength > 0) {
-      if (isRange && Array.isArray(value)) {
-        const [left, right] = value;
-        const [currLeft, currRight] = range;
+    if (trackLength <= 0) {
+      return;
+    }
+    if (isRange && Array.isArray(value)) {
+      const [left, right] = value;
+      const [currLeft, currRight] = range;
 
-        if (left !== currLeft || right !== currRight) {
-          const lPos = calculatePositionFromValue(left);
-          const rPos = calculatePositionFromValue(right);
-          rangeLeftPos.setValue(lPos);
-          rangeRightPos.setValue(rPos);
-          lastLeft.current = lPos;
-          lastRight.current = rPos;
-          setRange([left, right]);
-          setInputMin(`${left}`);
-          setInputMax(`${right}`);
-        }
-      } else if (!isRange && typeof value === 'number') {
-        if (value !== sliderValue) {
-          const stepped = applyStep(value);
-          const pos = calculatePositionFromValue(stepped);
-          handlePosition.setValue(pos);
-          lastPosition.current = pos;
-          setSliderValue(stepped);
-          setInputMin(`${stepped}`);
-        }
+      if (left !== currLeft || right !== currRight) {
+        const lPos = calculatePositionFromValue(left);
+        const rPos = calculatePositionFromValue(right);
+        rangeLeftPos.setValue(lPos);
+        rangeRightPos.setValue(rPos);
+        lastLeft.current = lPos;
+        lastRight.current = rPos;
+        setRange([left, right]);
+        setInputMin(`${left}`);
+        setInputMax(`${right}`);
+      }
+    } else if (!isRange && typeof value === 'number') {
+      if (value !== sliderValue) {
+        const stepped = applyStep(value);
+        const pos = calculatePositionFromValue(stepped);
+        handlePosition.setValue(pos);
+        lastPosition.current = pos;
+        setSliderValue(stepped);
+        setInputMin(`${stepped}`);
       }
     }
   }, [trackLength, isRange, value]);
 
-  const handleSubmit = (type: SubmitType) => {
-    const input = type === SubmitType.MIN ? inputMin : inputMax;
-    const parsed = parseFloat(input);
-
-    if (isNaN(parsed)) {
-      return;
-    }
-
-    const stepped = applyStep(parsed);
-
-    if (isRange) {
-      const clamped =
-        type === SubmitType.MIN
-          ? Math.min(Math.max(stepped, lowerLimit), range[1])
-          : Math.max(Math.min(stepped, upperLimit), range[0]);
-
-      const newRange: [number, number] =
-        type === SubmitType.MIN ? [clamped, range[1]] : [range[0], clamped];
-
-      const pos = calculatePositionFromValue(clamped);
-
-      if (type === SubmitType.MIN) {
-        rangeLeftPos.setValue(pos);
-        lastLeft.current = pos;
-      } else {
-        rangeRightPos.setValue(pos);
-        lastRight.current = pos;
+  const handleSubmit = useCallback(
+    (type: InputSubmitType) => {
+      const input = type === InputSubmitType.MIN ? inputMin : inputMax;
+      const parsed = parseFloat(input);
+      if (isNaN(parsed)) {
+        return;
       }
+      const stepped = applyStep(parsed);
 
-      setRange(newRange);
-      onValueChange?.(newRange);
-    } else {
-      const pos = calculatePositionFromValue(stepped);
-      handlePosition.setValue(pos);
-      lastPosition.current = pos;
-      setSliderValue(stepped);
-      setInputMin(`${stepped}`);
-      onValueChange?.(stepped);
-    }
-  };
+      if (isRange) {
+        const clamped =
+          type === InputSubmitType.MIN
+            ? clamp(stepped, lowerLimit, range[1])
+            : clamp(stepped, range[0], upperLimit);
+        const newRange: [number, number] =
+          type === InputSubmitType.MIN ? [clamped, range[1]] : [range[0], clamped];
+        const pos = calculatePositionFromValue(clamped);
+        if (type === InputSubmitType.MIN) {
+          rangeLeftPos.setValue(pos);
+          lastLeft.current = pos;
+        } else {
+          rangeRightPos.setValue(pos);
+          lastRight.current = pos;
+        }
+        setRange(newRange);
+        onValueChange?.(newRange);
+      } else {
+        const pos = calculatePositionFromValue(stepped);
+        handlePosition.setValue(pos);
+        lastPosition.current = pos;
+        setSliderValue(stepped);
+        setInputMin(`${stepped}`);
+        onValueChange?.(stepped);
+      }
+    },
+    [applyStep, inputMin, inputMax, isRange, range, lowerLimit, upperLimit],
+  );
 
   const gestureStartX = useRef(0);
   const createPanResponder = (
-    handleType: BubbleHandle,
+    handleType: SliderHandle,
     handleRef: Animated.Value,
     lastRef: React.MutableRefObject<number>,
     getCurrentRange?: () => [number, number],
@@ -184,40 +192,36 @@ const Slider = ({
   ) =>
     PanResponder.create({
       onStartShouldSetPanResponder: () => !disabled,
-
       onPanResponderGrant: () => {
         gestureStartX.current = lastRef.current;
         setIsSliding(true);
         setActiveHandle(handleType);
       },
-
-      onPanResponderMove: (_, gestureState) => {
-        if (trackLength <= 0) return;
-
-        const delta = gestureState.dx;
-        let newPos = Math.max(0, Math.min(gestureStartX.current + delta, trackLength));
-        const rawValue = calculateValueFromPosition(newPos);
-        const stepped = applyStep(rawValue);
+      onPanResponderMove: (_, g) => {
+        if (trackLength <= 0) {
+          return;
+        }
+        let newPos = clamp(gestureStartX.current + g.dx, 0, trackLength);
+        const stepped = applyStep(calculateValueFromPosition(newPos));
         newPos = calculatePositionFromValue(stepped);
-        if (newPos > trackLength) {
-          newPos = trackLength;
+
+        if (handleType === SliderHandle.LEFT && getCurrentRange) {
+          const [, r] = getCurrentRange();
+          if (stepped > r) {
+            return;
+          }
+        }
+        if (handleType === SliderHandle.RIGHT && getCurrentRange) {
+          const [l] = getCurrentRange();
+          if (stepped < l) {
+            return;
+          }
         }
 
-        if (handleType === BubbleHandle.LEFT && getCurrentRange) {
-          const [, right] = getCurrentRange();
-          if (stepped > right) return;
-        }
-
-        if (handleType === BubbleHandle.RIGHT && getCurrentRange) {
-          const [left] = getCurrentRange();
-          if (stepped < left) return;
-        }
-
-        if ((handleType === BubbleHandle.LEFT || handleType === BubbleHandle.SINGLE) && inputMin) {
+        if (handleType === SliderHandle.LEFT || handleType === SliderHandle.SINGLE) {
           setInputMin('');
         }
-
-        if (handleType === BubbleHandle.RIGHT && inputMax) {
+        if (handleType === SliderHandle.RIGHT) {
           setInputMax('');
         }
 
@@ -225,20 +229,17 @@ const Slider = ({
         updateRangeOrValue?.(stepped);
         setBubbleValue(stepped);
       },
-
-      onPanResponderRelease: (_, gestureState) => {
-        if (trackLength <= 0) return;
-
-        let finalPos = gestureStartX.current + gestureState.dx;
-        finalPos = Math.max(0, Math.min(finalPos, trackLength));
-
-        const finalValue = applyStep(calculateValueFromPosition(finalPos));
-        const finalPosition = calculatePositionFromValue(finalValue);
-
-        handleRef.setValue(finalPosition);
-        lastRef.current = finalPosition;
+      onPanResponderRelease: (_, g) => {
+        if (trackLength <= 0) {
+          return;
+        }
+        const finalValue = applyStep(
+          calculateValueFromPosition(clamp(gestureStartX.current + g.dx, 0, trackLength)),
+        );
+        const finalPos = calculatePositionFromValue(finalValue);
+        handleRef.setValue(finalPos);
+        lastRef.current = finalPos;
         updateRangeOrValue?.(finalValue);
-
         setBubbleValue(null);
         setActiveHandle(null);
         setIsSliding(false);
@@ -247,7 +248,7 @@ const Slider = ({
 
   const singlePanResponder = useMemo(
     () =>
-      createPanResponder(BubbleHandle.SINGLE, handlePosition, lastPosition, undefined, stepped => {
+      createPanResponder(SliderHandle.SINGLE, handlePosition, lastPosition, undefined, stepped => {
         setSliderValue(stepped);
         onValueChange?.(stepped);
       }),
@@ -257,7 +258,7 @@ const Slider = ({
   const leftPanResponder = useMemo(
     () =>
       createPanResponder(
-        BubbleHandle.LEFT,
+        SliderHandle.LEFT,
         rangeLeftPos,
         lastLeft,
         () => range,
@@ -273,7 +274,7 @@ const Slider = ({
   const rightPanResponder = useMemo(
     () =>
       createPanResponder(
-        BubbleHandle.RIGHT,
+        SliderHandle.RIGHT,
         rangeRightPos,
         lastRight,
         () => range,
@@ -286,7 +287,7 @@ const Slider = ({
     [trackLength],
   );
 
-  const renderBubble = (handle: BubbleHandle, position: Animated.Value, value: number | null) => {
+  const renderBubble = (handle: SliderHandle, position: Animated.Value, value: number | null) => {
     if (!isSliding || typeof value !== 'number' || activeHandle !== handle) {
       return null;
     }
@@ -295,27 +296,30 @@ const Slider = ({
       <Animated.View
         pointerEvents={'none'}
         style={[
-          styles.valueBubbleWrapper,
+          styles.valueLabelWrapper,
           {
             left: Animated.add(position, new Animated.Value(handleSize / 2 - handleSize * 1.6)),
             bottom: sizes['8'],
           },
         ]}
       >
-        <View style={styles.valueBubble}>
-          <Text style={styles.bubbleText}>{value}</Text>
+        <View style={styles.valueLabel}>
+          <Text style={styles.valueLabelText}>{value}</Text>
           <View style={styles.pointer} />
         </View>
       </Animated.View>
     );
   };
 
-  const handleLayout = (e: LayoutChangeEvent) => {
-    const width = e.nativeEvent.layout.width;
-    if (width > 0 && width !== trackLength) {
-      setTrackLength(width);
-    }
-  };
+  const handleLayout = useCallback(
+    (e: LayoutChangeEvent) => {
+      const width = e.nativeEvent.layout.width;
+      if (width > 0 && width !== trackLength) {
+        setTrackLength(width);
+      }
+    },
+    [trackLength],
+  );
 
   return (
     <View style={styles.container} onLayout={handleLayout}>
@@ -327,7 +331,7 @@ const Slider = ({
                 <Input
                   value={inputMin}
                   onChangeText={text => setInputMin(text)}
-                  onSubmitEditing={() => handleSubmit(SubmitType.MIN)}
+                  onSubmitEditing={() => handleSubmit(InputSubmitType.MIN)}
                   placeholder={`${lowerLimit}`}
                   keyboardType="numeric"
                   disabled={disabled}
@@ -341,7 +345,7 @@ const Slider = ({
                   <Input
                     value={inputMax}
                     onChangeText={text => setInputMax(text)}
-                    onSubmitEditing={() => handleSubmit(SubmitType.MAX)}
+                    onSubmitEditing={() => handleSubmit(InputSubmitType.MAX)}
                     placeholder={`${upperLimit}`}
                     keyboardType="numeric"
                     disabled={disabled}
@@ -354,10 +358,10 @@ const Slider = ({
             </View>
           )}
 
-          <View style={[styles.horizontalTrack, disabled && styles.disabledTrack]}>
+          <View style={[styles.sliderLine, disabled && styles.disabledTrack]}>
             <Animated.View
               style={[
-                styles.filledTrack,
+                styles.sliderFilledLine,
                 {
                   left: isRange ? rangeLeftPos : 0,
                   width: isRange
@@ -379,15 +383,15 @@ const Slider = ({
               );
             })}
 
-            {renderBubble(BubbleHandle.SINGLE, handlePosition, bubbleValue)}
-            {renderBubble(BubbleHandle.LEFT, rangeLeftPos, bubbleValue)}
-            {renderBubble(BubbleHandle.RIGHT, rangeRightPos, bubbleValue)}
+            {renderBubble(SliderHandle.SINGLE, handlePosition, bubbleValue)}
+            {renderBubble(SliderHandle.LEFT, rangeLeftPos, bubbleValue)}
+            {renderBubble(SliderHandle.RIGHT, rangeRightPos, bubbleValue)}
 
             {isRange ? (
               <>
                 <Animated.View
                   style={[
-                    styles.handle,
+                    styles.sliderHandle,
                     disabled && styles.disabledHandle,
                     { left: Animated.subtract(rangeLeftPos, handleSize / 2) },
                   ]}
@@ -395,7 +399,7 @@ const Slider = ({
                 />
                 <Animated.View
                   style={[
-                    styles.handle,
+                    styles.sliderHandle,
                     disabled && styles.disabledHandle,
                     { left: Animated.subtract(rangeRightPos, handleSize / 2) },
                   ]}
@@ -405,7 +409,7 @@ const Slider = ({
             ) : (
               <Animated.View
                 style={[
-                  styles.handle,
+                  styles.sliderHandle,
                   disabled && styles.disabledHandle,
                   { left: Animated.subtract(handlePosition, handleSize / 2) },
                 ]}

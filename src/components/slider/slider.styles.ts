@@ -12,7 +12,7 @@ export const useSliderStyles = () => {
       alignItems: 'center',
       width: '100%',
     },
-    horizontalTrack: {
+    sliderLine: {
       width: '100%',
       marginTop: theme.space[2],
       height: theme.sizes['2'],
@@ -20,13 +20,13 @@ export const useSliderStyles = () => {
       justifyContent: 'center',
       backgroundColor: theme.colors.primary['50'],
     },
-    filledTrack: {
+    sliderFilledLine: {
       position: 'absolute',
       borderRadius: theme.radii.full,
       backgroundColor: theme.colors.primary['500'],
       height: theme.sizes['2'],
     },
-    handle: {
+    sliderHandle: {
       position: 'absolute',
       width: theme.sizes['5'],
       height: theme.sizes['5'],
@@ -35,12 +35,12 @@ export const useSliderStyles = () => {
       borderWidth: parseInt(theme.borderWidths['4'], 10),
       borderColor: theme.colors.white,
     },
-    valueBubbleWrapper: {
+    valueLabelWrapper: {
       position: 'absolute',
       alignItems: 'center',
       zIndex: 10,
     },
-    valueBubble: {
+    valueLabel: {
       ...theme.shadows['7'],
       backgroundColor: theme.colors.white,
       paddingHorizontal: theme.space['2.5'],
@@ -54,7 +54,7 @@ export const useSliderStyles = () => {
       justifyContent: 'center',
       position: 'relative',
     },
-    bubbleText: {
+    valueLabelText: {
       fontSize: theme.fontSizes.md,
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       color: theme.colors.secondary['500'],

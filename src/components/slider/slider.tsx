@@ -36,33 +36,16 @@ const Slider = ({
 
   const styles = useSliderStyles();
 
-  const clamp = useCallback(
-    (val: number, min: number, max: number) => Math.min(Math.max(val, min), max),
-    [],
-  );
+  const clamp = useCallback((val: number, min: number, max: number) => Math.min(Math.max(val, min), max),[]);
 
-  const calculatePositionFromValue = useCallback(
-    (val: number) =>
-      trackLength > 0 ? ((val - lowerLimit) / (upperLimit - lowerLimit)) * trackLength : 0,
-    [trackLength, lowerLimit, upperLimit],
-  );
+  const calculatePositionFromValue = useCallback((val: number) => trackLength > 0 ? ((val - lowerLimit) / (upperLimit - lowerLimit)) * trackLength : 0,[trackLength, lowerLimit, upperLimit]);
 
-  const calculateValueFromPosition = useCallback(
-    (pos: number) =>
-      trackLength > 0 ? lowerLimit + ((upperLimit - lowerLimit) * pos) / trackLength : lowerLimit,
-    [trackLength, lowerLimit, upperLimit],
-  );
+  const calculateValueFromPosition = useCallback((pos: number) => trackLength > 0 ? lowerLimit + ((upperLimit - lowerLimit) * pos) / trackLength : lowerLimit, [trackLength, lowerLimit, upperLimit],);
 
-  const applyStep = useCallback(
-    (val: number) =>
-      step > 0 ? clamp(Math.round(val / step) * step, lowerLimit, upperLimit) : val,
-    [step, lowerLimit, upperLimit, clamp],
-  );
+  const applyStep = useCallback((val: number) => step > 0 ? clamp(Math.round(val / step) * step, lowerLimit, upperLimit) : val, [step, lowerLimit, upperLimit, clamp]);
 
   const internalMarkers = useMemo(() => {
-    if (!internalMarkerStep || internalMarkerStep <= 0) {
-      return [];
-    }
+    if (!internalMarkerStep || internalMarkerStep <= 0) return [];
     const markers = [];
     for (let i = lowerLimit + internalMarkerStep; i < upperLimit; i += internalMarkerStep) {
       markers.push(i);
@@ -70,8 +53,7 @@ const Slider = ({
     return markers;
   }, [internalMarkerStep, lowerLimit, upperLimit]);
 
-  const initialRange: [number, number] =
-    Array.isArray(value) && isRange ? value : [lowerLimit, upperLimit];
+  const initialRange: [number, number] = Array.isArray(value) && isRange ? value : [lowerLimit, upperLimit];
   const initialVal: number = typeof value === 'number' && !isRange ? value : lowerLimit;
 
   const [range, setRange] = useState<[number, number]>(initialRange);
@@ -113,9 +95,7 @@ const Slider = ({
   }, [trackLength]);
 
   useEffect(() => {
-    if (trackLength <= 0) {
-      return;
-    }
+    if (trackLength <= 0) return;
 
     if (isRange && Array.isArray(value)) {
       const [leftVal, rightVal] = value;
@@ -148,19 +128,14 @@ const Slider = ({
     (type: InputSubmitType) => {
       const inputValue = type === InputSubmitType.MIN ? inputMin : inputMax;
       const parsed = parseFloat(inputValue);
-      if (isNaN(parsed)) {
-        return;
-      }
+      if (isNaN(parsed)) return;
 
       const steppedVal = applyStep(parsed);
 
       if (isRange) {
         const clamped =
-          type === InputSubmitType.MIN
-            ? clamp(steppedVal, lowerLimit, range[1])
-            : clamp(steppedVal, range[0], upperLimit);
-        const newRange: [number, number] =
-          type === InputSubmitType.MIN ? [clamped, range[1]] : [range[0], clamped];
+          type === InputSubmitType.MIN ? clamp(steppedVal, lowerLimit, range[1]) : clamp(steppedVal, range[0], upperLimit);
+        const newRange: [number, number] = type === InputSubmitType.MIN ? [clamped, range[1]] : [range[0], clamped];
         const pos = calculatePositionFromValue(clamped);
         if (type === InputSubmitType.MIN) {
           rangeLeftPos.setValue(pos);
@@ -199,9 +174,7 @@ const Slider = ({
         setActiveHandle(handleType);
       },
       onPanResponderMove: (_, g) => {
-        if (trackLength <= 0) {
-          return;
-        }
+        if (trackLength <= 0) return;
 
         let newPos = clamp(gestureStartX.current + g.dx, 0, trackLength);
         const steppedVal = applyStep(calculateValueFromPosition(newPos));
@@ -209,36 +182,24 @@ const Slider = ({
 
         if (handleType === SliderHandle.LEFT && getCurrentRange) {
           const [, r] = getCurrentRange();
-          if (steppedVal > r) {
-            return;
-          }
+          if (steppedVal > r) return;
         }
         if (handleType === SliderHandle.RIGHT && getCurrentRange) {
           const [l] = getCurrentRange();
-          if (steppedVal < l) {
-            return;
-          }
+          if (steppedVal < l) return;
         }
 
-        if (handleType === SliderHandle.LEFT || handleType === SliderHandle.SINGLE) {
-          setInputMin('');
-        }
-        if (handleType === SliderHandle.RIGHT) {
-          setInputMax('');
-        }
+        if (handleType === SliderHandle.LEFT || handleType === SliderHandle.SINGLE) setInputMin('');
+        if (handleType === SliderHandle.RIGHT) setInputMax('');
 
         handleRef.setValue(newPos);
         updateRangeOrValue?.(steppedVal);
         setBubbleValue(steppedVal);
       },
       onPanResponderRelease: (_, g) => {
-        if (trackLength <= 0) {
-          return;
-        }
+        if (trackLength <= 0) return;
 
-        const finalVal = applyStep(
-          calculateValueFromPosition(clamp(gestureStartX.current + g.dx, 0, trackLength)),
-        );
+        const finalVal = applyStep(calculateValueFromPosition(clamp(gestureStartX.current + g.dx, 0, trackLength)));
         const finalPos = calculatePositionFromValue(finalVal);
         handleRef.setValue(finalPos);
         lastRef.current = finalPos;
@@ -255,7 +216,7 @@ const Slider = ({
         setSliderValue(val);
         onValueChange?.(val);
       }),
-    [trackLength],
+    [trackLength]
   );
 
   const leftPanResponder = useMemo(
@@ -271,7 +232,7 @@ const Slider = ({
           onValueChange?.(updated);
         },
       ),
-    [trackLength],
+    [trackLength]
   );
 
   const rightPanResponder = useMemo(
@@ -280,28 +241,19 @@ const Slider = ({
         SliderHandle.RIGHT,
         rangeRightPos,
         lastRight,
-        () => range,
-        val => {
+        () => range, val => {
           const updated: [number, number] = [range[0], val];
           setRange(updated);
           onValueChange?.(updated);
         },
       ),
-    [trackLength],
+    [trackLength]
   );
 
-  const renderBubble = (
-    handle: SliderHandle,
-    position: Animated.Value,
-    bubbleVal: number | null,
-  ) => {
-    if (!isSliding || typeof bubbleVal !== 'number' || activeHandle !== handle) {
-      return null;
-    }
+  const renderBubble = (handle: SliderHandle, position: Animated.Value, bubbleVal: number | null,) => {
+    if (!isSliding || typeof bubbleVal !== 'number' || activeHandle !== handle) return null;
 
-    const bubbleLeft = Animated.add(
-      position,
-      new Animated.Value(handleSize / 2 - handleSize * 1.6),
+    const bubbleLeft = Animated.add( position, new Animated.Value(handleSize / 2 - handleSize * 1.6)
     );
 
     return (

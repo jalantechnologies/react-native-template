@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { CalendarProps, DateSelectionMode, PresetOption } from '../../types/date-time-picker';
 import { isSameDate, isDateInRange, isBlocked } from '../../utils/dateUtils';
-import MonthNavigator from '../../utils/MonthNavigator';
+import MonthNavigator from '../../utils/month-navigator';
 import Button from '../button/button';
 
 import { useCalendarStyles } from './date-time-picker.styles';

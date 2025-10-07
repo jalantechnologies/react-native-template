@@ -13,7 +13,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { CalendarProps, DateSelectionMode, PresetOption } from '../../types/date-time-picker';
-import { isSameDate, isDateInRange, isBlocked } from '../../utils/dateUtils';
+import { isSameDate, isDateInRange, isBlocked } from '../../utils/date-utils';
 import MonthNavigator from '../../utils/month-navigator';
 import Button from '../button/button';
 

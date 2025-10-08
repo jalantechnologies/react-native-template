@@ -21,6 +21,7 @@ export enum KeyboardTypes {
 }
 
 export interface CardDetailsInputProps {
+  cardHolderName?: string;
   cardNumber: string;
   cvv: string;
   disabled?: boolean;
@@ -31,7 +32,7 @@ export interface CardDetailsInputProps {
   onCvvChange: (value: string) => void;
   onExpiryChange: (value: string) => void;
   onValidate?: (
-    result: { cardHolderName: string; cardNumber: string; expiry: string; cvv: string } | '',
+    result: { cardHolderName?: string; cardNumber: string; expiry: string; cvv: string } | '',
     status: InputStatus,
   ) => void;
   status?: InputStatus;

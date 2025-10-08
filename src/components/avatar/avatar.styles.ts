@@ -1,7 +1,7 @@
-import { AvatarSize } from 'boilerplate-react-native/src/types';
 import { useTheme } from 'native-base';
 import { StyleSheet } from 'react-native';
 import type { ViewStyle, ImageStyle, TextStyle } from 'react-native';
+import { AvatarSize } from 'react-native-template/src/types';
 
 const sizeMap = {
   [AvatarSize.small]: 32,

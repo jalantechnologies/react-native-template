@@ -1,4 +1,4 @@
-def ios_testflight_deploy!(options = {})
+def ios_deploy_preview!(options = {})
   require 'fileutils'
   require 'base64'
   require 'fastlane'
@@ -17,6 +17,18 @@ def ios_testflight_deploy!(options = {})
   apple_id = options.fetch(:apple_id)
   username = options.fetch(:username)
   team_id = options.fetch(:team_id)
+
+  # Remove old builds for this PR before deploying
+  require_relative "ios_cleanup_preview"
+  FastlaneCore::UI.message("Checking for old builds for PR ##{pr_number}...")
+  ios_cleanup_preview!(
+    pr_number: pr_number,
+    app_identifier: app_identifier,
+    api_key_id: api_key_id,
+    issuer_id: issuer_id,
+    api_key_b64: api_key_b64
+  )
+
   # Use match in readonly mode to fetch existing App Store signing certificates and provisioning profiles.
   match(
     type: "appstore",
@@ -53,6 +65,7 @@ def ios_testflight_deploy!(options = {})
     clean: true,
     scheme: scheme,
     export_method: "app-store",
+    verbose: true,
     xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER=\"match AppStore #{app_identifier}\" PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
     export_options: {
       compileBitcode: false,# Bitcode is stripped manually below due to Hermes compatibility issues.
@@ -128,10 +141,10 @@ def ios_testflight_deploy!(options = {})
     UI.error("Upload to TestFlight failed: #{e.message}")
 
     # trigger ios_testflight_cleanup to remove stale builds
-    require_relative "ios_testflight_cleanup"
-    ios_testflight_cleanup!(
+    require_relative "ios_cleanup_preview"
+    ios_cleanup_preview!(
       pr_number: ENV["PR_NUMBER"],
-      app_identifier: ENV["IOS_APP_IDENTIFIER_PREVIEW"],
+      app_identifier: ENV["IOS_APP_IDENTIFIER"],
       api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
       issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
       api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64']

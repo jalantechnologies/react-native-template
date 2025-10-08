@@ -5,7 +5,7 @@ export * from './auth';
 export * from './common';
 export * from './task';
 export * from './avatar';
-export * from './inputs';
+export type { CardDetailsInputProps } from './inputs';
 export * from './alert';
 export * from './input';
 export * from './spinner';

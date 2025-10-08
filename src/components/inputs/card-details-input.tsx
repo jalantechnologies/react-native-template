@@ -1,11 +1,11 @@
 import { useTheme } from 'native-base';
+import { Button } from 'native-base';
 import React, { useRef, useState } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import { Button } from 'native-base';
-
 
 import { InputStatus, CardDetailsInputProps, KeyboardTypes } from '../../types';
+
 import { useCardDetailsInputStyles } from './input.styles';
 
 const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
@@ -38,8 +38,12 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
   const currentErrorMessage = errorMessage !== undefined ? errorMessage : localErrorMessage;
 
   const getBorderColor = () => {
-    if (currentStatus === InputStatus.ERROR) return theme.colors.danger[500];
-    if (focusedField) return theme.colors.primary[300];
+    if (currentStatus === InputStatus.ERROR) {
+      return theme.colors.danger[500];
+    }
+    if (focusedField) {
+      return theme.colors.primary[300];
+    }
     return theme.colors.secondary[200];
   };
 
@@ -135,12 +139,11 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
         </Text>
       )}
 
-
       <TextInput
         ref={cardNameRef}
         style={[
           styles.inputField,
-          styles.cardHolderInput, 
+          styles.cardHolderInput,
           {
             color: disabled
               ? theme.colors.secondary[500]
@@ -187,7 +190,9 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           value={cardNumber}
           onChangeText={handleCardNumberChange}
           placeholder="Card Number"
-          placeholderTextColor={disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]}
+          placeholderTextColor={
+            disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
+          }
           keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
           onFocus={() => setFocusedField('card')}
@@ -215,7 +220,9 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           value={expiry}
           onChangeText={handleExpiryInput}
           placeholder="MM/YY"
-          placeholderTextColor={disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]}
+          placeholderTextColor={
+            disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
+          }
           keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
           onFocus={() => setFocusedField('expiry')}
@@ -240,7 +247,9 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           value={cvv}
           onChangeText={handleCvvChange}
           placeholder="CVV"
-          placeholderTextColor={disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]}
+          placeholderTextColor={
+            disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
+          }
           keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
           maxLength={3}
@@ -251,19 +260,14 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
         />
       </View>
 
-
-      <Button
-        onPress={handleValidation}
-        isDisabled={disabled}
-        size="md"
-        mt={3}
-      >
-      Validate Card
-    </Button>
-
+      <Button onPress={handleValidation} isDisabled={disabled} size="md" mt={3}>
+        Validate Card
+      </Button>
 
       {currentStatus === InputStatus.ERROR && !!currentErrorMessage && (
-        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>{currentErrorMessage}</Text>
+        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>
+          {currentErrorMessage}
+        </Text>
       )}
 
       {currentStatus === InputStatus.SUCCESS && !!successMessage && (

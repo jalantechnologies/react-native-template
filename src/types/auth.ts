@@ -5,7 +5,7 @@ export class AccessToken {
   token: string;
 
   constructor(json: any) {
-    this.accountId = json.accountId as string;
+    this.accountId = json.account_id as string;
     this.token = json.token as string;
   }
 }
@@ -14,9 +14,9 @@ export class PhoneNumber {
   countryCode: string;
   phoneNumber: string;
 
-  constructor(json: { countryCode: string; phoneNumber: string }) {
-    this.countryCode = json.countryCode;
-    this.phoneNumber = json.phoneNumber;
+  constructor(json: { country_code: string; phone_number: string }) {
+    this.countryCode = json.country_code;
+    this.phoneNumber = json.phone_number;
   }
 
   getFormattedPhoneNumber(): string {

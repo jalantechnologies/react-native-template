@@ -152,6 +152,17 @@ export const useCardDetailsInputStyles = () => {
       lineHeight: Number(theme.lineHeights.sm),
       paddingHorizontal: theme.space[2],
     },
+    cardHolderInput: {
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      borderRadius: theme.radii.md,
+      paddingHorizontal: theme.space[3],
+      paddingVertical: theme.space[2],
+      marginBottom: theme.space[2],
+      backgroundColor: theme.colors.white,
+      fontSize: theme.fontSizes.md,
+      color: theme.colors.secondary[900],
+    },
+
     cardInput: {
       flex: 2,
       borderRightWidth: theme.borderWidths[0],

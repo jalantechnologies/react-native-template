@@ -31,7 +31,7 @@ export interface CardDetailsInputProps {
   onCvvChange: (value: string) => void;
   onExpiryChange: (value: string) => void;
   onValidate?: (
-    result: { cardNumber: string; expiry: string; cvv: string } | '',
+    result: { cardHolderName: string; cardNumber: string; expiry: string; cvv: string } | '',
     status: InputStatus,
   ) => void;
   status?: InputStatus;

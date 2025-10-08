@@ -2,9 +2,10 @@ import { useTheme } from 'native-base';
 import React, { useRef, useState } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import { Button } from 'native-base';
+
 
 import { InputStatus, CardDetailsInputProps, KeyboardTypes } from '../../types';
-
 import { useCardDetailsInputStyles } from './input.styles';
 
 const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
@@ -26,24 +27,19 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
 
   const expiryRef = useRef<TextInput>(null);
   const cvvRef = useRef<TextInput>(null);
+  const cardNameRef = useRef<TextInput>(null);
 
   const [localStatus, setLocalStatus] = useState<InputStatus>(InputStatus.DEFAULT);
   const [localErrorMessage, setLocalErrorMessage] = useState('');
-
+  const [cardHolderName, setCardHolderName] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const currentStatus = status !== undefined ? status : localStatus;
   const currentErrorMessage = errorMessage !== undefined ? errorMessage : localErrorMessage;
 
   const getBorderColor = () => {
-    if (currentStatus === InputStatus.ERROR) {
-      return theme.colors.danger[500];
-    }
-
-    if (focusedField) {
-      return theme.colors.primary[300];
-    }
-
+    if (currentStatus === InputStatus.ERROR) return theme.colors.danger[500];
+    if (focusedField) return theme.colors.primary[300];
     return theme.colors.secondary[200];
   };
 
@@ -54,6 +50,11 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
     }
   };
 
+  const handleCardHolderNameChange = (text: string) => {
+    resetValidation();
+    setCardHolderName(text);
+  };
+
   const handleCardNumberChange = (text: string) => {
     resetValidation();
     onCardNumberChange(text);
@@ -61,12 +62,10 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
 
   const handleExpiryInput = (text: string) => {
     resetValidation();
-
     let formatted = text.replace(/[^0-9]/g, '');
     if (formatted.length >= 3) {
       formatted = `${formatted.substring(0, 2)}/${formatted.substring(2, 4)}`;
     }
-
     onExpiryChange(formatted);
   };
 
@@ -78,6 +77,15 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
   const handleValidation = () => {
     const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
     const cvvRegex = /^\d{3}$/;
+
+    if (!cardHolderName || cardHolderName.trim().length === 0) {
+      if (status === undefined) {
+        setLocalStatus(InputStatus.ERROR);
+        setLocalErrorMessage('Enter the cardholder name');
+      }
+      onValidate?.('', InputStatus.ERROR);
+      return;
+    }
 
     if (!cardNumber || cardNumber.length < 13 || cardNumber.length > 19) {
       if (status === undefined) {
@@ -111,8 +119,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
       setLocalErrorMessage('');
     }
 
-    const cardData = { cardNumber, expiry, cvv };
-    onValidate?.(cardData, InputStatus.SUCCESS);
+    onValidate?.({ cardHolderName, cardNumber, expiry, cvv }, InputStatus.SUCCESS);
   };
 
   return (
@@ -128,6 +135,32 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
         </Text>
       )}
 
+
+      <TextInput
+        ref={cardNameRef}
+        style={[
+          styles.inputField,
+          styles.cardHolderInput, 
+          {
+            color: disabled
+              ? theme.colors.secondary[500]
+              : currentStatus === InputStatus.ERROR
+              ? theme.colors.danger[500]
+              : theme.colors.secondary[900],
+          },
+        ]}
+        value={cardHolderName}
+        onChangeText={handleCardHolderNameChange}
+        placeholder="Cardholder Name"
+        placeholderTextColor={disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]}
+        keyboardType={KeyboardTypes.DEFAULT}
+        editable={!disabled}
+        onFocus={() => setFocusedField('name')}
+        onBlur={() => setFocusedField(null)}
+        returnKeyType="next"
+      />
+
+      {/* Card Details Container */}
       <View
         style={[
           styles.container,
@@ -154,9 +187,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           value={cardNumber}
           onChangeText={handleCardNumberChange}
           placeholder="Card Number"
-          placeholderTextColor={
-            disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
-          }
+          placeholderTextColor={disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]}
           keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
           onFocus={() => setFocusedField('card')}
@@ -184,9 +215,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           value={expiry}
           onChangeText={handleExpiryInput}
           placeholder="MM/YY"
-          placeholderTextColor={
-            disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
-          }
+          placeholderTextColor={disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]}
           keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
           onFocus={() => setFocusedField('expiry')}
@@ -211,9 +240,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           value={cvv}
           onChangeText={handleCvvChange}
           placeholder="CVV"
-          placeholderTextColor={
-            disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
-          }
+          placeholderTextColor={disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]}
           keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
           maxLength={3}
@@ -224,10 +251,19 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
         />
       </View>
 
+
+      <Button
+        onPress={handleValidation}
+        isDisabled={disabled}
+        size="md"
+        mt={3}
+      >
+      Validate Card
+    </Button>
+
+
       {currentStatus === InputStatus.ERROR && !!currentErrorMessage && (
-        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>
-          {currentErrorMessage}
-        </Text>
+        <Text style={[styles.message, { color: theme.colors.danger[500] }]}>{currentErrorMessage}</Text>
       )}
 
       {currentStatus === InputStatus.SUCCESS && !!successMessage && (

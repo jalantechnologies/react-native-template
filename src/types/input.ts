@@ -1,5 +1,8 @@
-import React from 'react';
-import { KeyboardTypeOptions, TextInput, TextInputProps, TextStyle } from 'react-native';
+export enum InputStatus {
+  DEFAULT = 'default',
+  ERROR = 'error',
+  SUCCESS = 'success',
+}
 
 export enum KeyboardTypes {
   ASCII_CAPABLE = 'ascii-capable',
@@ -17,35 +20,21 @@ export enum KeyboardTypes {
   WEB_SEARCH = 'web-search',
 }
 
-export enum InputStatus {
-  DEFAULT = 'default',
-  ERROR = 'error',
-  SUCCESS = 'success',
-}
-
-export interface InputProps extends Omit<TextInputProps, 'style | multiline'> {
+export interface CardDetailsInputProps {
+  cardHolderName?: string;
+  cardNumber: string;
+  cvv: string;
   disabled?: boolean;
-  endEnhancer?: React.ReactNode;
-  handleInputRef?: (ref: TextInput) => void;
-  keyboardType?: KeyboardTypeOptions;
+  errorMessage?: string;
+  expiry: string;
   label?: string;
-  message?: string;
-  startEnhancer?: React.ReactNode;
+  onCardNumberChange: (value: string) => void;
+  onCvvChange: (value: string) => void;
+  onExpiryChange: (value: string) => void;
+  onValidate?: (
+    result: { cardHolderName?: string; cardNumber: string; expiry: string; cvv: string } | '',
+    status: InputStatus,
+  ) => void;
   status?: InputStatus;
-  testId?: string;
-  textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
-}
-
-export interface PasswordInputProps extends InputProps {}
-
-export interface TextAreaInputProps extends Omit<TextInputProps, 'style | multiline'> {
-  disabled?: boolean;
-  endEnhancer?: React.ReactNode;
-  handleInputRef?: (ref: TextInput) => void;
-  keyboardType?: KeyboardTypeOptions;
-  label?: string;
-  numberOfLines?: number;
-  startEnhancer?: React.ReactNode;
-  testId?: string;
-  textAlign?: Exclude<TextStyle['textAlign'], 'auto' | 'justify'>;
+  successMessage?: string;
 }

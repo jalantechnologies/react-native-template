@@ -14,74 +14,80 @@ import { Input } from '../inputs';
 import DatePicker from './date-picker';
 import TimePicker from './time-picker';
 
-function isRangePickerProps(props: DateTimePickerProps): props is RangeDateTimePickerProps {
+// check if props belong to a Range Date Picker
+function isRangePicker(props: DateTimePickerProps): props is RangeDateTimePickerProps {
   return props.dateSelectionMode === DateSelectionMode.RANGE;
 }
 
-export const DateTimePicker: React.FC<DateTimePickerProps> = props => {
+export const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
   const theme = useTheme();
 
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [triggerLayout, setTriggerLayout] = useState<LayoutRectangle | null>(null);
+  // State to show/hide the DatePicker or TimePicker overlays
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const [isTimePickerVisible, setTimePickerVisible] = useState(false);
 
-  const isRangeMode = isRangePickerProps(props);
+  // State to store layout position of the input field to position picker overlay
+  const [inputLayout, setInputLayout] = useState<LayoutRectangle | null>(null);
+
+  const isRangeMode = isRangePicker(props);
 
   const inputRef = useRef<View>(null);
-  const measureInput = () => {
+
+  // Measure input position to align picker overlay correctly
+  const measureInputLayout = () => {
     inputRef.current?.measureInWindow((x, y, width, height) => {
-      setTriggerLayout({ x, y, width, height });
+      setInputLayout({ x, y, width, height });
     });
   };
 
-  const handleDatePress = () => {
-    measureInput();
-    setShowDatePicker(true);
+  //Called when user taps the date input field
+  const onDateInputPress = () => {
+    measureInputLayout();
+    setDatePickerVisible(true);
   };
 
-  const handleTimePress = () => {
-    measureInput();
-    setShowTimePicker(true);
+  // Called when user taps the time input field
+  const onTimeInputPress = () => {
+    measureInputLayout();
+    setTimePickerVisible(true);
   };
 
-  const handleDateChange = (date: Date | { start: Date | null; end: Date | null }) => {
+  // Called when user selects a date (single or range)
+  const onDateSelected = (selectedDate: Date | { start: Date | null; end: Date | null }) => {
     if (isRangeMode) {
-      if ('start' in date && 'end' in date) {
-        const { start, end } = date;
+      if ('start' in selectedDate && 'end' in selectedDate) {
+        const { start, end } = selectedDate;
         if (start && end) {
           props.onChange({ start, end });
-          setShowDatePicker(false);
+          setDatePickerVisible(false);
         }
       }
       return;
     }
-    if (date instanceof Date) {
-      props.onChange(date);
+
+    if (selectedDate instanceof Date) {
+      props.onChange(selectedDate);
+      setDatePickerVisible(false);
     }
-    setShowDatePicker(false);
   };
 
-  const handleTimeChange = (date: Date) => {
+  // Called when user selects a time
+  const onTimeSelected = (selectedTime: Date) => {
     if (!isRangeMode) {
-      props.onChange(date);
+      props.onChange(selectedTime);
+      setTimePickerVisible(false);
     }
-    setShowTimePicker(false);
   };
 
-  const getLocalizedDatePlaceholder = () => {
-    const format = new Intl.DateTimeFormat(undefined).formatToParts(new Date());
+  // Generate placeholder based on user's locale date format
+  const getDatePlaceholder = () => {
+    const formatParts = new Intl.DateTimeFormat(undefined).formatToParts(new Date());
 
-    return format
-      .map(part => {
-        if (part.type === 'day') {
-          return 'DD';
-        }
-        if (part.type === 'month') {
-          return 'MM';
-        }
-        if (part.type === 'year') {
-          return 'YYYY';
-        }
+    return formatParts
+      .map((part) => {
+        if (part.type === 'day') return 'DD';
+        if (part.type === 'month') return 'MM';
+        if (part.type === 'year') return 'YYYY';
         return part.value;
       })
       .join('');
@@ -89,70 +95,72 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = props => {
 
   return (
     <View>
+      {/* Date Input Field */}
       {(props.mode === DateTimePickerMode.DATE || props.mode === DateTimePickerMode.DATETIME) && (
-        <Pressable ref={inputRef} onLayout={measureInput} onPress={() => setShowDatePicker(true)}>
+        <Pressable ref={inputRef} onLayout={measureInputLayout} onPress={onDateInputPress}>
           <Input
             value={
               isRangeMode
                 ? props.value
-                  ? `${props.value.start.toLocaleDateString(undefined, {
-                      dateStyle: 'medium',
-                    })} - ${props.value.end.toLocaleDateString(undefined, { dateStyle: 'medium' })}`
-                  : `${props.label}`
-                : props.value.toLocaleDateString(undefined, { dateStyle: 'medium' })
+                  ? `${props.value.start.toLocaleDateString()} - ${props.value.end.toLocaleDateString()}`
+                  : props.label
+                : props.value.toLocaleDateString()
             }
-            placeholder={!props.label ? getLocalizedDatePlaceholder() : ''}
+            placeholder={!props.label ? getDatePlaceholder() : ''}
             editable={false}
             showSoftInputOnFocus={false}
             endEnhancer={
-              <Pressable onPress={() => setShowDatePicker(true)}>
+              <Pressable onPress={onDateInputPress}>
                 <Icon name="calendar-alt" size={theme.sizes[4]} />
               </Pressable>
             }
-            onPressIn={handleDatePress}
+            onPressIn={onDateInputPress}
           />
         </Pressable>
       )}
 
+      {/* Time Input Field (only for single mode or DATETIME) */}
       {(props.mode === DateTimePickerMode.TIME || props.mode === DateTimePickerMode.DATETIME) &&
         !isRangeMode && (
           <Pressable
             ref={inputRef}
-            onLayout={measureInput}
-            onPress={() => setShowTimePicker(true)}
-            style={props.mode === DateTimePickerMode.DATETIME && { marginTop: theme.space[1] }}
+            onLayout={measureInputLayout}
+            onPress={onTimeInputPress}
+            style={props.mode === DateTimePickerMode.DATETIME ? { marginTop: theme.space[1] } : {}}
           >
             <Input
               value={props.value.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               editable={false}
               showSoftInputOnFocus={false}
               endEnhancer={
-                <Pressable onPress={() => setShowTimePicker(true)}>
+                <Pressable onPress={onTimeInputPress}>
                   <Icon name="clock" size={theme.sizes[4]} />
                 </Pressable>
               }
-              onPressIn={handleTimePress}
+              onPressIn={onTimeInputPress}
             />
           </Pressable>
         )}
 
-      {showDatePicker && triggerLayout && (
+      {/* DatePicker Overlay */}
+      {isDatePickerVisible && inputLayout && (
         <DatePicker
           blockedDates={props.blockedDates}
           tempDate={isRangeMode ? new Date() : props.value}
           dateSelectionMode={props.dateSelectionMode}
-          onChange={handleDateChange}
-          onCancel={() => setShowDatePicker(false)}
-          triggerLayout={triggerLayout}
+          onChange={onDateSelected}
+          onCancel={() => setDatePickerVisible(false)}
+          triggerLayout={inputLayout}
         />
       )}
 
-      {!isRangeMode && showTimePicker && triggerLayout && (
+      {/* TimePicker Overlay */}
+      {!isRangeMode && isTimePickerVisible && inputLayout && (
         <TimePicker
           tempDate={props.value}
-          onChange={handleTimeChange}
-          onCancel={() => setShowTimePicker(false)}
-          triggerLayout={triggerLayout}
+          onChange={onTimeSelected}
+          onCancel={() => setTimePickerVisible(false)}
+          triggerLayout={inputLayout}
         />
       )}
     </View>

@@ -7,20 +7,20 @@ import { useYearPickerStyles } from './date-time-picker.styles';
 
 const YearPicker: React.FC<YearPickerProps> = ({ calendarYear, onYearSelect }) => {
   const styles = useYearPickerStyles();
-  // generate year list centered on current year
+  // Generate 120 years (60 before current year and 59 after)
   const years = Array.from({ length: 120 }, (_, i) => new Date().getFullYear() - 60 + i);
   return (
     <View style={styles.modalContent}>
       <ScrollView>
         <View style={styles.yearGrid}>
-          {years.map(y => (
+          {years.map(year => (
             <TouchableOpacity
-              key={y}
-              style={[styles.yearCell, y === calendarYear && styles.selectedCell]}
-              onPress={() => onYearSelect(y)}
+              key={year}
+              style={[styles.yearCell, year === calendarYear && styles.selectedYearCell]}
+              onPress={() => onYearSelect(year)}
             >
-              <Text style={y === calendarYear ? styles.selectedYear : styles.yearTextCell}>
-                {y}
+              <Text style={year === calendarYear ? styles.selectedYearText : styles.yearText}>
+                {year}
               </Text>
             </TouchableOpacity>
           ))}

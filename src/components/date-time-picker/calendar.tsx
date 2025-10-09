@@ -1,5 +1,5 @@
 import { useTheme } from 'native-base';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -19,14 +19,15 @@ import Button from '../button/button';
 
 import { useCalendarStyles } from './date-time-picker.styles';
 
+// Constants
 const WEEK_DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 const DAYS_IN_WEEK = 7;
 
 const Calendar: React.FC<CalendarProps> = ({
   blockedDates,
   tempDate,
-  calendarMonth,
-  calendarYear,
+  currentMonth,
+  currentYear,
   dateSelectionMode = DateSelectionMode.SINGLE,
   onDateSelect,
   onMonthChange,
@@ -35,14 +36,17 @@ const Calendar: React.FC<CalendarProps> = ({
   onConfirm,
   onYearLayout,
 }) => {
-  const [selectedDate, setSelectedDate] = useState<number | null>(tempDate.getDate());
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [showSelectByOptions, setShowSelectByOptions] = useState(false);
-
-  const today = new Date();
-  const styles = useCalendarStyles();
   const theme = useTheme();
+  const styles = useCalendarStyles();
+
+  // Selected dates state
+  const [selectedDay, setSelectedDay] = useState<number | null>(tempDate.getDate());
+  const [rangeStartDate, setRangeStartDate] = useState<Date | null>(null);
+  const [rangeEndDate, setRangeEndDate] = useState<Date | null>(null);
+
+  // Preset options for quick range selection
+  const [showPresetOptions, setShowPresetOptions] = useState(false);
+  const today = new Date();
 
   const presetOptions = [
     { label: 'Last 3 Days', value: PresetOption.LAST_3_DAYS },
@@ -55,37 +59,34 @@ const Calendar: React.FC<CalendarProps> = ({
     { label: 'Next 14 Days', value: PresetOption.NEXT_14_DAYS },
   ];
 
-  const calendarDates = React.useMemo(() => {
-    const firstWeekday = new Date(calendarYear, calendarMonth, 1).getDay();
-    const totalDays = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+  // Generate calendar grid for current month
+  const calendarDates = useMemo(() => {
+    const firstWeekday = new Date(currentYear, currentMonth, 1).getDay();
+    const totalDaysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const datesArray: (number | null)[] = [];
 
-    // Leading empty cells
-    for (let i = 0; i < firstWeekday; i++) {
-      datesArray.push(null);
-    }
+    // Add empty cells before first day
+    for (let i = 0; i < firstWeekday; i++) datesArray.push(null);
 
-    // Days of month
-    for (let i = 1; i <= totalDays; i++) {
-      datesArray.push(i);
-    }
+    // Add days of month
+    for (let day = 1; day <= totalDaysInMonth; day++) datesArray.push(day);
 
-    // Trailing empty cells
-    while (datesArray.length % DAYS_IN_WEEK !== 0) {
-      datesArray.push(null);
-    }
+    // Fill remaining cells to complete last week
+    while (datesArray.length % DAYS_IN_WEEK !== 0) datesArray.push(null);
 
     return datesArray;
-  }, [calendarYear, calendarMonth]);
+  }, [currentYear, currentMonth]);
 
-  const calendarRows = React.useMemo(() => {
-    const rows: (number | null)[][] = [];
+  // Split calendar dates into weeks
+  const calendarWeeks = useMemo(() => {
+    const weeks: (number | null)[][] = [];
     for (let i = 0; i < calendarDates.length; i += DAYS_IN_WEEK) {
-      rows.push(calendarDates.slice(i, i + DAYS_IN_WEEK));
+      weeks.push(calendarDates.slice(i, i + DAYS_IN_WEEK));
     }
-    return rows;
+    return weeks;
   }, [calendarDates]);
 
+  // PanResponder for swipe gestures to change months
   const translateX = useRef(new Animated.Value(0)).current;
 
   const panResponder = useRef(
@@ -95,72 +96,57 @@ const Calendar: React.FC<CalendarProps> = ({
         translateX.setValue(gestureState.dx);
       },
       onPanResponderRelease: (_, gestureState) => {
-        if (gestureState.dx < -50) {
-          Animated.timing(translateX, {
-            toValue: -300,
-            duration: 200,
-            useNativeDriver: true,
-          }).start(() => {
+        const swipeThreshold = 50;
+        if (gestureState.dx < -swipeThreshold) {
+          // Swipe left → next month
+          Animated.timing(translateX, { toValue: -300, duration: 200, useNativeDriver: true }).start(() => {
             translateX.setValue(0);
             onMonthChange(1);
           });
-        } else if (gestureState.dx > 50) {
-          Animated.timing(translateX, {
-            toValue: 300,
-            duration: 200,
-            useNativeDriver: true,
-          }).start(() => {
+        } else if (gestureState.dx > swipeThreshold) {
+          // Swipe right → previous month
+          Animated.timing(translateX, { toValue: 300, duration: 200, useNativeDriver: true }).start(() => {
             translateX.setValue(0);
             onMonthChange(-1);
           });
         } else {
-          Animated.spring(translateX, {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start();
+          Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
         }
       },
-    }),
+    })
   ).current;
 
-  const onDatePress = React.useCallback(
+  // Handle selecting a day on the calendar
+  const handleDayPress = useCallback(
     (day: number | null) => {
-      if (day === null || isBlocked(day, blockedDates, calendarMonth, calendarYear)) {
-        return;
-      }
+      if (!day || isBlocked(day, blockedDates, currentMonth, currentYear)) return;
 
-      const selectedFullDate = new Date(calendarYear, calendarMonth, day);
+      const fullDate = new Date(currentYear, currentMonth, day);
 
       if (dateSelectionMode === DateSelectionMode.RANGE) {
-        if (!startDate) {
-          setStartDate(selectedFullDate);
-        } else if (!endDate && selectedFullDate.getTime() > startDate.getTime()) {
-          setEndDate(selectedFullDate);
-        } else if (isSameDate(selectedFullDate, startDate)) {
-          setStartDate(null);
-          setEndDate(null);
-        } else if (endDate && isSameDate(selectedFullDate, endDate)) {
-          setEndDate(null);
+        if (!rangeStartDate) {
+          setRangeStartDate(fullDate);
+          setRangeEndDate(null);
+        } else if (!rangeEndDate && fullDate > rangeStartDate) {
+          setRangeEndDate(fullDate);
+        } else if (rangeStartDate && isSameDate(fullDate, rangeStartDate)) {
+          setRangeStartDate(null);
+          setRangeEndDate(null);
+        } else if (rangeEndDate && isSameDate(fullDate, rangeEndDate)) {
+          setRangeEndDate(null);
         } else {
-          setStartDate(selectedFullDate);
-          setEndDate(null);
+          setRangeStartDate(fullDate);
+          setRangeEndDate(null);
         }
       } else {
-        setSelectedDate(day);
+        setSelectedDay(day);
         onDateSelect(day);
       }
     },
-    [
-      startDate,
-      endDate,
-      blockedDates,
-      calendarMonth,
-      calendarYear,
-      dateSelectionMode,
-      onDateSelect,
-    ],
+    [rangeStartDate, rangeEndDate, blockedDates, currentMonth, currentYear, dateSelectionMode, onDateSelect]
   );
 
+  // Handle quick preset selection
   const handlePresetSelection = (preset: PresetOption) => {
     let start: Date;
     let end: Date;
@@ -208,21 +194,22 @@ const Calendar: React.FC<CalendarProps> = ({
         return;
     }
 
-    setStartDate(start);
-    setEndDate(end);
+    setRangeStartDate(start);
+    setRangeEndDate(end);
   };
 
+  // Confirm selected date(s)
   const handleConfirm = () => {
     if (dateSelectionMode === DateSelectionMode.SINGLE) {
-      if (selectedDate !== null) {
-        const confirmedDate = new Date(calendarYear, calendarMonth, selectedDate);
-        onConfirm(confirmedDate);
+      if (selectedDay !== null) {
+        onConfirm(new Date(currentYear, currentMonth, selectedDay));
       }
     } else {
-      onConfirm({ startDate, endDate });
+      onConfirm({ startDate: rangeStartDate, endDate: rangeEndDate });
     }
   };
 
+  // Ref to measure the year dropdown
   const yearRef = useRef<TouchableOpacity>(null);
 
   const measureYearPosition = () => {
@@ -237,42 +224,45 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   return (
+    // Outer modal container
     <Pressable onPress={onCancel} style={styles.modalContainer}>
       <Pressable pointerEvents="box-none" style={styles.modalContent}>
-        <View style={styles.headerCont}>
+        {/* Header: Year + "Select By" */}
+        <View style={styles.headerContainer}>
           <TouchableOpacity
             ref={yearRef}
             onPress={() => {
               measureYearPosition();
               onYearPress();
             }}
-            style={styles.header}
+            style={styles.yearDropdownButton}
           >
-            <Text style={styles.headerText}>{calendarYear}</Text>
-            <Icon name="angle-down" style={[styles.headerIcon, styles.headerText]} />
+            <Text style={styles.yearDropdownText}>{currentYear}</Text>
+            <Icon name="angle-down" style={styles.yearDropdownIcon} />
           </TouchableOpacity>
 
           {dateSelectionMode === DateSelectionMode.RANGE && (
             <TouchableOpacity
-              onPress={() => setShowSelectByOptions(true)}
+              onPress={() => setShowPresetOptions(true)}
               style={styles.selectByButton}
             >
               <Text style={styles.selectByText}>Select By</Text>
-              <Icon name="angle-down" style={styles.headerIcon} size={theme.sizes[4]} />
+              <Icon name="angle-down" size={theme.sizes[4]} />
             </TouchableOpacity>
           )}
         </View>
 
-        {showSelectByOptions && (
-          <Pressable style={styles.presetOverlay} onPress={() => setShowSelectByOptions(false)}>
-            <Pressable pointerEvents="box-none" style={styles.presetCont}>
+        {/* Preset overlay */}
+        {showPresetOptions && (
+          <Pressable style={styles.presetOverlay} onPress={() => setShowPresetOptions(false)}>
+            <Pressable pointerEvents="box-none" style={styles.presetContainer}>
               {presetOptions.map(option => (
                 <TouchableOpacity
                   key={option.value}
                   style={styles.presetOption}
                   onPress={() => {
                     handlePresetSelection(option.value);
-                    setShowSelectByOptions(false);
+                    setShowPresetOptions(false);
                   }}
                 >
                   <Text style={styles.presetOptionText}>{option.label}</Text>
@@ -282,115 +272,70 @@ const Calendar: React.FC<CalendarProps> = ({
           </Pressable>
         )}
 
-        <Text style={styles.selectedDateHeader}>
-          {tempDate.toLocaleDateString(undefined, {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric',
-          })}
+        {/* Selected date display */}
+        <Text style={styles.selectedDateText}>
+          {tempDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
         </Text>
 
+        {/* Calendar grid with swipe */}
         <Animated.View {...panResponder.panHandlers} style={{ transform: [{ translateX }] }}>
-          <MonthNavigator
-            month={calendarMonth}
-            year={calendarYear}
-            onMonthChange={onMonthChange}
-            styles={styles}
-          />
+          <MonthNavigator month={currentMonth} year={currentYear} onMonthChange={onMonthChange} styles={styles} />
 
+          {/* Weekday labels */}
           <View style={styles.daysRow}>
             {WEEK_DAYS.map((day, index) => (
-              <Text key={index} style={styles.dayLabel}>
-                {day}
-              </Text>
+              <Text key={index} style={styles.dayLabelText}>{day}</Text>
             ))}
           </View>
 
+          {/* Dates */}
           <View style={styles.calendarGrid}>
-            {calendarRows.map((week, rowIndex) => (
-              <View key={rowIndex} style={styles.calendarRow}>
-                {week.map((day, colIndex) => (
-                  <TouchableOpacity
-                    key={colIndex}
-                    style={[
-                      styles.dateCell,
-                      isBlocked(day, blockedDates, calendarMonth, calendarYear)
-                        ? styles.blockedCell
-                        : null,
-                      day === today.getDate() &&
-                      calendarMonth === today.getMonth() &&
-                      calendarYear === today.getFullYear()
-                        ? styles.todayCell
-                        : null,
-                      dateSelectionMode === DateSelectionMode.SINGLE &&
-                      day !== null &&
-                      day === selectedDate
-                        ? styles.selectedCell
-                        : null,
-                      dateSelectionMode === DateSelectionMode.RANGE &&
-                      day !== null &&
-                      ((startDate !== null &&
-                        isSameDate(new Date(calendarYear, calendarMonth, day), startDate)) ||
-                        (endDate !== null &&
-                          isSameDate(new Date(calendarYear, calendarMonth, day), endDate)))
-                        ? styles.selectedCell
-                        : dateSelectionMode === DateSelectionMode.RANGE &&
-                          day !== null &&
-                          startDate !== null &&
-                          endDate !== null &&
-                          isDateInRange(
-                            new Date(calendarYear, calendarMonth, day),
-                            startDate,
-                            endDate,
-                          )
-                        ? styles.rangeCell
-                        : null,
-                    ]}
-                    onPress={() => day !== null && onDatePress(day)}
-                  >
-                    <Text
+            {calendarWeeks.map((week, weekIndex) => (
+              <View key={weekIndex} style={styles.calendarRow}>
+                {week.map((day, dayIndex) => {
+                  const fullDate = day !== null ? new Date(currentYear, currentMonth, day) : null;
+                  const isBlockedDate = fullDate ? isBlocked(day, blockedDates, currentMonth, currentYear) : false;
+                  const isToday = fullDate ? isSameDate(fullDate, today) : false;
+                  const isSelected =
+                    dateSelectionMode === DateSelectionMode.SINGLE
+                      ? day === selectedDay
+                      : fullDate && ((rangeStartDate && isSameDate(fullDate, rangeStartDate)) || (rangeEndDate && isSameDate(fullDate, rangeEndDate)));
+                  const isInRange =
+                    dateSelectionMode === DateSelectionMode.RANGE && fullDate && rangeStartDate && rangeEndDate
+                      ? isDateInRange(fullDate, rangeStartDate, rangeEndDate)
+                      : false;
+
+                  return (
+                    <TouchableOpacity
+                      key={dayIndex}
                       style={[
-                        styles.dateTextCell,
-                        isBlocked(day, blockedDates, calendarMonth, calendarYear)
-                          ? styles.blockedCellText
-                          : null,
-                        day === today.getDate() &&
-                        calendarMonth === today.getMonth() &&
-                        calendarYear === today.getFullYear()
-                          ? styles.todayCellText
-                          : null,
-                        dateSelectionMode === DateSelectionMode.SINGLE &&
-                        day !== null &&
-                        day === selectedDate
-                          ? styles.selectedDate
-                          : dateSelectionMode === DateSelectionMode.RANGE &&
-                            day !== null &&
-                            ((startDate !== null &&
-                              isSameDate(new Date(calendarYear, calendarMonth, day), startDate)) ||
-                              (endDate !== null &&
-                                isSameDate(new Date(calendarYear, calendarMonth, day), endDate)))
-                          ? styles.selectedDate
-                          : dateSelectionMode === DateSelectionMode.RANGE &&
-                            day !== null &&
-                            startDate !== null &&
-                            endDate !== null &&
-                            isDateInRange(
-                              new Date(calendarYear, calendarMonth, day),
-                              startDate,
-                              endDate,
-                            )
-                          ? styles.rangeDateText
-                          : null,
+                        styles.dateCell,
+                        isBlockedDate && styles.blockedDateCell,
+                        isToday && styles.todayDateCell,
+                        isSelected && styles.selectedDateCell,
+                        isInRange && styles.rangeDateCell,
                       ]}
+                      onPress={() => day !== null && handleDayPress(day)}
                     >
-                      {day || ''}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                      <Text
+                        style={[
+                          styles.dateText,
+                          isBlockedDate && styles.blockedDateText,
+                          isToday && styles.todayDateText,
+                          isSelected && styles.selectedDateTextWhite,
+                          isInRange && styles.rangeDateText,
+                        ]}
+                      >
+                        {day || ''}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             ))}
           </View>
 
+          {/* Confirm button */}
           <View style={styles.actionRow}>
             <View style={styles.actionText}>
               <Button onClick={handleConfirm}>Apply</Button>

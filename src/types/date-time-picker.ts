@@ -1,16 +1,19 @@
 import { LayoutRectangle } from 'react-native';
 
+// Picker display mode: Date only, Time only, or both
 export enum DateTimePickerMode {
   DATE = 'date',
   DATETIME = 'datetime',
   TIME = 'time',
 }
 
+// Date selection type: Single date or a Range 
 export enum DateSelectionMode {
   SINGLE = 'single',
   RANGE = 'range',
 }
 
+// Predefined quick-select options 
 export enum PresetOption {
   LAST_3_DAYS = 'last3',
   LAST_7_DAYS = 'last7',
@@ -22,20 +25,22 @@ export enum PresetOption {
   THIS_MONTH = 'thismonth',
 }
 
+// Props for the Calendar compone
 export interface CalendarProps {
   blockedDates?: Date[];
-  calendarMonth: number;
-  calendarYear: number;
+  currentMonth: number;    // 0–11
+  currentYear: number;
   dateSelectionMode?: DateSelectionMode;
   onCancel: () => void;
   onConfirm: (date: Date | { startDate: Date | null; endDate: Date | null }) => void;
   onDateSelect: (day: number) => void;
-  onMonthChange: (increment: number) => void;
+  onMonthChange: (increment: number) => void;    // +1 for next, -1 for prev
   onYearPress: () => void;
   tempDate: Date;
   onYearLayout: (layout: LayoutRectangle) => void;
 }
 
+// Props for a generic DatePicker modal
 export interface DatePickerProps {
   blockedDates?: Date[];
   dateSelectionMode?: DateSelectionMode;
@@ -45,11 +50,13 @@ export interface DatePickerProps {
   triggerLayout: LayoutRectangle;
 }
 
+// Base props shared between Single and Range pickers
 interface BaseDateTimePickerProps {
   blockedDates?: Date[];
   label?: string;
 }
 
+// Single date/time picker props 
 export interface SingleDateTimePickerProps extends BaseDateTimePickerProps {
   dateSelectionMode?: DateSelectionMode.SINGLE;
   value: Date;
@@ -57,6 +64,7 @@ export interface SingleDateTimePickerProps extends BaseDateTimePickerProps {
   onChange: (date: Date) => void;
 }
 
+// Range date picker props
 export interface RangeDateTimePickerProps extends BaseDateTimePickerProps {
   dateSelectionMode: DateSelectionMode.RANGE;
   value: { start: Date; end: Date } | null;
@@ -66,6 +74,7 @@ export interface RangeDateTimePickerProps extends BaseDateTimePickerProps {
 
 export type DateTimePickerProps = SingleDateTimePickerProps | RangeDateTimePickerProps;
 
+// Props for TimePicker modal
 export interface TimePickerProps {
   onCancel: () => void;
   onChange: (date: Date) => void;
@@ -73,6 +82,7 @@ export interface TimePickerProps {
   triggerLayout: LayoutRectangle;
 }
 
+// Props for YearPicker modal
 export interface YearPickerProps {
   calendarYear: number;
   onYearSelect: (year: number) => void;

@@ -1,22 +1,28 @@
-export const isSameDate = (d1: Date, d2: Date): boolean => {
+// to handle date comparisons, blocked dates, range selection
+
+// Checks whether two Date objects represent the same calendar day
+export const isSameDate = (date1: Date, date2: Date): boolean => {
   return (
-    d1.getDate() === d2.getDate() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getFullYear() === d2.getFullYear()
+    date1.getDate() === date2.getDate() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getFullYear() === date2.getFullYear()
   );
 };
 
-export const isDateInRange = (date: Date, start: Date, end: Date): boolean => {
-  return date.getTime() > start.getTime() && date.getTime() < end.getTime();
+// Determines whether a given date falls strictly between a start and end date
+export const isDateInRange = (targetDate: Date, startDate: Date, endDate: Date): boolean => {
+  const time = targetDate.getTime();
+  return time > startDate.getTime() && time < endDate.getTime();
 };
 
+// Checks whether a particular day is blocked.
 export const isBlocked = (
   day: number | null,
   blockedDates: Date[] | undefined,
   calendarMonth: number,
   calendarYear: number,
 ): boolean => {
-  if (day === null || !blockedDates) {
+  if (day === null || !blockedDates?.length) {
     return false;
   }
 

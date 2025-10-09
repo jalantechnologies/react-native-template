@@ -1,63 +1,78 @@
-import { useTheme } from 'native-base';
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Modal, ScrollView, Dimensions } from 'react-native';
+import { useTheme } from 'native-base';
 
+import Button from '../button/button';
 import { ButtonColor, ButtonKind } from '../../types/button';
 import { TimePickerProps } from '../../types/date-time-picker';
-import Button from '../button/button';
-
 import { useTimePickerStyles } from './date-time-picker.styles';
 
+// Screen constants
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const ITEM_HEIGHT = SCREEN_HEIGHT * 0.06;
+const ITEM_HEIGHT = SCREEN_HEIGHT * 0.06; // Each picker item height
 
-const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel, triggerLayout }) => {
+const TimePicker: React.FC<TimePickerProps> = ({
+  tempDate,
+  onChange,
+  onCancel,
+  triggerLayout,
+}) => {
   const theme = useTheme();
   const styles = useTimePickerStyles(ITEM_HEIGHT);
 
-  const [selectedAmPm, setSelectedAmPm] = useState(tempDate.getHours() >= 12 ? 1 : 0);
-  const [selectedHour, setSelectedHour] = useState(tempDate.getHours() % 12 || 12);
-  const [selectedMinute, setSelectedMinute] = useState(tempDate.getMinutes());
+  // Current selected time values
+  const [amPmIndex, setAmPmIndex] = useState(tempDate.getHours() >= 12 ? 1 : 0); // 0 = AM, 1 = PM
+  const [hour, setHour] = useState(tempDate.getHours() % 12 || 12);
+  const [minute, setMinute] = useState(tempDate.getMinutes());
 
-  const ampm = ['AM', 'PM'];
-  const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
-  const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
+  // Picker data
+  const amPmOptions = ['AM', 'PM'];
+  const hourOptions = Array.from({ length: 12 }, (_, i) =>
+    (i + 1).toString().padStart(2, '0'),
+  );
+  const minuteOptions = Array.from({ length: 60 }, (_, i) =>
+    i.toString().padStart(2, '0'),
+  );
 
-  const ampmRef = useRef<ScrollView>(null);
+  // Scroll refs
+  const amPmRef = useRef<ScrollView>(null);
   const hourRef = useRef<ScrollView>(null);
   const minuteRef = useRef<ScrollView>(null);
 
+  // Position picker below the trigger
   const pickerTop = triggerLayout.y + triggerLayout.height - 16;
 
-  // confirm selected time
-  const confirmTime = () => {
-    let hour = selectedHour % 12;
-    if (ampm[selectedAmPm] === 'PM') {
-      hour += 12;
-    }
-    const newDate = new Date(tempDate);
-    newDate.setHours(hour);
-    newDate.setMinutes(selectedMinute);
-    onChange(newDate);
+  // Scroll to selected initial values
+  const scrollToSelected = () => {
+    amPmRef.current?.scrollTo({ y: amPmIndex * ITEM_HEIGHT, animated: false });
+    hourRef.current?.scrollTo({ y: (hour - 1) * ITEM_HEIGHT, animated: false });
+    minuteRef.current?.scrollTo({ y: minute * ITEM_HEIGHT, animated: false });
   };
 
+  useEffect(() => {
+    scrollToSelected();
+  }, []);
+
+  // Handle scrolling to select new value
   const handleScroll = (event: any, setSelected: (index: number) => void) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     const index = Math.round(offsetY / ITEM_HEIGHT);
     setSelected(index);
   };
 
-  const scrollToInitialPosition = () => {
-    ampmRef.current?.scrollTo({ y: selectedAmPm * ITEM_HEIGHT, animated: false });
-    hourRef.current?.scrollTo({ y: (selectedHour - 1) * ITEM_HEIGHT, animated: false });
-    minuteRef.current?.scrollTo({ y: selectedMinute * ITEM_HEIGHT, animated: false });
+  // Confirm selected time and send to parent
+  const handleConfirm = () => {
+    let newHour = hour % 12;
+    if (amPmOptions[amPmIndex] === 'PM') newHour += 12;
+
+    const updatedDate = new Date(tempDate);
+    updatedDate.setHours(newHour);
+    updatedDate.setMinutes(minute);
+    onChange(updatedDate);
   };
 
-  useEffect(() => {
-    scrollToInitialPosition();
-  }, []);
-
-  const renderPicker = (
+  // Render picker column (AM/PM, hour, minute)
+  const renderPickerColumn = (
     data: string[],
     selectedIndex: number,
     setSelected: (index: number) => void,
@@ -104,24 +119,28 @@ const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel, t
         ]}
       >
         <View style={styles.modalContent}>
-          <Text style={styles.headerText}>SELECT TIME</Text>
+          <Text style={styles.headerText}>Select Time</Text>
 
           <View style={styles.pickerRow}>
-            {renderPicker(ampm, selectedAmPm, setSelectedAmPm, ampmRef)}
-            <View style={styles.separator} />
-            {renderPicker(hours, selectedHour - 1, index => setSelectedHour(index + 1), hourRef)}
-            <View style={styles.separator} />
-            {renderPicker(minutes, selectedMinute, setSelectedMinute, minuteRef)}
+            {renderPickerColumn(amPmOptions, amPmIndex, setAmPmIndex, amPmRef)}
+            <View style={styles.separatorLine} />
+            {renderPickerColumn(hourOptions, hour - 1, i => setHour(i + 1), hourRef)}
+            <View style={styles.separatorLine} />
+            {renderPickerColumn(minuteOptions, minute, setMinute, minuteRef)}
           </View>
 
           <View style={styles.actionRow}>
             <View style={styles.actionText}>
-              <Button onClick={onCancel} kind={ButtonKind.OUTLINED} color={ButtonColor.SECONDARY}>
+              <Button
+                onClick={onCancel}
+                kind={ButtonKind.OUTLINED}
+                color={ButtonColor.SECONDARY}
+              >
                 Cancel
               </Button>
             </View>
             <View style={styles.actionText}>
-              <Button onClick={confirmTime}>Apply</Button>
+              <Button onClick={handleConfirm}>Apply</Button>
             </View>
           </View>
         </View>

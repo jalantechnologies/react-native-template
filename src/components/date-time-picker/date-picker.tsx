@@ -8,105 +8,123 @@ import Calendar from './calendar';
 import YearPicker from './year-picker';
 
 const DatePicker: React.FC<DatePickerProps> = ({
-  triggerLayout,
-  tempDate,
-  onChange,
-  onCancel,
-  dateSelectionMode,
-  blockedDates,
+  triggerLayout,         
+  tempDate,              
+  onChange,              
+  onCancel,              
+  dateSelectionMode,     
+  blockedDates,          
 }) => {
-  const [calendarMonth, setCalendarMonth] = useState(tempDate.getMonth());
-  const [calendarYear, setCalendarYear] = useState(tempDate.getFullYear());
+  // Current displayed month & year
+  const [displayedMonth, setDisplayedMonth] = useState(tempDate.getMonth());
+  const [displayedYear, setDisplayedYear] = useState(tempDate.getFullYear());
+
+  // State for showing year picker modal
   const [showYearPicker, setShowYearPicker] = useState(false);
+
+  // Currently selected date
   const [selectedDate, setSelectedDate] = useState(tempDate);
 
-  const [yearLayout, setYearLayout] = useState<{
+  // Position and dimensions of year dropdown
+  const [yearDropdownLayout, setYearDropdownLayout] = useState<{
     x: number;
     y: number;
     width: number;
     height: number;
   } | null>(null);
 
-  const handleDateSelect = (day: number) => {
-    const updatedDate = new Date(selectedDate);
-    updatedDate.setFullYear(calendarYear);
-    updatedDate.setMonth(calendarMonth);
-    updatedDate.setDate(day);
-    setSelectedDate(updatedDate);
+  // Update selected date
+  const updateSelectedDate = (day: number) => {
+    const updated = new Date(selectedDate);
+    updated.setFullYear(displayedYear);
+    updated.setMonth(displayedMonth);
+    updated.setDate(day);
+    setSelectedDate(updated);
   };
 
-  const handleMonthChange = (increment: number) => {
-    setCalendarMonth(prev => {
-      let newMonth = prev + increment;
-      if (newMonth < 0) {
-        newMonth = 11;
-      }
-      if (newMonth > 11) {
-        newMonth = 0;
-      }
-      return newMonth;
+  // Change month by increment (-1 prev, +1 next)
+  const updateDisplayedMonth = (increment: number) => {
+    setDisplayedMonth(prevMonth => {
+      let nextMonth = prevMonth + increment;
+      if (nextMonth < 0) nextMonth = 11;
+      if (nextMonth > 11) nextMonth = 0;
+      return nextMonth;
     });
   };
 
-  const handleYearSelect = (year: number) => {
-    setCalendarYear(year);
+  // Year selected from year picker
+  const updateDisplayedYear = (year: number) => {
+    setDisplayedYear(year);
     setShowYearPicker(false);
   };
 
-  const confirmDate = (date: Date | { startDate: Date | null; endDate: Date | null }) => {
+  // called when apply button is pressed and applies the selected date or date range to the parent component.
+  const applySelectedDate = (
+    date: Date | { startDate: Date | null; endDate: Date | null }
+  ) => {
     if (date instanceof Date) {
       setSelectedDate(date);
       onChange(date);
     } else {
-      const start = date.startDate ?? null;
-      const end = date.endDate ?? null;
-      onChange({ start, end });
+      onChange({
+        start: date.startDate ?? null,
+        end: date.endDate ?? null,
+      });
     }
   };
 
-  const pickerTop = triggerLayout.y + triggerLayout.height - theme.space[4];
+  // Position calendar relative to trigger
+  const calendarTop = triggerLayout.y + triggerLayout.height - theme.space[4];
 
   const calendarPositionStyle: ViewStyle = {
     position: 'absolute',
-    top: pickerTop,
+    top: calendarTop,
     left: triggerLayout.x,
     width: triggerLayout.width,
   };
 
+  // Position the year picker relative to the year dropdown
   const yearPickerPositionStyle: ViewStyle = {
     position: 'absolute',
-    top: yearLayout ? yearLayout.y + yearLayout.height + theme.space[1] : 0,
-    left: yearLayout ? yearLayout.x : 0,
+    top: yearDropdownLayout
+      ? yearDropdownLayout.y + yearDropdownLayout.height + theme.space[1]
+      : 0,
+    left: yearDropdownLayout ? yearDropdownLayout.x : 0,
   };
 
   return (
     <>
+      {/* Calendar Modal */}
       <Modal visible transparent animationType="fade">
         <Pressable style={styles.flex} onPress={onCancel}>
           <View style={calendarPositionStyle}>
             <Calendar
               blockedDates={blockedDates}
               tempDate={selectedDate}
-              calendarMonth={calendarMonth}
-              calendarYear={calendarYear}
+              currentMonth={displayedMonth}
+              currentYear={displayedYear}
               dateSelectionMode={dateSelectionMode}
-              onDateSelect={handleDateSelect}
-              onMonthChange={handleMonthChange}
+              onDateSelect={updateSelectedDate}
+              onMonthChange={updateDisplayedMonth}
               onYearPress={() => setShowYearPicker(true)}
-              onYearLayout={layout => setYearLayout(layout)}
+              onYearLayout={layout => setYearDropdownLayout(layout)}
               onCancel={onCancel}
-              onConfirm={confirmDate}
+              onConfirm={applySelectedDate}
             />
           </View>
         </Pressable>
       </Modal>
 
+      {/* Year Picker Modal */}
       {showYearPicker && (
         <Modal visible transparent animationType="fade">
           <Pressable style={styles.flex} onPress={() => setShowYearPicker(false)}>
             <View style={yearPickerPositionStyle}>
               <Pressable style={styles.flex} onPress={() => {}}>
-                <YearPicker calendarYear={calendarYear} onYearSelect={handleYearSelect} />
+                <YearPicker
+                  calendarYear={displayedYear}
+                  onYearSelect={updateDisplayedYear}
+                />
               </Pressable>
             </View>
           </Pressable>

@@ -3,14 +3,17 @@ import { Dimensions, StyleSheet, TextStyle } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
+// Calender styles
 export const useCalendarStyles = () => {
   const theme = useTheme();
   return StyleSheet.create({
+    // Outer modal container
     modalContainer: {
       flex: 1,
       justifyContent: 'center',
       padding: theme.space[4],
     },
+    // Main calendar modal
     modalContent: {
       ...theme.shadows[5],
       shadowColor: theme.colors.secondary[600],
@@ -21,12 +24,13 @@ export const useCalendarStyles = () => {
       minHeight: height * 0.6,
       overflow: 'hidden',
     },
-    headerCont: {
+    // Header container: Year + "Select By"
+    headerContainer: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
     },
-    header: {
+    yearDropdownButton: {
       backgroundColor: theme.colors.primary[500],
       borderWidth: parseInt(theme.borderWidths[1], 10),
       borderColor: theme.colors.secondary[50],
@@ -36,25 +40,26 @@ export const useCalendarStyles = () => {
       flexDirection: 'row',
       alignItems: 'center',
     },
-    headerText: {
+    yearDropdownText: {
       color: theme.colors.white,
       fontSize: theme.fontSizes.md,
       fontWeight: `${theme.fontWeights.semibold}` as TextStyle['fontWeight'],
     },
-    headerIcon: {
+    yearDropdownIcon: {
       marginLeft: theme.space[1],
     },
-    selectedDateHeader: {
+    selectedDateText: {
       fontSize: theme.fontSizes['3xl'],
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       color: theme.colors.secondary[800],
     },
+    // Day names row (Sun, Mon, ...)
     daysRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       marginBottom: theme.space[2],
     },
-    dayLabel: {
+    dayLabelText: {
       color: theme.colors.secondary[500],
       lineHeight: Number(theme.lineHeights.md),
       letterSpacing: theme.letterSpacings.md,
@@ -63,6 +68,7 @@ export const useCalendarStyles = () => {
       textAlign: 'center',
       fontSize: theme.fontSizes.lg,
     },
+    // Calendar grid
     calendarGrid: {
       flexDirection: 'column',
       minHeight: height * 0.3,
@@ -79,41 +85,42 @@ export const useCalendarStyles = () => {
       marginVertical: theme.space[1],
       borderRadius: theme.radii.lg,
     },
-    selectedCell: {
+    selectedDateCell: {
       ...theme.shadows[3],
       shadowColor: theme.colors.primary[400],
       backgroundColor: theme.colors.primary[500],
     },
-    selectedDate: {
+    selectedDateTextWhite: {
       color: theme.colors.white,
       fontWeight: `${theme.fontWeights.semibold}` as TextStyle['fontWeight'],
     },
-    dateTextCell: {
+    dateText: {
       color: theme.colors.secondary[900],
       fontSize: theme.fontSizes.lg,
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       lineHeight: Number(theme.lineHeights.md),
       letterSpacing: theme.letterSpacings.md,
     },
-    rangeCell: {
+    rangeDateCell: {
       backgroundColor: theme.colors.primary[100],
     },
     rangeDateText: {
       color: theme.colors.primary[500],
     },
-    todayCell: {
+    todayDateCell: {
       borderColor: theme.colors.primary[500],
       borderWidth: parseInt(theme.borderWidths['1'], 10),
     },
-    todayCellText: {
+    todayDateText: {
       color: theme.colors.primary[500],
     },
-    blockedCell: {
+    blockedDateCell: {
       backgroundColor: theme.colors.secondary[100],
     },
-    blockedCellText: {
+    blockedDateText: {
       color: theme.colors.secondary[400],
     },
+    // Action buttons row (Confirm / Cancel)
     actionRow: {
       alignItems: 'flex-end',
       alignSelf: 'flex-end',
@@ -121,13 +128,14 @@ export const useCalendarStyles = () => {
     actionText: {
       minWidth: width * 0.2,
     },
+    // Month-Year row
     monthYearRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
       marginBottom: theme.space[4],
     },
-    monthYearItems: {
+    monthYearButton: {
       borderWidth: parseInt(theme.borderWidths[1], 10),
       borderColor: theme.colors.primary[50],
       paddingHorizontal: theme.space[3],
@@ -141,10 +149,11 @@ export const useCalendarStyles = () => {
       letterSpacing: theme.letterSpacings.md,
       textAlign: 'center',
     },
-    monthYearRowIcons: {
+    monthYearNavIcon: {
       fontSize: theme.fontSizes.lg,
       color: theme.colors.secondary[500],
     },
+    // "Select By" dropdown
     selectByButton: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -153,6 +162,7 @@ export const useCalendarStyles = () => {
       fontSize: theme.fontSizes.md,
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
     },
+    // Preset overlay
     presetOverlay: {
       position: 'absolute',
       top: theme.space[12],
@@ -163,7 +173,7 @@ export const useCalendarStyles = () => {
       alignItems: 'flex-end',
       zIndex: 9999,
     },
-    presetCont: {
+    presetContainer: {
       ...theme.shadows[5],
       shadowColor: theme.colors.secondary[600],
       backgroundColor: theme.colors.white,
@@ -218,16 +228,16 @@ export const useYearPickerStyles = () => {
       borderRadius: theme.radii.lg,
       borderColor: theme.colors.primary[50],
     },
-    selectedCell: {
+    selectedYearCell: {
       ...theme.shadows[3],
       shadowColor: theme.colors.primary[400],
       backgroundColor: theme.colors.primary[500],
     },
-    selectedYear: {
+    selectedYearText: {
       color: theme.colors.white,
       fontWeight: `${theme.fontWeights.semibold}` as TextStyle['fontWeight'],
     },
-    yearTextCell: {
+    yearText: {
       color: theme.colors.secondary[900],
       fontSize: theme.fontSizes.md,
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
@@ -237,6 +247,7 @@ export const useYearPickerStyles = () => {
   });
 };
 
+// Time Picker styles 
 export const useTimePickerStyles = (ITEM_HEIGHT: number) => {
   const theme = useTheme();
   return StyleSheet.create({
@@ -269,7 +280,7 @@ export const useTimePickerStyles = (ITEM_HEIGHT: number) => {
       justifyContent: 'space-evenly',
       alignItems: 'center',
     },
-    separator: {
+    separatorLine: {
       width: StyleSheet.hairlineWidth,
       backgroundColor: theme.colors.secondary[400],
       height: ITEM_HEIGHT * 3,

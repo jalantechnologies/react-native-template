@@ -92,36 +92,45 @@ const Calendar: React.FC<CalendarProps> = ({
     return weeks;
   }, [calendarDates]);
 
-  // PanResponder for swipe gestures to change months
+  // Animated value for horizontal swipe
   const translateX = useRef(new Animated.Value(0)).current;
 
+  const gestureSensitivity = 20;
+  const swipeThreshold = 50;
+  const swipeDistance = 300;
+  const swipeAnimationDuration = 200;
+
+  // Helper function to animate swipe
+  const animateSwipe = (toValue: number, callback: () => void) => {
+    Animated.timing(translateX, {
+      toValue,
+      duration: swipeAnimationDuration,
+      useNativeDriver: true,
+    }).start(() => {
+      // Reset translation after animation completes
+      translateX.setValue(0);
+      callback();
+    });
+  };
+
+  // PanResponder for swipe gestures to change months
   const panResponder = useRef(
     PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gestureState) => Math.abs(gestureState.dx) > 20,
+      // Decide if gesture should start responding
+      onMoveShouldSetPanResponder: (_, gestureState) => Math.abs(gestureState.dx) > gestureSensitivity,
+      // Update translation as user drags
       onPanResponderMove: (_, gestureState) => {
         translateX.setValue(gestureState.dx);
       },
       onPanResponderRelease: (_, gestureState) => {
-        const swipeThreshold = 50;
         if (gestureState.dx < -swipeThreshold) {
           // Swipe left → next month
-          Animated.timing(translateX, {
-            toValue: -300,
-            duration: 200,
-            useNativeDriver: true,
-          }).start(() => {
-            translateX.setValue(0);
-            onMonthChange(1);
-          });
+          animateSwipe(-swipeDistance, () => onMonthChange(1));
         } else if (gestureState.dx > swipeThreshold) {
           // Swipe right → previous month
-          Animated.timing(translateX, { toValue: 300, duration: 200, useNativeDriver: true }).start(
-            () => {
-              translateX.setValue(0);
-              onMonthChange(-1);
-            },
-          );
+          animateSwipe(swipeDistance, () => onMonthChange(-1));
         } else {
+          // Swipe too small → bounce back
           Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
         }
       },
@@ -168,80 +177,77 @@ const Calendar: React.FC<CalendarProps> = ({
     ],
   );
 
-  // Handle quick preset selection
-  const handlePresetSelection = (preset: PresetOption) => {
-    let start: Date;
-    let end: Date;
+  // Helper function to calculate start and end dates relative to today
+  const calculateDateRange = (daysBefore: number, daysAfter: number = 0) => {
+    const start = new Date(today);
+    start.setDate(today.getDate() - daysBefore);
+
+    const end = new Date(today);
+    end.setDate(today.getDate() + daysAfter);
+
+    return { start, end };
+  };
+
+  // Handle selection of quick date range presets
+  const handleQuickDateRangePreset = (preset: PresetOption) => {
+    let rangeStart: Date;
+    let rangeEnd: Date;
 
     switch (preset) {
       case PresetOption.LAST_3_DAYS:
-        start = new Date(today);
-        start.setDate(today.getDate() - 2);
-        end = today;
+        ({ start: rangeStart, end: rangeEnd } = calculateDateRange(2));
         break;
       case PresetOption.LAST_7_DAYS:
-        start = new Date(today);
-        start.setDate(today.getDate() - 6);
-        end = today;
+        ({ start: rangeStart, end: rangeEnd } = calculateDateRange(6));
         break;
       case PresetOption.LAST_14_DAYS:
-        start = new Date(today);
-        start.setDate(today.getDate() - 13);
-        end = today;
-        break;
-      case PresetOption.LAST_MONTH:
-        start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-        end = new Date(today.getFullYear(), today.getMonth(), 0);
-        break;
-      case PresetOption.THIS_MONTH:
-        start = new Date(today.getFullYear(), today.getMonth(), 1);
-        end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        ({ start: rangeStart, end: rangeEnd } = calculateDateRange(13));
         break;
       case PresetOption.NEXT_3_DAYS:
-        start = today;
-        end = new Date(today);
-        end.setDate(today.getDate() + 2);
+        ({ start: rangeStart, end: rangeEnd } = calculateDateRange(0, 2));
         break;
       case PresetOption.NEXT_7_DAYS:
-        start = today;
-        end = new Date(today);
-        end.setDate(today.getDate() + 6);
+        ({ start: rangeStart, end: rangeEnd } = calculateDateRange(0, 6));
         break;
       case PresetOption.NEXT_14_DAYS:
-        start = today;
-        end = new Date(today);
-        end.setDate(today.getDate() + 13);
+        ({ start: rangeStart, end: rangeEnd } = calculateDateRange(0, 13));
+        break;
+      case PresetOption.LAST_MONTH:
+        rangeStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+        rangeEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+        break;
+      case PresetOption.THIS_MONTH:
+        rangeStart = new Date(today.getFullYear(), today.getMonth(), 1);
+        rangeEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
         break;
       default:
         return;
     }
-
-    setRangeStartDate(start);
-    setRangeEndDate(end);
+  
+    setRangeStartDate(rangeStart);
+    setRangeEndDate(rangeEnd);
   };
 
   // Confirm selected date(s)
-  const handleConfirm = () => {
+  const handleApplySelection = () => {
     if (dateSelectionMode === DateSelectionMode.SINGLE) {
-      if (selectedDay !== null) {
-        onConfirm(new Date(currentYear, currentMonth, selectedDay));
-      }
+      const selectedDate = selectedDay !== null ? new Date(currentYear, currentMonth, selectedDay) : null;
+      if (selectedDate) onConfirm(selectedDate);
     } else {
       onConfirm({ startDate: rangeStartDate, endDate: rangeEndDate });
     }
   };
+  
 
   // Ref to measure the year dropdown
   const yearRef = useRef<TouchableOpacity>(null);
 
-  const measureYearPosition = () => {
-    if (yearRef.current) {
-      const handle = findNodeHandle(yearRef.current);
-      if (handle) {
-        UIManager.measure(handle, (x, y, width, height, pageX, pageY) => {
-          onYearLayout({ x: pageX, y: pageY, width, height });
-        });
-      }
+  const updateYearDropdownLayout = () => {
+    const handle = yearRef.current && findNodeHandle(yearRef.current);
+    if (handle) {
+      UIManager.measure(handle, (x, y, width, height, pageX, pageY) => {
+        onYearLayout({ x: pageX, y: pageY, width, height });
+      });
     }
   };
 
@@ -254,7 +260,7 @@ const Calendar: React.FC<CalendarProps> = ({
           <TouchableOpacity
             ref={yearRef}
             onPress={() => {
-              measureYearPosition();
+              updateYearDropdownLayout();
               onYearPress();
             }}
             style={styles.yearDropdownButton}
@@ -283,7 +289,7 @@ const Calendar: React.FC<CalendarProps> = ({
                   key={option.value}
                   style={styles.presetOption}
                   onPress={() => {
-                    handlePresetSelection(option.value);
+                    handleQuickDateRangePreset(option.value);
                     setShowPresetOptions(false);
                   }}
                 >
@@ -378,7 +384,7 @@ const Calendar: React.FC<CalendarProps> = ({
           {/* Confirm button */}
           <View style={styles.actionRow}>
             <View style={styles.actionText}>
-              <Button onClick={handleConfirm}>Apply</Button>
+              <Button onClick={handleApplySelection}>Apply</Button>
             </View>
           </View>
         </Animated.View>

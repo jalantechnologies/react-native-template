@@ -18,7 +18,9 @@ const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel, t
 
   // Current selected time values
   const [amPmIndex, setAmPmIndex] = useState(tempDate.getHours() >= 12 ? 1 : 0); // 0 = AM, 1 = PM
-  const [hour, setHour] = useState(tempDate.getHours() % 12 || 12);
+  // Convert 24-hour format to 12-hour format
+  const to12Hour = (h: number) => (h % 12 === 0 ? 12 : h % 12);
+  const [hour, setHour] = useState(to12Hour(tempDate.getHours()));
   const [minute, setMinute] = useState(tempDate.getMinutes());
 
   // Picker data
@@ -32,7 +34,8 @@ const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel, t
   const minuteRef = useRef<ScrollView>(null);
 
   // Position picker below the trigger
-  const pickerTop = triggerLayout.y + triggerLayout.height - 16;
+  const PICKER_VERTICAL_OFFSET = 16; // Offset to slightly overlap the input field
+  const pickerTop = triggerLayout.y + triggerLayout.height - PICKER_VERTICAL_OFFSET;
 
   // Scroll to selected initial values
   const scrollToSelected = () => {

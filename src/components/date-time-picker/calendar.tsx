@@ -117,7 +117,8 @@ const Calendar: React.FC<CalendarProps> = ({
   const panResponder = useRef(
     PanResponder.create({
       // Decide if gesture should start responding
-      onMoveShouldSetPanResponder: (_, gestureState) => Math.abs(gestureState.dx) > gestureSensitivity,
+      onMoveShouldSetPanResponder: (_, gestureState) =>
+        Math.abs(gestureState.dx) > gestureSensitivity,
       // Update translation as user drags
       onPanResponderMove: (_, gestureState) => {
         translateX.setValue(gestureState.dx);
@@ -223,7 +224,7 @@ const Calendar: React.FC<CalendarProps> = ({
       default:
         return;
     }
-  
+
     setRangeStartDate(rangeStart);
     setRangeEndDate(rangeEnd);
   };
@@ -231,13 +232,15 @@ const Calendar: React.FC<CalendarProps> = ({
   // Confirm selected date(s)
   const handleApplySelection = () => {
     if (dateSelectionMode === DateSelectionMode.SINGLE) {
-      const selectedDate = selectedDay !== null ? new Date(currentYear, currentMonth, selectedDay) : null;
-      if (selectedDate) onConfirm(selectedDate);
+      const selectedDate =
+        selectedDay !== null ? new Date(currentYear, currentMonth, selectedDay) : null;
+      if (selectedDate) {
+        onConfirm(selectedDate);
+      }
     } else {
       onConfirm({ startDate: rangeStartDate, endDate: rangeEndDate });
     }
   };
-  
 
   // Ref to measure the year dropdown
   const yearRef = useRef<TouchableOpacity>(null);

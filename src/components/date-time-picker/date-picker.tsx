@@ -46,8 +46,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   const updateDisplayedMonth = (increment: number) => {
     setDisplayedMonth(prevMonth => {
       let nextMonth = prevMonth + increment;
-      let nextYear = displayedYear;
-  
+
       if (nextMonth < 0) {
         nextMonth = 11;
         setDisplayedYear(prev => prev - 1);
@@ -55,10 +54,10 @@ const DatePicker: React.FC<DatePickerProps> = ({
         nextMonth = 0;
         setDisplayedYear(prev => prev + 1);
       }
-  
+
       return nextMonth;
     });
-  };  
+  };
 
   // Year selected from year picker
   const updateDisplayedYear = (year: number) => {

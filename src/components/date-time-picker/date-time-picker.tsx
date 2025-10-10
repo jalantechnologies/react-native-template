@@ -19,7 +19,7 @@ function isRangePicker(props: DateTimePickerProps): props is RangeDateTimePicker
   return props.dateSelectionMode === DateSelectionMode.RANGE;
 }
 
-export const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
+export const DateTimePicker: React.FC<DateTimePickerProps> = props => {
   const theme = useTheme();
 
   // State to show/hide the DatePicker or TimePicker overlays
@@ -84,10 +84,16 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = (props) => {
     const formatParts = new Intl.DateTimeFormat(undefined).formatToParts(new Date());
 
     return formatParts
-      .map((part) => {
-        if (part.type === 'day') return 'DD';
-        if (part.type === 'month') return 'MM';
-        if (part.type === 'year') return 'YYYY';
+      .map(part => {
+        if (part.type === 'day') {
+          return 'DD';
+        }
+        if (part.type === 'month') {
+          return 'MM';
+        }
+        if (part.type === 'year') {
+          return 'YYYY';
+        }
         return part.value;
       })
       .join('');

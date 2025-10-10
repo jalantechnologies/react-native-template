@@ -1,22 +1,18 @@
+import { useTheme } from 'native-base';
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, Modal, ScrollView, Dimensions } from 'react-native';
-import { useTheme } from 'native-base';
 
-import Button from '../button/button';
 import { ButtonColor, ButtonKind } from '../../types/button';
 import { TimePickerProps } from '../../types/date-time-picker';
+import Button from '../button/button';
+
 import { useTimePickerStyles } from './date-time-picker.styles';
 
 // Screen constants
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const ITEM_HEIGHT = SCREEN_HEIGHT * 0.06; // Each picker item height
 
-const TimePicker: React.FC<TimePickerProps> = ({
-  tempDate,
-  onChange,
-  onCancel,
-  triggerLayout,
-}) => {
+const TimePicker: React.FC<TimePickerProps> = ({ tempDate, onChange, onCancel, triggerLayout }) => {
   const theme = useTheme();
   const styles = useTimePickerStyles(ITEM_HEIGHT);
 
@@ -27,12 +23,8 @@ const TimePicker: React.FC<TimePickerProps> = ({
 
   // Picker data
   const amPmOptions = ['AM', 'PM'];
-  const hourOptions = Array.from({ length: 12 }, (_, i) =>
-    (i + 1).toString().padStart(2, '0'),
-  );
-  const minuteOptions = Array.from({ length: 60 }, (_, i) =>
-    i.toString().padStart(2, '0'),
-  );
+  const hourOptions = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+  const minuteOptions = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
 
   // Scroll refs
   const amPmRef = useRef<ScrollView>(null);
@@ -63,7 +55,9 @@ const TimePicker: React.FC<TimePickerProps> = ({
   // Confirm selected time and send to parent
   const handleConfirm = () => {
     let newHour = hour % 12;
-    if (amPmOptions[amPmIndex] === 'PM') newHour += 12;
+    if (amPmOptions[amPmIndex] === 'PM') {
+      newHour += 12;
+    }
 
     const updatedDate = new Date(tempDate);
     updatedDate.setHours(newHour);
@@ -131,11 +125,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
 
           <View style={styles.actionRow}>
             <View style={styles.actionText}>
-              <Button
-                onClick={onCancel}
-                kind={ButtonKind.OUTLINED}
-                color={ButtonColor.SECONDARY}
-              >
+              <Button onClick={onCancel} kind={ButtonKind.OUTLINED} color={ButtonColor.SECONDARY}>
                 Cancel
               </Button>
             </View>

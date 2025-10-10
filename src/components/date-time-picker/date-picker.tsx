@@ -8,12 +8,12 @@ import Calendar from './calendar';
 import YearPicker from './year-picker';
 
 const DatePicker: React.FC<DatePickerProps> = ({
-  triggerLayout,         
-  tempDate,              
-  onChange,              
-  onCancel,              
-  dateSelectionMode,     
-  blockedDates,          
+  triggerLayout,
+  tempDate,
+  onChange,
+  onCancel,
+  dateSelectionMode,
+  blockedDates,
 }) => {
   // Current displayed month & year
   const [displayedMonth, setDisplayedMonth] = useState(tempDate.getMonth());
@@ -46,8 +46,12 @@ const DatePicker: React.FC<DatePickerProps> = ({
   const updateDisplayedMonth = (increment: number) => {
     setDisplayedMonth(prevMonth => {
       let nextMonth = prevMonth + increment;
-      if (nextMonth < 0) nextMonth = 11;
-      if (nextMonth > 11) nextMonth = 0;
+      if (nextMonth < 0) {
+        nextMonth = 11;
+      }
+      if (nextMonth > 11) {
+        nextMonth = 0;
+      }
       return nextMonth;
     });
   };
@@ -59,9 +63,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   };
 
   // called when apply button is pressed and applies the selected date or date range to the parent component.
-  const applySelectedDate = (
-    date: Date | { startDate: Date | null; endDate: Date | null }
-  ) => {
+  const applySelectedDate = (date: Date | { startDate: Date | null; endDate: Date | null }) => {
     if (date instanceof Date) {
       setSelectedDate(date);
       onChange(date);
@@ -86,9 +88,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   // Position the year picker relative to the year dropdown
   const yearPickerPositionStyle: ViewStyle = {
     position: 'absolute',
-    top: yearDropdownLayout
-      ? yearDropdownLayout.y + yearDropdownLayout.height + theme.space[1]
-      : 0,
+    top: yearDropdownLayout ? yearDropdownLayout.y + yearDropdownLayout.height + theme.space[1] : 0,
     left: yearDropdownLayout ? yearDropdownLayout.x : 0,
   };
 
@@ -121,10 +121,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           <Pressable style={styles.flex} onPress={() => setShowYearPicker(false)}>
             <View style={yearPickerPositionStyle}>
               <Pressable style={styles.flex} onPress={() => {}}>
-                <YearPicker
-                  calendarYear={displayedYear}
-                  onYearSelect={updateDisplayedYear}
-                />
+                <YearPicker calendarYear={displayedYear} onYearSelect={updateDisplayedYear} />
               </Pressable>
             </View>
           </Pressable>

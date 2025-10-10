@@ -247,7 +247,7 @@ export const useYearPickerStyles = () => {
   });
 };
 
-// Time Picker styles 
+// Time Picker styles
 export const useTimePickerStyles = (ITEM_HEIGHT: number) => {
   const theme = useTheme();
   return StyleSheet.create({

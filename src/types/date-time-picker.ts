@@ -7,13 +7,13 @@ export enum DateTimePickerMode {
   TIME = 'time',
 }
 
-// Date selection type: Single date or a Range 
+// Date selection type: Single date or a Range
 export enum DateSelectionMode {
   SINGLE = 'single',
   RANGE = 'range',
 }
 
-// Predefined quick-select options 
+// Predefined quick-select options
 export enum PresetOption {
   LAST_3_DAYS = 'last3',
   LAST_7_DAYS = 'last7',
@@ -28,13 +28,13 @@ export enum PresetOption {
 // Props for the Calendar compone
 export interface CalendarProps {
   blockedDates?: Date[];
-  currentMonth: number;    // 0–11
+  currentMonth: number; // 0–11
   currentYear: number;
   dateSelectionMode?: DateSelectionMode;
   onCancel: () => void;
   onConfirm: (date: Date | { startDate: Date | null; endDate: Date | null }) => void;
   onDateSelect: (day: number) => void;
-  onMonthChange: (increment: number) => void;    // +1 for next, -1 for prev
+  onMonthChange: (increment: number) => void; // +1 for next, -1 for prev
   onYearPress: () => void;
   tempDate: Date;
   onYearLayout: (layout: LayoutRectangle) => void;
@@ -56,7 +56,7 @@ interface BaseDateTimePickerProps {
   label?: string;
 }
 
-// Single date/time picker props 
+// Single date/time picker props
 export interface SingleDateTimePickerProps extends BaseDateTimePickerProps {
   dateSelectionMode?: DateSelectionMode.SINGLE;
   value: Date;

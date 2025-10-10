@@ -66,13 +66,19 @@ const Calendar: React.FC<CalendarProps> = ({
     const datesArray: (number | null)[] = [];
 
     // Add empty cells before first day
-    for (let i = 0; i < firstWeekday; i++) datesArray.push(null);
+    for (let i = 0; i < firstWeekday; i++) {
+      datesArray.push(null);
+    }
 
     // Add days of month
-    for (let day = 1; day <= totalDaysInMonth; day++) datesArray.push(day);
+    for (let day = 1; day <= totalDaysInMonth; day++) {
+      datesArray.push(day);
+    }
 
     // Fill remaining cells to complete last week
-    while (datesArray.length % DAYS_IN_WEEK !== 0) datesArray.push(null);
+    while (datesArray.length % DAYS_IN_WEEK !== 0) {
+      datesArray.push(null);
+    }
 
     return datesArray;
   }, [currentYear, currentMonth]);
@@ -99,27 +105,35 @@ const Calendar: React.FC<CalendarProps> = ({
         const swipeThreshold = 50;
         if (gestureState.dx < -swipeThreshold) {
           // Swipe left → next month
-          Animated.timing(translateX, { toValue: -300, duration: 200, useNativeDriver: true }).start(() => {
+          Animated.timing(translateX, {
+            toValue: -300,
+            duration: 200,
+            useNativeDriver: true,
+          }).start(() => {
             translateX.setValue(0);
             onMonthChange(1);
           });
         } else if (gestureState.dx > swipeThreshold) {
           // Swipe right → previous month
-          Animated.timing(translateX, { toValue: 300, duration: 200, useNativeDriver: true }).start(() => {
-            translateX.setValue(0);
-            onMonthChange(-1);
-          });
+          Animated.timing(translateX, { toValue: 300, duration: 200, useNativeDriver: true }).start(
+            () => {
+              translateX.setValue(0);
+              onMonthChange(-1);
+            },
+          );
         } else {
           Animated.spring(translateX, { toValue: 0, useNativeDriver: true }).start();
         }
       },
-    })
+    }),
   ).current;
 
   // Handle selecting a day on the calendar
   const handleDayPress = useCallback(
     (day: number | null) => {
-      if (!day || isBlocked(day, blockedDates, currentMonth, currentYear)) return;
+      if (!day || isBlocked(day, blockedDates, currentMonth, currentYear)) {
+        return;
+      }
 
       const fullDate = new Date(currentYear, currentMonth, day);
 
@@ -143,7 +157,15 @@ const Calendar: React.FC<CalendarProps> = ({
         onDateSelect(day);
       }
     },
-    [rangeStartDate, rangeEndDate, blockedDates, currentMonth, currentYear, dateSelectionMode, onDateSelect]
+    [
+      rangeStartDate,
+      rangeEndDate,
+      blockedDates,
+      currentMonth,
+      currentYear,
+      dateSelectionMode,
+      onDateSelect,
+    ],
   );
 
   // Handle quick preset selection
@@ -274,17 +296,28 @@ const Calendar: React.FC<CalendarProps> = ({
 
         {/* Selected date display */}
         <Text style={styles.selectedDateText}>
-          {tempDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+          {tempDate.toLocaleDateString(undefined, {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+          })}
         </Text>
 
         {/* Calendar grid with swipe */}
         <Animated.View {...panResponder.panHandlers} style={{ transform: [{ translateX }] }}>
-          <MonthNavigator month={currentMonth} year={currentYear} onMonthChange={onMonthChange} styles={styles} />
+          <MonthNavigator
+            month={currentMonth}
+            year={currentYear}
+            onMonthChange={onMonthChange}
+            styles={styles}
+          />
 
           {/* Weekday labels */}
           <View style={styles.daysRow}>
             {WEEK_DAYS.map((day, index) => (
-              <Text key={index} style={styles.dayLabelText}>{day}</Text>
+              <Text key={index} style={styles.dayLabelText}>
+                {day}
+              </Text>
             ))}
           </View>
 
@@ -294,14 +327,21 @@ const Calendar: React.FC<CalendarProps> = ({
               <View key={weekIndex} style={styles.calendarRow}>
                 {week.map((day, dayIndex) => {
                   const fullDate = day !== null ? new Date(currentYear, currentMonth, day) : null;
-                  const isBlockedDate = fullDate ? isBlocked(day, blockedDates, currentMonth, currentYear) : false;
+                  const isBlockedDate = fullDate
+                    ? isBlocked(day, blockedDates, currentMonth, currentYear)
+                    : false;
                   const isToday = fullDate ? isSameDate(fullDate, today) : false;
                   const isSelected =
                     dateSelectionMode === DateSelectionMode.SINGLE
                       ? day === selectedDay
-                      : fullDate && ((rangeStartDate && isSameDate(fullDate, rangeStartDate)) || (rangeEndDate && isSameDate(fullDate, rangeEndDate)));
+                      : fullDate &&
+                        ((rangeStartDate && isSameDate(fullDate, rangeStartDate)) ||
+                          (rangeEndDate && isSameDate(fullDate, rangeEndDate)));
                   const isInRange =
-                    dateSelectionMode === DateSelectionMode.RANGE && fullDate && rangeStartDate && rangeEndDate
+                    dateSelectionMode === DateSelectionMode.RANGE &&
+                    fullDate &&
+                    rangeStartDate &&
+                    rangeEndDate
                       ? isDateInRange(fullDate, rangeStartDate, rangeEndDate)
                       : false;
 

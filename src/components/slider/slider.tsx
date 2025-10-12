@@ -216,7 +216,7 @@ const Slider = ({
 
   // Track gesture start position
   const gestureStartPositionX = useRef(0);
-  // PanResponder for slider handles 
+  // PanResponder for slider handles
   const createPanResponder = (
     handleType: SliderHandle,
     handleRef: Animated.Value,
@@ -340,7 +340,7 @@ const Slider = ({
       return null;
     }
 
-    const BUBBLE_OFFSET_RATIO = 1.6;  // Multiplier to position bubble slightly above handle
+    const BUBBLE_OFFSET_RATIO = 1.6; // Multiplier to position bubble slightly above handle
     const bubbleLeft = Animated.add(
       position,
       new Animated.Value(HANDLE_SIZE / 2 - HANDLE_SIZE * BUBBLE_OFFSET_RATIO),

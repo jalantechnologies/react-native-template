@@ -139,7 +139,7 @@ const Calendar: React.FC<CalendarProps> = ({
   ).current;
 
   // Handle selecting a day on the calendar
-  const handleDayPress = useCallback(
+  const handleDaySelect = useCallback(
     (day: number | null) => {
       if (!day || isBlocked(day, blockedDates, currentMonth, currentYear)) {
         return;
@@ -179,7 +179,7 @@ const Calendar: React.FC<CalendarProps> = ({
   );
 
   // Helper function to calculate start and end dates relative to today
-  const calculateDateRange = (daysBefore: number, daysAfter: number = 0) => {
+  const getRelativeDateRange = (daysBefore: number, daysAfter: number = 0) => {
     const start = new Date(today);
     start.setDate(today.getDate() - daysBefore);
 
@@ -190,28 +190,28 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   // Handle selection of quick date range presets
-  const handleQuickDateRangePreset = (preset: PresetOption) => {
+  const applyPresetRange = (preset: PresetOption) => {
     let rangeStart: Date;
     let rangeEnd: Date;
 
     switch (preset) {
       case PresetOption.LAST_3_DAYS:
-        ({ start: rangeStart, end: rangeEnd } = calculateDateRange(2));
+        ({ start: rangeStart, end: rangeEnd } = getRelativeDateRange(2));
         break;
       case PresetOption.LAST_7_DAYS:
-        ({ start: rangeStart, end: rangeEnd } = calculateDateRange(6));
+        ({ start: rangeStart, end: rangeEnd } = getRelativeDateRange(6));
         break;
       case PresetOption.LAST_14_DAYS:
-        ({ start: rangeStart, end: rangeEnd } = calculateDateRange(13));
+        ({ start: rangeStart, end: rangeEnd } = getRelativeDateRange(13));
         break;
       case PresetOption.NEXT_3_DAYS:
-        ({ start: rangeStart, end: rangeEnd } = calculateDateRange(0, 2));
+        ({ start: rangeStart, end: rangeEnd } = getRelativeDateRange(0, 2));
         break;
       case PresetOption.NEXT_7_DAYS:
-        ({ start: rangeStart, end: rangeEnd } = calculateDateRange(0, 6));
+        ({ start: rangeStart, end: rangeEnd } = getRelativeDateRange(0, 6));
         break;
       case PresetOption.NEXT_14_DAYS:
-        ({ start: rangeStart, end: rangeEnd } = calculateDateRange(0, 13));
+        ({ start: rangeStart, end: rangeEnd } = getRelativeDateRange(0, 13));
         break;
       case PresetOption.LAST_MONTH:
         rangeStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
@@ -243,10 +243,10 @@ const Calendar: React.FC<CalendarProps> = ({
   };
 
   // Ref to measure the year dropdown
-  const yearRef = useRef<TouchableOpacity>(null);
+  const yearDropdownRef = useRef<TouchableOpacity>(null);
 
-  const updateYearDropdownLayout = () => {
-    const handle = yearRef.current && findNodeHandle(yearRef.current);
+  const measureYearDropdownLayout = () => {
+    const handle = yearDropdownRef.current && findNodeHandle(yearDropdownRef.current);
     if (handle) {
       UIManager.measure(handle, (x, y, width, height, pageX, pageY) => {
         onYearLayout({ x: pageX, y: pageY, width, height });
@@ -261,9 +261,9 @@ const Calendar: React.FC<CalendarProps> = ({
         {/* Header: Year + "Select By" */}
         <View style={styles.headerContainer}>
           <TouchableOpacity
-            ref={yearRef}
+            ref={yearDropdownRef}
             onPress={() => {
-              updateYearDropdownLayout();
+              measureYearDropdownLayout();
               onYearPress();
             }}
             style={styles.yearDropdownButton}
@@ -292,7 +292,7 @@ const Calendar: React.FC<CalendarProps> = ({
                   key={option.value}
                   style={styles.presetOption}
                   onPress={() => {
-                    handleQuickDateRangePreset(option.value);
+                    applyPresetRange(option.value);
                     setShowPresetOptions(false);
                   }}
                 >
@@ -364,7 +364,7 @@ const Calendar: React.FC<CalendarProps> = ({
                         isSelected && styles.selectedDateCell,
                         isInRange && styles.rangeDateCell,
                       ]}
-                      onPress={() => day !== null && handleDayPress(day)}
+                      onPress={() => day !== null && handleDaySelect(day)}
                     >
                       <Text
                         style={[
@@ -384,7 +384,7 @@ const Calendar: React.FC<CalendarProps> = ({
             ))}
           </View>
 
-          {/* Confirm button */}
+          {/* Apply button */}
           <View style={styles.actionRow}>
             <View style={styles.actionText}>
               <Button onClick={handleApplySelection}>Apply</Button>

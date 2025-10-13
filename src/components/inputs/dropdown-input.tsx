@@ -3,17 +3,13 @@ import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, FlatList, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { DropdownInputProps, DropdownOptionProps, InputStatus } from '../../types';
-
+import { DropdownInputProps, DropdownOptionProps } from '../../types';
 import { useDropdownInputStyles } from './input.styles';
 
 const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownOptionProps> } = ({
   label,
-  value,
+  selectedValue,
   onValueChange,
-  status = InputStatus.DEFAULT,
-  errorMessage,
-  successMessage,
   disabled = false,
   children,
 }) => {
@@ -23,20 +19,13 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
 
   const styles = useDropdownInputStyles();
   const theme = useTheme();
-  const options = React.Children.toArray(children);
+  const options = React.Children.toArray(children);   // convert children to array
 
-  const getBorderColor = () => {
-    if (status === InputStatus.ERROR) {
-      return theme.colors.danger[500];
-    }
-    return theme.colors.secondary[200];
-  };
-
+  // Toggle dropdown visibility
   const toggleDropdown = () => {
-    if (disabled) {
-      return;
-    }
+    if (disabled) return;
 
+    // Measure container height to position dropdown below input
     if (!isDropdownVisible) {
       containerRef.current?.measure((x, y, width, height) => {
         setDropdownTop(height);
@@ -48,42 +37,28 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
 
   return (
     <View ref={containerRef} style={styles.wrapper}>
+      {/* Label above input -> Eg: "Select an option" on the input field*/}
       {label && (
-        <Text
-          style={[
-            styles.label,
-            { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
-          ]}
-        >
+        <Text style={[styles.label, { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] }]}>
           {label}
         </Text>
       )}
 
+      {/* Input container that opens dropdown */}
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={toggleDropdown}
         style={[
           styles.inputContainer,
           {
-            borderColor: getBorderColor(),
+            borderColor: theme.colors.secondary[200],
             backgroundColor: disabled ? theme.colors.secondary[50] : theme.colors.white,
           },
         ]}
         disabled={disabled}
       >
-        <Text
-          style={[
-            styles.inputText,
-            {
-              color: disabled
-                ? theme.colors.secondary[500]
-                : status === InputStatus.ERROR
-                ? theme.colors.danger[800]
-                : theme.colors.secondary[900],
-            },
-          ]}
-        >
-          {value || 'Select an option'}
+        <Text style={[styles.inputText, { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] }]}>
+          {selectedValue || 'Select an option'}
         </Text>
         <Text style={styles.inputText}>
           <Icon name="angle-down" size={theme.sizes[6]} color={theme.colors.secondary[900]} />
@@ -103,8 +78,8 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
                       <TouchableOpacity
                         style={styles.option}
                         onPress={() => {
-                          onValueChange(item.props.value);
-                          setDropdownVisible(false);
+                          onValueChange(item.props.value);  // notify parent
+                          setDropdownVisible(false);  // close dropdown
                         }}
                       >
                         {item.props.children}
@@ -119,21 +94,18 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
         </TouchableWithoutFeedback>
       )}
 
-      {status === InputStatus.ERROR && !!errorMessage && (
-        <Text style={styles.errorMessage}>{errorMessage}</Text>
-      )}
-
-      {status === InputStatus.SUCCESS && !!successMessage && (
-        <Text style={styles.successMessage}>{successMessage}</Text>
-      )}
+      {/* Show simple success message */}
+      {selectedValue && <Text style={styles.successMessage}>{`${selectedValue} is selected`}</Text>}
     </View>
   );
 };
 
+// Simple wrapper for each dropdown item; used as DropdownInput.Option
 const DropdownOption: React.FC<DropdownOptionProps> = ({ children }) => {
   return <>{children}</>;
 };
 
+// Attach to DropdownInput so options can be used like <DropdownInput.Option>
 DropdownInput.Option = DropdownOption;
 
 export default DropdownInput;

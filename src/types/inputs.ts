@@ -1,40 +1,41 @@
+// Input status types for showing validation states
 export enum InputStatus {
   DEFAULT = 'default',
   ERROR = 'error',
   SUCCESS = 'success',
 }
 
+// Keyboard types used for card details
 export enum KeyboardTypes {
-  ASCII_CAPABLE = 'ascii-capable',
-  DECIMAL_PAD = 'decimal-pad',
-  DEFAULT = 'default',
-  EMAIL_ADDRESS = 'email-address',
-  NAME_PHONE_PAD = 'name-phone-pad',
-  NUMBER_PAD = 'number-pad',
-  NUMBERS_AND_PUNCTUATION = 'numbers-and-punctuation',
-  NUMERIC = 'numeric',
-  PHONE_PAD = 'phone-pad',
-  TWITTER = 'twitter',
-  URL = 'url',
-  VISIBLE_PASSWORD = 'visible-password',
-  WEB_SEARCH = 'web-search',
+  DEFAULT = 'default',       // for card holder name
+  NUMBER_PAD = 'number-pad', // for card number, expiry, and CVV
 }
 
+// Props for the CardDetailsInput component
 export interface CardDetailsInputProps {
-  cardHolderName?: string;
+  cardHolderName: string;
+  onCardHolderNameChange: (value: string) => void;
+
   cardNumber: string;
-  cvv: string;
-  disabled?: boolean;
-  errorMessage?: string;
-  expiry: string;
-  label?: string;
   onCardNumberChange: (value: string) => void;
-  onCvvChange: (value: string) => void;
+
+  expiry: string;
   onExpiryChange: (value: string) => void;
+  
+  cvv: string;
+  onCvvChange: (value: string) => void;
+
+  disabled?: boolean;  
+  label?: string;  
+
+  // Validation
+  status?: InputStatus; 
   onValidate?: (
     result: { cardHolderName?: string; cardNumber: string; expiry: string; cvv: string } | '',
     status: InputStatus,
-  ) => void;
-  status?: InputStatus;
-  successMessage?: string;
+  ) => void;    
+
+  // Error Messages
+  errorMessage?: string;    
+  successMessage?: string;   
 }

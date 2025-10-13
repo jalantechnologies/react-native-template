@@ -8,18 +8,27 @@ import { InputStatus, CardDetailsInputProps, KeyboardTypes } from '../../types';
 
 import { useCardDetailsInputStyles } from './input.styles';
 
+// constants for validation
+const cardNumberMinLen = 13;
+const cardNumberMaxLen = 19;
+const expiryYearDigits = 2;
+const cvvLength = 3;
+
+// main card details component
 const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
-  label,
+  cardHolderName,
+  onCardHolderNameChange,
   cardNumber,
   onCardNumberChange,
   expiry,
   onExpiryChange,
   cvv,
   onCvvChange,
+  disabled = false,
+  label,
   status,
   errorMessage,
   successMessage,
-  disabled = false,
   onValidate,
 }) => {
   const theme = useTheme();
@@ -29,14 +38,15 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
   const cvvRef = useRef<TextInput>(null);
   const cardNameRef = useRef<TextInput>(null);
 
+  // Local states for validation & focus
   const [localStatus, setLocalStatus] = useState<InputStatus>(InputStatus.DEFAULT);
   const [localErrorMessage, setLocalErrorMessage] = useState('');
-  const [cardHolderName, setCardHolderName] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const currentStatus = status !== undefined ? status : localStatus;
   const currentErrorMessage = errorMessage !== undefined ? errorMessage : localErrorMessage;
 
+  // hange border color based on status/focus
   const getBorderColor = () => {
     if (currentStatus === InputStatus.ERROR) {
       return theme.colors.danger[500];
@@ -47,6 +57,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
     return theme.colors.secondary[200];
   };
 
+  // reset validation when typing
   const resetValidation = () => {
     if (status === undefined) {
       setLocalStatus(InputStatus.DEFAULT);
@@ -54,9 +65,10 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
     }
   };
 
+  // Handlers for each field
   const handleCardHolderNameChange = (text: string) => {
     resetValidation();
-    setCardHolderName(text);
+    onCardHolderNameChange(text);
   };
 
   const handleCardNumberChange = (text: string) => {
@@ -64,11 +76,13 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
     onCardNumberChange(text);
   };
 
+  // Auto-add "/" for expiry input after 2 digits (MM/YY format)
+  const EXPIRY_SLASH_POSITION = 2;
   const handleExpiryInput = (text: string) => {
     resetValidation();
     let formatted = text.replace(/[^0-9]/g, '');
     if (formatted.length >= 3) {
-      formatted = `${formatted.substring(0, 2)}/${formatted.substring(2, 4)}`;
+      formatted = `${formatted.substring(0, EXPIRY_SLASH_POSITION)}/${formatted.substring(EXPIRY_SLASH_POSITION, EXPIRY_SLASH_POSITION+2)}`;
     }
     onExpiryChange(formatted);
   };
@@ -78,10 +92,12 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
     onCvvChange(text);
   };
 
+  // Final Validation before submitting
   const handleValidation = () => {
-    const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
-    const cvvRegex = /^\d{3}$/;
+    const expiryRegex = new RegExp(`^(0[1-9]|1[0-2])/\\d{${expiryYearDigits}}$`); // matches MM/YY
+    const cvvRegex = new RegExp(`^\\d{${cvvLength}}$`);  // matches 3-digit CVV
 
+    // Validate Cardholder Name
     if (!cardHolderName || cardHolderName.trim().length === 0) {
       if (status === undefined) {
         setLocalStatus(InputStatus.ERROR);
@@ -90,8 +106,9 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
       onValidate?.('', InputStatus.ERROR);
       return;
     }
-
-    if (!cardNumber || cardNumber.length < 13 || cardNumber.length > 19) {
+    
+    // Validate Card Number length
+    if (!cardNumber || cardNumber.length < cardNumberMinLen || cardNumber.length > cardNumberMaxLen) {
       if (status === undefined) {
         setLocalStatus(InputStatus.ERROR);
         setLocalErrorMessage('Enter a valid card number');
@@ -100,6 +117,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
       return;
     }
 
+    // Validate Expiry Date format
     if (!expiryRegex.test(expiry)) {
       if (status === undefined) {
         setLocalStatus(InputStatus.ERROR);
@@ -109,6 +127,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
       return;
     }
 
+    // Validate CVV
     if (!cvvRegex.test(cvv)) {
       if (status === undefined) {
         setLocalStatus(InputStatus.ERROR);
@@ -118,14 +137,17 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
       return;
     }
 
+    // If all validations pass
     if (status === undefined) {
       setLocalStatus(InputStatus.SUCCESS);
       setLocalErrorMessage('');
     }
 
+    // Send success response to parent form
     onValidate?.({ cardHolderName, cardNumber, expiry, cvv }, InputStatus.SUCCESS);
   };
 
+  // UI rendering
   return (
     <View style={styles.wrapper}>
       {label && (
@@ -139,6 +161,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
         </Text>
       )}
 
+      {/* Cardholder Name Input */}
       <TextInput
         ref={cardNameRef}
         style={[
@@ -201,7 +224,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           onSubmitEditing={() => expiryRef.current?.focus()}
           numberOfLines={1}
           multiline={false}
-          maxLength={19}
+          maxLength={cardNumberMaxLen}
         />
 
         <TextInput
@@ -252,7 +275,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           }
           keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
-          maxLength={3}
+          maxLength={cvvLength}
           onFocus={() => setFocusedField('cvv')}
           onBlur={() => setFocusedField(null)}
           returnKeyType="done"

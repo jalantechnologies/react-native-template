@@ -3,9 +3,9 @@ import { StyleSheet, TextStyle } from 'react-native';
 
 export const useInputStyles = () => {
   const theme = useTheme();
+  const { space: spacing, colors, fontSizes, lineHeights, letterSpacings, borderWidths, fontWeights, radii, sizes } = theme;
 
-  const spacing = theme.space;
-  const colors = theme.colors;
+  const borderWidth = parseInt(borderWidths['1'], 10);
 
   return StyleSheet.create({
     wrapper: {
@@ -14,14 +14,14 @@ export const useInputStyles = () => {
     container: {
       flexDirection: 'row',
       alignItems: 'center',
-      borderRadius: theme.radii.md,
+      borderRadius: radii.md,
       paddingHorizontal: spacing[3],
       paddingVertical: spacing[2],
-      minHeight: theme.sizes['12'],
+      minHeight: sizes['12'],
     },
     input: {
       flex: 1,
-      fontSize: theme.fontSizes.md,
+      fontSize: fontSizes.md,
       padding: spacing[0],
       margin: spacing[0],
     },
@@ -31,8 +31,11 @@ export const useInputStyles = () => {
       alignItems: 'center',
     },
     defaultBorder: {
-      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      borderWidth,
       borderColor: colors.secondary[200],
+    },
+    focusedBorder: {
+      borderColor: colors.primary[300],
     },
     disabledBackground: {
       backgroundColor: colors.secondary[50],
@@ -44,40 +47,37 @@ export const useInputStyles = () => {
       color: colors.secondary[600],
     },
     label: {
-      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      fontWeight: `${fontWeights.normal}` as TextStyle['fontWeight'],
       color: colors.secondary[900],
-      fontSize: theme.fontSizes.sm,
-
-      lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
+      fontSize: fontSizes.sm,
+      lineHeight: Number(lineHeights.sm),
+      letterSpacing: parseFloat(letterSpacings.sm) * fontSizes.sm,
     },
-    focusedBorder: {
-      borderColor: colors.primary[300],
+    errorBorder: {
+      borderWidth,
+      borderColor: colors.danger[500],
     },
     errorMessage: {
       color: colors.danger[500],
-      fontSize: theme.fontSizes.xs,
-    },
-    errorBorder: {
-      borderWidth: parseInt(theme.borderWidths['1'], 10),
-      borderColor: colors.danger[500],
+      fontSize: fontSizes.xs,
     },
     successBorder: {
+      borderWidth,
       borderColor: colors.success[500],
-      borderWidth: parseInt(theme.borderWidths['1'], 10),
     },
     successMessage: {
       color: colors.success[500],
-      fontSize: theme.fontSizes.xs,
+      fontSize: fontSizes.xs,
     },
   });
 };
 
+// Text Area Styles 
 export const useTextAreaInputStyles = () => {
   const theme = useTheme();
+  const { space: spacing, colors, fontSizes, lineHeights, letterSpacings, borderWidths, fontWeights, radii, sizes } = theme;
 
-  const spacing = theme.space;
-  const colors = theme.colors;
+  const borderWidth = parseInt(borderWidths['1'], 10);
 
   return StyleSheet.create({
     wrapper: {
@@ -86,30 +86,33 @@ export const useTextAreaInputStyles = () => {
     container: {
       flexDirection: 'row',
       alignItems: 'center',
-      borderRadius: theme.radii.md,
+      borderRadius: radii.md,
       paddingHorizontal: spacing[3],
       paddingVertical: spacing[2],
     },
     input: {
       flex: 1,
-      fontSize: theme.fontSizes.md,
+      fontSize: fontSizes.md,
       color: colors.secondary[900],
-      padding: theme.space[0],
-      margin: theme.space[0],
-      minHeight: theme.sizes[20],
-    },
-    label: {
-      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
-      fontSize: theme.fontSizes.sm,
-      lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
+      padding: spacing[0],
+      margin: spacing[0],
+      minHeight: sizes[20],
     },
     enhancer: {
       marginHorizontal: spacing[1],
     },
+    label: {
+      fontWeight: `${fontWeights.normal}` as TextStyle['fontWeight'],
+      fontSize: fontSizes.sm,
+      lineHeight: Number(lineHeights.sm),
+      letterSpacing: parseFloat(letterSpacings.sm) * fontSizes.sm,
+    },
     defaultBorder: {
-      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      borderWidth,
       borderColor: colors.secondary[200],
+    },
+    focusedBorder: {
+      borderColor: colors.primary[300],
     },
     disabledBackground: {
       backgroundColor: colors.secondary[50],
@@ -120,62 +123,73 @@ export const useTextAreaInputStyles = () => {
     disabled: {
       color: colors.secondary[500],
     },
-    focusedBorder: {
-      borderColor: colors.primary[300],
-    },
   });
 };
 
+// Card Details Input Styles 
 export const useCardDetailsInputStyles = () => {
   const theme = useTheme();
+  const { space: spacing, colors, fontSizes, lineHeights, letterSpacings, borderWidths, fontWeights, radii } = theme;
+
+  const borderWidth = parseInt(borderWidths['1'], 10);
+
+  const baseInput = {
+    fontWeight: `${fontWeights.normal}` as TextStyle['fontWeight'],
+    fontSize: fontSizes.md,
+    lineHeight: Number(lineHeights.sm),
+    paddingHorizontal: spacing[2],
+    color: colors.secondary[900],
+  };
+
   return StyleSheet.create({
     wrapper: {
-      gap: theme.space[2],
+      gap: spacing[2],
     },
     label: {
-      fontSize: theme.fontSizes.sm,
-      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
-      lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
+      fontSize: fontSizes.sm,
+      fontWeight: `${fontWeights.normal}` as TextStyle['fontWeight'],
+      lineHeight: Number(lineHeights.sm),
+      letterSpacing: parseFloat(letterSpacings.sm) * fontSizes.sm,
+      color: colors.secondary[900],
     },
     container: {
       flexDirection: 'row',
-      borderWidth: parseInt(theme.borderWidths['1'], 10),
-      borderRadius: theme.radii.md,
+      borderWidth,
+      borderRadius: radii.md,
       overflow: 'hidden',
       alignItems: 'center',
-      paddingHorizontal: theme.space[3],
+      paddingHorizontal: spacing[3],
+      backgroundColor: colors.white,
     },
     inputField: {
-      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
-      fontSize: theme.fontSizes.md,
-      lineHeight: Number(theme.lineHeights.sm),
-      paddingHorizontal: theme.space[2],
+      ...baseInput,
     },
     cardHolderInput: {
-      borderWidth: parseInt(theme.borderWidths['1'], 10),
-      borderRadius: theme.radii.md,
-      paddingHorizontal: theme.space[3],
-      paddingVertical: theme.space[2],
-      marginBottom: theme.space[2],
-      backgroundColor: theme.colors.white,
-      fontSize: theme.fontSizes.md,
-      color: theme.colors.secondary[900],
+      ...baseInput,
+      borderWidth,
+      borderRadius: radii.md,
+      paddingVertical: spacing[2],
+      paddingHorizontal: spacing[3],
+      marginBottom: spacing[2],
+      backgroundColor: colors.white,
     },
-
     cardInput: {
+      ...baseInput,
       flex: 2,
-      borderRightWidth: theme.borderWidths[0],
+      borderRightWidth: 0,
+      textAlign: 'left',
     },
     expiryInput: {
-      borderRightWidth: theme.borderWidths[0],
+      ...baseInput,
+      borderRightWidth: 0,
       textAlign: 'center',
     },
     cvvInput: {
+      ...baseInput,
       textAlign: 'center',
     },
     message: {
-      fontSize: theme.fontSizes.xs,
+      fontSize: fontSizes.xs,
     },
   });
 };

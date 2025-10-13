@@ -82,7 +82,10 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
     resetValidation();
     let formatted = text.replace(/[^0-9]/g, '');
     if (formatted.length >= 3) {
-      formatted = `${formatted.substring(0, EXPIRY_SLASH_POSITION)}/${formatted.substring(EXPIRY_SLASH_POSITION, EXPIRY_SLASH_POSITION+2)}`;
+      formatted = `${formatted.substring(0, EXPIRY_SLASH_POSITION)}/${formatted.substring(
+        EXPIRY_SLASH_POSITION,
+        EXPIRY_SLASH_POSITION + 2,
+      )}`;
     }
     onExpiryChange(formatted);
   };
@@ -95,7 +98,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
   // Final Validation before submitting
   const handleValidation = () => {
     const expiryRegex = new RegExp(`^(0[1-9]|1[0-2])/\\d{${expiryYearDigits}}$`); // matches MM/YY
-    const cvvRegex = new RegExp(`^\\d{${cvvLength}}$`);  // matches 3-digit CVV
+    const cvvRegex = new RegExp(`^\\d{${cvvLength}}$`); // matches 3-digit CVV
 
     // Validate Cardholder Name
     if (!cardHolderName || cardHolderName.trim().length === 0) {
@@ -106,9 +109,13 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
       onValidate?.('', InputStatus.ERROR);
       return;
     }
-    
+
     // Validate Card Number length
-    if (!cardNumber || cardNumber.length < cardNumberMinLen || cardNumber.length > cardNumberMaxLen) {
+    if (
+      !cardNumber ||
+      cardNumber.length < cardNumberMinLen ||
+      cardNumber.length > cardNumberMaxLen
+    ) {
       if (status === undefined) {
         setLocalStatus(InputStatus.ERROR);
         setLocalErrorMessage('Enter a valid card number');

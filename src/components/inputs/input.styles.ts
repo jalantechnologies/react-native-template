@@ -3,7 +3,17 @@ import { StyleSheet, TextStyle } from 'react-native';
 
 export const useInputStyles = () => {
   const theme = useTheme();
-  const { space: spacing, colors, fontSizes, lineHeights, letterSpacings, borderWidths, fontWeights, radii, sizes } = theme;
+  const {
+    space: spacing,
+    colors,
+    fontSizes,
+    lineHeights,
+    letterSpacings,
+    borderWidths,
+    fontWeights,
+    radii,
+    sizes,
+  } = theme;
 
   const borderWidth = parseInt(borderWidths['1'], 10);
 
@@ -72,10 +82,20 @@ export const useInputStyles = () => {
   });
 };
 
-// Text Area Styles 
+// Text Area Styles
 export const useTextAreaInputStyles = () => {
   const theme = useTheme();
-  const { space: spacing, colors, fontSizes, lineHeights, letterSpacings, borderWidths, fontWeights, radii, sizes } = theme;
+  const {
+    space: spacing,
+    colors,
+    fontSizes,
+    lineHeights,
+    letterSpacings,
+    borderWidths,
+    fontWeights,
+    radii,
+    sizes,
+  } = theme;
 
   const borderWidth = parseInt(borderWidths['1'], 10);
 
@@ -126,10 +146,19 @@ export const useTextAreaInputStyles = () => {
   });
 };
 
-// Card Details Input Styles 
+// Card Details Input Styles
 export const useCardDetailsInputStyles = () => {
   const theme = useTheme();
-  const { space: spacing, colors, fontSizes, lineHeights, letterSpacings, borderWidths, fontWeights, radii } = theme;
+  const {
+    space: spacing,
+    colors,
+    fontSizes,
+    lineHeights,
+    letterSpacings,
+    borderWidths,
+    fontWeights,
+    radii,
+  } = theme;
 
   const borderWidth = parseInt(borderWidths['1'], 10);
 

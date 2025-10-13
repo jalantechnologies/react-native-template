@@ -7,7 +7,7 @@ export enum InputStatus {
 
 // Keyboard types used for card details
 export enum KeyboardTypes {
-  DEFAULT = 'default',       // for card holder name
+  DEFAULT = 'default', // for card holder name
   NUMBER_PAD = 'number-pad', // for card number, expiry, and CVV
 }
 
@@ -21,21 +21,21 @@ export interface CardDetailsInputProps {
 
   expiry: string;
   onExpiryChange: (value: string) => void;
-  
+
   cvv: string;
   onCvvChange: (value: string) => void;
 
-  disabled?: boolean;  
-  label?: string;  
+  disabled?: boolean;
+  label?: string;
 
   // Validation
-  status?: InputStatus; 
+  status?: InputStatus;
   onValidate?: (
     result: { cardHolderName?: string; cardNumber: string; expiry: string; cvv: string } | '',
     status: InputStatus,
-  ) => void;    
+  ) => void;
 
   // Error Messages
-  errorMessage?: string;    
-  successMessage?: string;   
+  errorMessage?: string;
+  successMessage?: string;
 }

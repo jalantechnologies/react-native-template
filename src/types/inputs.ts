@@ -6,7 +6,7 @@ export interface DropdownInputProps {
   children: React.ReactElement<DropdownOptionProps>[];
   disabled?: boolean;
   label?: string; // Label displayed above the dropdown
-  onValueChange: (value: string) => void;   // Called when an option is selected
+  onValueChange: (value: string) => void; // Called when an option is selected
   selectedValue?: ReactNode;
 }
 

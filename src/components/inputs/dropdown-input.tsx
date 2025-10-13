@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, FlatList, TouchableWithoutFeedback } from
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { DropdownInputProps, DropdownOptionProps } from '../../types';
+
 import { useDropdownInputStyles } from './input.styles';
 
 const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownOptionProps> } = ({
@@ -19,11 +20,13 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
 
   const styles = useDropdownInputStyles();
   const theme = useTheme();
-  const options = React.Children.toArray(children);   // convert children to array
+  const options = React.Children.toArray(children); // convert children to array
 
   // Toggle dropdown visibility
   const toggleDropdown = () => {
-    if (disabled) return;
+    if (disabled) {
+      return;
+    }
 
     // Measure container height to position dropdown below input
     if (!isDropdownVisible) {
@@ -39,7 +42,12 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
     <View ref={containerRef} style={styles.wrapper}>
       {/* Label above input -> Eg: "Select an option" on the input field*/}
       {label && (
-        <Text style={[styles.label, { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] }]}>
+        <Text
+          style={[
+            styles.label,
+            { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
+          ]}
+        >
           {label}
         </Text>
       )}
@@ -57,7 +65,12 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
         ]}
         disabled={disabled}
       >
-        <Text style={[styles.inputText, { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] }]}>
+        <Text
+          style={[
+            styles.inputText,
+            { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
+          ]}
+        >
           {selectedValue || 'Select an option'}
         </Text>
         <Text style={styles.inputText}>
@@ -78,8 +91,8 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
                       <TouchableOpacity
                         style={styles.option}
                         onPress={() => {
-                          onValueChange(item.props.value);  // notify parent
-                          setDropdownVisible(false);  // close dropdown
+                          onValueChange(item.props.value); // notify parent
+                          setDropdownVisible(false); // close dropdown
                         }}
                       >
                         {item.props.children}

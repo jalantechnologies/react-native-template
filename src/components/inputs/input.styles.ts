@@ -151,6 +151,7 @@ export const useCardDetailsInputStyles = () => {
       fontSize: theme.fontSizes.md,
       lineHeight: Number(theme.lineHeights.sm),
       paddingHorizontal: theme.space[2],
+      minHeight: 40,
     },
     cardInput: {
       flex: 2,
@@ -162,6 +163,15 @@ export const useCardDetailsInputStyles = () => {
     },
     cvvInput: {
       textAlign: 'center',
+    },
+    cardHolderInput: {
+      marginBottom: 8,
+      minHeight: 40, // ensures the box is tall enough
+      flex: 1, // fills available width
+      borderWidth: 1, // optional, for visual debugging
+      borderColor: 'gray', // optional, for debugging
+      borderRadius: 6, // optional, to match card inputs
+      paddingHorizontal: 10,
     },
     message: {
       fontSize: theme.fontSizes.xs,

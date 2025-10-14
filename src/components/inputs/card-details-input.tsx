@@ -1,5 +1,4 @@
-import { useTheme } from 'native-base';
-import { Button } from 'native-base';
+import { Button, useTheme } from 'native-base';
 import React, { useRef, useState } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
@@ -8,14 +7,15 @@ import { InputStatus, CardDetailsInputProps, KeyboardTypes } from '../../types';
 
 import { useCardDetailsInputStyles } from './input.styles';
 
-// constants for validation
-const cardNumberMinLen = 13;
-const cardNumberMaxLen = 19;
-const expiryYearDigits = 2;
-const cvvLength = 3;
+const CARD_NUMBER_MIN_LEN = 13;
+const CARD_NUMBER_MAX_LEN = 19;
+const EXPIRY_YEAR_DIGITS = 2;
+const CVV_DIGITS = 3;
+const EXPIRY_SLASH_POS = 2;
+const CARD_ICON_SIZE = 16;
 
-// main card details component
 const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
+  label,
   cardHolderName,
   onCardHolderNameChange,
   cardNumber,
@@ -25,39 +25,24 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
   cvv,
   onCvvChange,
   disabled = false,
-  label,
+  onValidate,
   status,
   errorMessage,
   successMessage,
-  onValidate,
 }) => {
   const theme = useTheme();
   const styles = useCardDetailsInputStyles();
 
   const expiryRef = useRef<TextInput>(null);
   const cvvRef = useRef<TextInput>(null);
-  const cardNameRef = useRef<TextInput>(null);
 
-  // Local states for validation & focus
   const [localStatus, setLocalStatus] = useState<InputStatus>(InputStatus.DEFAULT);
   const [localErrorMessage, setLocalErrorMessage] = useState('');
-  const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [activeInputField, setActiveInputField] = useState<string | null>(null);
 
-  const currentStatus = status !== undefined ? status : localStatus;
-  const currentErrorMessage = errorMessage !== undefined ? errorMessage : localErrorMessage;
+  const currentStatus = status ?? localStatus;
+  const currentErrorMessage = errorMessage ?? localErrorMessage;
 
-  // hange border color based on status/focus
-  const getBorderColor = () => {
-    if (currentStatus === InputStatus.ERROR) {
-      return theme.colors.danger[500];
-    }
-    if (focusedField) {
-      return theme.colors.primary[300];
-    }
-    return theme.colors.secondary[200];
-  };
-
-  // reset validation when typing
   const resetValidation = () => {
     if (status === undefined) {
       setLocalStatus(InputStatus.DEFAULT);
@@ -65,96 +50,72 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
     }
   };
 
-  // Handlers for each field
-  const handleCardHolderNameChange = (text: string) => {
-    resetValidation();
-    onCardHolderNameChange(text);
+  const handleValidatedInputChange =
+    (onChange: (value: string) => void, formatter?: (text: string) => string) => (text: string) => {
+      resetValidation();
+      onChange(formatter ? formatter(text) : text);
+    };
+
+  const formatExpiry = (text: string) => {
+    const digitsOnly = text.replace(/[^0-9]/g, '');
+    return digitsOnly.length > EXPIRY_SLASH_POS
+      ? `${digitsOnly.slice(0, EXPIRY_SLASH_POS)}/${digitsOnly.slice(
+          EXPIRY_SLASH_POS,
+          EXPIRY_SLASH_POS + EXPIRY_YEAR_DIGITS,
+        )}`
+      : digitsOnly;
   };
 
-  const handleCardNumberChange = (text: string) => {
-    resetValidation();
-    onCardNumberChange(text);
-  };
-
-  // Auto-add "/" for expiry input after 2 digits (MM/YY format)
-  const EXPIRY_SLASH_POSITION = 2;
-  const handleExpiryInput = (text: string) => {
-    resetValidation();
-    let formatted = text.replace(/[^0-9]/g, '');
-    if (formatted.length >= 3) {
-      formatted = `${formatted.substring(0, EXPIRY_SLASH_POSITION)}/${formatted.substring(
-        EXPIRY_SLASH_POSITION,
-        EXPIRY_SLASH_POSITION + 2,
-      )}`;
+  const getInputBorderColorByStatus = () => {
+    if (currentStatus === InputStatus.ERROR) {
+      return theme.colors.danger[500];
     }
-    onExpiryChange(formatted);
+    if (activeInputField) {
+      return theme.colors.primary[300];
+    }
+    return theme.colors.secondary[900];
   };
 
-  const handleCvvChange = (text: string) => {
-    resetValidation();
-    onCvvChange(text);
+  const setValidationError = (message: string) => {
+    if (!status) {
+      setLocalStatus(InputStatus.ERROR);
+      setLocalErrorMessage(message);
+    }
+    onValidate?.('', InputStatus.ERROR);
   };
 
-  // Final Validation before submitting
-  const handleValidation = () => {
-    const expiryRegex = new RegExp(`^(0[1-9]|1[0-2])/\\d{${expiryYearDigits}}$`); // matches MM/YY
-    const cvvRegex = new RegExp(`^\\d{${cvvLength}}$`); // matches 3-digit CVV
+  const validateCardDetails = () => {
+    const cardExpiryFormat = new RegExp(`^(0[1-9]|1[0-2])/\\d{${EXPIRY_YEAR_DIGITS}}$`);
+    const cvvFormat = new RegExp(`^\\d{${CVV_DIGITS}}$`);
 
-    // Validate Cardholder Name
-    if (!cardHolderName || cardHolderName.trim().length === 0) {
-      if (status === undefined) {
-        setLocalStatus(InputStatus.ERROR);
-        setLocalErrorMessage('Enter the cardholder name');
-      }
-      onValidate?.('', InputStatus.ERROR);
-      return;
+    if (!cardHolderName) {
+      return setValidationError('Enter the cardholder name');
     }
 
-    // Validate Card Number length
     if (
       !cardNumber ||
-      cardNumber.length < cardNumberMinLen ||
-      cardNumber.length > cardNumberMaxLen
+      cardNumber.length < CARD_NUMBER_MIN_LEN ||
+      cardNumber.length > CARD_NUMBER_MAX_LEN
     ) {
-      if (status === undefined) {
-        setLocalStatus(InputStatus.ERROR);
-        setLocalErrorMessage('Enter a valid card number');
-      }
-      onValidate?.('', InputStatus.ERROR);
-      return;
+      return setValidationError('Enter a valid card number');
     }
 
-    // Validate Expiry Date format
-    if (!expiryRegex.test(expiry)) {
-      if (status === undefined) {
-        setLocalStatus(InputStatus.ERROR);
-        setLocalErrorMessage('Enter expiry in MM/YY format');
-      }
-      onValidate?.('', InputStatus.ERROR);
-      return;
+    if (!cardExpiryFormat.test(expiry)) {
+      return setValidationError('Enter expiry in MM/YY format');
     }
 
-    // Validate CVV
-    if (!cvvRegex.test(cvv)) {
-      if (status === undefined) {
-        setLocalStatus(InputStatus.ERROR);
-        setLocalErrorMessage('CVV must be 3 digits');
-      }
-      onValidate?.('', InputStatus.ERROR);
-      return;
+    if (!cvvFormat.test(cvv)) {
+      return setValidationError('CVV must be 3 digits');
     }
 
-    // If all validations pass
-    if (status === undefined) {
+    if (!status) {
       setLocalStatus(InputStatus.SUCCESS);
       setLocalErrorMessage('');
     }
 
-    // Send success response to parent form
     onValidate?.({ cardHolderName, cardNumber, expiry, cvv }, InputStatus.SUCCESS);
   };
 
-  // UI rendering
   return (
     <View style={styles.wrapper}>
       {label && (
@@ -168,9 +129,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
         </Text>
       )}
 
-      {/* Cardholder Name Input */}
       <TextInput
-        ref={cardNameRef}
         style={[
           styles.inputField,
           styles.cardHolderInput,
@@ -183,124 +142,91 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           },
         ]}
         value={cardHolderName}
-        onChangeText={handleCardHolderNameChange}
+        onChangeText={handleValidatedInputChange(onCardHolderNameChange)}
         placeholder="Cardholder Name"
         placeholderTextColor={disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]}
         keyboardType={KeyboardTypes.DEFAULT}
         editable={!disabled}
-        onFocus={() => setFocusedField('name')}
-        onBlur={() => setFocusedField(null)}
+        onFocus={() => setActiveInputField('name')}
+        onBlur={() => setActiveInputField(null)}
         returnKeyType="next"
       />
 
-      {/* Card Details Container */}
       <View
         style={[
           styles.container,
           {
-            borderColor: getBorderColor(),
+            borderColor: getInputBorderColorByStatus(),
             backgroundColor: disabled ? theme.colors.secondary[50] : theme.colors.white,
           },
         ]}
       >
-        <Icon name="credit-card" size={16} />
+        <Icon name="credit-card" size={CARD_ICON_SIZE} />
 
         <TextInput
-          style={[
-            styles.inputField,
-            styles.cardInput,
-            {
-              color: disabled
-                ? theme.colors.secondary[500]
-                : currentStatus === InputStatus.ERROR
-                ? theme.colors.danger[800]
-                : theme.colors.secondary[900],
-            },
-          ]}
+          style={[styles.inputField, styles.cardInput]}
           value={cardNumber}
-          onChangeText={handleCardNumberChange}
+          onChangeText={handleValidatedInputChange(onCardNumberChange)}
           placeholder="Card Number"
           placeholderTextColor={
             disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
           }
           keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
-          onFocus={() => setFocusedField('card')}
-          onBlur={() => setFocusedField(null)}
+          onFocus={() => setActiveInputField('card')}
+          onBlur={() => setActiveInputField(null)}
           returnKeyType="next"
           onSubmitEditing={() => expiryRef.current?.focus()}
-          numberOfLines={1}
-          multiline={false}
-          maxLength={cardNumberMaxLen}
+          maxLength={CARD_NUMBER_MAX_LEN}
         />
 
         <TextInput
           ref={expiryRef}
-          style={[
-            styles.inputField,
-            styles.expiryInput,
-            {
-              color: disabled
-                ? theme.colors.secondary[500]
-                : currentStatus === InputStatus.ERROR
-                ? theme.colors.danger[500]
-                : theme.colors.secondary[900],
-            },
-          ]}
+          style={[styles.inputField, styles.expiryInput]}
           value={expiry}
-          onChangeText={handleExpiryInput}
+          onChangeText={handleValidatedInputChange(onExpiryChange, formatExpiry)}
           placeholder="MM/YY"
           placeholderTextColor={
             disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
           }
           keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
-          onFocus={() => setFocusedField('expiry')}
-          onBlur={() => setFocusedField(null)}
+          onFocus={() => setActiveInputField('expiry')}
+          onBlur={() => setActiveInputField(null)}
           returnKeyType="next"
           onSubmitEditing={() => cvvRef.current?.focus()}
         />
 
         <TextInput
           ref={cvvRef}
-          style={[
-            styles.inputField,
-            styles.cvvInput,
-            {
-              color: disabled
-                ? theme.colors.secondary[500]
-                : currentStatus === InputStatus.ERROR
-                ? theme.colors.danger[500]
-                : theme.colors.secondary[900],
-            },
-          ]}
+          style={[styles.inputField, styles.cvvInput]}
           value={cvv}
-          onChangeText={handleCvvChange}
+          onChangeText={handleValidatedInputChange(onCvvChange)}
           placeholder="CVV"
           placeholderTextColor={
             disabled ? theme.colors.secondary[500] : theme.colors.secondary[600]
           }
           keyboardType={KeyboardTypes.NUMBER_PAD}
           editable={!disabled}
-          maxLength={cvvLength}
-          onFocus={() => setFocusedField('cvv')}
-          onBlur={() => setFocusedField(null)}
+          maxLength={CVV_DIGITS}
+          onFocus={() => setActiveInputField('cvv')}
+          onBlur={() => setActiveInputField(null)}
           returnKeyType="done"
-          onSubmitEditing={handleValidation}
+          onSubmitEditing={validateCardDetails}
         />
       </View>
 
-      <Button onPress={handleValidation} isDisabled={disabled} size="md" mt={3}>
+      <Button onPress={validateCardDetails} isDisabled={disabled} size="md" mt={3}>
         Validate Card
       </Button>
 
-      {currentStatus === InputStatus.ERROR && !!currentErrorMessage && (
+      {currentStatus === InputStatus.ERROR && currentErrorMessage && (
         <Text style={[styles.message, { color: theme.colors.danger[500] }]}>
           {currentErrorMessage}
         </Text>
       )}
 
-      {currentStatus === InputStatus.SUCCESS && !!successMessage && (
+      {currentStatus === InputStatus.SUCCESS && successMessage && (
         <Text style={[styles.message, { color: theme.colors.success[500] }]}>{successMessage}</Text>
       )}
     </View>

@@ -1,9 +1,12 @@
 import { useTheme } from 'native-base';
 import { StyleSheet, TextStyle } from 'react-native';
+
 export const useInputStyles = () => {
   const theme = useTheme();
+
   const spacing = theme.space;
   const colors = theme.colors;
+
   return StyleSheet.create({
     wrapper: {
       gap: spacing[2],
@@ -44,6 +47,7 @@ export const useInputStyles = () => {
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       color: colors.secondary[900],
       fontSize: theme.fontSizes.sm,
+
       lineHeight: Number(theme.lineHeights.sm),
       letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
@@ -68,10 +72,13 @@ export const useInputStyles = () => {
     },
   });
 };
+
 export const useTextAreaInputStyles = () => {
   const theme = useTheme();
+
   const spacing = theme.space;
   const colors = theme.colors;
+  
   return StyleSheet.create({
     wrapper: {
       gap: spacing[2],

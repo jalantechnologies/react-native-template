@@ -78,7 +78,7 @@ export const useTextAreaInputStyles = () => {
 
   const spacing = theme.space;
   const colors = theme.colors;
-  
+
   return StyleSheet.create({
     wrapper: {
       gap: spacing[2],

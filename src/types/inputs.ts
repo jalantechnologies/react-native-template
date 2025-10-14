@@ -4,8 +4,8 @@ export interface DropdownInputProps {
   // Children are used to pass the dropdown options using <DropdownInput.Option> components
   children: React.ReactElement<DropdownOptionProps>[];
   disabled?: boolean;
-  label?: string; 
-  onValueChange: (value: string) => void; 
+  label?: string;
+  onValueChange: (value: string) => void;
   selectedValue?: ReactNode;
 }
 

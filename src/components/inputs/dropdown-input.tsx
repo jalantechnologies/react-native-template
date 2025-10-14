@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, FlatList, TouchableWithoutFeedback } from
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { DropdownInputProps, DropdownOptionProps } from '../../types';
+
 import { useDropdownInputStyles } from './input.styles';
 
 const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownOptionProps> } = ({
@@ -89,7 +90,9 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
           </TouchableWithoutFeedback>
         )}
       </View>
-      {selectedValue && <Text style={dropdownStyles.successMessage}>{`${selectedValue} is selected`}</Text>}
+      {selectedValue && (
+        <Text style={dropdownStyles.successMessage}>{`${selectedValue} is selected`}</Text>
+      )}
     </View>
   );
 };

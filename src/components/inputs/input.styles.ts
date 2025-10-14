@@ -131,6 +131,7 @@ export const useDropdownInputStyles = () => {
   return StyleSheet.create({
     wrapper: {
       gap: theme.space[2],
+      position: 'relative',
     },
     overlay: {
       position: 'absolute',
@@ -138,6 +139,7 @@ export const useDropdownInputStyles = () => {
       left: theme.space[0],
       right: theme.space[0],
       bottom: theme.space[0],
+      backgroundColor: 'transparent',
       zIndex: 1000,
     },
     label: {
@@ -158,10 +160,6 @@ export const useDropdownInputStyles = () => {
     inputText: {
       fontSize: theme.fontSizes.md,
     },
-    errorMessage: {
-      fontSize: theme.fontSizes.xs,
-      color: theme.colors.danger[500],
-    },
     successMessage: {
       fontSize: theme.fontSizes.xs,
       color: theme.colors.success[500],
@@ -173,6 +171,7 @@ export const useDropdownInputStyles = () => {
     },
     dropdown: {
       position: 'absolute',
+      top: '100%',
       left: theme.space[0],
       right: theme.space[0],
       backgroundColor: theme.colors.white,
@@ -180,6 +179,7 @@ export const useDropdownInputStyles = () => {
       borderColor: theme.colors.secondary[200],
       borderRadius: theme.radii.md,
       zIndex: 1000,
+      maxHeight: 200,
     },
   });
 };

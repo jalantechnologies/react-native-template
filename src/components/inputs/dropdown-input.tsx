@@ -1,10 +1,9 @@
 import { useTheme } from 'native-base';
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { DropdownInputProps, DropdownOptionProps } from '../../types';
-
 import { useDropdownInputStyles } from './input.styles';
 
 const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownOptionProps> } = ({
@@ -15,36 +14,27 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
   children,
 }) => {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const [dropdownTop, setDropdownTop] = useState(0);
-  const containerRef = useRef<View>(null);
 
-  const styles = useDropdownInputStyles();
+  const dropdownStyles = useDropdownInputStyles();
   const theme = useTheme();
-  const options = React.Children.toArray(children); // convert children to array
 
-  // Toggle dropdown visibility
-  const toggleDropdown = () => {
-    if (disabled) {
-      return;
+  const handleDropDownVisibility = () => {
+    if (!disabled) {
+      setDropdownVisible(!isDropdownVisible);
     }
+  };
 
-    // Measure container height to position dropdown below input
-    if (!isDropdownVisible) {
-      containerRef.current?.measure((x, y, width, height) => {
-        setDropdownTop(height);
-      });
-    }
-
-    setDropdownVisible(!isDropdownVisible);
+  const selectOption = (value: string) => {
+    onValueChange(value);
+    setDropdownVisible(false);
   };
 
   return (
-    <View ref={containerRef} style={styles.wrapper}>
-      {/* Label above input -> Eg: "Select an option" on the input field*/}
+    <View style={dropdownStyles.wrapper}>
       {label && (
         <Text
           style={[
-            styles.label,
+            dropdownStyles.label,
             { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
           ]}
         >
@@ -52,73 +42,59 @@ const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownO
         </Text>
       )}
 
-      {/* Input container that opens dropdown */}
-      <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={toggleDropdown}
-        style={[
-          styles.inputContainer,
-          {
-            borderColor: theme.colors.secondary[200],
-            backgroundColor: disabled ? theme.colors.secondary[50] : theme.colors.white,
-          },
-        ]}
-        disabled={disabled}
-      >
-        <Text
+      <View style={{ position: 'relative' }}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={handleDropDownVisibility}
           style={[
-            styles.inputText,
-            { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
+            dropdownStyles.inputContainer,
+            {
+              borderColor: theme.colors.secondary[200],
+              backgroundColor: disabled ? theme.colors.secondary[50] : theme.colors.white,
+            },
           ]}
+          disabled={disabled}
         >
-          {selectedValue || 'Select an option'}
-        </Text>
-        <Text style={styles.inputText}>
+          <Text
+            style={[
+              dropdownStyles.inputText,
+              { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
+            ]}
+          >
+            {selectedValue || 'Select an option'}
+          </Text>
           <Icon name="angle-down" size={theme.sizes[6]} color={theme.colors.secondary[900]} />
-        </Text>
-      </TouchableOpacity>
+        </TouchableOpacity>
 
-      {isDropdownVisible && (
-        <TouchableWithoutFeedback onPress={() => setDropdownVisible(false)}>
-          <View style={styles.overlay}>
-            <View style={[styles.dropdown, { top: dropdownTop }]}>
-              <FlatList
-                data={options}
-                keyExtractor={(_, index) => index.toString()}
-                renderItem={({ item }) => {
-                  if (React.isValidElement(item)) {
-                    return (
+        {isDropdownVisible && (
+          <TouchableWithoutFeedback onPress={() => setDropdownVisible(false)}>
+            <View style={dropdownStyles.overlay}>
+              <View style={dropdownStyles.dropdown}>
+                <FlatList
+                  data={React.Children.toArray(children)}
+                  keyExtractor={(_, index) => index.toString()}
+                  renderItem={({ item }) =>
+                    React.isValidElement(item) ? (
                       <TouchableOpacity
-                        style={styles.option}
-                        onPress={() => {
-                          onValueChange(item.props.value); // notify parent
-                          setDropdownVisible(false); // close dropdown
-                        }}
+                        style={dropdownStyles.option}
+                        onPress={() => selectOption(item.props.value)}
                       >
                         {item.props.children}
                       </TouchableOpacity>
-                    );
+                    ) : null
                   }
-                  return null;
-                }}
-              />
+                />
+              </View>
             </View>
-          </View>
-        </TouchableWithoutFeedback>
-      )}
-
-      {/* Show simple success message */}
-      {selectedValue && <Text style={styles.successMessage}>{`${selectedValue} is selected`}</Text>}
+          </TouchableWithoutFeedback>
+        )}
+      </View>
+      {selectedValue && <Text style={dropdownStyles.successMessage}>{`${selectedValue} is selected`}</Text>}
     </View>
   );
 };
 
-// Simple wrapper for each dropdown item; used as DropdownInput.Option
-const DropdownOption: React.FC<DropdownOptionProps> = ({ children }) => {
-  return <>{children}</>;
-};
+const DropdownOption: React.FC<DropdownOptionProps> = ({ children }) => <>{children}</>;
 
-// Attach to DropdownInput so options can be used like <DropdownInput.Option>
 DropdownInput.Option = DropdownOption;
-
 export default DropdownInput;

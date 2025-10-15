@@ -7,96 +7,81 @@ import { DropdownInputProps, DropdownOptionProps } from '../../types';
 
 import { useDropdownInputStyles } from './input.styles';
 
-const DropdownInput: React.FC<DropdownInputProps> & { Option: React.FC<DropdownOptionProps> } = ({
-  label,
-  selectedValue,
-  onValueChange,
-  disabled = false,
-  children,
-}) => {
+const DropdownInput: React.FC<DropdownInputProps> & {
+  Option: React.FC<DropdownOptionProps>;
+} = ({ label, selectedValue, onValueChange, disabled = false, children }) => {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-
   const dropdownStyles = useDropdownInputStyles();
   const theme = useTheme();
 
-  const handleDropDownVisibility = () => {
+  const toggleDropdown = () => {
     if (!disabled) {
       setDropdownVisible(!isDropdownVisible);
     }
   };
 
-  const selectOption = (value: string) => {
+  const handleOptionSelect = (value: string) => {
     onValueChange(value);
     setDropdownVisible(false);
   };
 
+  const inputTextColor = disabled ? theme.colors.secondary[500] : theme.colors.secondary[900];
+  const inputBgColor = disabled ? theme.colors.secondary[50] : theme.colors.white;
+
   return (
     <View style={dropdownStyles.wrapper}>
-      {label && (
-        <Text
-          style={[
-            dropdownStyles.label,
-            { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
-          ]}
-        >
-          {label}
-        </Text>
-      )}
+      {label && <Text style={[dropdownStyles.label, { color: inputTextColor }]}>{label}</Text>}
 
       <View style={{ position: 'relative' }}>
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={handleDropDownVisibility}
+          onPress={toggleDropdown}
           style={[
             dropdownStyles.inputContainer,
-            {
-              borderColor: theme.colors.secondary[200],
-              backgroundColor: disabled ? theme.colors.secondary[50] : theme.colors.white,
-            },
+            { borderColor: theme.colors.secondary[200], backgroundColor: inputBgColor },
           ]}
           disabled={disabled}
         >
-          <Text
-            style={[
-              dropdownStyles.inputText,
-              { color: disabled ? theme.colors.secondary[500] : theme.colors.secondary[900] },
-            ]}
-          >
+          <Text style={[dropdownStyles.inputText, { color: inputTextColor }]}>
             {selectedValue || 'Select an option'}
           </Text>
-          <Icon name="angle-down" size={theme.sizes[6]} color={theme.colors.secondary[900]} />
+          <Icon
+            name={isDropdownVisible ? 'angle-up' : 'angle-down'}
+            size={theme.sizes[6]}
+            color={theme.colors.secondary[900]}
+          />
         </TouchableOpacity>
 
         {isDropdownVisible && (
-          <TouchableWithoutFeedback onPress={() => setDropdownVisible(false)}>
-            <View style={dropdownStyles.overlay}>
-              <View style={dropdownStyles.dropdown}>
-                <FlatList
-                  data={React.Children.toArray(children)}
-                  keyExtractor={(_, index) => index.toString()}
-                  renderItem={({ item }) =>
-                    React.isValidElement(item) ? (
-                      <TouchableOpacity
-                        style={dropdownStyles.option}
-                        onPress={() => selectOption(item.props.value)}
-                      >
-                        {item.props.children}
-                      </TouchableOpacity>
-                    ) : null
-                  }
-                />
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
+          <View style={dropdownStyles.dropdown}>
+            <FlatList
+              // Makes sure each option has a value before rendering
+              data={React.Children.toArray(children)}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={({ item }) =>
+                React.isValidElement(item) ? (
+                  <TouchableOpacity
+                    style={dropdownStyles.option}
+                    onPress={() => handleOptionSelect(item.props.value)}
+                  >
+                    {item.props.children}
+                  </TouchableOpacity>
+                ) : null
+              }
+            />
+          </View>
         )}
       </View>
+
       {selectedValue && (
-        <Text style={dropdownStyles.successMessage}>{`${selectedValue} is selected`}</Text>
+        <Text style={dropdownStyles.successMessage}>{`${selectedValue} selected`}</Text>
       )}
     </View>
   );
 };
 
+// Subcomponent needed to give each dropdown option a value
+// Allows using <DropdownInput.Option value="x">Label</DropdownInput.Option>
 const DropdownOption: React.FC<DropdownOptionProps> = ({ children }) => <>{children}</>;
 
 DropdownInput.Option = DropdownOption;

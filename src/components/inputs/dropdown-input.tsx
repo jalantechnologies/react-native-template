@@ -1,6 +1,6 @@
 import { useTheme } from 'native-base';
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { DropdownInputProps, DropdownOptionProps } from '../../types';
@@ -32,7 +32,7 @@ const DropdownInput: React.FC<DropdownInputProps> & {
     <View style={dropdownStyles.wrapper}>
       {label && <Text style={[dropdownStyles.label, { color: inputTextColor }]}>{label}</Text>}
 
-      <View style={{ position: 'relative' }}>
+      <View style={dropdownStyles.container}>
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={toggleDropdown}

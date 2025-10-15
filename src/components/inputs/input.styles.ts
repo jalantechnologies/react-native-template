@@ -133,6 +133,9 @@ export const useDropdownInputStyles = () => {
       gap: theme.space[2],
       position: 'relative',
     },
+    container: {
+      position: 'relative',
+    },
     overlay: {
       position: 'absolute',
       top: theme.space[0],

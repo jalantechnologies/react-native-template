@@ -1,6 +1,6 @@
-import { useTheme } from 'native-base';
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { DropdownInputProps, DropdownOptionProps } from '../../types';
@@ -9,7 +9,7 @@ import { useDropdownInputStyles } from './input.styles';
 
 const DropdownInput: React.FC<DropdownInputProps> & {
   Option: React.FC<DropdownOptionProps>;
-} = ({ label, selectedValue, onValueChange, disabled = false, children }) => {
+} = ({ children, disabled = false, label, onValueChange, selectedValue }) => {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const dropdownStyles = useDropdownInputStyles();
   const theme = useTheme();
@@ -35,20 +35,20 @@ const DropdownInput: React.FC<DropdownInputProps> & {
       <View style={dropdownStyles.container}>
         <TouchableOpacity
           activeOpacity={0.7}
+          disabled={disabled}
           onPress={toggleDropdown}
           style={[
             dropdownStyles.inputContainer,
-            { borderColor: theme.colors.secondary[200], backgroundColor: inputBgColor },
+            { backgroundColor: inputBgColor, borderColor: theme.colors.secondary[200] },
           ]}
-          disabled={disabled}
         >
           <Text style={[dropdownStyles.inputText, { color: inputTextColor }]}>
             {selectedValue || 'Select an option'}
           </Text>
           <Icon
+            color={theme.colors.secondary[900]}
             name={isDropdownVisible ? 'angle-up' : 'angle-down'}
             size={theme.sizes[6]}
-            color={theme.colors.secondary[900]}
           />
         </TouchableOpacity>
 
@@ -59,12 +59,12 @@ const DropdownInput: React.FC<DropdownInputProps> & {
               data={React.Children.toArray(children)}
               keyExtractor={(_, index) => index.toString()}
               renderItem={({ item }) =>
-                React.isValidElement(item) ? (
+                React.isValidElement<DropdownOptionProps>(item) ? (
                   <TouchableOpacity
+                    onPress={() => handleOptionSelect(item.props?.value)}
                     style={dropdownStyles.option}
-                    onPress={() => handleOptionSelect(item.props.value)}
                   >
-                    {item.props.children}
+                    {item.props?.children}
                   </TouchableOpacity>
                 ) : null
               }

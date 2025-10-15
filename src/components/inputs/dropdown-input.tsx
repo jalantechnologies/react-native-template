@@ -1,6 +1,6 @@
+import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
-import { useTheme } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { DropdownInputProps, DropdownOptionProps } from '../../types';

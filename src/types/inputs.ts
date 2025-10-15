@@ -1,15 +1,12 @@
-import React, { ReactNode } from 'react';
+import { PropsWithChildren } from 'react';
 
-export interface DropdownInputProps {
-  // Only allows DropdownInput.Option as children
-  children: React.ReactElement<DropdownOptionProps>[];
+export type DropdownInputProps = PropsWithChildren<{
   disabled?: boolean;
   label?: string;
   onValueChange: (value: string) => void;
   selectedValue?: string;
-}
+}>;
 
-export interface DropdownOptionProps {
-  children: ReactNode;
+export type DropdownOptionProps = PropsWithChildren<{
   value: string;
-}
+}>;

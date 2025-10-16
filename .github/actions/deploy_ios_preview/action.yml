@@ -148,13 +148,14 @@ runs:
       run: bundle exec fastlane ios pr_deploy
       shell: bash
     
-    - name: Upload iOS .ipa artifact (for testing)
-      if: success()
+    - name: Upload .ipa artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ios-preview-${{ env.PR_NUMBER || github.run_number }}
-        path: ios/build/**/*.ipa
+        name: ios-preview-pr-${{ github.event.pull_request.number }}-${{ github.sha }}
+        path: ios/Boilerplate.ipa
         retention-days: 1
+        if-no-files-found: error
+        compression-level: 6
 
     - name: Upload Xcode build logs
       if: failure()

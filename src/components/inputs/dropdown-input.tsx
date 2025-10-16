@@ -7,8 +7,6 @@ import { DropdownInputProps, DropdownOptionProps } from '../../types';
 
 import { useDropdownInputStyles } from './input.styles';
 
-const TOUCHABLE_OPACITY = 0.7;
-
 const DropdownInput: React.FC<DropdownInputProps> & {
   Option: React.FC<DropdownOptionProps>;
 } = ({ children, disabled = false, label, onValueChange, selectedValue }) => {
@@ -33,7 +31,7 @@ const DropdownInput: React.FC<DropdownInputProps> & {
 
       <View style={dropdownStyles.container}>
         <TouchableOpacity
-          activeOpacity={TOUCHABLE_OPACITY}
+          activeOpacity={dropdownStyles.touchableOpacity}
           disabled={disabled}
           onPress={toggleDropdown}
           style={[

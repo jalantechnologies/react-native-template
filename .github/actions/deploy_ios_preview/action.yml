@@ -37,9 +37,6 @@ inputs:
   PR_NUMBER:
     required: false
     description: 'Pull request number for PR-specific builds'
-  NO_FLIPPER:
-    required: false
-    description: 'Skip installing Flipper dependencies'
 
 runs:
   using: 'composite'
@@ -86,7 +83,7 @@ runs:
       run: |
         awk '
         /spec.source/ {
-          print "  spec.source = { :http => '\''https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.gz'\'', :sha256 => '\''7bd7ddceec1a1dfdcbdb3e609b60d01739c38390a5f956385a12f3122049f0ca'\'' }";
+          print "  spec.source = { :http => '\''https://archives.boost.io/release/1.84.0/source/boost_1_84_0.tar.gz'\'', :sha256 => '\''a5800f405508f5df8114558ca9855d2640a2de8f0445f051fa1c7c3383045724'\'' }";
           skip=1; next
         }
         skip && /\}/ { skip=0; next }
@@ -150,6 +147,15 @@ runs:
       working-directory: ios
       run: bundle exec fastlane ios pr_deploy
       shell: bash
+    
+    - name: Upload .ipa artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-preview-pr-${{ github.event.pull_request.number }}-${{ github.sha }}
+        path: ios/Boilerplate.ipa
+        retention-days: 1
+        if-no-files-found: error
+        compression-level: 6
 
     - name: Upload Xcode build logs
       if: failure()

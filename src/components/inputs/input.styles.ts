@@ -128,53 +128,59 @@ export const useTextAreaInputStyles = () => {
 
 export const useCardDetailsInputStyles = () => {
   const theme = useTheme();
+  const colors = theme.colors;
+  const spacing = theme.space;
+
   return StyleSheet.create({
-    wrapper: {
-      gap: theme.space[2],
-    },
-    label: {
-      fontSize: theme.fontSizes.sm,
-      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
-      lineHeight: Number(theme.lineHeights.sm),
-      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
-    },
-    container: {
-      flexDirection: 'row',
-      borderWidth: parseInt(theme.borderWidths['1'], 10),
+    cardHolderInput: {
+      borderColor: colors.secondary[200],
       borderRadius: theme.radii.md,
-      overflow: 'hidden',
-      alignItems: 'center',
-      paddingHorizontal: theme.space[3],
-    },
-    inputField: {
-      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      flex: 1,
       fontSize: theme.fontSizes.md,
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       lineHeight: Number(theme.lineHeights.sm),
-      paddingHorizontal: theme.space[2],
-      minHeight: 40,
+      marginBottom: spacing[2],
+      minHeight: theme.sizes['10'],
+      paddingHorizontal: spacing[3],
     },
     cardInput: {
-      flex: 2,
       borderRightWidth: theme.borderWidths[0],
+      flex: 2,
+    },
+    container: {
+      alignItems: 'center',
+      borderRadius: theme.radii.md,
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      flexDirection: 'row',
+      overflow: 'hidden',
+      paddingHorizontal: spacing[3],
+    },
+    cvvInput: {
+      textAlign: 'center',
     },
     expiryInput: {
       borderRightWidth: theme.borderWidths[0],
       textAlign: 'center',
     },
-    cvvInput: {
-      textAlign: 'center',
+    inputField: {
+      fontSize: theme.fontSizes.md,
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      lineHeight: Number(theme.lineHeights.sm),
+      minHeight: theme.sizes['10'],
+      paddingHorizontal: spacing[2],
     },
-    cardHolderInput: {
-      marginBottom: 8,
-      minHeight: 40, // ensures the box is tall enough
-      flex: 1, // fills available width
-      borderWidth: 1, // optional, for visual debugging
-      borderColor: 'gray', // optional, for debugging
-      borderRadius: 6, // optional, to match card inputs
-      paddingHorizontal: 10,
+    label: {
+      fontSize: theme.fontSizes.sm,
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
+      lineHeight: Number(theme.lineHeights.sm),
     },
     message: {
       fontSize: theme.fontSizes.xs,
+    },
+    wrapper: {
+      gap: spacing[2],
     },
   });
 };

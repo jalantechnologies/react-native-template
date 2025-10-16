@@ -1,9 +1,14 @@
+import { Button, useTheme } from 'native-base';
 import React, { useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
-import { Button, useTheme } from 'native-base';
 import Icon from 'react-native-vector-icons/Feather';
 
-import { CardDetailsInputProps, CardValidationResult, InputStatus, KeyboardTypes } from '../../types';
+import {
+  CardDetailsInputProps,
+  CardValidationResult,
+  InputStatus,
+  KeyboardTypes,
+} from '../../types';
 
 import { useCardDetailsInputStyles } from './input.styles';
 
@@ -72,7 +77,8 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
 
   const getCardContainerBorderColor = (): string => {
     const cardFields = ['card', 'expiry', 'cvv'];
-    const hasCardFieldError = currentStatus === InputStatus.ERROR && errorField && cardFields.includes(errorField);
+    const hasCardFieldError =
+      currentStatus === InputStatus.ERROR && errorField && cardFields.includes(errorField);
 
     if (hasCardFieldError) {
       return theme.colors.danger[500];
@@ -104,8 +110,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
   };
 
   const handleInputChange =
-    (onChange: (value: string) => void, formatter?: (text: string) => string) =>
-    (text: string) => {
+    (onChange: (value: string) => void, formatter?: (text: string) => string) => (text: string) => {
       if (!isExternallyControlled) {
         setLocalStatus(InputStatus.DEFAULT);
         setLocalErrorMessage('');
@@ -170,11 +175,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
 
   return (
     <View style={styles.wrapper}>
-      {label && (
-        <Text style={[styles.label, { color: theme.colors.secondary[900] }]}>
-          {label}
-        </Text>
-      )}
+      {label && <Text style={[styles.label, { color: theme.colors.secondary[900] }]}>{label}</Text>}
 
       <TextInput
         editable={!disabled}
@@ -265,13 +266,10 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
       )}
 
       {currentStatus === InputStatus.SUCCESS && successMessage && (
-        <Text style={[styles.message, { color: theme.colors.success[500] }]}>
-          {successMessage}
-        </Text>
+        <Text style={[styles.message, { color: theme.colors.success[500] }]}>{successMessage}</Text>
       )}
     </View>
   );
 };
 
 export default CardDetailsInput;
-

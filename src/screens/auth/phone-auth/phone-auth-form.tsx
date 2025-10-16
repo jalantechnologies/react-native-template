@@ -1,7 +1,3 @@
-import CheckIcon from 'boilerplate-react-native/assets/icons/check.svg';
-import { FormControl, Input, Button } from 'boilerplate-react-native/src/components';
-import { ButtonKind } from 'boilerplate-react-native/src/types/button';
-import { useThemeColor } from 'boilerplate-react-native/src/utils';
 import {
   VStack,
   Container,
@@ -17,6 +13,10 @@ import {
   Checkbox,
 } from 'native-base';
 import React, { useState } from 'react';
+import CheckIcon from 'react-native-template/assets/icons/check.svg';
+import { FormControl, Input, Button } from 'react-native-template/src/components';
+import { ButtonKind } from 'react-native-template/src/types/button';
+import { useThemeColor } from 'react-native-template/src/utils';
 
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError, PhoneNumber } from '../../../types';
@@ -140,7 +140,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
             By continuing, you agree to our
             <Link
               _text={{ color: 'primary.500', underline: true, marginLeft: 1 }}
-              href="https://jalantechnologies.github.io/boilerplate-react-native/"
+              href="https://jalantechnologies.github.io/react-native-template/"
               isExternal
             >
               Privacy Policy

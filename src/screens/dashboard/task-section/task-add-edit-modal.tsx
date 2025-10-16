@@ -1,6 +1,6 @@
-import { Button, FormControl, Input, Modal } from 'boilerplate-react-native/src/components';
 import { VStack } from 'native-base';
 import React from 'react';
+import { Button, FormControl, Input, Modal } from 'react-native-template/src/components';
 
 import { TaskModal, TaskOperation } from '../../../constants';
 import { AsyncError, Nullable, Task } from '../../../types';

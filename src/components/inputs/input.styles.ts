@@ -138,15 +138,6 @@ export const useDropdownInputStyles = () => {
       container: {
         position: 'relative',
       },
-      overlay: {
-        position: 'absolute',
-        top: theme.space[0],
-        left: theme.space[0],
-        right: theme.space[0],
-        bottom: theme.space[0],
-        backgroundColor: 'transparent',
-        zIndex: 1000,
-      },
       label: {
         fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
         fontSize: theme.fontSizes.sm,
@@ -183,8 +174,9 @@ export const useDropdownInputStyles = () => {
         borderWidth: parseInt(theme.borderWidths['1'], 10),
         borderColor: theme.colors.secondary[200],
         borderRadius: theme.radii.md,
-        zIndex: 1000,
-        maxHeight: 200,
+        zIndex: 10,
+        elevation: 5,
+        maxHeight: theme.sizes[56],
       },
     }),
   };

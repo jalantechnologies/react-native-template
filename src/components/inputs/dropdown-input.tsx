@@ -1,7 +1,6 @@
 import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { DropdownInputProps, DropdownOptionProps } from '../../types';
 
@@ -42,11 +41,9 @@ const DropdownInput: React.FC<DropdownInputProps> & {
           <Text style={[dropdownStyles.inputText, { color: inputTextColor }]}>
             {selectedValue || 'Select an option'}
           </Text>
-          <Icon
-            color={theme.colors.secondary[900]}
-            name={isDropdownVisible ? 'angle-up' : 'angle-down'}
-            size={theme.sizes[6]}
-          />
+          <Text style={{ color: theme.colors.secondary[900], fontSize: 20 }}>
+            {isDropdownVisible ? '▲' : '▼'}
+          </Text>
         </TouchableOpacity>
 
         {isDropdownVisible && (
@@ -71,7 +68,7 @@ const DropdownInput: React.FC<DropdownInputProps> & {
       </View>
 
       {selectedValue && (
-        <Text style={dropdownStyles.successMessage}>{`${selectedValue} selected`}</Text>
+        <Text style={dropdownStyles.successMessage}>{`${selectedValue} is selected`}</Text>
       )}
     </View>
   );

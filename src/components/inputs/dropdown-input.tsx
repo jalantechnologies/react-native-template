@@ -41,7 +41,7 @@ const DropdownInput: React.FC<DropdownInputProps> & {
           <Text style={[dropdownStyles.inputText, { color: inputTextColor }]}>
             {selectedValue || 'Select an option'}
           </Text>
-          <Text style={{ color: theme.colors.secondary[900], fontSize: 20 }}>
+          <Text style={[dropdownStyles.icon, { color: theme.colors.secondary[900] }]}>
             {isDropdownVisible ? '▲' : '▼'}
           </Text>
         </TouchableOpacity>

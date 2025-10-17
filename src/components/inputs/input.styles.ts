@@ -156,6 +156,9 @@ export const useDropdownInputStyles = () => {
       inputText: {
         fontSize: theme.fontSizes.md,
       },
+      icon: {
+        fontSize: 20,
+      },
       successMessage: {
         fontSize: theme.fontSizes.xs,
         color: theme.colors.success[500],

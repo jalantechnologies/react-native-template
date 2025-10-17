@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { ScrollView, View, Text } from 'react-native';
 import { useTheme } from 'native-base';
-import CardDetailsInput from '../components/inputs/card-details-input'; // adjust path as needed
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+
+import CardDetailsInput from '../components/inputs/card-details-input';
 import { InputStatus } from '../types';
 
 const TempCardDetailsScreen: React.FC = () => {
@@ -18,25 +19,27 @@ const TempCardDetailsScreen: React.FC = () => {
     }
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: theme.colors.secondary[50],
+      flexGrow: 1,
+      padding: 20,
+    },
+  });
+
   return (
-    <ScrollView
-      contentContainerStyle={{
-        flexGrow: 1,
-        backgroundColor: theme.colors.secondary[50],
-        padding: 20,
-      }}
-    >
+    <ScrollView contentContainerStyle={styles.container}>
       <View>
         <CardDetailsInput
-          label="Enter Card Details"
           cardHolderName={cardHolderName}
-          onCardHolderNameChange={setCardHolderName}
           cardNumber={cardNumber}
-          onCardNumberChange={setCardNumber}
-          expiry={expiry}
-          onExpiryChange={setExpiry}
           cvv={cvv}
+          expiry={expiry}
+          label="Enter Card Details"
+          onCardHolderNameChange={setCardHolderName}
+          onCardNumberChange={setCardNumber}
           onCvvChange={setCvv}
+          onExpiryChange={setExpiry}
           onValidate={handleValidate}
           successMessage="Card is valid ✅ "
         />

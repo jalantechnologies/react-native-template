@@ -6,6 +6,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 export type ApplicationStackParamList = {
   Main: NavigatorScreenParams<MainParamsList>;
   Startup: undefined;
+  Temp: undefined;
 };
 
 // Main stack parameter list

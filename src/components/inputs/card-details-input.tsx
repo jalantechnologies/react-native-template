@@ -1,7 +1,9 @@
 import { Button, useTheme } from 'native-base';
 import React, { useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
+import IconBase from 'react-native-vector-icons/Feather';
+
+const Icon = IconBase as any;
 
 import {
   CardDetailsInputProps,
@@ -146,6 +148,18 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
 
     if (isCardNumberInvalid) {
       return setValidationError('card', 'Enter a valid card number');
+    }
+
+    const expiryParts = expiry.split('/');
+    const hasValidExpiryFormat = expiryParts.length === 2 && expiryParts[0].length === 2;
+
+    if (hasValidExpiryFormat) {
+      const month = parseInt(expiryParts[0], 10);
+      const isMonthInvalid = month > 12 || month === 0;
+
+      if (isMonthInvalid) {
+        return setValidationError('expiry', 'Enter valid month (01-12)');
+      }
     }
 
     const isExpiryInvalid = !expiryDateRegex.test(expiry);

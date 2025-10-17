@@ -92,6 +92,8 @@ runs:
       working-directory: ios
       shell: bash
       run: |
+        pod repo update
+        bundle exec pod update boost --no-repo-update
         bundle exec pod install
 
     - name: Set up SSH for Match

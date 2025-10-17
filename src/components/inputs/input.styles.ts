@@ -1,6 +1,10 @@
 import { useTheme } from 'native-base';
 import { StyleSheet, TextStyle } from 'react-native';
 
+const Z_INDEX = {
+  DROPDOWN: 9999,
+};
+
 export const useInputStyles = () => {
   const theme = useTheme();
 
@@ -47,7 +51,6 @@ export const useInputStyles = () => {
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       color: colors.secondary[900],
       fontSize: theme.fontSizes.sm,
-
       lineHeight: Number(theme.lineHeights.sm),
       letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
@@ -124,4 +127,59 @@ export const useTextAreaInputStyles = () => {
       borderColor: colors.primary[300],
     },
   });
+};
+
+export const useDropdownInputStyles = () => {
+  const theme = useTheme();
+  return {
+    touchableOpacity: theme.opacity[70],
+    ...StyleSheet.create({
+      wrapper: {
+        gap: theme.space[2],
+        position: 'relative',
+      },
+      container: {
+        position: 'relative',
+      },
+      label: {
+        fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+        fontSize: theme.fontSizes.sm,
+        lineHeight: Number(theme.lineHeights.sm),
+        letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
+      },
+      inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: parseInt(theme.borderWidths['1'], 10),
+        borderRadius: theme.radii.md,
+        paddingHorizontal: theme.space[3],
+        paddingVertical: theme.space[3],
+        justifyContent: 'space-between',
+      },
+      inputText: {
+        fontSize: theme.fontSizes.md,
+      },
+      successMessage: {
+        fontSize: theme.fontSizes.xs,
+        color: theme.colors.success[500],
+      },
+      option: {
+        padding: theme.space[4],
+        borderBottomWidth: parseInt(theme.borderWidths['1'], 10),
+        borderBottomColor: theme.colors.secondary[200],
+      },
+      dropdown: {
+        position: 'absolute',
+        top: '100%',
+        left: theme.space[0],
+        right: theme.space[0],
+        backgroundColor: theme.colors.white,
+        borderWidth: parseInt(theme.borderWidths['1'], 10),
+        borderColor: theme.colors.secondary[200],
+        borderRadius: theme.radii.md,
+        zIndex: Z_INDEX.DROPDOWN,
+        maxHeight: theme.sizes[48],
+      },
+    }),
+  };
 };

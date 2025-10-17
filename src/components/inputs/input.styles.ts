@@ -3,7 +3,6 @@ import { StyleSheet, TextStyle } from 'react-native';
 
 const Z_INDEX = {
   DROPDOWN: 9999,
-  OVERLAY: 1000,
 };
 
 export const useInputStyles = () => {
@@ -141,15 +140,6 @@ export const useDropdownInputStyles = () => {
       },
       container: {
         position: 'relative',
-      },
-      overlay: {
-        position: 'absolute',
-        top: theme.space[0],
-        left: theme.space[0],
-        right: theme.space[0],
-        bottom: theme.space[0],
-        backgroundColor: 'transparent',
-        zIndex: Z_INDEX.OVERLAY,
       },
       label: {
         fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],

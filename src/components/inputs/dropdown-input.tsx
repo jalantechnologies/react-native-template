@@ -1,7 +1,7 @@
 import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome6';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { DropdownInputProps, DropdownOptionProps } from '../../types';
 
@@ -43,12 +43,11 @@ const DropdownInput: React.FC<DropdownInputProps> & {
           <Text style={[dropdownStyles.inputText, { color: textColor }]}>
             {selectedValue || 'Select an option'}
           </Text>
-          {/* Type casting added because react-native-vector-icons has compatibility issues with React types */}
-          {React.createElement(Icon as unknown as React.ComponentType<any>, {
-            color: theme.colors.secondary[900],
-            name: isDropdownVisible ? 'chevron-up' : 'chevron-down',
-            size: Number(theme.sizes[6]),
-          })}
+          <Icon
+            color={theme.colors.secondary[900]}
+            name={isDropdownVisible ? 'angle-up' : 'angle-down'}
+            size={theme.sizes[6]}
+          />
         </TouchableOpacity>
 
         {isDropdownVisible && (
@@ -71,7 +70,6 @@ const DropdownInput: React.FC<DropdownInputProps> & {
           </View>
         )}
       </View>
-
       {selectedValue && (
         <Text style={dropdownStyles.successMessage}>{`${selectedValue} selected`}</Text>
       )}

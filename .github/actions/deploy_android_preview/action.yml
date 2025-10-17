@@ -1,0 +1,118 @@
+name: Firebase Preview Deploy
+description: 'Build and deploy the Android app to Firebase App Distribution using Fastlane'
+
+inputs:
+  ANDROID_FIREBASE_PROJECT_NUMBER:
+    description: 'Firebase project number'
+    required: true
+  ANDROID_FIREBASE_APP_ID:
+    description: 'Firebase app ID'
+    required: true
+  ANDROID_FIREBASE_PROJECT_ID:
+    description: 'Firebase project ID'
+    required: true
+  ANDROID_FIREBASE_APP_PACKAGE:
+    description: 'Firebase app package name'
+    required: true
+  ANDROID_FIREBASE_API_KEY:
+    description: 'Firebase API key'
+    required: true
+  ANDROID_GCP_JSON_BASE64:
+    description: 'GCP JSON key (base64 encoded)'
+    required: true
+  PR_NUMBER:
+    description: 'Pull request number'
+    required: true
+  PR_TITLE:
+    description: 'Pull request title'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    # 1. Checkout repo (caller workflow decides path)
+    - uses: actions/checkout@v3
+
+    # 2. Node.js setup
+    - uses: actions/setup-node@v3
+      with:
+        node-version-file: '.nvmrc'
+
+    - name: Install Yarn
+      shell: bash
+      run: npm install -g yarn
+
+
+    - name: Install dependencies
+      shell: bash
+      run: yarn install
+
+    # 3. Java & Ruby setup
+    - uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1'
+
+    # 4. Fastlane setup (local action)
+    - uses: ./.github/actions/setup-fastlane
+
+    # 5. Decode GCP JSON
+    - name: Decode and save GCP service account key
+      shell: bash
+      run: |
+        echo "${{ inputs.ANDROID_GCP_JSON_BASE64 }}" | base64 --decode > /tmp/gcp_key.json
+        echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp_key.json" >> $GITHUB_ENV
+
+    # 6. Gradle cache
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    # 7. Build & deploy
+    - name: Build & Deploy to Firebase App Distribution
+      working-directory: android
+      env:
+        FIREBASE_API_KEY: "${{ inputs.ANDROID_FIREBASE_API_KEY }}"
+        ANDROID_FIREBASE_PROJECT_NUMBER: "${{ inputs.ANDROID_FIREBASE_PROJECT_NUMBER }}"
+        ANDROID_FIREBASE_APP_ID: "${{ inputs.ANDROID_FIREBASE_APP_ID }}"
+      shell: bash
+      run: |
+        bundle exec fastlane android pr_deploy \
+          pr_number:"${{ inputs.PR_NUMBER }}" \
+          pr_title:"${{ inputs.PR_TITLE }}" \
+          project_number:"${{ inputs.ANDROID_FIREBASE_PROJECT_NUMBER }}" \
+          app_id:"${{ inputs.ANDROID_FIREBASE_APP_ID }}"
+
+    # 8. Cleanup sensitive files
+    - name: Cleanup sensitive files
+      shell: bash
+      if: always()
+      run: rm -f /tmp/gcp_key.json
+
+    # 9. Comment on PR with Firebase link
+    - name: Comment on PR with Firebase link
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const prNumber = context.issue.number;
+          const projectId = "${{ inputs.ANDROID_FIREBASE_PROJECT_ID }}";
+          const appPackage = "${{ inputs.ANDROID_FIREBASE_APP_PACKAGE }}";
+          const encodedAppPackage = encodeURIComponent(appPackage);
+          const releaseUrl = `https://console.firebase.google.com/u/0/project/${projectId}/appdistribution/app/android:${encodedAppPackage}/releases`;
+
+          github.rest.issues.createComment({
+            issue_number: prNumber,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `🚀 Deployed PR #${prNumber} to Firebase App Distribution.\n\n🔗 [View Release in Firebase Console](${releaseUrl})`
+          });
+

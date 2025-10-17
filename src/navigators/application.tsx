@@ -8,7 +8,6 @@ import { StatusBar } from 'react-native';
 
 import { ApplicationStackParamList } from '../../@types/navigation';
 import { Startup } from '../screens';
-import TempDropdownScreen from '../screens/Temp';
 
 import MainNavigator from './main';
 
@@ -28,10 +27,9 @@ const ApplicationNavigator = () => {
     <Box safeAreaTop flex={1}>
       <NavigationContainer ref={navigationRef} onReady={onNavigationReady}>
         <StatusBar />
-        <Stack.Navigator initialRouteName="TempDropdown" screenOptions={{ headerShown: false }}>
-          <Stack.Screen component={TempDropdownScreen} name="TempDropdown" />
-          <Stack.Screen component={Startup} name="Startup" />
-          <Stack.Screen component={MainNavigator} name="Main" />
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Startup" component={Startup} />
+          <Stack.Screen name="Main" component={MainNavigator} />
         </Stack.Navigator>
       </NavigationContainer>
     </Box>

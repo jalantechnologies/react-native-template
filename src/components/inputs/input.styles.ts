@@ -1,6 +1,11 @@
 import { useTheme } from 'native-base';
 import { StyleSheet, TextStyle } from 'react-native';
 
+const Z_INDEX = {
+  DROPDOWN: 9999,
+  OVERLAY: 1000,
+};
+
 export const useInputStyles = () => {
   const theme = useTheme();
 
@@ -47,7 +52,6 @@ export const useInputStyles = () => {
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       color: colors.secondary[900],
       fontSize: theme.fontSizes.sm,
-
       lineHeight: Number(theme.lineHeights.sm),
       letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
@@ -138,6 +142,15 @@ export const useDropdownInputStyles = () => {
       container: {
         position: 'relative',
       },
+      overlay: {
+        position: 'absolute',
+        top: theme.space[0],
+        left: theme.space[0],
+        right: theme.space[0],
+        bottom: theme.space[0],
+        backgroundColor: 'transparent',
+        zIndex: Z_INDEX.OVERLAY,
+      },
       label: {
         fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
         fontSize: theme.fontSizes.sm,
@@ -155,9 +168,6 @@ export const useDropdownInputStyles = () => {
       },
       inputText: {
         fontSize: theme.fontSizes.md,
-      },
-      icon: {
-        fontSize: 20,
       },
       successMessage: {
         fontSize: theme.fontSizes.xs,
@@ -177,9 +187,8 @@ export const useDropdownInputStyles = () => {
         borderWidth: parseInt(theme.borderWidths['1'], 10),
         borderColor: theme.colors.secondary[200],
         borderRadius: theme.radii.md,
-        zIndex: 10,
-        elevation: 5,
-        maxHeight: theme.sizes[56],
+        zIndex: Z_INDEX.DROPDOWN,
+        maxHeight: theme.sizes[48],
       },
     }),
   };

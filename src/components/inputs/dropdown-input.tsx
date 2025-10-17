@@ -1,6 +1,7 @@
 import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome6';
 
 import { DropdownInputProps, DropdownOptionProps } from '../../types';
 
@@ -16,17 +17,18 @@ const DropdownInput: React.FC<DropdownInputProps> & {
   const toggleDropdown = () => {
     setDropdownVisible(!isDropdownVisible);
   };
+
   const handleOptionSelect = (value: string) => {
     onValueChange(value);
     setDropdownVisible(false);
   };
 
-  const inputTextColor = disabled ? theme.colors.secondary[500] : theme.colors.secondary[900];
-  const inputBgColor = disabled ? theme.colors.secondary[50] : theme.colors.white;
+  const textColor = disabled ? theme.colors.secondary[500] : theme.colors.secondary[900];
+  const backgroundColor = disabled ? theme.colors.secondary[50] : theme.colors.white;
 
   return (
     <View style={dropdownStyles.wrapper}>
-      {label && <Text style={[dropdownStyles.label, { color: inputTextColor }]}>{label}</Text>}
+      {label && <Text style={[dropdownStyles.label, { color: textColor }]}>{label}</Text>}
 
       <View style={dropdownStyles.container}>
         <TouchableOpacity
@@ -35,15 +37,18 @@ const DropdownInput: React.FC<DropdownInputProps> & {
           onPress={toggleDropdown}
           style={[
             dropdownStyles.inputContainer,
-            { backgroundColor: inputBgColor, borderColor: theme.colors.secondary[200] },
+            { backgroundColor, borderColor: theme.colors.secondary[200] },
           ]}
         >
-          <Text style={[dropdownStyles.inputText, { color: inputTextColor }]}>
+          <Text style={[dropdownStyles.inputText, { color: textColor }]}>
             {selectedValue || 'Select an option'}
           </Text>
-          <Text style={[dropdownStyles.icon, { color: theme.colors.secondary[900] }]}>
-            {isDropdownVisible ? '▲' : '▼'}
-          </Text>
+          {/* Type casting added because react-native-vector-icons has compatibility issues with React types */}
+          {React.createElement(Icon as unknown as React.ComponentType<any>, {
+            color: theme.colors.secondary[900],
+            name: isDropdownVisible ? 'chevron-up' : 'chevron-down',
+            size: Number(theme.sizes[6]),
+          })}
         </TouchableOpacity>
 
         {isDropdownVisible && (
@@ -55,10 +60,10 @@ const DropdownInput: React.FC<DropdownInputProps> & {
               renderItem={({ item }) =>
                 React.isValidElement<DropdownOptionProps>(item) ? (
                   <TouchableOpacity
-                    onPress={() => handleOptionSelect(item.props?.value)}
+                    onPress={() => handleOptionSelect(item.props.value)}
                     style={dropdownStyles.option}
                   >
-                    {item.props?.children}
+                    {item.props.children}
                   </TouchableOpacity>
                 ) : null
               }
@@ -68,7 +73,7 @@ const DropdownInput: React.FC<DropdownInputProps> & {
       </View>
 
       {selectedValue && (
-        <Text style={dropdownStyles.successMessage}>{`${selectedValue} is selected`}</Text>
+        <Text style={dropdownStyles.successMessage}>{`${selectedValue} selected`}</Text>
       )}
     </View>
   );

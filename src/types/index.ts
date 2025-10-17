@@ -5,6 +5,7 @@ export * from './auth';
 export * from './common';
 export * from './task';
 export * from './avatar';
+export type { CardDetailsInputProps, CardValidationResult } from './inputs';
 export * from './alert';
 export * from './input';
 export * from './spinner';

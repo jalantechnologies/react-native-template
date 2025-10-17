@@ -125,3 +125,62 @@ export const useTextAreaInputStyles = () => {
     },
   });
 };
+
+export const useCardDetailsInputStyles = () => {
+  const theme = useTheme();
+  const colors = theme.colors;
+  const spacing = theme.space;
+
+  return StyleSheet.create({
+    cardHolderInput: {
+      borderColor: colors.secondary[200],
+      borderRadius: theme.radii.md,
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      flex: 1,
+      fontSize: theme.fontSizes.md,
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      lineHeight: Number(theme.lineHeights.sm),
+      marginBottom: spacing[2],
+      minHeight: theme.sizes['10'],
+      paddingHorizontal: spacing[3],
+    },
+    cardInput: {
+      borderRightWidth: theme.borderWidths[0],
+      flex: 2,
+    },
+    container: {
+      alignItems: 'center',
+      borderRadius: theme.radii.md,
+      borderWidth: parseInt(theme.borderWidths['1'], 10),
+      flexDirection: 'row',
+      overflow: 'hidden',
+      paddingHorizontal: spacing[3],
+    },
+    cvvInput: {
+      textAlign: 'center',
+    },
+    expiryInput: {
+      borderRightWidth: theme.borderWidths[0],
+      textAlign: 'center',
+    },
+    inputField: {
+      fontSize: theme.fontSizes.md,
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      lineHeight: Number(theme.lineHeights.sm),
+      minHeight: theme.sizes['10'],
+      paddingHorizontal: spacing[2],
+    },
+    label: {
+      fontSize: theme.fontSizes.sm,
+      fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
+      letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
+      lineHeight: Number(theme.lineHeights.sm),
+    },
+    message: {
+      fontSize: theme.fontSizes.xs,
+    },
+    wrapper: {
+      gap: spacing[2],
+    },
+  });
+};

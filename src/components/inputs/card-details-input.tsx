@@ -216,8 +216,8 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           },
         ]}
       >
-        <Text style={{ color: theme.colors.secondary[600], fontSize: 14, marginRight: 8 }}>
-          Card
+        <Text style={{ fontSize: 14, marginRight: 8, color: theme.colors.secondary[700] }}>
+          ▭
         </Text>
 
         <TextInput

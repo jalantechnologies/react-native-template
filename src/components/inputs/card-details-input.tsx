@@ -216,7 +216,9 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           },
         ]}
       >
-        <Text style={{ fontSize: 16, marginRight: 8 }}>💳</Text>
+        <Text style={{ color: theme.colors.secondary[600], fontSize: 14, marginRight: 8 }}>
+          Card
+        </Text>
 
         <TextInput
           editable={!disabled}

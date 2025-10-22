@@ -1,9 +1,6 @@
 import { Button, useTheme } from 'native-base';
 import React, { useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
-import IconBase from 'react-native-vector-icons/Feather';
-
-const Icon = IconBase as any;
 
 import {
   CardDetailsInputProps,
@@ -14,7 +11,6 @@ import {
 
 import { useCardDetailsInputStyles } from './input.styles';
 
-const CARD_ICON_SIZE = 16;
 const CARD_NUMBER_MAX_LEN = 19;
 const CARD_NUMBER_MIN_LEN = 13;
 const CVV_DIGITS = 3;
@@ -220,7 +216,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
           },
         ]}
       >
-        <Icon name="credit-card" size={CARD_ICON_SIZE} />
+        <Text style={{ fontSize: 16, marginRight: 8 }}>💳</Text>
 
         <TextInput
           editable={!disabled}

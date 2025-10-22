@@ -36,5 +36,8 @@ target 'Boilerplate' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+    
+    # Copy Feather font for vector icons
+    system("cp ../node_modules/react-native-vector-icons/Fonts/Feather.ttf ./Boilerplate/ 2>/dev/null || :")
   end
 end

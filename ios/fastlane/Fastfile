@@ -1,6 +1,15 @@
 default_platform(:ios)
 
 platform :ios do
+  # Setup keychain for code signing
+  create_keychain(
+    name: "ios.keychain",
+    password: ENV["IOS_KEYCHAIN_PASSWORD"],
+    default_keychain: true,
+    unlock: true,
+    timeout: 1800
+  )
+  
   # Fetch App Store and Development signing certificates for CI environment.
   # Both are required to unlock build and test capabilities in GitHub Actions.
   desc "Fetch certificates for CI"
@@ -41,6 +50,23 @@ platform :ios do
       api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
       issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
       api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64']
+    )
+  end
+  # Deploys the production app to the App Store
+  desc "Build and upload Production app to App Store"
+  lane :production_deploy do
+    require_relative "scripts/ios_deploy_production"
+
+    ios_deploy_production!(
+      app_identifier: ENV["IOS_APP_IDENTIFIER"],
+      workspace: "Boilerplate.xcworkspace",
+      scheme: "Boilerplate",
+      api_key_id: ENV["IOS_APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
+      api_key_b64: ENV["IOS_APP_STORE_CONNECT_API_KEY_B64"],
+      keychain_name: "ios.keychain",
+      keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
+      team_id: ENV["IOS_APP_STORE_TEAM_ID"]
     )
   end
 end

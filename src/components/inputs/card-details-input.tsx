@@ -1,6 +1,6 @@
+import { Button, Icon, useTheme } from 'native-base';
 import React, { useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
-import { Button, Icon, useTheme } from 'native-base';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 
 import {

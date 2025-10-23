@@ -1,9 +1,7 @@
-import { Button, useTheme } from 'native-base';
 import React, { useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
-import IconBase from 'react-native-vector-icons/Feather';
-
-const Icon = IconBase as any;
+import { Button, Icon, useTheme } from 'native-base';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 
 import {
   CardDetailsInputProps,
@@ -14,11 +12,11 @@ import {
 
 import { useCardDetailsInputStyles } from './input.styles';
 
-const CARD_ICON_SIZE = 16;
-const CARD_NUMBER_MAX_LEN = 19;
-const CARD_NUMBER_MIN_LEN = 13;
-const CVV_DIGITS = 3;
-const EXPIRY_SLASH_POS = 2;
+const CREDIT_CARD_ICON_SIZE = 16;
+const CARD_NUMBER_MAX_LENGTH = 19;
+const CARD_NUMBER_MIN_LENGTH = 13;
+const CVV_REQUIRED_DIGITS = 3;
+const EXPIRY_MONTH_DIGITS = 2;
 const EXPIRY_YEAR_DIGITS = 2;
 
 const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
@@ -54,11 +52,11 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
 
   const formatExpiryWithSlash = (text: string): string => {
     const digitsOnly = text.replace(/[^0-9]/g, '');
-    const hasEnoughDigitsForSlash = digitsOnly.length > EXPIRY_SLASH_POS;
+    const hasEnoughDigitsForSlash = digitsOnly.length > EXPIRY_MONTH_DIGITS;
 
     if (hasEnoughDigitsForSlash) {
-      const monthPart = digitsOnly.slice(0, EXPIRY_SLASH_POS);
-      const yearPart = digitsOnly.slice(EXPIRY_SLASH_POS, EXPIRY_SLASH_POS + EXPIRY_YEAR_DIGITS);
+      const monthPart = digitsOnly.slice(0, EXPIRY_MONTH_DIGITS);
+      const yearPart = digitsOnly.slice(EXPIRY_MONTH_DIGITS, EXPIRY_MONTH_DIGITS + EXPIRY_YEAR_DIGITS);
       return `${monthPart}/${yearPart}`;
     }
 
@@ -69,60 +67,47 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
     if (currentStatus === InputStatus.ERROR && errorField === fieldName) {
       return theme.colors.danger[500];
     }
-
     if (activeInputField === fieldName) {
       return theme.colors.primary[300];
     }
-
     return theme.colors.secondary[200];
   };
 
   const getCardContainerBorderColor = (): string => {
-    const cardFields = ['card', 'expiry', 'cvv'];
+    const cardFields: string[] = ['card', 'expiry', 'cvv'];
     const hasCardFieldError =
       currentStatus === InputStatus.ERROR && errorField && cardFields.includes(errorField);
-
     if (hasCardFieldError) {
       return theme.colors.danger[500];
     }
-
     if (activeInputField && cardFields.includes(activeInputField)) {
       return theme.colors.primary[300];
     }
-
     return theme.colors.secondary[200];
   };
-
   const getDisabledColor = (): string => theme.colors.secondary[500];
-
   const getPlaceholderColor = (): string => {
     return disabled ? getDisabledColor() : theme.colors.secondary[600];
   };
-
   const getTextColor = (fieldName: string): string => {
     if (disabled) {
       return getDisabledColor();
     }
-
     if (currentStatus === InputStatus.ERROR && errorField === fieldName) {
       return theme.colors.danger[500];
     }
-
     return theme.colors.secondary[900];
   };
-
   const handleInputChange =
-    (onChange: (value: string) => void, formatter?: (text: string) => string) => (text: string) => {
+    (onChange: (value: string) => void, formatter?: (text: string) => string) => (text: string): void => {
       if (!isExternallyControlled) {
         setLocalStatus(InputStatus.DEFAULT);
         setLocalErrorMessage('');
         setErrorField(null);
       }
-
       const formattedValue = formatter ? formatter(text) : text;
       onChange(formattedValue);
     };
-
   const setValidationError = (fieldName: string, message: string): void => {
     if (!isExternallyControlled) {
       setLocalStatus(InputStatus.ERROR);
@@ -131,44 +116,28 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
     }
     onValidate?.(null, InputStatus.ERROR);
   };
-
   const validateCardDetails = (): void => {
     const expiryDateRegex = new RegExp(`^(0[1-9]|1[0-2])/\\d{${EXPIRY_YEAR_DIGITS}}$`);
-    const cvvRegex = new RegExp(`^\\d{${CVV_DIGITS}}$`);
+    const cvvRegex = new RegExp(`^\\d{${CVV_REQUIRED_DIGITS}}$`);
 
-    const isCardHolderNameEmpty = !cardHolderName;
-    if (isCardHolderNameEmpty) {
+    if (!cardHolderName) {
       return setValidationError('name', 'Enter the cardholder name');
     }
 
-    const isCardNumberEmpty = !cardNumber;
-    const isCardNumberTooShort = cardNumber.length < CARD_NUMBER_MIN_LEN;
-    const isCardNumberTooLong = cardNumber.length > CARD_NUMBER_MAX_LEN;
-    const isCardNumberInvalid = isCardNumberEmpty || isCardNumberTooShort || isCardNumberTooLong;
-
-    if (isCardNumberInvalid) {
+    if (!cardNumber || cardNumber.length < CARD_NUMBER_MIN_LENGTH || cardNumber.length > CARD_NUMBER_MAX_LENGTH) {
       return setValidationError('card', 'Enter a valid card number');
     }
 
-    const expiryParts = expiry.split('/');
-    const hasValidExpiryFormat = expiryParts.length === 2 && expiryParts[0].length === 2;
-
-    if (hasValidExpiryFormat) {
-      const month = parseInt(expiryParts[0], 10);
-      const isMonthInvalid = month > 12 || month === 0;
-
-      if (isMonthInvalid) {
-        return setValidationError('expiry', 'Enter valid month (01-12)');
-      }
-    }
-
-    const isExpiryInvalid = !expiryDateRegex.test(expiry);
-    if (isExpiryInvalid) {
+    if (!expiryDateRegex.test(expiry)) {
       return setValidationError('expiry', 'Enter expiry in MM/YY format');
     }
 
-    const isCvvInvalid = !cvvRegex.test(cvv);
-    if (isCvvInvalid) {
+    const month = parseInt(expiry.split('/')[0], 10);
+    if (month > 12 || month === 0) {
+      return setValidationError('expiry', 'Enter valid month (01-12)');
+    }
+
+    if (!cvvRegex.test(cvv)) {
       return setValidationError('cvv', 'CVV must be 3 digits');
     }
 
@@ -215,17 +184,17 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
         style={[
           styles.container,
           {
-            backgroundColor: disabled ? theme.colors.secondary[50] : theme.colors.white,
+            backgroundColor: disabled ? theme.colors.secondary[50] : 'transparent',
             borderColor: getCardContainerBorderColor(),
           },
         ]}
       >
-        <Icon name="credit-card" size={CARD_ICON_SIZE} />
+        <Icon as={FeatherIcon} name="credit-card" size={CREDIT_CARD_ICON_SIZE} color={theme.colors.secondary[600]} />
 
         <TextInput
           editable={!disabled}
           keyboardType={KeyboardTypes.NUMBER_PAD}
-          maxLength={CARD_NUMBER_MAX_LEN}
+          maxLength={CARD_NUMBER_MAX_LENGTH}
           onBlur={() => setActiveInputField(null)}
           onChangeText={handleInputChange(onCardNumberChange)}
           onFocus={() => setActiveInputField('card')}
@@ -255,7 +224,7 @@ const CardDetailsInput: React.FC<CardDetailsInputProps> = ({
         <TextInput
           editable={!disabled}
           keyboardType={KeyboardTypes.NUMBER_PAD}
-          maxLength={CVV_DIGITS}
+          maxLength={CVV_REQUIRED_DIGITS}
           onBlur={() => setActiveInputField(null)}
           onChangeText={handleInputChange(onCvvChange)}
           onFocus={() => setActiveInputField('cvv')}

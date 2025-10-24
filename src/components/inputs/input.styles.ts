@@ -1,10 +1,6 @@
 import { useTheme } from 'native-base';
 import { StyleSheet, TextStyle } from 'react-native';
 
-const Z_INDEX = {
-  DROPDOWN: 9999,
-};
-
 export const useInputStyles = () => {
   const theme = useTheme();
 
@@ -51,6 +47,7 @@ export const useInputStyles = () => {
       fontWeight: `${theme.fontWeights.normal}` as TextStyle['fontWeight'],
       color: colors.secondary[900],
       fontSize: theme.fontSizes.sm,
+      
       lineHeight: Number(theme.lineHeights.sm),
       letterSpacing: parseFloat(theme.letterSpacings.sm) * theme.fontSizes.sm,
     },
@@ -177,7 +174,11 @@ export const useDropdownInputStyles = () => {
         borderWidth: parseInt(theme.borderWidths['1'], 10),
         borderColor: theme.colors.secondary[200],
         borderRadius: theme.radii.md,
-        zIndex: Z_INDEX.DROPDOWN,
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
         maxHeight: theme.sizes[48],
       },
     }),

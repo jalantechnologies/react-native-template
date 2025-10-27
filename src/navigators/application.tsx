@@ -8,6 +8,7 @@ import { StatusBar } from 'react-native';
 
 import { ApplicationStackParamList } from '../../@types/navigation';
 import { Startup } from '../screens';
+import TestWebsiteInputScreen from '../screens/temp'; 
 
 import MainNavigator from './main';
 
@@ -28,8 +29,9 @@ const ApplicationNavigator = () => {
       <NavigationContainer ref={navigationRef} onReady={onNavigationReady}>
         <StatusBar />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Startup" component={Startup} />
-          <Stack.Screen name="Main" component={MainNavigator} />
+          {/* <Stack.Screen name="Startup" component={Startup} />
+          <Stack.Screen name="Main" component={MainNavigator} /> */}
+          <Stack.Screen name="TestWebsiteInput" component={TestWebsiteInputScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Box>

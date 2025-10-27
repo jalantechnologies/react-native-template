@@ -7,10 +7,7 @@ import React from 'react';
 import { StatusBar } from 'react-native';
 
 import { ApplicationStackParamList } from '../../@types/navigation';
-import { Startup } from '../screens';
-import TestWebsiteInputScreen from '../screens/temp'; 
-
-import MainNavigator from './main';
+import TestWebsiteInputScreen from '../screens/temp';
 
 const Stack = createStackNavigator<ApplicationStackParamList>();
 

@@ -63,17 +63,18 @@ runs:
     - name: Cache node modules
       uses: actions/cache@v4
       with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('**/yarn.lock') }}
+        path: |
+          **/node_modules
+        key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
-          ${{ runner.os }}-node-modules-v2-
+          ${{ runner.os }}-node-modules-
 
     - name: Install Yarn
       run: npm install -g yarn
       shell: bash
 
-    - name: Install dependencies
-      run: yarn install
+    - name: Install JS dependencies
+      run: yarn install --frozen-lockfile
       shell: bash
 
     - name: Cache CocoaPods
@@ -89,9 +90,11 @@ runs:
 
     - name: Install CocoaPods dependencies
       working-directory: ios
-      run: |
-        bundle exec pod install --deployment
       shell: bash
+      run: |
+        pod repo update
+        bundle exec pod update boost --no-repo-update
+        bundle exec pod install
 
     - name: Set up SSH for Match
       uses: webfactory/ssh-agent@v0.7.0

@@ -1,6 +1,7 @@
 import 'react-native-gesture-handler';
 import { DatadogProvider } from '@datadog/mobile-react-native';
 import { NativeBaseProvider } from 'native-base';
+import { Provider as PaperProvider } from 'react-native-paper';
 import React, { useCallback } from 'react';
 import ErrorBoundary from 'react-native-error-boundary';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
@@ -19,22 +20,24 @@ const App = () => {
 
   return (
     <NativeBaseProvider theme={appTheme}>
-      <ErrorBoundary
-        onError={(e, stack) => Logger.error(`App Error: ${e} ${stack}`)}
-        FallbackComponent={ErrorComponent}
-      >
-        <DatadogProvider configuration={DatadogConfig} onInitialization={onDataDogSDKInitialized}>
-          <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-            <AuthContextProvider>
-              <AccountContextProvider>
-                <TaskContextProvider>
-                  <ApplicationNavigator />
-                </TaskContextProvider>
-              </AccountContextProvider>
-            </AuthContextProvider>
-          </SafeAreaProvider>
-        </DatadogProvider>
-      </ErrorBoundary>
+      <PaperProvider>
+        <ErrorBoundary
+          onError={(e, stack) => Logger.error(`App Error: ${e} ${stack}`)}
+          FallbackComponent={ErrorComponent}
+        >
+          <DatadogProvider configuration={DatadogConfig} onInitialization={onDataDogSDKInitialized}>
+            <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+              <AuthContextProvider>
+                <AccountContextProvider>
+                  <TaskContextProvider>
+                    <ApplicationNavigator />
+                  </TaskContextProvider>
+                </AccountContextProvider>
+              </AuthContextProvider>
+            </SafeAreaProvider>
+          </DatadogProvider>
+        </ErrorBoundary>
+      </PaperProvider>
     </NativeBaseProvider>
   );
 };

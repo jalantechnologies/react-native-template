@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { DatadogProvider } from '@datadog/mobile-react-native';
 import { NativeBaseProvider } from 'native-base';
-import { Provider as PaperProvider } from 'react-native-paper';
+import { MD3LightTheme as PaperDefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import React, { useCallback } from 'react';
 import ErrorBoundary from 'react-native-error-boundary';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
@@ -18,9 +18,20 @@ const App = () => {
   Logger.initializeLoggers();
   const ErrorComponent = useCallback(() => <ErrorFallback />, []);
 
+  const paperTheme = {
+    ...PaperDefaultTheme,
+    roundness: appTheme.radii.sm,
+    colors: {
+      ...PaperDefaultTheme.colors,
+      primary: appTheme.colors.primary['500'],
+      outline: appTheme.colors.secondary['200'],
+      onPrimary: appTheme.colors.white,
+    },
+  } as const;
+
   return (
     <NativeBaseProvider theme={appTheme}>
-      <PaperProvider>
+      <PaperProvider theme={paperTheme}>
         <ErrorBoundary
           onError={(e, stack) => Logger.error(`App Error: ${e} ${stack}`)}
           FallbackComponent={ErrorComponent}

@@ -54,10 +54,12 @@ const usePhoneAuthForm = ({ onSendOTPSuccess, onError }: PhoneAuthFormProps) => 
       )
         .then(() => {
           onSendOTPSuccess();
-          navigation.navigate('OTPVerify', {
-            countryCode: formik.values.countryCode,
-            phoneNumber: formik.values.phoneNumber,
-          });
+          setTimeout(() => {
+            navigation.navigate('OTPVerify', {
+              countryCode: formik.values.countryCode,
+              phoneNumber: formik.values.phoneNumber,
+            });
+          }, 3000);
         })
         .catch((err: AsyncError) => {
           onError(err as AsyncError);

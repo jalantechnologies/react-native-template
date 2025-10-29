@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Snackbar } from 'react-native-paper';
 import { Alert } from 'react-native';
+import { Snackbar } from 'react-native-paper';
 
 import { MainScreenProps } from '../../../../@types/navigation';
 import { AsyncError } from '../../../types';

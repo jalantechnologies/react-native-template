@@ -8,7 +8,6 @@ import {
   TextInput,
 } from 'react-native-paper';
 import CheckIcon from 'react-native-template/assets/icons/check.svg';
-
 import { FormControl } from 'react-native-template/src/components';
 import { useThemeColor } from 'react-native-template/src/utils';
 

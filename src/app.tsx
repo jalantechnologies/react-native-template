@@ -1,9 +1,9 @@
 import 'react-native-gesture-handler';
 import { DatadogProvider } from '@datadog/mobile-react-native';
 import { NativeBaseProvider } from 'native-base';
-import { MD3LightTheme as PaperDefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import React, { useCallback } from 'react';
 import ErrorBoundary from 'react-native-error-boundary';
+import { MD3LightTheme as PaperDefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 
 import appTheme from './app-theme';

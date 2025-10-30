@@ -1,7 +1,6 @@
 import React, { PropsWithChildren } from 'react';
-import { View, Text } from 'react-native';
-
-import { useFormControlStyles } from './form-control.styles';
+import { View } from 'react-native';
+import { Text } from 'react-native-paper';
 
 interface FormControlProps {
   error?: string;
@@ -9,18 +8,15 @@ interface FormControlProps {
 }
 
 const FormControl: React.FC<PropsWithChildren<FormControlProps>> = ({ children, error, label }) => {
-  const styles = useFormControlStyles();
-
-  const inputContainerStyle = [
-    styles.inputContainer,
-    error ? { borderColor: styles.error.color, borderWidth: 1 } : {},
-  ];
-
   return (
-    <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
-      <View style={inputContainerStyle}>{children}</View>
-      {error && <Text style={styles.error}>{error}</Text>}
+    <View style={{ marginBottom: 8 }}>
+      {label && (
+        <Text variant="labelLarge" style={{ marginBottom: 6, color: '#007AFF', fontWeight: '500' }}>{label}</Text>
+      )}
+      <View style={{ justifyContent: 'center' }}>{children}</View>
+      {error && (
+        <Text style={{ color: '#E2332B', fontSize: 12, marginTop: 4 }}>{error}</Text>
+      )}
     </View>
   );
 };

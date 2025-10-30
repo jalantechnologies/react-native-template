@@ -31,9 +31,9 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
     }
   };
 
-  const outline = theme.colors.outline; 
-  const activeOutline = theme.colors.primary; 
-  const bg = theme.colors.background; 
+  const outline = theme.colors.outline;
+  const activeOutline = theme.colors.primary;
+  const bg = theme.colors.background;
 
   return (
     <View style={{ flexDirection: 'row', width: '100%' }}>

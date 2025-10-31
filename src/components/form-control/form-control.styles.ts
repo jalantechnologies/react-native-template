@@ -3,17 +3,17 @@ import { useTheme } from 'react-native-paper';
 
 export const useFormControlStyles = () => {
   const theme = useTheme() as any;
-  const spacing = theme.spacing || {};
+  const spacing = theme.spacing;
   const colors = theme.colors;
-  const fontSizes = theme.fonts?.fontSize || {};
+  const fontSizes = theme.fonts?.fontSize;
   const roundness = theme.roundness;
 
   return StyleSheet.create({
     container: {
       flexDirection: 'column',
-      gap: spacing.xs || 4,
-      marginBottom: spacing.sm || 8,
-      padding: spacing.sm || 8,
+      gap: spacing.xs,
+      marginBottom: spacing.sm,
+      padding: spacing.sm,
     },
     label: {
       minHeight: 24,
@@ -26,10 +26,10 @@ export const useFormControlStyles = () => {
     },
     error: {
       color: colors.errorContainer || colors.error,
-      fontSize: fontSizes.xs || 12,
+      fontSize: fontSizes?.xs,
       fontWeight: '500',
       letterSpacing: 0.5,
-      marginTop: spacing.xs || 4,
+      marginTop: spacing.xs,
     },
   });
 };

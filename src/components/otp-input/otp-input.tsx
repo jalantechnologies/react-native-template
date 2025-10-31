@@ -14,7 +14,7 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
   const theme = useTheme();
   const inputsRef = useRef<Array<RNTextInput | null>>([]);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
-  const spacing = (theme as any).spacing || {};
+  const spacing = (theme as any).spacing;
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -43,7 +43,7 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
     },
     inputWrapper: {
       flex: 1,
-      marginHorizontal: spacing.xs || 4,
+      marginHorizontal: spacing.xs,
     },
     input: {
       backgroundColor: bg,

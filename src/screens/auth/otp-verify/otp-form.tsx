@@ -39,10 +39,10 @@ const OTPForm: React.FC<OTPFormProps> = ({
   const primary = theme.colors.primary;
   const onPrimary = theme.colors.onPrimary;
   const muted = theme.colors.onSurfaceVariant;
-  const radius = (theme as any).roundness ?? 6;
-  const spacing = (theme as any).spacing || {};
-  const fontSizes = (theme as any).fonts?.fontSize || {};
-  const lineHeights = (theme as any).fonts?.lineHeight || {};
+  const radius = (theme as any).roundness;
+  const spacing = (theme as any).spacing;
+  const fontSizes = (theme as any).fonts?.fontSize;
+  const lineHeights = (theme as any).fonts?.lineHeight;
 
   const handleSetOtp = (otp: string[]) => {
     formik.setFieldValue('otp', otp);
@@ -51,26 +51,26 @@ const OTPForm: React.FC<OTPFormProps> = ({
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingBottom: spacing.lg || 16,
+      paddingBottom: spacing.lg,
     },
     content: {
       flex: 1,
-      marginBottom: spacing.xl || 32,
+      marginBottom: spacing.xl,
     },
     titleSection: {
-      marginTop: spacing.md || 12,
+      marginTop: spacing.md,
     },
     inputWrapper: {
       alignItems: 'center',
     },
     resendText: {
-      fontSize: fontSizes.xs || 12,
-      lineHeight: lineHeights.sm || 18,
-      marginTop: spacing.sm || 8,
+      fontSize: fontSizes?.xs,
+      lineHeight: lineHeights?.sm,
+      marginTop: spacing.sm,
     },
     resendLink: {
-      fontSize: fontSizes.xs || 12,
-      lineHeight: lineHeights.xs || 16,
+      fontSize: fontSizes?.xs,
+      lineHeight: lineHeights?.xs,
       color: isResendEnabled ? primary : muted,
       textDecorationLine: isResendEnabled ? 'underline' : 'none',
     },

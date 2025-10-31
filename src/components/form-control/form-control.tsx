@@ -9,15 +9,15 @@ interface FormControlProps {
 
 const FormControl: React.FC<PropsWithChildren<FormControlProps>> = ({ children, error, label }) => {
   const theme = useTheme();
-  const spacing = (theme as any).spacing || {};
-  const fontSizes = (theme as any).fonts?.fontSize || {};
+  const spacing = (theme as any).spacing;
+  const fontSizes = (theme as any).fonts?.fontSize;
 
   const styles = StyleSheet.create({
     container: {
-      marginBottom: spacing.sm || 8,
+      marginBottom: spacing.sm,
     },
     label: {
-      marginBottom: spacing.xs || 6,
+      marginBottom: spacing.xs,
       color: theme.colors.primary,
       fontWeight: '500',
     },
@@ -26,8 +26,8 @@ const FormControl: React.FC<PropsWithChildren<FormControlProps>> = ({ children, 
     },
     error: {
       color: theme.colors.errorContainer || theme.colors.error,
-      fontSize: fontSizes.xs || 12,
-      marginTop: spacing.xs || 4,
+      fontSize: fontSizes?.xs,
+      marginTop: spacing.xs,
     },
   });
 

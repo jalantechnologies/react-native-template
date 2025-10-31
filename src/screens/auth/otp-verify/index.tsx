@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, StyleSheet } from 'react-native';
-import { Snackbar } from 'react-native-paper';
+import { Portal, Snackbar, Text, useTheme } from 'react-native-paper';
 
 import { MainScreenProps } from '../../../../@types/navigation';
 import { AsyncError } from '../../../types';
@@ -9,16 +9,7 @@ import AuthLayout from '../auth-layout';
 
 import OTPForm from './otp-form';
 
-const styles = StyleSheet.create({
-  snackbar: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    marginBottom: 0,
-    borderRadius: 0,
-  },
-});
+const styles = StyleSheet.create({});
 
 const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;
@@ -43,6 +34,18 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
     setSnackbarVisible(true);
   };
 
+  const theme = useTheme();
+  const spacing = (theme as any).spacing;
+  const snackbarStyle = {
+    position: 'absolute',
+    backgroundColor: '#000',
+    borderRadius: (theme as any).roundness,
+    alignSelf: 'center',
+    bottom: spacing?.xl,
+    maxWidth: '80%',
+    paddingHorizontal: spacing?.md,
+  } as const;
+
   return (
     <AuthLayout primaryTitle="Better." secondaryTitle="">
       <OTPForm
@@ -54,15 +57,16 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
         phoneNumber={phoneNumber}
         remainingSecondsStr={remainingSecondsStr}
       />
-      <Snackbar
-        visible={snackbarVisible}
-        onDismiss={() => setSnackbarVisible(false)}
-        duration={6000}
-        action={{ label: 'OK', onPress: () => setSnackbarVisible(false) }}
-        style={styles.snackbar}
-      >
-        {snackbarMessage}
-      </Snackbar>
+      <Portal>
+        <Snackbar
+          visible={snackbarVisible}
+          onDismiss={() => setSnackbarVisible(false)}
+          duration={18000}
+          style={snackbarStyle}
+        >
+          <Text style={{ color: '#fff' }}>{snackbarMessage}</Text>
+        </Snackbar>
+      </Portal>
     </AuthLayout>
   );
 };

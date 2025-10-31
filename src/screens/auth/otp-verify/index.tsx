@@ -9,7 +9,6 @@ import AuthLayout from '../auth-layout';
 
 import OTPForm from './otp-form';
 
-const styles = StyleSheet.create({});
 
 const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;
@@ -46,6 +45,12 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
     paddingHorizontal: spacing?.md,
   } as const;
 
+  const styles = StyleSheet.create({
+    snackbarText: {
+      color: '#fff',
+    },
+  });
+
   return (
     <AuthLayout primaryTitle="Better." secondaryTitle="">
       <OTPForm
@@ -61,10 +66,10 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
         <Snackbar
           visible={snackbarVisible}
           onDismiss={() => setSnackbarVisible(false)}
-          duration={18000}
+          duration={6000}
           style={snackbarStyle}
         >
-          <Text style={{ color: '#fff' }}>{snackbarMessage}</Text>
+          <Text style={styles.snackbarText}>{snackbarMessage}</Text>
         </Snackbar>
       </Portal>
     </AuthLayout>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
 import { Snackbar } from 'react-native-paper';
 
 import { MainScreenProps } from '../../../../@types/navigation';
@@ -8,6 +8,17 @@ import useTimer from '../../../utils/use-timer.hook';
 import AuthLayout from '../auth-layout';
 
 import OTPForm from './otp-form';
+
+const styles = StyleSheet.create({
+  snackbar: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    marginBottom: 0,
+    borderRadius: 0,
+  },
+});
 
 const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;
@@ -48,7 +59,7 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
         onDismiss={() => setSnackbarVisible(false)}
         duration={6000}
         action={{ label: 'OK', onPress: () => setSnackbarVisible(false) }}
-        style={{ position: 'absolute', left: 0, right: 0, bottom: 0, marginBottom: 0, borderRadius: 0 }}
+        style={styles.snackbar}
       >
         {snackbarMessage}
       </Snackbar>

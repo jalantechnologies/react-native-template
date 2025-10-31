@@ -26,6 +26,31 @@ const paperTheme = {
     onSurfaceVariant: '#525252',
     background: '#FFFFFF',
     surface: '#FFFFFF',
+    errorContainer: '#E2332B',
+  },
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 12,
+    lg: 16,
+    xl: 32,
+  },
+  fonts: {
+    ...DefaultPaperTheme.fonts,
+    fontSize: {
+      xs: 12,
+      sm: 14,
+      md: 16,
+      lg: 18,
+      xl: 20,
+    },
+    lineHeight: {
+      xs: 16,
+      sm: 18,
+      md: 20,
+      lg: 24,
+      xl: 28,
+    },
   },
 } as const;
 

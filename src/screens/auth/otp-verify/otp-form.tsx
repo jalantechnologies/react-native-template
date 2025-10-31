@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Button as PaperButton, Text, useTheme } from 'react-native-paper';
 
 import { FormControl, OTPInput } from '../../../components';
@@ -40,20 +40,54 @@ const OTPForm: React.FC<OTPFormProps> = ({
   const onPrimary = theme.colors.onPrimary;
   const muted = theme.colors.onSurfaceVariant;
   const radius = (theme as any).roundness ?? 6;
+  const spacing = (theme as any).spacing || {};
+  const fontSizes = (theme as any).fonts?.fontSize || {};
+  const lineHeights = (theme as any).fonts?.lineHeight || {};
 
   const handleSetOtp = (otp: string[]) => {
     formik.setFieldValue('otp', otp);
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingBottom: spacing.lg || 16,
+    },
+    content: {
+      flex: 1,
+      marginBottom: spacing.xl || 32,
+    },
+    titleSection: {
+      marginTop: spacing.md || 12,
+    },
+    inputWrapper: {
+      alignItems: 'center',
+    },
+    resendText: {
+      fontSize: fontSizes.xs || 12,
+      lineHeight: lineHeights.sm || 18,
+      marginTop: spacing.sm || 8,
+    },
+    resendLink: {
+      fontSize: fontSizes.xs || 12,
+      lineHeight: lineHeights.xs || 16,
+      color: isResendEnabled ? primary : muted,
+      textDecorationLine: isResendEnabled ? 'underline' : 'none',
+    },
+    button: {
+      borderRadius: radius,
+    },
+  });
+
   return (
-    <View style={{ flex: 1, paddingBottom: 16 }}>
-      <View style={{ flex: 1, marginBottom: 32 }}>
+    <View style={styles.container}>
+      <View style={styles.content}>
         <View>
           <Text variant="titleLarge">Verify OTP</Text>
         </View>
-        <View style={{ marginTop: 12 }}>
+        <View style={styles.titleSection}>
           <FormControl label="Enter your otp sent to your mobile number">
-            <View style={{ alignItems: 'center' }}>
+            <View style={styles.inputWrapper}>
               <OTPInput
                 length={AuthOptions.OTPLength}
                 otp={formik.values.otp}
@@ -61,17 +95,9 @@ const OTPForm: React.FC<OTPFormProps> = ({
               />
             </View>
           </FormControl>
-          <Text style={{ fontSize: 12, lineHeight: 18, marginTop: 8 }}>
+          <Text style={styles.resendText}>
             Didn't receive the OTP?{' '}
-            <Text
-              style={{
-                fontSize: 12,
-                lineHeight: 16,
-                color: isResendEnabled ? primary : muted,
-                textDecorationLine: isResendEnabled ? 'underline' : 'none',
-              }}
-              onPress={handleResendOTP}
-            >
+            <Text style={styles.resendLink} onPress={handleResendOTP}>
               {isResendEnabled
                 ? 'Resend OTP'
                 : `Resend OTP in 00:${remainingSecondsStr}`}
@@ -87,7 +113,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
         loading={isVerifyOTPLoading}
         onPress={() => formik.handleSubmit()}
         disabled={!(formik.isValid && formik.dirty)}
-        style={{ borderRadius: radius }}
+        style={styles.button}
       >
         Verify OTP
       </PaperButton>

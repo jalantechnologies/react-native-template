@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, TextInput as RNTextInput } from 'react-native';
+import { StyleSheet, TextInput as RNTextInput, View } from 'react-native';
 import { TextInput as PaperTextInput, useTheme } from 'react-native-paper';
 
 import { KeyboardKeys } from '../../constants';
@@ -14,6 +14,7 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
   const theme = useTheme();
   const inputsRef = useRef<Array<RNTextInput | null>>([]);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const spacing = (theme as any).spacing || {};
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -32,15 +33,29 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
   };
 
   const outline = theme.colors.outline;
-  const activeOutline = theme.colors.primary;
+  const activeOutline = `${theme.colors.primary}99`;
   const bg = theme.colors.background;
 
+  const styles = StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      width: '100%',
+    },
+    inputWrapper: {
+      flex: 1,
+      marginHorizontal: spacing.xs || 4,
+    },
+    input: {
+      backgroundColor: bg,
+    },
+  });
+
   return (
-    <View style={{ flexDirection: 'row', width: '100%' }}>
+    <View style={styles.container}>
       {Array(length)
         .fill('')
         .map((_, index) => (
-          <View key={index} style={{ flex: 1, marginHorizontal: 4 }}>
+          <View key={index} style={styles.inputWrapper}>
             <PaperTextInput
               ref={(el: any) => (inputsRef.current[index] = el)}
               mode="outlined"
@@ -53,7 +68,7 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
               dense
               outlineColor={focusedIndex === index ? activeOutline : outline}
               activeOutlineColor={activeOutline}
-              style={{ backgroundColor: bg }}
+              style={styles.input}
               onFocus={() => setFocusedIndex(index)}
               onBlur={() => setFocusedIndex(null)}
             />

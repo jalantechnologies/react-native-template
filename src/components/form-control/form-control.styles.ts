@@ -1,31 +1,35 @@
-import { useTheme } from 'native-base';
 import { StyleSheet } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 export const useFormControlStyles = () => {
-  const theme = useTheme();
+  const theme = useTheme() as any;
+  const spacing = theme.spacing || {};
+  const colors = theme.colors;
+  const fontSizes = theme.fonts?.fontSize || {};
+  const roundness = theme.roundness;
 
   return StyleSheet.create({
     container: {
       flexDirection: 'column',
-      gap: theme.space['1'],
-      marginBottom: theme.space['1'],
-      padding: theme.space['1'],
+      gap: spacing.xs || 4,
+      marginBottom: spacing.sm || 8,
+      padding: spacing.sm || 8,
     },
     label: {
       minHeight: 24,
       fontWeight: '500',
-      color: theme.colors.primary['500'],
+      color: colors.primary,
     },
     inputContainer: {
       position: 'relative',
-      borderRadius: theme.radii.md,
+      borderRadius: roundness,
     },
     error: {
-      color: theme.colors.danger['500'],
-      fontSize: theme.fontSizes.xs,
+      color: colors.errorContainer || colors.error,
+      fontSize: fontSizes.xs || 12,
       fontWeight: '500',
       letterSpacing: 0.5,
-      marginTop: theme.space['0.5'],
+      marginTop: spacing.xs || 4,
     },
   });
 };

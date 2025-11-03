@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Config from 'react-native-config';
-import GearIcon from 'react-native-template/assets/icons/gear.svg';
 import { IconButton, useTheme } from 'react-native-paper';
+import GearIcon from 'react-native-template/assets/icons/gear.svg';
 
 import ChangeApiUrlModal from './change-api-url-modal';
 

@@ -56,4 +56,8 @@ const ChangeApiUrlModal: React.FC<ChangeApiUrlModalProps> = ({ isModalOpen, hand
   );
 };
 
+ChangeApiUrlModal.defaultProps = {
+  handleModalClose: undefined,
+};
+
 export default ChangeApiUrlModal;

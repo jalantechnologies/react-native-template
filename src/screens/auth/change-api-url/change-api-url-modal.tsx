@@ -1,22 +1,26 @@
-import { Toast } from 'native-base';
 import React, { useState } from 'react';
 import Config from 'react-native-config';
-import { FormControl, Input, Modal } from 'react-native-template/src/components';
-import { ModalProps } from 'react-native-template/src/components/modal/modal';
+import { Button, Dialog, Portal, Snackbar, TextInput } from 'react-native-paper';
 import { useLocalStorage } from 'react-native-template/src/utils';
 
-const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose }) => {
+interface ChangeApiUrlModalProps {
+  isModalOpen: boolean;
+  handleModalClose?: () => void;
+}
+
+const ChangeApiUrlModal: React.FC<ChangeApiUrlModalProps> = ({ isModalOpen, handleModalClose }) => {
   const localStorage = useLocalStorage();
 
   const [apiBaseUrl, setApiBaseUrl] = useState(
     localStorage.getFromStorage('apiBaseUrl') || (Config.API_BASE_URL as string),
   );
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
 
   const handleSaveChanges = () => {
     if (!apiBaseUrl) {
-      Toast.show({
-        title: 'API Base URL can not be empty',
-      });
+      setSnackbarMessage('API Base URL cannot be empty');
+      setSnackbarVisible(true);
       return;
     }
 
@@ -28,24 +32,27 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
   };
 
   return (
-    <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose}>
-      <Modal.Header title="Change Base API URL" onClose={handleModalClose} />
-      <Modal.Body>
-        <FormControl label="New Base API URL">
-          <Input
+    <Portal>
+      <Dialog visible={isModalOpen} onDismiss={handleModalClose}>
+        <Dialog.Title>Change Base API URL</Dialog.Title>
+        <Dialog.Content>
+          <TextInput
+            label="New Base API URL"
             value={apiBaseUrl}
-            onChangeText={e => {
-              setApiBaseUrl(e);
-            }}
+            onChangeText={setApiBaseUrl}
+            autoCapitalize="none"
+            autoCorrect={false}
           />
-        </FormControl>
-      </Modal.Body>
-      <Modal.Footer
-        onCancel={handleModalClose}
-        onConfirm={handleSaveChanges}
-        confirmText="Save Changes"
-      />
-    </Modal>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onPress={handleModalClose}>Cancel</Button>
+          <Button onPress={handleSaveChanges}>Save Changes</Button>
+        </Dialog.Actions>
+      </Dialog>
+      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000}>
+        {snackbarMessage}
+      </Snackbar>
+    </Portal>
   );
 };
 

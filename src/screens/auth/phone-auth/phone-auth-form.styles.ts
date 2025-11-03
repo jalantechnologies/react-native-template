@@ -1,18 +1,19 @@
-import { useTheme } from 'native-base';
+import { useTheme } from 'react-native-paper';
 
 export const usePhoneAuthFormStyles = () => {
-  const { colors, radii } = useTheme();
+  const theme = useTheme();
+  const radius = (theme as any).roundness;
 
   return {
     inputBox: {
-      borderRadius: radii.md,
+      borderRadius: radius,
     },
     errorStyle: {
-      borderColor: colors.danger[600],
+      borderColor: theme.colors.error,
       borderWidth: 1,
     },
     errorText: {
-      color: colors.danger[600],
+      color: theme.colors.error,
       fontSize: 14,
       marginTop: 4,
     },

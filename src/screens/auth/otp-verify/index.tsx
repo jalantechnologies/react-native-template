@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Alert, StyleSheet } from 'react-native';
 import { Portal, Snackbar, Text, useTheme } from 'react-native-paper';
 
@@ -34,22 +34,27 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   };
 
   const theme = useTheme();
-  const spacing = (theme as any).spacing;
-  const snackbarStyle = {
-    position: 'absolute',
-    backgroundColor: '#000',
-    borderRadius: (theme as any).roundness,
-    alignSelf: 'center',
-    bottom: spacing?.xl,
-    maxWidth: '80%',
-    paddingHorizontal: spacing?.md,
-  } as const;
+  const spacing = (theme as any).spacing || {};
+  const roundness = (theme as any).roundness || 6;
 
-  const styles = StyleSheet.create({
-    snackbarText: {
-      color: '#fff',
-    },
-  });
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        snackbar: {
+          backgroundColor: '#000',
+          borderRadius: roundness,
+          marginHorizontal: spacing?.md || 12,
+          maxWidth: '90%',
+          paddingHorizontal: spacing?.md || 12,
+          paddingVertical: spacing?.sm || 8,
+        },
+        snackbarText: {
+          color: '#fff',
+          textAlign: 'center',
+        },
+      }),
+    [spacing?.md, spacing?.sm, roundness],
+  );
 
   return (
     <AuthLayout primaryTitle="Better." secondaryTitle="">
@@ -67,7 +72,7 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
           visible={snackbarVisible}
           onDismiss={() => setSnackbarVisible(false)}
           duration={6000}
-          style={snackbarStyle}
+          style={styles.snackbar}
         >
           <Text style={styles.snackbarText}>{snackbarMessage}</Text>
         </Snackbar>

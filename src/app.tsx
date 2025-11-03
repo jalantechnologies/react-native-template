@@ -3,7 +3,6 @@ import { DatadogProvider } from '@datadog/mobile-react-native';
 import { NativeBaseProvider } from 'native-base';
 import React, { useCallback } from 'react';
 import ErrorBoundary from 'react-native-error-boundary';
-import { Provider as PaperProvider, MD3LightTheme as DefaultPaperTheme } from 'react-native-paper';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 
 import appTheme from './app-theme';
@@ -13,46 +12,6 @@ import Logger from './logger/logger';
 import ApplicationNavigator from './navigators/application';
 import './translations';
 import DatadogConfig, { onDataDogSDKInitialized } from './services/datadog';
-
-const paperTheme = {
-  ...DefaultPaperTheme,
-  roundness: 6,
-  colors: {
-    ...DefaultPaperTheme.colors,
-    primary: '#007AFF',
-    onPrimary: '#FFFFFF',
-    error: '#FF3B30',
-    outline: '#E5E5E5',
-    onSurfaceVariant: '#525252',
-    background: '#FFFFFF',
-    surface: '#FFFFFF',
-    errorContainer: '#E2332B',
-  },
-  spacing: {
-    xs: 4,
-    sm: 8,
-    md: 12,
-    lg: 16,
-    xl: 32,
-  },
-  fonts: {
-    ...DefaultPaperTheme.fonts,
-    fontSize: {
-      xs: 12,
-      sm: 14,
-      md: 16,
-      lg: 18,
-      xl: 20,
-    },
-    lineHeight: {
-      xs: 16,
-      sm: 18,
-      md: 20,
-      lg: 24,
-      xl: 28,
-    },
-  },
-} as const;
 
 const App = () => {
   Logger.initializeLoggers();
@@ -65,17 +24,15 @@ const App = () => {
         FallbackComponent={ErrorComponent}
       >
         <DatadogProvider configuration={DatadogConfig} onInitialization={onDataDogSDKInitialized}>
-          <PaperProvider theme={paperTheme}>
-            <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-              <AuthContextProvider>
-                <AccountContextProvider>
-                  <TaskContextProvider>
-                    <ApplicationNavigator />
-                  </TaskContextProvider>
-                </AccountContextProvider>
-              </AuthContextProvider>
-            </SafeAreaProvider>
-          </PaperProvider>
+          <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+            <AuthContextProvider>
+              <AccountContextProvider>
+                <TaskContextProvider>
+                  <ApplicationNavigator />
+                </TaskContextProvider>
+              </AccountContextProvider>
+            </AuthContextProvider>
+          </SafeAreaProvider>
         </DatadogProvider>
       </ErrorBoundary>
     </NativeBaseProvider>

@@ -35,16 +35,17 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
 
   const theme = useTheme();
   const spacing = (theme as any).spacing;
+  const snackbarStyle = {
+    position: 'absolute',
+    backgroundColor: '#000',
+    borderRadius: (theme as any).roundness,
+    alignSelf: 'center',
+    bottom: spacing?.xl,
+    maxWidth: '80%',
+    paddingHorizontal: spacing?.md,
+  } as const;
 
   const styles = StyleSheet.create({
-    snackbar: {
-      backgroundColor: '#000',
-      borderRadius: (theme as any).roundness,
-      marginHorizontal: spacing?.md,
-      maxWidth: '90%',
-      paddingHorizontal: spacing?.md,
-      paddingVertical: spacing?.sm,
-    },
     snackbarText: {
       color: '#fff',
     },
@@ -66,7 +67,7 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
           visible={snackbarVisible}
           onDismiss={() => setSnackbarVisible(false)}
           duration={6000}
-          style={styles.snackbar}
+          style={snackbarStyle}
         >
           <Text style={styles.snackbarText}>{snackbarMessage}</Text>
         </Snackbar>

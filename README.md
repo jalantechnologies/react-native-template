@@ -2,6 +2,7 @@
 
 This is a boilerplate repository for React Native projects.
 
+
 **NOTE:** If you're trying to set up this project on a Windows machine, please read the following:
 
 - This project has a history of not running smoothly on Windows machines.

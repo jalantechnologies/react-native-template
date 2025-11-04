@@ -29,7 +29,7 @@ const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
         <ScrollView bounces={false} contentContainerStyle={styles.contentContainer}>
-          <View style={[styles.header, { backgroundColor: theme.colors.primary }]}>
+          <View style={[styles.header, styles.headerBg]}>
             <View style={styles.titleWrapper}>
               <Text variant="displaySmall" style={styles.titleText}>
                 {primaryTitle}
@@ -53,6 +53,7 @@ const useStyles = (theme: any) => {
     flex: { flex: 1 },
     contentContainer: { flexGrow: 1 },
     header: { flex: 1 },
+    headerBg: { backgroundColor: theme.colors.primary },
     titleWrapper: {
       paddingTop: spacing?.xl,
       paddingHorizontal: spacing?.xl,

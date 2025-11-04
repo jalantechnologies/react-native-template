@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Portal, Snackbar } from 'react-native-paper';
+import { Portal, Snackbar, useTheme } from 'react-native-paper';
 
 import { MainScreenProps } from '../../../../@types/navigation';
 import { AsyncError } from '../../../types';
@@ -11,6 +11,9 @@ import OTPForm from './otp-form';
 const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;
   const sendOTPDelayInMilliseconds = 60_000;
+
+  const theme = useTheme();
+  const duration = (theme as any).duration;
 
   const { startTimer, remainingSecondsStr, isResendEnabled } = useTimer({
     delayInMilliseconds: sendOTPDelayInMilliseconds,
@@ -49,14 +52,14 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
         <Snackbar
           visible={snackbarVisible}
           onDismiss={() => setSnackbarVisible(false)}
-          duration={3000}
+          duration={duration.snackbar.success}
         >
           OTP verified successfully
         </Snackbar>
         <Snackbar
           visible={errorVisible}
           onDismiss={() => setErrorVisible(false)}
-          duration={4000}
+          duration={duration.snackbar.error}
         >
           {errorMessage}
         </Snackbar>

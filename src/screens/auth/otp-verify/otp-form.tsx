@@ -44,6 +44,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
   const onPrimary = theme.colors.onPrimary;
   const muted = theme.colors.onSurfaceVariant;
   const radius = (theme as any).roundness;
+  const textDecoration = (theme as any).textDecoration;
 
   const styles = StyleSheet.create({
     container: {
@@ -52,14 +53,12 @@ const OTPForm: React.FC<OTPFormProps> = ({
     content: {
       flex: 1,
     },
-    titleSection: {},
     inputWrapper: {
       alignItems: 'center',
     },
-    resendText: {},
     resendLink: {
       color: isResendEnabled ? primary : muted,
-      textDecorationLine: isResendEnabled ? 'underline' : 'none',
+      textDecorationLine: isResendEnabled ? textDecoration.underline : textDecoration.none,
     },
     button: {
       borderRadius: radius,
@@ -72,7 +71,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
         <View>
           <Text variant="titleLarge">Verify OTP</Text>
         </View>
-        <View style={styles.titleSection}>
+        <View>
           <Text variant="labelLarge">Enter your otp sent to your mobile number</Text>
           <View style={styles.inputWrapper}>
             <OTPInput
@@ -81,7 +80,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
               setOtp={handleSetOtp}
             />
           </View>
-          <Text style={styles.resendText}>
+          <Text>
             Didn't receive the OTP?{' '}
             <Text style={styles.resendLink} onPress={handleResendOTP}>
               {isResendEnabled ? 'Resend OTP' : `Resend OTP in 00:${remainingSecondsStr}`}

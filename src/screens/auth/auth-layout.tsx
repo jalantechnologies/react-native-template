@@ -31,10 +31,10 @@ const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
         <ScrollView bounces={false} contentContainerStyle={styles.contentContainer}>
           <View style={[styles.header, { backgroundColor: theme.colors.primary }]}>
             <View style={styles.titleWrapper}>
-              <Text variant="displaySmall" style={{ color: theme.colors.onPrimary }}>
+              <Text variant="displaySmall" style={styles.titleText}>
                 {primaryTitle}
               </Text>
-              <Text variant="displaySmall" style={{ color: theme.colors.onPrimary }}>
+              <Text variant="displaySmall" style={styles.titleText}>
                 {secondaryTitle}
               </Text>
             </View>
@@ -47,25 +47,28 @@ const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
   );
 };
 
-const useStyles = (theme: any) =>
-  StyleSheet.create({
+const useStyles = (theme: any) => {
+  const spacing = theme.spacing;
+  return StyleSheet.create({
     flex: { flex: 1 },
     contentContainer: { flexGrow: 1 },
     header: { flex: 1 },
     titleWrapper: {
-      paddingTop: '10%',
-      paddingHorizontal: '10%',
+      paddingTop: spacing?.xl,
+      paddingHorizontal: spacing?.xl,
       alignSelf: 'flex-start',
     },
+    titleText: { color: theme.colors.onPrimary },
     bodySurface: {
       flex: 1,
       width: '100%',
-      marginTop: 32,
-      paddingVertical: 32,
-      paddingHorizontal: '10%',
+      marginTop: spacing?.xl,
+      paddingVertical: spacing?.xl,
+      paddingHorizontal: spacing?.xl,
       borderTopLeftRadius: theme.roundness,
       borderTopRightRadius: theme.roundness,
     },
   });
+};
 
 export default AuthLayout;

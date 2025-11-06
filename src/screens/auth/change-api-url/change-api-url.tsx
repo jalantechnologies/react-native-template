@@ -10,9 +10,6 @@ const ChangeApiUrlButton = () => {
   const isNonProdEnv = Config.ENVIRONMENT !== 'production';
 
   const theme = useTheme();
-  const spacing = (theme as any).spacing;
-  const iconSize = (theme as any).iconSize;
-  const zIndex = (theme as any).zIndex;
 
   const [isChangeAPIUrlModalOpen, setIsChangeAPIUrlModalOpen] = useState(false);
 
@@ -22,10 +19,10 @@ const ChangeApiUrlButton = () => {
 
   const styles = StyleSheet.create({
     buttonContainer: {
-      top: spacing.buttonTop,
-      right: spacing.buttonRight,
       position: 'absolute',
-      zIndex: zIndex.modal,
+      top: 55,
+      right: 30,
+      zIndex: 1000,
     },
   });
 
@@ -34,9 +31,7 @@ const ChangeApiUrlButton = () => {
       <>
         <View style={styles.buttonContainer}>
           <IconButton
-            icon={() => (
-              <GearIcon width={iconSize.medium} height={iconSize.medium} fill={theme.colors.onPrimary} />
-            )}
+            icon={() => <GearIcon width={24} height={24} fill={theme.colors.onPrimary} />}
             onPress={() => setIsChangeAPIUrlModalOpen(true)}
           />
         </View>

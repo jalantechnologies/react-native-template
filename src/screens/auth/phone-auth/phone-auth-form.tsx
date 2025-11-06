@@ -80,9 +80,6 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
     phone_number: '9999999999',
   }).getFormattedWithoutCountryCode();
 
-  const spacing = (theme as any).spacing;
-  const maxMenuHeight = (spacing.lg as number) * 8;
-
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -100,7 +97,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
               () => setMenuVisible(false),
               handleSelectChange,
               styles.countryAnchorButton,
-              maxMenuHeight,
+              0,
               styles.menuScroll,
             )}
 
@@ -130,7 +127,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
             uncheckedColor={theme.colors.onSurfaceVariant}
           />
           <TouchableOpacity onPress={() => setIsChecked(prev => !prev)}>
-            <Text variant="bodySmall" style={styles.agreementText}>
+            <Text variant="bodySmall">
               By continuing, you agree to our
               <Text
                 variant="bodySmall"

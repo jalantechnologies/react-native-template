@@ -43,8 +43,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
   const primary = theme.colors.primary;
   const onPrimary = theme.colors.onPrimary;
   const muted = theme.colors.onSurfaceVariant;
-  const radius = (theme as any).roundness;
-  const textDecoration = (theme as any).textDecoration;
+  const radius = theme.roundness;
 
   const styles = StyleSheet.create({
     container: {
@@ -58,7 +57,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
     },
     resendLink: {
       color: isResendEnabled ? primary : muted,
-      textDecorationLine: isResendEnabled ? textDecoration.underline : textDecoration.none,
+      textDecorationLine: isResendEnabled ? 'underline' : 'none',
     },
     button: {
       borderRadius: radius,

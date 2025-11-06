@@ -14,47 +14,12 @@ import ApplicationNavigator from './navigators/application';
 import './translations';
 import DatadogConfig, { onDataDogSDKInitialized } from './services/datadog';
 
-const customPaperTheme = {
-  ...MD3LightTheme,
-  spacing: {
-    xs: 4,
-    sm: 8,
-    md: 16,
-    lg: 24,
-    xl: 32,
-    buttonTop: 55,
-    buttonRight: 30,
-  },
-  iconSize: {
-    small: 16,
-    medium: 24,
-    large: 32,
-  },
-  zIndex: {
-    base: 1,
-    dropdown: 100,
-    modal: 1000,
-    toast: 2000,
-  },
-  duration: {
-    snackbar: {
-      success: 3000,
-      error: 4000,
-      info: 3000,
-    },
-  },
-  textDecoration: {
-    none: 'none',
-    underline: 'underline',
-  },
-};
-
 const App = () => {
   Logger.initializeLoggers();
   const ErrorComponent = useCallback(() => <ErrorFallback />, []);
 
   return (
-    <PaperProvider theme={customPaperTheme}>
+    <PaperProvider theme={MD3LightTheme}>
       <NativeBaseProvider theme={appTheme}>
         <ErrorBoundary
           onError={(e, stack) => Logger.error(`App Error: ${e} ${stack}`)}

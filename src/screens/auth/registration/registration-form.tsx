@@ -13,17 +13,16 @@ interface RegistrationFormProps {
 
 const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError }) => {
   const theme = useTheme();
-  const spacing = (theme as any).spacing;
   const { formik, isUpdateAccountLoading } = useRegistrationForm({
     onRegistrationError: onError,
     onRegistrationSuccess: onSuccess,
   });
 
   const styles = StyleSheet.create({
-    container: { gap: spacing.md },
-    header: { marginBottom: spacing.sm },
-    inputContainer: { marginTop: spacing.sm },
-    button: { borderRadius: (theme as any).roundness },
+    container: { gap: 16 },
+    header: { marginBottom: 8 },
+    inputContainer: { marginTop: 8 },
+    button: { borderRadius: theme.roundness },
   });
 
   return (

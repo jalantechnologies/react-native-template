@@ -12,9 +12,6 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;
   const sendOTPDelayInMilliseconds = 60_000;
 
-  const theme = useTheme();
-  const duration = (theme as any).duration;
-
   const { startTimer, remainingSecondsStr, isResendEnabled } = useTimer({
     delayInMilliseconds: sendOTPDelayInMilliseconds,
   });
@@ -49,18 +46,10 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
         remainingSecondsStr={remainingSecondsStr}
       />
       <Portal>
-        <Snackbar
-          visible={snackbarVisible}
-          onDismiss={() => setSnackbarVisible(false)}
-          duration={duration.snackbar.success}
-        >
+        <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)}>
           OTP verified successfully
         </Snackbar>
-        <Snackbar
-          visible={errorVisible}
-          onDismiss={() => setErrorVisible(false)}
-          duration={duration.snackbar.error}
-        >
+        <Snackbar visible={errorVisible} onDismiss={() => setErrorVisible(false)}>
           {errorMessage}
         </Snackbar>
       </Portal>

@@ -23,6 +23,7 @@ export const usePhoneAuthFormStyles = () => {
     },
     countryAnchorButton: {
       borderColor: theme.colors.outline,
+      borderRadius: radius,
       flex: 1,
     },
     phoneInputWrapper: {

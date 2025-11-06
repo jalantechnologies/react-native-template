@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Config from 'react-native-config';
 import { IconButton, useTheme } from 'react-native-paper';
@@ -12,6 +12,11 @@ const ChangeApiUrlButton = () => {
   const theme = useTheme();
 
   const [isChangeAPIUrlModalOpen, setIsChangeAPIUrlModalOpen] = useState(false);
+
+  const gearIcon = useMemo(
+    () => <GearIcon width={24} height={24} fill={theme.colors.onPrimary} />,
+    [theme.colors.onPrimary],
+  );
 
   if (!isNonProdEnv) {
     return null;
@@ -27,20 +32,15 @@ const ChangeApiUrlButton = () => {
   });
 
   return (
-    isNonProdEnv && (
-      <>
-        <View style={styles.buttonContainer}>
-          <IconButton
-            icon={() => <GearIcon width={24} height={24} fill={theme.colors.onPrimary} />}
-            onPress={() => setIsChangeAPIUrlModalOpen(true)}
-          />
-        </View>
-        <ChangeApiUrlModal
-          handleModalClose={() => setIsChangeAPIUrlModalOpen(false)}
-          isModalOpen={isChangeAPIUrlModalOpen}
-        />
-      </>
-    )
+    <>
+      <View style={styles.buttonContainer}>
+        <IconButton icon={() => gearIcon} onPress={() => setIsChangeAPIUrlModalOpen(true)} />
+      </View>
+      <ChangeApiUrlModal
+        handleModalClose={() => setIsChangeAPIUrlModalOpen(false)}
+        isModalOpen={isChangeAPIUrlModalOpen}
+      />
+    </>
   );
 };
 

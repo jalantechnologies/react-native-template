@@ -40,5 +40,8 @@ export const usePhoneAuthFormStyles = () => {
     menuScroll: {
       maxHeight: 192,
     },
+    buttonContent: {
+      justifyContent: 'flex-start' as const,
+    },
   };
 };

@@ -22,6 +22,7 @@ const renderCountrySelectMenu = (
   anchorStyle: object,
   maxMenuHeight: number,
   menuScrollStyle: object,
+  buttonContentStyle: object,
 ) => (
   <Menu
     visible={visible}
@@ -31,7 +32,7 @@ const renderCountrySelectMenu = (
         mode="outlined"
         onPress={open}
         style={anchorStyle}
-        contentStyle={{ justifyContent: 'flex-start' }}
+        contentStyle={buttonContentStyle}
       >
         {`${formik.values.country} (${formik.values.countryCode})`}
       </Button>
@@ -99,6 +100,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
               styles.countryAnchorButton,
               0,
               styles.menuScroll,
+              styles.buttonContent,
             )}
 
             <View style={styles.phoneInputWrapper}>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Portal, Snackbar, useTheme } from 'react-native-paper';
+import { Portal, Snackbar } from 'react-native-paper';
 
 import { MainScreenProps } from '../../../../@types/navigation';
 import { AsyncError } from '../../../types';

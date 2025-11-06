@@ -49,7 +49,7 @@ const ChangeApiUrlModal: React.FC<ChangeApiUrlModalProps> = ({ isModalOpen, hand
           <Button onPress={handleSaveChanges}>Save Changes</Button>
         </Dialog.Actions>
       </Dialog>
-      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)} duration={3000}>
+      <Snackbar visible={snackbarVisible} onDismiss={() => setSnackbarVisible(false)}>
         {snackbarMessage}
       </Snackbar>
     </Portal>

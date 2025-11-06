@@ -40,10 +40,6 @@ const OTPForm: React.FC<OTPFormProps> = ({
   };
 
   const theme = useTheme();
-  const primary = theme.colors.primary;
-  const onPrimary = theme.colors.onPrimary;
-  const muted = theme.colors.onSurfaceVariant;
-  const radius = theme.roundness;
 
   const styles = StyleSheet.create({
     container: {
@@ -54,13 +50,6 @@ const OTPForm: React.FC<OTPFormProps> = ({
     },
     inputWrapper: {
       alignItems: 'center',
-    },
-    resendLink: {
-      color: isResendEnabled ? primary : muted,
-      textDecorationLine: isResendEnabled ? 'underline' : 'none',
-    },
-    button: {
-      borderRadius: radius,
     },
   });
 
@@ -81,7 +70,13 @@ const OTPForm: React.FC<OTPFormProps> = ({
           </View>
           <Text>
             Didn't receive the OTP?{' '}
-            <Text style={styles.resendLink} onPress={handleResendOTP}>
+            <Text
+              style={{
+                color: isResendEnabled ? theme.colors.primary : theme.colors.onSurfaceVariant,
+                textDecorationLine: isResendEnabled ? 'underline' : 'none',
+              }}
+              onPress={handleResendOTP}
+            >
               {isResendEnabled ? 'Resend OTP' : `Resend OTP in 00:${remainingSecondsStr}`}
             </Text>
           </Text>
@@ -90,12 +85,9 @@ const OTPForm: React.FC<OTPFormProps> = ({
 
       <PaperButton
         mode="contained"
-        buttonColor={primary}
-        textColor={onPrimary}
         loading={isVerifyOTPLoading}
         onPress={() => formik.handleSubmit()}
         disabled={!(formik.isValid && formik.dirty)}
-        style={styles.button}
       >
         Verify OTP
       </PaperButton>

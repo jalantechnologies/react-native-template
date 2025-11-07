@@ -15,26 +15,35 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
   const inputsRef = useRef<Array<React.ComponentRef<typeof PaperTextInput> | null>>([]);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
+  const focusNextInput = (index: number) => {
+    const nextInput = inputsRef.current[index + 1];
+    if (nextInput && typeof nextInput.focus === 'function') {
+      nextInput.focus();
+    }
+  };
+
+  const focusPreviousInput = (index: number) => {
+    const previousInput = inputsRef.current[index - 1];
+    if (previousInput && typeof previousInput.focus === 'function') {
+      previousInput.focus();
+    }
+  };
+
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
     newOtp[index] = text;
     setOtp(newOtp);
 
     if (text && index < length - 1) {
-      inputsRef.current[index + 1]?.focus?.();
+      focusNextInput(index);
     }
   };
 
   const handleKeyPress = (e: any, index: number) => {
     if (e.nativeEvent.key === KeyboardKeys.BACKSPACE && index > 0 && otp[index] === '') {
-      inputsRef.current[index - 1]?.focus?.();
+      focusPreviousInput(index);
     }
   };
-
-  const outline = theme.colors.outline;
-  const activeOutline = theme.colors.primary;
-  const bg = theme.colors.background;
-  const horizontalGap = 8;
 
   const styles = StyleSheet.create({
     container: {
@@ -43,10 +52,9 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
     },
     inputWrapper: {
       flex: 1,
-      marginHorizontal: horizontalGap,
+      marginHorizontal: 8,
     },
     input: {
-      backgroundColor: bg,
       textAlign: 'center',
     },
   });
@@ -66,8 +74,8 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
               keyboardType="numeric"
               maxLength={1}
               dense
-              outlineColor={focusedIndex === index ? activeOutline : outline}
-              activeOutlineColor={activeOutline}
+              outlineColor={focusedIndex === index ? theme.colors.primary : theme.colors.outline}
+              activeOutlineColor={theme.colors.primary}
               style={styles.input}
               onFocus={() => setFocusedIndex(index)}
               onBlur={() => setFocusedIndex(null)}

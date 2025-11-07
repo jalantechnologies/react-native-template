@@ -1,5 +1,6 @@
 {
   "oops": "Oops",
-  "somethingWrong": "Something Went Wrong.",
-  "phoneValidation": "Please enter a valid phone number"
+  "otpDeliveryFailure": "Our system is facing challenge to deliver OTP to you at the moment, and the team has been notified. We recommend you to come back and try again later",
+  "phoneValidation": "Please enter a valid phone number",
+  "somethingWrong": "Something Went Wrong."
 }

@@ -1,6 +1,7 @@
 import { Toast } from 'native-base';
 import React from 'react';
 import { Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { MainScreenProps } from '../../../../@types/navigation';
 import { AsyncError } from '../../../types';
@@ -11,14 +12,25 @@ import OTPForm from './otp-form';
 
 const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;
+  const { t } = useTranslation();
   const sendOTPDelayInMilliseconds = 60_000;
 
-  const { startTimer, remainingSecondsStr, isResendEnabled } = useTimer({
+  const { isResendEnabled, remainingSecondsStr, startTimer } = useTimer({
     delayInMilliseconds: sendOTPDelayInMilliseconds,
   });
 
   const onError = (error: AsyncError) => {
-    Alert.alert('Error', error.message);
+    const message = error.message?.toLowerCase() ?? '';
+    const isOTPDeliveryError =
+      message.includes('unable to create record') ||
+      message.includes('authenticate') ||
+      message.includes('twilio') ||
+      message.includes('sms');
+
+    const fallbackMessage = error.message ?? t('error:somethingWrong');
+    const errorMessage = isOTPDeliveryError ? t('error:otpDeliveryFailure') : fallbackMessage;
+
+    Alert.alert('Error', errorMessage);
   };
 
   const onResendOTPSuccess = () => {

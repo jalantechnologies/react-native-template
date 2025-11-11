@@ -46,8 +46,6 @@ const ChangeApiUrlModal: React.FC<ChangeApiUrlModalProps> = ({ handleModalClose,
               setHasValidationError(false);
               setApiBaseUrl(value);
             }}
-            multiline={false}
-            numberOfLines={1}
             value={apiBaseUrl}
           />
           <HelperText type="error" visible={hasValidationError}>

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Config from 'react-native-config';
-import { IconButton, useTheme } from 'react-native-paper';
+import { IconButton, MD3Theme, useTheme } from 'react-native-paper';
 import GearIcon from 'react-native-template/assets/icons/gear.svg';
 
 import ChangeApiUrlModal from './change-api-url-modal';
@@ -9,7 +9,8 @@ import ChangeApiUrlModal from './change-api-url-modal';
 const ChangeApiUrlButton = () => {
   const isNonProdEnv = Config.ENVIRONMENT !== 'production';
 
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = useStyles(theme);
 
   const [isChangeAPIUrlModalOpen, setIsChangeAPIUrlModalOpen] = useState(false);
 
@@ -23,8 +24,8 @@ const ChangeApiUrlButton = () => {
         <View style={styles.buttonContainer}>
           <IconButton
             accessibilityLabel="Change API URL"
-            icon={({ color, size }) => <GearIcon height={size} width={size} fill={color} />}
-            iconColor={colors.secondary}
+            icon={({ size }) => <GearIcon height={size} width={size} fill={theme.colors.onPrimary} />}
+            iconColor={theme.colors.onPrimary}
             onPress={() => setIsChangeAPIUrlModalOpen(true)}
             size={24}
           />
@@ -38,13 +39,14 @@ const ChangeApiUrlButton = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  buttonContainer: {
-    top: 55,
-    right: 30,
-    position: 'absolute',
-    zIndex: 1000,
-  },
-});
+const useStyles = (theme: MD3Theme) =>
+  StyleSheet.create({
+    buttonContainer: {
+      position: 'absolute',
+      top: 56,
+      right: 24,
+      zIndex: 1000,
+    },
+  });
 
 export default ChangeApiUrlButton;

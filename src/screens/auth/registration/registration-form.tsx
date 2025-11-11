@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { PropsWithChildren } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, HelperText, Text, TextInput, useTheme } from 'react-native-paper';
+import { MD3Theme, Button, HelperText, Text, TextInput, useTheme } from 'react-native-paper';
 
 import { AsyncError } from '../../../types';
 
@@ -18,22 +18,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
   });
 
   const theme = useTheme();
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        container: {
-          flex: 1,
-          justifyContent: 'space-between' as const,
-        },
-        content: {
-          gap: theme.roundness,
-        },
-        heading: {
-          gap: theme.roundness,
-        },
-      }),
-    [theme.roundness],
-  );
+  const styles = useStyles(theme);
 
   const renderHelperText = (field: 'firstName' | 'lastName') => {
     if (!formik.touched[field] || !formik.errors[field]) {
@@ -95,3 +80,17 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
 };
 
 export default RegistrationForm;
+
+const useStyles = (theme: MD3Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'space-between',
+    },
+    content: {
+      gap: theme.roundness,
+    },
+    heading: {
+      gap: theme.roundness,
+    },
+  });

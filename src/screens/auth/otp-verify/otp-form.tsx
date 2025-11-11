@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Text, useTheme } from 'react-native-paper';
+import { MD3Theme, Button, Text, useTheme } from 'react-native-paper';
 
 import { OTPInput } from '../../../components';
 import { AuthOptions } from '../../../constants';
@@ -40,32 +40,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
   };
 
   const theme = useTheme();
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        container: {
-          flex: 1,
-          justifyContent: 'space-between' as const,
-        },
-        header: {
-          flexGrow: 1,
-          rowGap: theme.roundness,
-        },
-        otpInputContainer: {
-          marginTop: theme.roundness,
-        },
-        resendLink: {
-          textDecorationLine: 'underline' as const,
-        },
-        resendActive: {
-          color: theme.colors.primary,
-        },
-        resendDisabled: {
-          color: theme.colors.onSurfaceDisabled,
-        },
-      }),
-    [theme.colors.onSurfaceDisabled, theme.colors.primary, theme.roundness],
-  );
+  const styles = useStyles(theme);
   const resendLabel = isResendEnabled ? 'Resend OTP' : `Resend OTP in 00:${remainingSecondsStr}`;
 
   return (
@@ -107,3 +82,27 @@ const OTPForm: React.FC<OTPFormProps> = ({
 };
 
 export default OTPForm;
+
+const useStyles = (theme: MD3Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'space-between',
+    },
+    header: {
+      flexGrow: 1,
+      rowGap: theme.roundness,
+    },
+    otpInputContainer: {
+      marginTop: theme.roundness,
+    },
+    resendLink: {
+      textDecorationLine: 'underline',
+    },
+    resendActive: {
+      color: theme.colors.primary,
+    },
+    resendDisabled: {
+      color: theme.colors.onSurfaceDisabled,
+    },
+  });

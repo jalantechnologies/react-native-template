@@ -25,7 +25,11 @@ const RegistrationScreen: React.FC = () => {
   return (
     <AuthLayout primaryTitle="Create" secondaryTitle="Account">
       <RegistrationForm onError={onError} onSuccess={onSuccess} />
-      <Snackbar duration={3000} onDismiss={() => setIsSnackbarVisible(false)} visible={isSnackbarVisible}>
+      <Snackbar
+        duration={3000}
+        onDismiss={() => setIsSnackbarVisible(false)}
+        visible={isSnackbarVisible}
+      >
         {snackbarMessage}
       </Snackbar>
     </AuthLayout>

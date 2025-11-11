@@ -1,4 +1,4 @@
-name: production_on_push
+name: cd_production
 
 on:
   push:
@@ -6,25 +6,6 @@ on:
       - main
 
 jobs:
-  sonarqube:
-    name: analyze
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          # Disabling shallow clone is recommended for improving relevancy of reporting
-          fetch-depth: 0
-      
-      - name: sonarqube-scan-branch
-        uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          args: >
-            -Dsonar.branch.name=${{ github.event.ref }}
-
-  
   build:
     runs-on: ubuntu-latest
     outputs:
@@ -64,7 +45,6 @@ jobs:
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
 
   deploy-android:
-    needs: build
     runs-on: ubuntu-latest
     if: false
     steps:
@@ -102,33 +82,3 @@ jobs:
           IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
           IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
           IOS_MATCH_DEPLOY_KEY: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
-
-  checks:
-    needs: build
-    runs-on: ubuntu-latest
-    strategy:
-      # turn off fail fast, let all the checks run irrespective of failures
-      fail-fast: false
-      matrix:
-        check: ['yarn:lint', 'compose:test']
-    steps:
-      - name: Checkout (app)
-        uses: actions/checkout@v3
-        with:
-          path: app
-
-      - name: Inject Doppler secrets
-        uses: ./app/.github/actions/inject_doppler_secrets
-        with:
-          doppler_token: ${{ secrets.DOPPLER_PRODUCTION_TOKEN }}
-          working_directory: app
-          
-      - name: Run check
-        uses: ./app/.github/actions/check
-        with:
-          check: ${{ matrix.check }}
-          image: ${{ needs.build.outputs.image_ref }}
-          tag: boilerplate-react-native
-          docker_registry: ${{ vars.DOCKER_REGISTRY }}
-          docker_username: ${{ vars.DOCKER_USERNAME }}
-          docker_password: ${{ secrets.DOCKER_PASSWORD }}

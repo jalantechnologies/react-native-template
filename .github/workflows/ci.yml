@@ -49,7 +49,6 @@ jobs:
         uses: ./app/.github/actions/check
         with:
           check: ${{ matrix.check }}
-          image: ${{ needs.build.outputs.image_ref }}
           tag: boilerplate-react-native
           docker_registry: ${{ vars.DOCKER_REGISTRY }}
           docker_username: ${{ vars.DOCKER_USERNAME }}

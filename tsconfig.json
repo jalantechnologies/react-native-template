@@ -4,8 +4,7 @@
     "types": ["react-native", "jest", "node"],
     "typeRoots": [
       "@types",
-      "./node_modules/@types",
-      "./src/types"
+      "./node_modules/@types"
     ],
     "baseUrl": "..",
     "paths": {

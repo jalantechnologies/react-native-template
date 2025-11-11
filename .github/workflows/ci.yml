@@ -32,16 +32,15 @@ jobs:
         run: yarn lint
 
   sonarqube:
+    name: analyze
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (app)
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
-          path: app
-
-      - name: SonarQube scan (PR)
+      - name: sonarqube-scan-pullrequest
         uses: sonarsource/sonarqube-scan-action@master
         if: ${{ github.base_ref == 'main' }}
         env:
@@ -55,46 +54,8 @@ jobs:
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=1000
 
-  build:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
-    outputs:
-      image_ref: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native@${{ steps.build.outputs.image_digest }}
-    steps:
-      - name: Checkout (app)
-        uses: actions/checkout@v3
-        with:
-          path: app
-
-      - name: Extract branch name
-        id: extract_branch
-        shell: bash
-        run: |
-          BRANCH_NAME=$(echo "${{ github.event.pull_request.head.ref }}" | sed -e 's/^refs\/heads\///g')
-          BRANCH_HASH=$(sha1sum < <(printf '%s' "$BRANCH_NAME") | cut -c -15)
-          echo "branch_hash=$BRANCH_HASH" >> $GITHUB_OUTPUT
-
-      - name: Inject Doppler secrets
-        uses: ./app/.github/actions/inject_doppler_secrets
-        with:
-          doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
-          working_directory: app
-
-      - name: Build application (Docker)
-        id: build
-        uses: ./app/.github/actions/build
-        with:
-          tags: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native:${{ steps.extract_branch.outputs.branch_hash }}
-          build_args: NODE_CONFIG_ENV=preview
-          build_secrets: ''
-          context: app/
-          docker_registry: ${{ vars.DOCKER_REGISTRY }}
-          docker_username: ${{ vars.DOCKER_USERNAME }}
-          docker_password: ${{ secrets.DOCKER_PASSWORD }}
-
   test:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (app)
@@ -102,11 +63,24 @@ jobs:
         with:
           path: app
 
-      - name: Run tests (React Native)
-        working-directory: app
-        run: yarn test --coverage --ci
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'app/.nvmrc'
+          cache: 'yarn'
 
-      - name: Generate Coverage Report
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        working-directory: app
+        run: yarn install --frozen-lockfile
+
+      - name: Run Jest tests
+        working-directory: app
+        run: yarn test --ci --coverage
+
+      - name: Generate coverage summary
         continue-on-error: true
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
@@ -133,5 +107,5 @@ jobs:
     steps:
       - name: Placeholder for code review
         run: |
-          echo "🧠 Code review placeholder"
-          echo "Future implementation: AI-powered review for mobile architecture, performance, and UX best practices"
+          echo "Code review placeholder"
+          echo "Future implementation: AI-powered review for React Native architecture, security, and UX best practices"

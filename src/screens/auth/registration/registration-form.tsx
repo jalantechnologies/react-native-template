@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { MD3Theme, Button, HelperText, Text, TextInput, useTheme } from 'react-native-paper';
 

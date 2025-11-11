@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { MD3Theme, Button, Text, useTheme } from 'react-native-paper';
 

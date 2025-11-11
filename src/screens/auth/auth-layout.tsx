@@ -28,10 +28,7 @@ const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.flex}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex} >
         <ScrollView bounces={false} contentContainerStyle={styles.contentContainer}>
           <View style={[styles.header, styles.headerBg]}>
             <View style={styles.titleWrapper}>

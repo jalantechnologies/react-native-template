@@ -5,7 +5,6 @@ import { IconButton, useTheme } from 'react-native-paper';
 import GearIcon from 'react-native-template/assets/icons/gear.svg';
 
 import type { AppTheme } from '../../../theme/app-theme';
-
 import ChangeApiUrlModal from './change-api-url-modal';
 
 const ChangeApiUrlButton = () => {
@@ -16,7 +15,7 @@ const ChangeApiUrlButton = () => {
 
   const [isChangeAPIUrlModalOpen, setIsChangeAPIUrlModalOpen] = useState(false);
 
-  const renderIcon = useCallback(
+  const gearIcon = useCallback(
     ({ size }: { size: number }) => (
       <GearIcon height={size} width={size} fill={theme.colors.onPrimary} />
     ),
@@ -32,7 +31,7 @@ const ChangeApiUrlButton = () => {
       <View style={styles.buttonContainer}>
         <IconButton
           accessibilityLabel="Change API URL"
-          icon={renderIcon}
+          icon={gearIcon}
           iconColor={theme.colors.onPrimary}
           onPress={() => setIsChangeAPIUrlModalOpen(true)}
           size={theme.iconSizes.medium}

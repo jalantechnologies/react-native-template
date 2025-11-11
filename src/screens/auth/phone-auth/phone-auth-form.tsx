@@ -136,7 +136,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
             status={isChecked ? 'checked' : 'unchecked'}
             onPress={() => setIsChecked(prev => !prev)}
             color={theme.colors.primary}
-            uncheckedColor={theme.colors.onSurfaceVariant}
+            uncheckedColor={theme.colors.outline}
           />
           <TouchableOpacity onPress={() => setIsChecked(prev => !prev)}>
             <Text variant="bodySmall">

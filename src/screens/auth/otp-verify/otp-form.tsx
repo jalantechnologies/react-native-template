@@ -1,7 +1,8 @@
-import { Box, Center, Container, Heading, Link, Text, VStack } from 'native-base';
-import React from 'react';
+import React, { useMemo } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Button, Text, useTheme } from 'react-native-paper';
 
-import { Button, FormControl, OTPInput } from '../../../components';
+import { OTPInput } from '../../../components';
 import { AuthOptions } from '../../../constants';
 import { AsyncError } from '../../../types';
 
@@ -38,48 +39,70 @@ const OTPForm: React.FC<OTPFormProps> = ({
     formik.setFieldValue('otp', otp);
   };
 
+  const theme = useTheme();
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          flex: 1,
+          justifyContent: 'space-between' as const,
+        },
+        header: {
+          flexGrow: 1,
+          rowGap: theme.roundness,
+        },
+        otpInputContainer: {
+          marginTop: theme.roundness,
+        },
+        resendLink: {
+          textDecorationLine: 'underline' as const,
+        },
+        resendActive: {
+          color: theme.colors.primary,
+        },
+        resendDisabled: {
+          color: theme.colors.onSurfaceDisabled,
+        },
+      }),
+    [theme.colors.onSurfaceDisabled, theme.colors.primary, theme.roundness],
+  );
+  const resendLabel = isResendEnabled ? 'Resend OTP' : `Resend OTP in 00:${remainingSecondsStr}`;
+
   return (
-    <Box flex={1} pb={4}>
-      <VStack space={6} flex={1} mb={8}>
-        <Container>
-          <Heading size="lg">Verify OTP</Heading>
-        </Container>
-        <Box mt={3}>
-          <FormControl label="Enter your otp sent to your mobile number">
-            <Center>
-              <OTPInput
-                length={AuthOptions.OTPLength}
-                otp={formik.values.otp}
-                setOtp={handleSetOtp}
-              />
-            </Center>
-          </FormControl>
-
-          <Text size="xs" lineHeight={18} mt={2}>
-            Didn’t receive the OTP?{' '}
-            <Link
-              onPress={handleResendOTP}
-              _text={{
-                fontSize: 12,
-                alignSelf: 'center',
-                lineHeight: 16,
-                color: isResendEnabled ? 'primary.500' : 'coolGray.600',
-              }}
-            >
-              {isResendEnabled ? 'Resend OTP' : `Resend OTP in 00:${remainingSecondsStr}`}
-            </Link>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text variant="headlineSmall">Verify OTP</Text>
+        <Text variant="bodyMedium">Enter the OTP sent to your mobile number</Text>
+        <View style={styles.otpInputContainer}>
+          <OTPInput
+            length={AuthOptions.OTPLength}
+            otp={formik.values.otp}
+            setOtp={handleSetOtp}
+          />
+        </View>
+        <Text variant="bodySmall">
+          Didn’t receive the OTP?{' '}
+          <Text
+            onPress={isResendEnabled ? handleResendOTP : undefined}
+            style={[
+              styles.resendLink,
+              isResendEnabled ? styles.resendActive : styles.resendDisabled,
+            ]}
+            variant="bodySmall"
+          >
+            {resendLabel}
           </Text>
-        </Box>
-      </VStack>
-
+        </Text>
+      </View>
       <Button
-        isLoading={isVerifyOTPLoading}
-        onClick={() => formik.handleSubmit()}
         disabled={!(formik.isValid && formik.dirty)}
+        loading={isVerifyOTPLoading}
+        mode="contained"
+        onPress={() => formik.handleSubmit()}
       >
         Verify OTP
       </Button>
-    </Box>
+    </View>
   );
 };
 

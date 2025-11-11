@@ -5,6 +5,7 @@ import { IconButton, useTheme } from 'react-native-paper';
 import GearIcon from 'react-native-template/assets/icons/gear.svg';
 
 import type { AppTheme } from '../../../theme/app-theme';
+
 import ChangeApiUrlModal from './change-api-url-modal';
 
 const ChangeApiUrlButton = () => {

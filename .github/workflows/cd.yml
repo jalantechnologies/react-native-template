@@ -4,15 +4,16 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
+concurrency:
+      group: cd-preview-${{ github.event.pull_request.head.ref }}
+      cancel-in-progress: true
+
 jobs:
   build:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     outputs:
       image_ref: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native@${{ steps.build.outputs.image_digest }}
-    concurrency:
-      group: cd-preview-build-${{ github.event.pull_request.head.ref }}
-      cancel-in-progress: true
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v3

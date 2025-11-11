@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
+concurrency:
+  group: ci-preview-${{ github.event.pull_request.head.ref }}
+  cancel-in-progress: true
+
 jobs:
   sonarqube:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
@@ -26,33 +30,15 @@ jobs:
             -Dsonar.pullrequest.base=${{ github.base_ref }}
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=1000
-  checks:
+  test:
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
-    strategy:
-      # turn off fail fast, let all the checks run irrespective of failures
-      fail-fast: false
-      matrix:
-        check: ['yarn:lint', 'compose:test']
     steps:
-      - name: Checkout (app)
-        uses: actions/checkout@v3
-        with:
-          path: app
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Inject Doppler secrets
-        uses: ./app/.github/actions/inject_doppler_secrets
-        with:
-          doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
-          working_directory: app
-          
-      - name: Run check
-        uses: ./app/.github/actions/check
-        with:
-          check: ${{ matrix.check }}
-          tag: boilerplate-react-native
-          docker_registry: ${{ vars.DOCKER_REGISTRY }}
-          docker_username: ${{ vars.DOCKER_USERNAME }}
-          docker_password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Run integration tests
+        run: docker compose -f docker-compose.test.yml up --exit-code-from app
 
   review:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false

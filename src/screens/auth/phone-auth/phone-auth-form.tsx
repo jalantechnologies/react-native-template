@@ -1,26 +1,17 @@
+import React, { useMemo, useState } from 'react';
+import { Linking, ScrollView as RNScrollView, TouchableOpacity, View } from 'react-native';
 import {
-  VStack,
-  Container,
-  Heading,
-  HStack,
-  useDisclose,
-  Text,
-  Pressable,
-  Menu,
-  ScrollView,
-  Link,
-  Box,
+  Button,
   Checkbox,
-} from 'native-base';
-import React, { useState } from 'react';
-import CheckIcon from 'react-native-template/assets/icons/check.svg';
-import { FormControl, Input, Button } from 'react-native-template/src/components';
-import { ButtonKind } from 'react-native-template/src/types/button';
-import { useThemeColor } from 'react-native-template/src/utils';
+  HelperText,
+  Menu,
+  Text,
+  TextInput,
+  useTheme,
+} from 'react-native-paper';
 
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError, PhoneNumber } from '../../../types';
-
 import usePhoneAuthForm from './phone-auth-form-hook';
 import { usePhoneAuthFormStyles } from './phone-auth-form.styles';
 
@@ -29,56 +20,55 @@ interface PhoneAuthFormProps {
   onError: (error: AsyncError) => void;
 }
 
+type Styles = ReturnType<typeof usePhoneAuthFormStyles>;
+
 const renderCountrySelectMenu = (
   formik: ReturnType<typeof usePhoneAuthForm>['formik'],
-  isOpen: boolean,
-  onOpen: () => void,
-  onClose: () => void,
+  visible: boolean,
+  open: () => void,
+  close: () => void,
   handleSelectChange: (value: string) => void,
+  styles: Styles,
 ) => (
   <Menu
-    isOpen={isOpen}
-    onOpen={onOpen}
-    onClose={onClose}
-    trigger={triggerProps => (
-      <Pressable
-        {...triggerProps}
-        borderWidth={1}
-        justifyContent="center"
-        borderColor={'warmGray.300'}
-        rounded="sm"
-        px={2}
+    visible={visible}
+    onDismiss={close}
+    anchor={
+      <Button
+        mode="outlined"
+        onPress={open}
+        style={styles.countryAnchorButton}
+        contentStyle={styles.buttonContent}
       >
-        <Text>{`${formik.values.country} (${formik.values.countryCode})`}</Text>
-      </Pressable>
-    )}
+        {`${formik.values.country} (${formik.values.countryCode})`}
+      </Button>
+    }
   >
-    <ScrollView maxH={'200px'}>
+    <RNScrollView style={styles.menuScroll}>
       {CountrySelectOptions.map(option => (
         <Menu.Item
           key={option.value}
           onPress={() => {
             handleSelectChange(option.value);
-            onClose();
+            close();
           }}
-        >
-          {option.label}
-        </Menu.Item>
+          title={option.label}
+        />
       ))}
-    </ScrollView>
+    </RNScrollView>
   </Menu>
 );
 
 const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => {
-  const themeColor = useThemeColor('primary.500');
-
+  const theme = useTheme();
   const styles = usePhoneAuthFormStyles();
+
   const { formik, isSendOTPLoading } = usePhoneAuthForm({
     onSendOTPSuccess: onSuccess,
-    onError: onError,
+    onError,
   });
 
-  const { isOpen, onOpen, onClose } = useDisclose();
+  const [menuVisible, setMenuVisible] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
   const handleSelectChange = (value: string) => {
@@ -87,77 +77,92 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
     formik.setFieldValue('country', country);
   };
 
-  const phoneNumber = new PhoneNumber({
-    country_code: formik.values.countryCode.replace('+', ''),
-    phone_number: formik.values.phoneNumber,
-  });
+  const phoneNumber = useMemo(
+    () =>
+      new PhoneNumber({
+        country_code: formik.values.countryCode,
+        phone_number: formik.values.phoneNumber,
+      }),
+    [formik.values.countryCode, formik.values.phoneNumber],
+  );
 
-  const phoneNumberPlaceholder = new PhoneNumber({
-    country_code: formik.values.countryCode.replace('+', ''),
-    phone_number: '9999999999',
-  }).getFormattedWithoutCountryCode();
+  const phoneNumberPlaceholder = useMemo(
+    () =>
+      new PhoneNumber({
+        country_code: formik.values.countryCode,
+        phone_number: '9999999999',
+      }).getFormattedWithoutCountryCode(),
+    [formik.values.countryCode],
+  );
+
+  const phoneErrorVisible = Boolean(formik.touched.phoneNumber && formik.errors.phoneNumber);
 
   return (
-    <Box flex={1} pb={4}>
-      <VStack space={6} flex={1} mb={8}>
-        <Container>
-          <Heading size="lg">Login</Heading>
-        </Container>
-        <FormControl label={'Mobile Number'}>
-          <HStack space={2} width="100%">
-            {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange)}
-            <Box
-              flex={3}
-              justifyContent="center"
-              style={[
-                styles.inputBox,
-                formik.touched.phoneNumber && formik.errors.phoneNumber ? styles.errorStyle : {},
-              ]}
-            >
-              <Input
+    <View style={styles.container}>
+      <View style={styles.content}>
+        <Text variant="headlineLarge">Login</Text>
+
+        <View>
+          <Text variant="labelLarge">Mobile Number</Text>
+          <View style={styles.row}>
+            {renderCountrySelectMenu(
+              formik,
+              menuVisible,
+              () => setMenuVisible(true),
+              () => setMenuVisible(false),
+              handleSelectChange,
+              styles,
+            )}
+
+            <View style={styles.phoneInputWrapper}>
+              <TextInput
+                mode="outlined"
                 value={phoneNumber.getFormattedWithoutCountryCode()}
                 onChangeText={formik.handleChange('phoneNumber')}
                 keyboardType="numeric"
                 placeholder={phoneNumberPlaceholder}
+                error={phoneErrorVisible}
               />
-            </Box>
-          </HStack>
-          {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
-            <Text style={styles.errorText}>{formik.errors.phoneNumber}</Text>
-          ) : null}
-        </FormControl>
+            </View>
+          </View>
+          <HelperText type="error" visible={phoneErrorVisible}>
+            {formik.errors.phoneNumber ?? ''}
+          </HelperText>
+        </View>
 
-        <HStack alignItems="center" space={2} mt={2}>
+        <View style={styles.agreementRow} accessibilityLabel="Agree to privacy policy">
           <Checkbox
-            isChecked={isChecked}
-            onChange={setIsChecked}
-            accessibilityLabel="Agree to privacy policy"
-            value="agreePrivacyPolicy"
-            icon={<CheckIcon width={12} height={12} color={themeColor} />}
-            aria-label="Privacy Policy Checkbox"
+            status={isChecked ? 'checked' : 'unchecked'}
+            onPress={() => setIsChecked(prev => !prev)}
+            color={theme.colors.primary}
+            uncheckedColor={theme.colors.onSurfaceVariant}
           />
-          <Text fontSize="sm" alignSelf={'center'} lineHeight={16}>
-            By continuing, you agree to our
-            <Link
-              _text={{ color: 'primary.500', underline: true, marginLeft: 1 }}
-              href="https://jalantechnologies.github.io/react-native-template/"
-              isExternal
-            >
-              Privacy Policy
-            </Link>
-          </Text>
-        </HStack>
-      </VStack>
+          <TouchableOpacity onPress={() => setIsChecked(prev => !prev)}>
+            <Text variant="bodySmall">
+              By continuing, you agree to our
+              <Text
+                variant="bodySmall"
+                style={styles.privacyLink}
+                onPress={() =>
+                  Linking.openURL('https://jalantechnologies.github.io/react-native-template/')
+                }
+              >
+                {' '}Privacy Policy
+              </Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
       <Button
         disabled={!isChecked}
-        isLoading={isSendOTPLoading}
-        onClick={() => formik.handleSubmit()}
-        kind={ButtonKind.CONTAINED}
+        loading={isSendOTPLoading}
+        mode="contained"
+        onPress={() => formik.handleSubmit()}
       >
         Send OTP
       </Button>
-    </Box>
+    </View>
   );
 };
 

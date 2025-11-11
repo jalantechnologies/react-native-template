@@ -62,7 +62,6 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
   deploy-ios:
-    needs: build
     runs-on: macos-14
     steps:
       - name: Checkout (app)

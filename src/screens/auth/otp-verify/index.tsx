@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, useTheme } from 'react-native-paper';
 
 import { MainScreenProps } from '../../../../@types/navigation';
+import type { AppTheme } from '../../../theme/app-theme';
 import { AsyncError } from '../../../types';
 import useTimer from '../../../utils/use-timer.hook';
 import AuthLayout from '../auth-layout';
@@ -12,6 +13,7 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   const { countryCode, phoneNumber } = route.params;
   const sendOTPDelayInMilliseconds = 60_000;
 
+  const theme = useTheme<AppTheme>();
   const { startTimer, remainingSecondsStr, isResendEnabled } = useTimer({
     delayInMilliseconds: sendOTPDelayInMilliseconds,
   });
@@ -48,7 +50,7 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
         remainingSecondsStr={remainingSecondsStr}
       />
       <Snackbar
-        duration={3000}
+        duration={theme.overlay.snackbarDuration}
         onDismiss={() => setSnackbarVisible(false)}
         visible={snackbarVisible}
       >

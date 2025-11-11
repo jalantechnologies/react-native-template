@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, useTheme } from 'react-native-paper';
 
+import type { AppTheme } from '../../../theme/app-theme';
 import { AsyncError } from '../../../types';
 import AuthLayout from '../auth-layout';
 
 import RegistrationForm from './registration-form';
 
 const RegistrationScreen: React.FC = () => {
+  const theme = useTheme<AppTheme>();
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
 
@@ -26,7 +28,7 @@ const RegistrationScreen: React.FC = () => {
     <AuthLayout primaryTitle="Create" secondaryTitle="Account">
       <RegistrationForm onError={onError} onSuccess={onSuccess} />
       <Snackbar
-        duration={3000}
+        duration={theme.overlay.snackbarDuration}
         onDismiss={() => setIsSnackbarVisible(false)}
         visible={isSnackbarVisible}
       >

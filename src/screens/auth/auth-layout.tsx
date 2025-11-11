@@ -8,7 +8,9 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { MD3Theme, Surface, Text, useTheme } from 'react-native-paper';
+import { Surface, Text, useTheme } from 'react-native-paper';
+
+import type { AppTheme } from '../../theme/app-theme';
 
 import ChangeApiUrlButton from './change-api-url/change-api-url';
 interface AuthLayoutProps {
@@ -21,7 +23,7 @@ const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
   secondaryTitle,
   children,
 }) => {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const styles = useStyles(theme);
 
   return (
@@ -49,31 +51,28 @@ const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
   );
 };
 
-const useStyles = (theme: MD3Theme) => {
-  const largeSpacing = theme.roundness * 8;
-
-  return StyleSheet.create({
+const useStyles = (theme: AppTheme) =>
+  StyleSheet.create({
     flex: { flex: 1 },
     contentContainer: { flexGrow: 1 },
     header: { flex: 1 },
     headerBg: { backgroundColor: theme.colors.primary },
     titleWrapper: {
-      paddingTop: largeSpacing,
-      paddingHorizontal: largeSpacing,
       alignSelf: 'flex-start',
+      paddingHorizontal: theme.spacing.xl,
+      paddingTop: theme.spacing.xl,
     },
     titleText: { color: theme.colors.onPrimary },
     bodySurface: {
-      flex: 1,
-      width: '100%',
-      marginTop: largeSpacing,
-      paddingVertical: largeSpacing,
-      paddingHorizontal: largeSpacing,
+      backgroundColor: theme.colors.background,
       borderTopLeftRadius: theme.roundness,
       borderTopRightRadius: theme.roundness,
-      backgroundColor: theme.colors.background,
+      flex: 1,
+      marginTop: theme.spacing.xl,
+      paddingHorizontal: theme.spacing.xl,
+      paddingVertical: theme.spacing.xl,
+      width: '100%',
     },
   });
-};
 
 export default AuthLayout;

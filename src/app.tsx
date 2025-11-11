@@ -3,7 +3,7 @@ import { DatadogProvider } from '@datadog/mobile-react-native';
 import { NativeBaseProvider } from 'native-base';
 import React, { useCallback } from 'react';
 import ErrorBoundary from 'react-native-error-boundary';
-import { MD3LightTheme, Provider as PaperProvider } from 'react-native-paper';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import type { IconProps } from 'react-native-vector-icons/Icon';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,6 +15,7 @@ import Logger from './logger/logger';
 import ApplicationNavigator from './navigators/application';
 import DatadogConfig, { onDataDogSDKInitialized } from './services/datadog';
 import './translations';
+import { appPaperTheme } from './theme/app-theme';
 
 const MaterialCommunityIconsComponent =
   MaterialCommunityIcons as unknown as React.ComponentType<IconProps>;
@@ -32,7 +33,7 @@ const App = () => {
       settings={{
         icon: PaperIcon,
       }}
-      theme={MD3LightTheme}
+      theme={appPaperTheme}
     >
       <NativeBaseProvider theme={appTheme}>
         <ErrorBoundary

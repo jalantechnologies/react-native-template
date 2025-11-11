@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, useTheme } from 'react-native-paper';
 
+import type { AppTheme } from '../../../theme/app-theme';
 import { AsyncError } from '../../../types';
 import AuthLayout from '../auth-layout';
 
 import PhoneAuthForm from './phone-auth-form';
 
 const PhoneAuth: React.FC = () => {
+  const theme = useTheme<AppTheme>();
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -32,7 +34,11 @@ const PhoneAuth: React.FC = () => {
       <AuthLayout primaryTitle="Better." secondaryTitle="">
         <PhoneAuthForm onError={onError} onSuccess={onSuccess} />
       </AuthLayout>
-      <Snackbar duration={3000} onDismiss={handleDismissSnackbar} visible={isSnackbarVisible}>
+      <Snackbar
+        duration={theme.overlay.snackbarDuration}
+        onDismiss={handleDismissSnackbar}
+        visible={isSnackbarVisible}
+      >
         {snackbarMessage}
       </Snackbar>
     </>

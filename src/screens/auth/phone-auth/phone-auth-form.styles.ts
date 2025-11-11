@@ -1,12 +1,14 @@
 import { StyleSheet } from 'react-native';
-import { MD3Theme, useTheme } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
+
+import type { AppTheme } from '../../../theme/app-theme';
 
 export const usePhoneAuthFormStyles = () => {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   return createStyles(theme);
 };
 
-const createStyles = (theme: MD3Theme) =>
+const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
     agreementRow: {
       alignItems: 'center',
@@ -27,7 +29,7 @@ const createStyles = (theme: MD3Theme) =>
       borderRadius: theme.roundness,
       flex: 1,
       justifyContent: 'center',
-      minHeight: theme.roundness * 12,
+      minHeight: theme.layout.buttonMinHeight,
     },
     errorText: {
       color: theme.colors.error,
@@ -36,10 +38,11 @@ const createStyles = (theme: MD3Theme) =>
       borderRadius: theme.roundness,
     },
     menuScroll: {
-      maxHeight: theme.roundness * 48,
+      maxHeight: theme.layout.listMaxHeight,
     },
     phoneInputWrapper: {
       flex: 3,
+      marginLeft: theme.spacing.xs,
     },
     privacyLink: {
       color: theme.colors.primary,

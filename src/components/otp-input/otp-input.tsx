@@ -1,6 +1,6 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { TextInput as PaperTextInput, useTheme } from 'react-native-paper';
+import { MD3Theme, TextInput as PaperTextInput, useTheme } from 'react-native-paper';
 
 import { KeyboardKeys } from '../../constants';
 
@@ -12,24 +12,8 @@ interface OTPInputProps {
 
 const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
   const inputsRef = useRef<Array<React.ComponentRef<typeof PaperTextInput> | null>>([]);
-  const { roundness } = useTheme();
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        container: {
-          flexDirection: 'row' as const,
-          width: '100%',
-        },
-        input: {
-          flex: 1,
-          marginHorizontal: roundness,
-        },
-        inputContent: {
-          textAlign: 'center' as const,
-        },
-      }),
-    [roundness],
-  );
+  const theme = useTheme();
+  const styles = useStyles(theme);
 
   const handleChange = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -77,3 +61,18 @@ const OTPInput: React.FC<OTPInputProps> = ({ length, otp, setOtp }) => {
 };
 
 export default OTPInput;
+
+const useStyles = (theme: MD3Theme) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row' as const,
+      width: '100%',
+    },
+    input: {
+      flex: 1,
+      marginHorizontal: theme.roundness,
+    },
+    inputContent: {
+      textAlign: 'center' as const,
+    },
+  });

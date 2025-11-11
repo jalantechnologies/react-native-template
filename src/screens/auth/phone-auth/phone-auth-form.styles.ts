@@ -1,47 +1,52 @@
-import { useTheme } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { MD3Theme, useTheme } from 'react-native-paper';
 
 export const usePhoneAuthFormStyles = () => {
   const theme = useTheme();
-  const radius = theme.roundness;
+  return createStyles(theme);
+};
 
-  return {
+const createStyles = (theme: MD3Theme) =>
+  StyleSheet.create({
+    agreementRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    buttonContent: {
+      justifyContent: 'flex-start',
+    },
     container: {
       flex: 1,
     },
     content: {
       flex: 1,
     },
-    row: {
-      alignItems: 'center' as const,
-      flexDirection: 'row' as const,
-    },
     countryAnchorButton: {
+      alignItems: 'center',
       borderColor: theme.colors.outline,
-      borderRadius: radius,
+      borderRadius: theme.roundness,
       flex: 1,
-    },
-    phoneInputWrapper: {
-      flex: 3,
-    },
-    inputBox: {
-      borderRadius: radius,
+      justifyContent: 'center',
+      minHeight: theme.roundness * 12,
     },
     errorText: {
       color: theme.colors.error,
     },
-    agreementRow: {
-      alignItems: 'center' as const,
-      flexDirection: 'row' as const,
+    inputBox: {
+      borderRadius: theme.roundness,
+    },
+    menuScroll: {
+      maxHeight: theme.roundness * 48,
+    },
+    phoneInputWrapper: {
+      flex: 3,
     },
     privacyLink: {
       color: theme.colors.primary,
-      textDecorationLine: 'underline' as const,
+      textDecorationLine: 'underline',
     },
-    menuScroll: {
-      maxHeight: 192,
+    row: {
+      alignItems: 'center',
+      flexDirection: 'row',
     },
-    buttonContent: {
-      justifyContent: 'flex-start' as const,
-    },
-  };
-};
+  });

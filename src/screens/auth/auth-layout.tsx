@@ -49,28 +49,31 @@ const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
   );
 };
 
-const useStyles = (theme: MD3Theme) =>
-  StyleSheet.create({
+const useStyles = (theme: MD3Theme) => {
+  const largeSpacing = theme.roundness * 8;
+
+  return StyleSheet.create({
     flex: { flex: 1 },
     contentContainer: { flexGrow: 1 },
     header: { flex: 1 },
     headerBg: { backgroundColor: theme.colors.primary },
     titleWrapper: {
-      paddingTop: 32,
-      paddingHorizontal: 32,
+      paddingTop: largeSpacing,
+      paddingHorizontal: largeSpacing,
       alignSelf: 'flex-start',
     },
     titleText: { color: theme.colors.onPrimary },
     bodySurface: {
       flex: 1,
       width: '100%',
-      marginTop: 32,
-      paddingVertical: 32,
-      paddingHorizontal: 32,
+      marginTop: largeSpacing,
+      paddingVertical: largeSpacing,
+      paddingHorizontal: largeSpacing,
       borderTopLeftRadius: theme.roundness,
       borderTopRightRadius: theme.roundness,
       backgroundColor: theme.colors.background,
     },
   });
+};
 
 export default AuthLayout;

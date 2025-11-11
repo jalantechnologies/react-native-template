@@ -34,7 +34,7 @@ const ChangeApiUrlButton = () => {
             icon={renderIcon}
             iconColor={theme.colors.onPrimary}
             onPress={() => setIsChangeAPIUrlModalOpen(true)}
-            size={24}
+            size={theme.roundness * 6}
           />
         </View>
         <ChangeApiUrlModal
@@ -47,15 +47,16 @@ const ChangeApiUrlButton = () => {
 };
 
 const useStyles = (theme: MD3Theme) => {
-  const topSpacing = theme.roundness * 4;
+  const overlayZIndex = theme.roundness * 250;
   const rightSpacing = theme.roundness * 2;
+  const topSpacing = theme.roundness * 4;
 
   return StyleSheet.create({
     buttonContainer: {
       position: 'absolute',
       top: topSpacing,
       right: rightSpacing,
-      zIndex: 1000,
+      zIndex: overlayZIndex,
     },
   });
 };

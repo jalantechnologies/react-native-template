@@ -32,7 +32,6 @@ jobs:
         run: yarn lint
 
   sonarqube:
-    name: analyze
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:

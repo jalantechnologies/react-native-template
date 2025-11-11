@@ -1,0 +1,46 @@
+name: cd
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  deploy_android_preview:
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    concurrency:
+      group: cd-preview-android-${{ github.event.pull_request.head.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout (app)
+        uses: actions/checkout@v3
+        with:
+          path: app
+
+      - name: Extract branch name
+        id: extract_branch
+        shell: bash
+        run: |
+          BRANCH_NAME=$(echo "${{ github.event.pull_request.head.ref }}" | sed -e 's/^refs\/heads\///g')
+          BRANCH_HASH=$(sha1sum < <(printf '%s' "$BRANCH_NAME") | cut -c -15)
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "branch_hash=$BRANCH_HASH" >> $GITHUB_OUTPUT
+
+      - name: Inject Doppler secrets
+        uses: ./app/.github/actions/inject_doppler_secrets
+        with:
+          doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
+          working_directory: app
+
+      - name: Deploy Android Preview to Firebase
+        uses: ./app/.github/actions/deploy_android_preview
+        with:
+          ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER_PREVIEW }}
+          ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID_PREVIEW }}
+          ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID_PREVIEW }}
+          ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE_PREVIEW }}
+          ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY_PREVIEW }}
+          ANDROID_GCP_JSON_BASE64: ${{ secrets.ANDROID_GCP_JSON_BASE64_PREVIEW }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}

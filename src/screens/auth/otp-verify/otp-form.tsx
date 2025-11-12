@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { MD3Theme, Button, Text, useTheme } from 'react-native-paper';
+import { Button, Text, useTheme } from 'react-native-paper';
 
 import { OTPInput } from '../../../components';
 import { AuthOptions } from '../../../constants';
 import { AsyncError } from '../../../types';
 
+import type { AppTheme } from '../../../theme/app-theme';
 import useOTPForm from './otp-form-hook';
 
 interface OTPFormProps {
@@ -39,7 +40,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
     formik.setFieldValue('otp', otp);
   };
 
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const styles = useStyles(theme);
   const resendLabel = isResendEnabled ? 'Resend OTP' : `Resend OTP in 00:${remainingSecondsStr}`;
 
@@ -47,7 +48,9 @@ const OTPForm: React.FC<OTPFormProps> = ({
     <View style={styles.container}>
       <View style={styles.header}>
         <Text variant="headlineSmall">Verify OTP</Text>
-        <Text variant="bodyMedium">Enter the OTP sent to your mobile number</Text>
+        <Text style={styles.headingSubtitle} variant="bodyMedium">
+          Enter the OTP sent to your mobile number
+        </Text>
         <View style={styles.otpInputContainer}>
           <OTPInput
             length={AuthOptions.OTPLength}
@@ -83,7 +86,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
 
 export default OTPForm;
 
-const useStyles = (theme: MD3Theme) =>
+const useStyles = (theme: AppTheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -91,10 +94,13 @@ const useStyles = (theme: MD3Theme) =>
     },
     header: {
       flexGrow: 1,
-      rowGap: theme.roundness,
+      rowGap: theme.spacing.md,
+    },
+    headingSubtitle: {
+      color: theme.colors.primary,
     },
     otpInputContainer: {
-      marginTop: theme.roundness,
+      marginTop: 0,
     },
     resendLink: {
       textDecorationLine: 'underline',

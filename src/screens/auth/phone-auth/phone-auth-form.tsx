@@ -110,8 +110,10 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
         <Text variant="headlineLarge">Login</Text>
 
         <View>
-          <Text variant="labelLarge">Mobile Number</Text>
-          <View style={styles.row}>
+          <Text style={styles.inputLabel} variant="labelLarge">
+            Mobile Number
+          </Text>
+          <View style={styles.phoneFieldsRow}>
             {renderCountrySelectMenu(
               formik,
               menuVisible,
@@ -129,6 +131,8 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
                 keyboardType="numeric"
                 placeholder={phoneNumberPlaceholder}
                 error={phoneErrorVisible}
+                dense
+                contentStyle={styles.inputContent}
               />
             </View>
           </View>

@@ -10,6 +10,13 @@ export const usePhoneAuthFormStyles = () => {
 
 const createStyles = (theme: AppTheme) =>
   StyleSheet.create({
+    inputLabel: {
+      color: theme.colors.primary,
+      marginBottom: theme.spacing.xs,
+    },
+    inputContent: {
+      paddingVertical: theme.spacing.xs,
+    },
     agreementRow: {
       alignItems: 'center',
       flexDirection: 'row',
@@ -22,6 +29,7 @@ const createStyles = (theme: AppTheme) =>
     },
     content: {
       flex: 1,
+      gap: theme.spacing.lg,
     },
     countryAnchorButton: {
       alignItems: 'center',
@@ -29,7 +37,7 @@ const createStyles = (theme: AppTheme) =>
       borderRadius: theme.roundness,
       flex: 1,
       justifyContent: 'center',
-      minHeight: theme.layout.buttonMinHeight,
+      minHeight: theme.spacing.xl,
     },
     errorText: {
       color: theme.colors.error,
@@ -43,6 +51,11 @@ const createStyles = (theme: AppTheme) =>
     phoneInputWrapper: {
       flex: 3,
       marginLeft: theme.spacing.xs,
+    },
+    phoneFieldsRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: theme.spacing.xs,
     },
     privacyLink: {
       color: theme.colors.primary,

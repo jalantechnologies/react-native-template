@@ -59,7 +59,10 @@ const useStyles = (theme: AppTheme) =>
       paddingHorizontal: theme.spacing.xl,
       paddingTop: theme.spacing.xl,
     },
-    titleText: { color: theme.colors.onPrimary },
+    titleText: {
+      color: theme.colors.onPrimary,
+      fontWeight: '700',
+    },
     bodySurface: {
       backgroundColor: theme.colors.background,
       borderTopLeftRadius: theme.roundness,

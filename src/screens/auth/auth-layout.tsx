@@ -2,6 +2,7 @@
 import React, { PropsWithChildren } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { IconButton, Text, useTheme } from 'react-native-paper';
+
 import LeadingIcon from '../../../assets/img/leading-icon.svg';
 
 interface AuthLayoutProps {

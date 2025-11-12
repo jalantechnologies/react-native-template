@@ -78,6 +78,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
       </Text>
 
       <Button
+        buttonColor={colors.primary}
         contentStyle={styles.submitButtonContent}
         disabled={!(formik.isValid && formik.dirty)}
         loading={isVerifyOTPLoading}

@@ -33,6 +33,7 @@ const AccountVerified: React.FC<AuthenticatedStackScreenProps<'AccountVerified'>
 
         <View style={styles.buttonWrapper}>
           <Button
+            buttonColor={colors.primary}
             mode="contained"
             onPress={handleDone}
             style={styles.submitButton}

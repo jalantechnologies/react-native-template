@@ -48,17 +48,18 @@ const usePhoneAuthForm = ({ onSendOTPSuccess, onError }: PhoneAuthFormProps) => 
       }
 
       const formattedPhoneNumber = parsedPhoneNumber.getNationalNumber()!.toString();
+      const sanitizedCountryCode = values.countryCode.replace('+', '');
 
       sendOTP(
         new PhoneNumber({
-          country_code: values.countryCode,
+          country_code: sanitizedCountryCode,
           phone_number: formattedPhoneNumber,
         }),
       )
         .then(() => {
           onSendOTPSuccess();
           navigation.navigate('OTPVerify', {
-            countryCode: formik.values.countryCode,
+            countryCode: sanitizedCountryCode,
             phoneNumber: formik.values.phoneNumber,
           });
         })

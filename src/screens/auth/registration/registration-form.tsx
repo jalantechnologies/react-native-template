@@ -72,12 +72,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
       </View>
 
       <Button
-        contentStyle={styles.submitButtonContent}
-        disabled={!formik.isValid || !formik.dirty}
-        loading={isUpdateAccountLoading}
+        buttonColor={colors.primary}
         mode="contained"
         onPress={() => formik.handleSubmit()}
+        loading={isUpdateAccountLoading}
+        disabled={!formik.isValid}
         style={styles.submitButton}
+        contentStyle={styles.submitButtonContent}
         uppercase={false}
       >
         Next

@@ -69,6 +69,7 @@ const AuthLanding: React.FC<MainScreenProps<'AuthLanding'>> = ({ navigation }) =
         </View>
 
         <Button
+          buttonColor={colors.primary}
           mode="contained"
           onPress={handleGetStarted}
           style={styles.ctaButton}

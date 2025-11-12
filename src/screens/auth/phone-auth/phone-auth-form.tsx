@@ -60,12 +60,13 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onError, onSuccess }) => 
       </View>
 
       <Button
+        buttonColor={colors.primary}
         mode="contained"
-        contentStyle={styles.submitButtonContent}
-        disabled={!formik.isValid || !formik.dirty}
-        loading={isSendOTPLoading}
         onPress={() => formik.handleSubmit()}
+        loading={isSendOTPLoading}
+        disabled={!formik.isValid}
         style={styles.submitButton}
+        contentStyle={styles.submitButtonContent}
         uppercase={false}
       >
         Get OTP

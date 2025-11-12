@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { Linking, ScrollView as RNScrollView, TouchableOpacity, View } from 'react-native';
+import type { GestureResponderEvent } from 'react-native';
+import { Linking, Pressable, ScrollView as RNScrollView, View } from 'react-native';
 import {
   Button,
   Checkbox,
@@ -98,6 +99,11 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
 
   const phoneErrorVisible = Boolean(formik.touched.phoneNumber && formik.errors.phoneNumber);
 
+  const handlePrivacyPolicyPress = (event: GestureResponderEvent) => {
+    event.stopPropagation();
+    Linking.openURL('https://jalantechnologies.github.io/react-native-template/');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -138,20 +144,18 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
             color={theme.colors.primary}
             uncheckedColor={theme.colors.outline}
           />
-          <TouchableOpacity onPress={() => setIsChecked(prev => !prev)}>
+          <Pressable onPress={() => setIsChecked(prev => !prev)}>
             <Text variant="bodySmall">
               By continuing, you agree to our
               <Text
                 variant="bodySmall"
                 style={styles.privacyLink}
-                onPress={() =>
-                  Linking.openURL('https://jalantechnologies.github.io/react-native-template/')
-                }
+                onPress={handlePrivacyPolicyPress}
               >
                 {' '}Privacy Policy
               </Text>
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
 

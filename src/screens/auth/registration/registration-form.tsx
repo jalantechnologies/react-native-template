@@ -20,18 +20,6 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
   const theme = useTheme();
   const styles = useStyles(theme);
 
-  const renderHelperText = (field: 'firstName' | 'lastName') => {
-    if (!formik.touched[field] || !formik.errors[field]) {
-      return <HelperText type="error" visible={false}>&nbsp;</HelperText>;
-    }
-
-    return (
-      <HelperText type="error" visible>
-        {formik.errors[field]}
-      </HelperText>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -50,7 +38,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
             placeholder="First Name"
             value={formik.values.firstName}
           />
-          {renderHelperText('firstName')}
+          <HelperText type="error" visible={Boolean(formik.touched.firstName && formik.errors.firstName)}>
+            {formik.errors.firstName}
+          </HelperText>
         </View>
 
         <View>
@@ -63,7 +53,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
             placeholder="Last Name"
             value={formik.values.lastName}
           />
-          {renderHelperText('lastName')}
+          <HelperText type="error" visible={Boolean(formik.touched.lastName && formik.errors.lastName)}>
+            {formik.errors.lastName}
+          </HelperText>
         </View>
       </View>
 

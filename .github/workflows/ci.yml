@@ -30,6 +30,7 @@ jobs:
             -Dsonar.pullrequest.base=${{ github.base_ref }}
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=1000
+
   lint:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest

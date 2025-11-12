@@ -13,7 +13,8 @@ jobs:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     outputs:
-      image_ref: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native@${{ steps.build.outputs.image_digest }}
+      image_ref: ${{ steps.build.outputs.image_ref }}
+
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v3
@@ -24,8 +25,8 @@ jobs:
         id: extract_branch
         shell: bash
         run: |
-          BRANCH_NAME=$(echo "${{ github.event.pull_request.head.ref }}" | sed -e 's/^refs\/heads\///g')
-          BRANCH_HASH=$(sha1sum < <(printf '%s' "$BRANCH_NAME") | cut -c -15)
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          BRANCH_HASH=$(sha1sum < <(printf '%s' "$BRANCH") | cut -c -15)
           echo "branch_hash=$BRANCH_HASH" >> $GITHUB_OUTPUT
 
       - name: Inject Doppler secrets
@@ -38,13 +39,13 @@ jobs:
         id: build
         uses: ./app/.github/actions/build
         with:
+          docker_registry: ${{ vars.DOCKER_REGISTRY }}
+          docker_username: ${{ vars.DOCKER_USERNAME }}
+          docker_password: ${{ secrets.DOCKER_PASSWORD }}
           tags: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native:${{ steps.extract_branch.outputs.branch_hash }}
           build_args: NODE_CONFIG_ENV=preview
           build_secrets: ''
           context: app/
-          docker_registry: ${{ vars.DOCKER_REGISTRY }}
-          docker_username: ${{ vars.DOCKER_USERNAME }}
-          docker_password: ${{ secrets.DOCKER_PASSWORD }}
 
   deploy_android_preview:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false

@@ -64,6 +64,8 @@ runs:
       id: meta
       shell: bash
       run: |
-        IMAGE_REF="${{ inputs.tags%%:* }}@${{ steps.build.outputs.digest }}"
-        echo "image_ref=$IMAGE_REF" >> $GITHUB_OUTPUT
+        TAG="${{ inputs.tags }}"
+        DIGEST="${{ steps.build.outputs.digest }}"
+        IMAGE_REPO="${TAG%%:*}"
+        echo "image_ref=${IMAGE_REPO}@${DIGEST}" >> $GITHUB_OUTPUT
 

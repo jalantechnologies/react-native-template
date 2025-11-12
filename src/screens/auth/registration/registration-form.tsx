@@ -10,6 +10,7 @@ import {
 } from 'react-native-paper';
 
 import { AsyncError } from '../../../types';
+
 import useRegistrationForm from './registration-form-hook';
 
 interface RegistrationFormProps {
@@ -115,12 +116,12 @@ const useStyles = (theme: MD3Theme) =>
       gap: theme.roundness,
     },
     fieldContainer: {
-      marginBottom: 20, 
+      marginBottom: 20,
     },
     label: {
-      marginBottom: 6, 
+      marginBottom: 6,
       textAlignVertical: 'bottom',
-      ...(Platform.OS === 'android' && { lineHeight: 18 }), 
+      ...(Platform.OS === 'android' && { lineHeight: 18 }),
       color: theme.colors.primary,
     },
     input: {

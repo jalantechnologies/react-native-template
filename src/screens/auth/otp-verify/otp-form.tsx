@@ -4,9 +4,9 @@ import { Button, Text, useTheme } from 'react-native-paper';
 
 import { OTPInput } from '../../../components';
 import { AuthOptions } from '../../../constants';
+import type { AppTheme } from '../../../theme/app-theme';
 import { AsyncError } from '../../../types';
 
-import type { AppTheme } from '../../../theme/app-theme';
 import useOTPForm from './otp-form-hook';
 
 interface OTPFormProps {

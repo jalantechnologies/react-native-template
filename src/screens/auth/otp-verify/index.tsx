@@ -33,7 +33,7 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ navigation, route }
   };
 
   return (
-    <AuthLayout primaryTitle="" secondaryTitle="" onBackPress={navigation.goBack}>
+    <AuthLayout onBackPress={navigation.goBack} primaryTitle="" secondaryTitle="">
       <OTPForm
         countryCode={countryCode}
         isResendEnabled={isResendEnabled}

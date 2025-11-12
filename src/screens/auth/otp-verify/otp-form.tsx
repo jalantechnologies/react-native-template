@@ -32,10 +32,10 @@ const OTPForm: React.FC<OTPFormProps> = ({
   remainingSecondsStr,
 }) => {
   const { formik, handleResendOTP, isVerifyOTPLoading } = useOTPForm({
+    countryCode,
     onError,
     onResendOTPSuccess,
     onVerifyOTPSuccess,
-    countryCode,
     phoneNumber,
   });
   const { colors } = useTheme();
@@ -78,12 +78,12 @@ const OTPForm: React.FC<OTPFormProps> = ({
       </Text>
 
       <Button
+        contentStyle={styles.submitButtonContent}
+        disabled={!(formik.isValid && formik.dirty)}
+        loading={isVerifyOTPLoading}
         mode="contained"
         onPress={() => formik.handleSubmit()}
-        loading={isVerifyOTPLoading}
-        disabled={!(formik.isValid && formik.dirty)}
         style={styles.submitButton}
-        contentStyle={styles.submitButtonContent}
         uppercase={false}
       >
         Verify OTP

@@ -7,15 +7,15 @@ import { AsyncError } from '../../../types';
 import usePhoneAuthForm from './phone-auth-form-hook';
 
 interface PhoneAuthFormProps {
-  onSuccess: () => void;
   onError: (error: AsyncError) => void;
+  onSuccess: () => void;
 }
 
-const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => {
+const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onError, onSuccess }) => {
   const { colors } = useTheme();
   const { formik, isSendOTPLoading } = usePhoneAuthForm({
+    onError,
     onSendOTPSuccess: onSuccess,
-    onError: onError,
   });
 
   const handlePhoneNumberChange = (value: string) => {
@@ -61,11 +61,11 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
 
       <Button
         mode="contained"
-        onPress={() => formik.handleSubmit()}
-        loading={isSendOTPLoading}
-        disabled={!formik.isValid}
-        style={styles.submitButton}
         contentStyle={styles.submitButtonContent}
+        disabled={!formik.isValid || !formik.dirty}
+        loading={isSendOTPLoading}
+        onPress={() => formik.handleSubmit()}
+        style={styles.submitButton}
         uppercase={false}
       >
         Get OTP
@@ -76,8 +76,8 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: 'center',
+    flex: 1,
     paddingBottom: 24,
   },
   copyWrapper: {
@@ -89,10 +89,6 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     width: '100%',
   },
-  subtitle: {
-    lineHeight: 20,
-    marginBottom: 8,
-  },
   submitButton: {
     borderRadius: 24,
     marginTop: 'auto',
@@ -101,9 +97,9 @@ const styles = StyleSheet.create({
   submitButtonContent: {
     height: 56,
   },
-  title: {
+  subtitle: {
+    lineHeight: 20,
     marginBottom: 8,
-    fontWeight: '700',
   },
   textInput: {
     backgroundColor: 'transparent',
@@ -116,6 +112,10 @@ const styles = StyleSheet.create({
   textInputOutline: {
     borderRadius: 12,
     borderWidth: 1,
+  },
+  title: {
+    fontWeight: '700',
+    marginBottom: 8,
   },
 });
 

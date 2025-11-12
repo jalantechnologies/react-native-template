@@ -2,22 +2,20 @@
 import React, { PropsWithChildren } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { IconButton, Text, useTheme } from 'react-native-paper';
-
 import LeadingIcon from '../../../assets/img/leading-icon.svg';
-
 import ChangeApiUrlButton from './change-api-url/change-api-url';
 
 interface AuthLayoutProps {
+  onBackPress?: () => void;
   primaryTitle: string;
   secondaryTitle: string;
-  onBackPress?: () => void;
 }
 
 const AuthLayoutContent: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
+  children,
+  onBackPress,
   primaryTitle,
   secondaryTitle,
-  onBackPress,
-  children,
 }) => {
   const { colors } = useTheme();
 
@@ -36,7 +34,7 @@ const AuthLayoutContent: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
           <View style={[styles.wrapper, { backgroundColor: colors.background }]}>
             <View style={styles.header}>
               {onBackPress ? (
-                <IconButton icon={LeadingIcon} size={24} onPress={onBackPress} style={styles.backButton} />
+                <IconButton icon={LeadingIcon} onPress={onBackPress} size={24} style={styles.backButton} />
               ) : null}
               {hasTitle ? (
                 <View style={styles.headerTitles}>
@@ -74,6 +72,9 @@ AuthLayout.defaultProps = {
 };
 
 const styles = StyleSheet.create({
+  backButton: {
+    marginRight: 12,
+  },
   content: {
     flex: 1,
     paddingBottom: 32,
@@ -82,9 +83,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-  },
-  backButton: {
-    marginRight: 12,
   },
   flex: {
     flex: 1,

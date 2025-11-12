@@ -37,13 +37,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
 
       <View style={styles.inputGroup}>
         <TextInput
-          mode="outlined"
           label="First Name"
+          mode="outlined"
+          error={Boolean(formik.touched.firstName && formik.errors.firstName)}
+          onBlur={formik.handleBlur('firstName')}
+          onChangeText={formik.handleChange('firstName')}
           placeholder="Enter your first name"
           value={formik.values.firstName}
-          onChangeText={formik.handleChange('firstName')}
-          onBlur={formik.handleBlur('firstName')}
-          error={Boolean(formik.touched.firstName && formik.errors.firstName)}
         />
         <HelperText
           type="error"
@@ -55,13 +55,13 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
 
       <View style={styles.inputGroup}>
         <TextInput
-          mode="outlined"
           label="Last Name"
+          mode="outlined"
+          error={Boolean(formik.touched.lastName && formik.errors.lastName)}
+          onBlur={formik.handleBlur('lastName')}
+          onChangeText={formik.handleChange('lastName')}
           placeholder="Enter your last name"
           value={formik.values.lastName}
-          onChangeText={formik.handleChange('lastName')}
-          onBlur={formik.handleBlur('lastName')}
-          error={Boolean(formik.touched.lastName && formik.errors.lastName)}
         />
         <HelperText
           type="error"
@@ -72,12 +72,12 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
       </View>
 
       <Button
+        contentStyle={styles.submitButtonContent}
+        disabled={!formik.isValid || !formik.dirty}
+        loading={isUpdateAccountLoading}
         mode="contained"
         onPress={() => formik.handleSubmit()}
-        loading={isUpdateAccountLoading}
-        disabled={!formik.isValid || !formik.dirty}
         style={styles.submitButton}
-        contentStyle={styles.submitButtonContent}
         uppercase={false}
       >
         Next
@@ -100,15 +100,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     width: '100%',
   },
-  subtitle: {
-    lineHeight: 20,
-  },
   submitButton: {
     borderRadius: 24,
     marginTop: 'auto',
   },
   submitButtonContent: {
     height: 52,
+  },
+  subtitle: {
+    lineHeight: 20,
   },
   title: {
     marginBottom: 8,

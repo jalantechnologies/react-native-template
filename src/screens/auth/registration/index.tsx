@@ -22,7 +22,7 @@ const RegistrationScreen: React.FC<AuthenticatedStackScreenProps<'Registration'>
     });
   };
   return (
-    <AuthLayout primaryTitle="" secondaryTitle="" onBackPress={navigation.goBack}>
+    <AuthLayout onBackPress={navigation.goBack} primaryTitle="" secondaryTitle="">
       <RegistrationForm onError={onError} onSuccess={onSuccess} />
     </AuthLayout>
   );

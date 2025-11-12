@@ -21,8 +21,8 @@ const PhoneAuth: React.FC<MainScreenProps<'PhoneAuth'>> = ({ navigation }) => {
   };
 
   return (
-    <AuthLayout primaryTitle="" secondaryTitle="" onBackPress={navigation.goBack}>
-      <PhoneAuthForm onSuccess={onSuccess} onError={onError} />
+    <AuthLayout onBackPress={navigation.goBack} primaryTitle="" secondaryTitle="">
+      <PhoneAuthForm onError={onError} onSuccess={onSuccess} />
     </AuthLayout>
   );
 };

@@ -21,13 +21,16 @@ const usePhoneAuthForm = ({ onSendOTPSuccess, onError }: PhoneAuthFormProps) => 
 
   const formik = useFormik({
     initialValues: {
-      countryCode: '+1',
-      country: 'US',
+      countryCode: '+91',
+      country: 'IN',
       phoneNumber: '',
     },
 
     validationSchema: Yup.object({
-      phoneNumber: Yup.string().required(t('auth:phoneNumberRequired')),
+      phoneNumber: Yup.string()
+        .trim()
+        .required(t('auth:phoneNumberRequired'))
+        .matches(/^\d{10}$/, t('error:phoneValidation')),
     }),
 
     onSubmit: values => {

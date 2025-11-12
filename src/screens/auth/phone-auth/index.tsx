@@ -1,47 +1,29 @@
-import React, { useState } from 'react';
-import { Snackbar, useTheme } from 'react-native-paper';
+import { Toast } from 'native-base';
+import React from 'react';
 
-import type { AppTheme } from '../../../theme/app-theme';
+import { MainScreenProps } from '../../../../@types/navigation';
 import { AsyncError } from '../../../types';
 import AuthLayout from '../auth-layout';
 
 import PhoneAuthForm from './phone-auth-form';
 
-const PhoneAuth: React.FC = () => {
-  const theme = useTheme<AppTheme>();
-  const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-
-  const handleDismissSnackbar = () => {
-    setIsSnackbarVisible(false);
-  };
-
-  const showSnackbar = (message: string) => {
-    setSnackbarMessage(message);
-    setIsSnackbarVisible(true);
-  };
-
+const PhoneAuth: React.FC<MainScreenProps<'PhoneAuth'>> = ({ navigation }) => {
   const onSuccess = () => {
-    showSnackbar('OTP sent successfully');
+    Toast.show({
+      title: 'OTP sent successfully',
+    });
   };
 
-  const onError = (error: AsyncError) => {
-    showSnackbar(error.message);
+  const onError = (err: AsyncError) => {
+    Toast.show({
+      title: err.message,
+    });
   };
 
   return (
-    <>
-      <AuthLayout primaryTitle="Better." secondaryTitle="">
-        <PhoneAuthForm onError={onError} onSuccess={onSuccess} />
-      </AuthLayout>
-      <Snackbar
-        duration={theme.overlay.snackbarDuration}
-        onDismiss={handleDismissSnackbar}
-        visible={isSnackbarVisible}
-      >
-        {snackbarMessage}
-      </Snackbar>
-    </>
+    <AuthLayout primaryTitle="" secondaryTitle="" onBackPress={navigation.goBack}>
+      <PhoneAuthForm onSuccess={onSuccess} onError={onError} />
+    </AuthLayout>
   );
 };
 

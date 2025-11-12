@@ -1,46 +1,62 @@
+/* eslint-disable react/require-default-props */
 import React, { PropsWithChildren } from 'react';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
-import { Surface, Text, useTheme } from 'react-native-paper';
+import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { IconButton, Text, useTheme } from 'react-native-paper';
 
-import type { AppTheme } from '../../theme/app-theme';
+import LeadingIcon from '../../../assets/img/leading-icon.svg';
 
 import ChangeApiUrlButton from './change-api-url/change-api-url';
+
 interface AuthLayoutProps {
   primaryTitle: string;
   secondaryTitle: string;
+  onBackPress?: () => void;
 }
 
-const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
+const AuthLayoutContent: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
   primaryTitle,
   secondaryTitle,
+  onBackPress,
   children,
 }) => {
-  const theme = useTheme<AppTheme>();
-  const styles = useStyles(theme);
+  const { colors } = useTheme();
+
+  const hasTitle = Boolean(primaryTitle || secondaryTitle);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex} >
-        <ScrollView bounces={false} contentContainerStyle={styles.contentContainer}>
-          <View style={[styles.header, styles.headerBg]}>
-            <View style={styles.titleWrapper}>
-              <Text style={styles.titleText} variant="displaySmall">
-                {primaryTitle}
-              </Text>
-              <Text style={styles.titleText} variant="displaySmall">
-                {secondaryTitle}
-              </Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.flex}
+      >
+        <ScrollView
+          bounces={false}
+          contentContainerStyle={[styles.contentContainer, { backgroundColor: colors.background }]}
+        >
+          <View style={[styles.wrapper, { backgroundColor: colors.background }]}>
+            <View style={styles.header}>
+              {onBackPress ? (
+                <IconButton icon={LeadingIcon} size={24} onPress={onBackPress} style={styles.backButton} />
+              ) : null}
+              {hasTitle ? (
+                <View style={styles.headerTitles}>
+                  {primaryTitle ? (
+                    <Text style={[styles.heading, { color: colors.onSurface }]} variant="headlineLarge">
+                      {primaryTitle}
+                    </Text>
+                  ) : null}
+                  {secondaryTitle ? (
+                    <Text style={[styles.heading, { color: colors.onSurface }]} variant="headlineLarge">
+                      {secondaryTitle}
+                    </Text>
+                  ) : null}
+                </View>
+              ) : null}
             </View>
             <ChangeApiUrlButton />
-            <Surface style={styles.bodySurface}>{children}</Surface>
+            <View style={[styles.content, { backgroundColor: colors.background }]}>
+              {children}
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -48,31 +64,49 @@ const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
   );
 };
 
-const useStyles = (theme: AppTheme) =>
-  StyleSheet.create({
-    flex: { flex: 1 },
-    contentContainer: { flexGrow: 1 },
-    header: { flex: 1 },
-    headerBg: { backgroundColor: theme.colors.primary },
-    titleWrapper: {
-      alignSelf: 'flex-start',
-      paddingHorizontal: theme.spacing.xl,
-      paddingTop: theme.spacing.xl,
-    },
-    titleText: {
-      color: theme.colors.onPrimary,
-      fontWeight: '700',
-    },
-    bodySurface: {
-      backgroundColor: theme.colors.background,
-      borderTopLeftRadius: theme.roundness,
-      borderTopRightRadius: theme.roundness,
-      flex: 1,
-      marginTop: theme.spacing.xl,
-      paddingHorizontal: theme.spacing.xl,
-      paddingVertical: theme.spacing.xl,
-      width: '100%',
-    },
-  });
+const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
+  onBackPress = undefined,
+  ...rest
+}) => <AuthLayoutContent onBackPress={onBackPress} {...rest} />;
+
+AuthLayout.defaultProps = {
+  onBackPress: undefined,
+};
+
+const styles = StyleSheet.create({
+  content: {
+    flex: 1,
+    paddingBottom: 32,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+  },
+  contentContainer: {
+    flexGrow: 1,
+  },
+  backButton: {
+    marginRight: 12,
+  },
+  flex: {
+    flex: 1,
+  },
+  header: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 24,
+    paddingTop: 48,
+  },
+  headerTitles: {
+    flexShrink: 1,
+  },
+  heading: {
+    fontWeight: '700',
+    textAlign: 'left',
+  },
+  wrapper: {
+    flex: 1,
+    minHeight: '100%',
+    position: 'relative',
+  },
+});
 
 export default AuthLayout;

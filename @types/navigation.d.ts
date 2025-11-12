@@ -10,6 +10,7 @@ export type ApplicationStackParamList = {
 
 // Main stack parameter list
 export type MainParamsList = {
+  AuthLanding: undefined;
   Authenticated: NavigatorScreenParams<AuthenticatedStackParamsList | AuthenticatedTabParamsList>;
   OTPVerify: { countryCode: string; phoneNumber: string };
   PhoneAuth: undefined;
@@ -29,6 +30,7 @@ export type ProfileStackParamsList = {
 
 // Authenticated stack parameter list
 export type AuthenticatedStackParamsList = {
+  AccountVerified: undefined;
   Registration: undefined;
 };
 

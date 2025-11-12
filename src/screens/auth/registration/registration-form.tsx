@@ -1,7 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Platform } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {
-  MD3Theme,
   Button,
   HelperText,
   Text,
@@ -18,116 +17,104 @@ interface RegistrationFormProps {
   onSuccess: () => void;
 }
 
-const RegistrationForm: React.FC<RegistrationFormProps> = ({
-  onSuccess,
-  onError,
-}) => {
+const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError }) => {
+  const { colors } = useTheme();
   const { formik, isUpdateAccountLoading } = useRegistrationForm({
     onRegistrationError: onError,
     onRegistrationSuccess: onSuccess,
   });
 
-  const theme = useTheme();
-  const styles = useStyles(theme);
-
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.heading}>
-          <Text variant="headlineSmall">New User Registration</Text>
-          <Text variant="bodyMedium">
-            Please fill the form to create an account
-          </Text>
-        </View>
+      <View style={styles.copyWrapper}>
+        <Text style={[styles.title, { color: colors.onSurface }]} variant="titleLarge">
+          Personal Details
+        </Text>
+        <Text style={[styles.subtitle, { color: colors.onSurfaceVariant }]} variant="bodyMedium">
+          Complete your profile by providing your personal details.
+        </Text>
+      </View>
 
-        {/* First Name Field */}
-        <View style={styles.fieldContainer}>
-          <Text variant="labelLarge" style={styles.label}>
-            First Name
-          </Text>
-          <TextInput
-            autoCapitalize="words"
-            mode="outlined"
-            dense
-            contentStyle={styles.inputContent}
-            style={styles.input}
-            onBlur={formik.handleBlur('firstName')}
-            onChangeText={formik.handleChange('firstName')}
-            placeholder="First Name"
-            value={formik.values.firstName}
-          />
-          <HelperText
-            type="error"
-            visible={Boolean(formik.touched.firstName && formik.errors.firstName)}
-          >
-            {formik.errors.firstName}
-          </HelperText>
-        </View>
+      <View style={styles.inputGroup}>
+        <TextInput
+          mode="outlined"
+          label="First Name"
+          placeholder="Enter your first name"
+          value={formik.values.firstName}
+          onChangeText={formik.handleChange('firstName')}
+          onBlur={formik.handleBlur('firstName')}
+          error={Boolean(formik.touched.firstName && formik.errors.firstName)}
+        />
+        <HelperText
+          type="error"
+          visible={Boolean(formik.touched.firstName && formik.errors.firstName)}
+        >
+          {formik.errors.firstName ?? ''}
+        </HelperText>
+      </View>
 
-        {/* Last Name Field */}
-        <View style={styles.fieldContainer}>
-          <Text variant="labelLarge" style={styles.label}>
-            Last Name
-          </Text>
-          <TextInput
-            autoCapitalize="words"
-            mode="outlined"
-            dense
-            contentStyle={styles.inputContent}
-            style={styles.input}
-            onBlur={formik.handleBlur('lastName')}
-            onChangeText={formik.handleChange('lastName')}
-            placeholder="Last Name"
-            value={formik.values.lastName}
-          />
-          <HelperText
-            type="error"
-            visible={Boolean(formik.touched.lastName && formik.errors.lastName)}
-          >
-            {formik.errors.lastName}
-          </HelperText>
-        </View>
+      <View style={styles.inputGroup}>
+        <TextInput
+          mode="outlined"
+          label="Last Name"
+          placeholder="Enter your last name"
+          value={formik.values.lastName}
+          onChangeText={formik.handleChange('lastName')}
+          onBlur={formik.handleBlur('lastName')}
+          error={Boolean(formik.touched.lastName && formik.errors.lastName)}
+        />
+        <HelperText
+          type="error"
+          visible={Boolean(formik.touched.lastName && formik.errors.lastName)}
+        >
+          {formik.errors.lastName ?? ''}
+        </HelperText>
       </View>
 
       <Button
-        disabled={!(formik.isValid && formik.dirty)}
-        loading={isUpdateAccountLoading}
         mode="contained"
         onPress={() => formik.handleSubmit()}
+        loading={isUpdateAccountLoading}
+        disabled={!formik.isValid || !formik.dirty}
+        style={styles.submitButton}
+        contentStyle={styles.submitButtonContent}
+        uppercase={false}
       >
-        Create Account
+        Next
       </Button>
     </View>
   );
 };
 
-export default RegistrationForm;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingBottom: 24,
+  },
+  copyWrapper: {
+    alignItems: 'flex-start',
+    marginBottom: 24,
+    width: '100%',
+  },
+  inputGroup: {
+    marginBottom: 16,
+    width: '100%',
+  },
+  subtitle: {
+    lineHeight: 20,
+  },
+  submitButton: {
+    borderRadius: 24,
+    marginTop: 'auto',
+  },
+  submitButtonContent: {
+    height: 52,
+  },
+  title: {
+    marginBottom: 8,
+    fontWeight: '600',
+    textAlign: 'left',
+  },
+});
 
-const useStyles = (theme: MD3Theme) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'space-between',
-    },
-    content: {
-      gap: theme.roundness,
-    },
-    heading: {
-      gap: theme.roundness,
-    },
-    fieldContainer: {
-      marginBottom: 20,
-    },
-    label: {
-      marginBottom: 6,
-      textAlignVertical: 'bottom',
-      ...(Platform.OS === 'android' && { lineHeight: 18 }),
-      color: theme.colors.primary,
-    },
-    input: {
-      ...(Platform.OS === 'android' && { paddingTop: 2 }),
-    },
-    inputContent: {
-      paddingVertical: 0,
-    },
-  });
+export default RegistrationForm;

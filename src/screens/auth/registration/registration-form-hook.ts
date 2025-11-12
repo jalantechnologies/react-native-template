@@ -20,6 +20,7 @@ const useRegistrationForm = ({
       firstName: '',
       lastName: '',
     },
+    validateOnMount: true,
 
     validationSchema: Yup.object({
       firstName: Yup.string()

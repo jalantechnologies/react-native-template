@@ -1,33 +1,24 @@
-import React, { useState } from 'react';
-import { Snackbar, useTheme } from 'react-native-paper';
+import { Toast } from 'native-base';
+import React from 'react';
+import { Alert } from 'react-native';
 
 import { MainScreenProps } from '../../../../@types/navigation';
-import type { AppTheme } from '../../../theme/app-theme';
 import { AsyncError } from '../../../types';
 import useTimer from '../../../utils/use-timer.hook';
 import AuthLayout from '../auth-layout';
 
 import OTPForm from './otp-form';
 
-const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
+const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ navigation, route }) => {
   const { countryCode, phoneNumber } = route.params;
   const sendOTPDelayInMilliseconds = 60_000;
 
-  const theme = useTheme<AppTheme>();
   const { startTimer, remainingSecondsStr, isResendEnabled } = useTimer({
     delayInMilliseconds: sendOTPDelayInMilliseconds,
   });
 
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-
-  const showMessage = (message: string) => {
-    setSnackbarMessage(message);
-    setSnackbarVisible(true);
-  };
-
   const onError = (error: AsyncError) => {
-    showMessage(error.message);
+    Alert.alert('Error', error.message);
   };
 
   const onResendOTPSuccess = () => {
@@ -35,11 +26,14 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   };
 
   const onVerifyOTPSuccess = () => {
-    showMessage('OTP verified successfully');
+    Toast.show({
+      title: 'OTP verified successfully',
+    });
+    navigation.navigate('Authenticated');
   };
 
   return (
-    <AuthLayout primaryTitle="Better." secondaryTitle="">
+    <AuthLayout primaryTitle="" secondaryTitle="" onBackPress={navigation.goBack}>
       <OTPForm
         countryCode={countryCode}
         isResendEnabled={isResendEnabled}
@@ -49,13 +43,6 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
         phoneNumber={phoneNumber}
         remainingSecondsStr={remainingSecondsStr}
       />
-      <Snackbar
-        duration={theme.overlay.snackbarDuration}
-        onDismiss={() => setSnackbarVisible(false)}
-        visible={snackbarVisible}
-      >
-        {snackbarMessage}
-      </Snackbar>
     </AuthLayout>
   );
 };

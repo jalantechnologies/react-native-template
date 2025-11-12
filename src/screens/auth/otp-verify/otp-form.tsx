@@ -1,11 +1,14 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Text, useTheme } from 'react-native-paper';
+import {
+  Button,
+  Text,
+  useTheme,
+} from 'react-native-paper';
 
 import { OTPInput } from '../../../components';
 import { AuthOptions } from '../../../constants';
-import type { AppTheme } from '../../../theme/app-theme';
-import { AsyncError } from '../../../types';
+import { AsyncError, PhoneNumber } from '../../../types';
 
 import useOTPForm from './otp-form-hook';
 
@@ -35,48 +38,53 @@ const OTPForm: React.FC<OTPFormProps> = ({
     countryCode,
     phoneNumber,
   });
+  const { colors } = useTheme();
+
+  const formattedDisplayNumber = new PhoneNumber({
+    country_code: countryCode.replace('+', ''),
+    phone_number: phoneNumber,
+  }).getFormattedPhoneNumber();
 
   const handleSetOtp = (otp: string[]) => {
     formik.setFieldValue('otp', otp);
   };
 
-  const theme = useTheme<AppTheme>();
-  const styles = useStyles(theme);
-  const resendLabel = isResendEnabled ? 'Resend OTP' : `Resend OTP in 00:${remainingSecondsStr}`;
-
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text variant="headlineSmall">Verify OTP</Text>
-        <Text style={styles.headingSubtitle} variant="bodyMedium">
-          Enter the OTP sent to your mobile number
+      <View style={styles.copyWrapper}>
+        <Text style={[styles.title, { color: colors.onSurface }]} variant="titleLarge">
+          Verify OTP
         </Text>
-        <View style={styles.otpInputContainer}>
-          <OTPInput
-            length={AuthOptions.OTPLength}
-            otp={formik.values.otp}
-            setOtp={handleSetOtp}
-          />
-        </View>
-        <Text variant="bodySmall">
-          Didn’t receive the OTP?{' '}
-          <Text
-            onPress={isResendEnabled ? handleResendOTP : undefined}
-            style={[
-              styles.resendLink,
-              isResendEnabled ? styles.resendActive : styles.resendDisabled,
-            ]}
-            variant="bodySmall"
-          >
-            {resendLabel}
-          </Text>
+        <Text style={[styles.subtitle, { color: colors.onSurfaceVariant }]} variant="bodyMedium">
+          Enter the verification code received on {formattedDisplayNumber}
         </Text>
       </View>
+
+      <View style={styles.otpWrapper}>
+        <OTPInput length={AuthOptions.OTPLength} otp={formik.values.otp} setOtp={handleSetOtp} />
+      </View>
+
+      <Text style={[styles.resendCopy, { color: colors.onSurfaceVariant }]} variant="bodySmall">
+        Didn’t receive the OTP?{' '}
+        <Text
+          style={[
+            styles.resendLink,
+            { color: isResendEnabled ? colors.primary : colors.onSurfaceVariant },
+          ]}
+          onPress={isResendEnabled ? handleResendOTP : undefined}
+        >
+          {isResendEnabled ? 'Resend OTP' : `Resend OTP in 00:${remainingSecondsStr}`}
+        </Text>
+      </Text>
+
       <Button
-        disabled={!(formik.isValid && formik.dirty)}
-        loading={isVerifyOTPLoading}
         mode="contained"
         onPress={() => formik.handleSubmit()}
+        loading={isVerifyOTPLoading}
+        disabled={!(formik.isValid && formik.dirty)}
+        style={styles.submitButton}
+        contentStyle={styles.submitButtonContent}
+        uppercase={false}
       >
         Verify OTP
       </Button>
@@ -84,31 +92,45 @@ const OTPForm: React.FC<OTPFormProps> = ({
   );
 };
 
-export default OTPForm;
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    flex: 1,
+    paddingBottom: 24,
+  },
+  copyWrapper: {
+    alignItems: 'flex-start',
+    marginBottom: 24,
+    width: '100%',
+  },
+  otpWrapper: {
+    alignItems: 'center',
+    marginBottom: 16,
+    width: '100%',
+  },
+  resendCopy: {
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  resendLink: {
+    fontWeight: '600',
+  },
+  submitButton: {
+    borderRadius: 24,
+    marginTop: 'auto',
+    width: '100%',
+  },
+  submitButtonContent: {
+    height: 52,
+  },
+  subtitle: {
+    lineHeight: 20,
+  },
+  title: {
+    marginBottom: 8,
+    fontWeight: '600',
+    textAlign: 'left',
+  },
+});
 
-const useStyles = (theme: AppTheme) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'space-between',
-    },
-    header: {
-      flexGrow: 1,
-      rowGap: theme.spacing.md,
-    },
-    headingSubtitle: {
-      color: theme.colors.primary,
-    },
-    otpInputContainer: {
-      marginTop: 0,
-    },
-    resendLink: {
-      textDecorationLine: 'underline',
-    },
-    resendActive: {
-      color: theme.colors.primary,
-    },
-    resendDisabled: {
-      color: theme.colors.onSurfaceDisabled,
-    },
-  });
+export default OTPForm;

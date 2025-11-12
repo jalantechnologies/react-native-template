@@ -9,7 +9,7 @@ import PersonIcon from 'react-native-template/assets/icons/person.svg';
 import { AuthenticatedStackParamsList, AuthenticatedTabParamsList } from '../../@types/navigation';
 import { FullScreenSpinner } from '../components';
 import { useAccountContext, useAuthContext } from '../contexts';
-import { Dashboard, RegistrationScreen } from '../screens';
+import { AccountVerified, Dashboard, RegistrationScreen } from '../screens';
 import { useThemeColor } from '../utils';
 
 import ProfileStack from './profile';
@@ -65,6 +65,7 @@ const AuthenticatedStack = () => {
 
   return isNewUser ? (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="AccountVerified" component={AccountVerified} />
       <Stack.Screen name="Registration" component={RegistrationScreen} />
     </Stack.Navigator>
   ) : (

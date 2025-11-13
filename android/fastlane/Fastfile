@@ -35,12 +35,15 @@ platform :android do
     updated_version_code
   end
 
-  desc "Deploy a new version to the Google Play (Production)"
   lane :deploy_android_production do
-    # Capture returned versionCode from fetch lane
+    # 1) Must capture returned value!
     updated_version_code = fetch_and_increment_build_number
 
-    # Build AAB/APK with signing
+    # 2) Read version name
+    package_json_path = File.expand_path("../package.json", __dir__)
+    version_name = JSON.parse(File.read(package_json_path))["version"]
+
+    # 3) Build with injected versionCode + versionName
     gradle(
       task: "bundle",
       build_type: "release",
@@ -48,37 +51,33 @@ platform :android do
         "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
         "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
         "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
-        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"]
+        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
+        "versionCode" => updated_version_code.to_s,
+        "versionName" => version_name
       }
     )
 
-    # Read release notes text (directly from env)
+    # 4) Create changelog file matching versionCode
     release_notes = ENV["RELEASE_NOTES"]
-    release_notes_language = "en-US"
-
-    # Create changelog file only if notes exist
     if release_notes && !release_notes.strip.empty?
-      changelog_dir = "fastlane/metadata/android/#{release_notes_language}/changelogs"
-      changelog_path = "#{changelog_dir}/#{updated_version_code}.txt"
-
-      FileUtils.mkdir_p(changelog_dir)
+      release_notes_language = "en-US"
+      changelog_path = "fastlane/metadata/android/#{release_notes_language}/changelogs/#{updated_version_code}.txt"
+      FileUtils.mkdir_p(File.dirname(changelog_path))
       File.write(changelog_path, release_notes)
-
       UI.success("📝 Created Play Store changelog: #{changelog_path}")
-    else
-      UI.important("⚠️ No release notes provided — skipping changelog generation")
     end
 
-    # Upload only changelogs (NOT full metadata)
+    # 5) Upload (supply automatically picks changelog)
     upload_to_play_store(
       track: "internal",
       release_status: "draft",
       json_key: ENV["ANDROID_JSON_KEY_FILE"],
       skip_upload_apk: true,
-      skip_upload_metadata: true,      # do not upload title, desc etc
-      skip_upload_changelogs: false    # ensure changelogs ARE uploaded
+      skip_upload_metadata: false,
+      skip_upload_changelogs: false
     )
   end
+
 
 
   desc "Deploy APK to Firebase App Distribution (PR Preview)"

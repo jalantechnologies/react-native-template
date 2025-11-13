@@ -138,14 +138,12 @@ class FirebaseDistributionService
     # Build comprehensive notes with PR info and release notes
     notes = if release_notes && !release_notes.strip.empty?
       <<~NOTES
+        PR ##{pr_number}: #{pr_title}
         📋 **Release Notes:**
         #{release_notes.strip}
-
         ---
         🔍 **Build Info:**
-        PR ##{pr_number}: #{pr_title}
         Version: #{version_info[:version]} (Code: #{version_info[:version_code]})
-        Uploaded: #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}
       NOTES
     else
       "PR ##{pr_number}: #{pr_title}\nVersion: #{version_info[:version]} (Code: #{version_info[:version_code]})\nUploaded: #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}"

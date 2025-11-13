@@ -1,3 +1,18 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
 default_platform(:android)
 
 platform :android do
@@ -8,7 +23,7 @@ platform :android do
 
     version_codes = google_play_track_version_codes(
       package_name: app_identifier,
-      track: "internal",
+      track: "production",
       json_key: ENV["ANDROID_JSON_KEY_FILE"]
     )
     
@@ -17,16 +32,83 @@ platform :android do
     increment_version_code(
       version_code: updated_version_code
     )
-    
-    UI.success("✅ Incremented version code to: #{updated_version_code}")
   end
 
-  desc "Deploy a new version to the Google Play (Production)"
+  desc "Sync version from package.json to Android and iOS"
+lane :sync_versions do
+  require 'json'
+
+  # Read package.json
+  package_json_path = File.expand_path("../../package.json", __dir__)
+
+  if !File.exist?(package_json_path)
+    UI.user_error!(" Error: package.json not found at #{package_json_path}")
+  end
+
+  package_json = JSON.parse(File.read(package_json_path))
+  version = package_json["version"]
+
+  if version.nil? || version.empty?
+    UI.user_error!(" Error: Version not found in package.json")
+  end
+
+  # Android Version Update
+  begin
+    major, minor, patch = version.split('.').map(&:to_i)
+    version_code = (major * 10000) + (minor * 100) + patch
+
+    # Update Android versionCode
+    increment_version_code(version_code: version_code)
+    UI.success(" [Android] Synced version to #{version} (versionCode: #{version_code})")
+  rescue => e
+    UI.error(" [Android] Failed to update versionCode: #{e.message}")
+  end
+
+  # Update Android versionName in build.gradle
+  gradle_file = File.expand_path("../app/build.gradle", __dir__)
+
+  if File.exist?(gradle_file)
+    gradle_content = File.read(gradle_file)
+    new_gradle_content = gradle_content.gsub(/versionName\s*=\s*"[\d.]+"?/, "versionName = \"#{version}\"")
+    File.write(gradle_file, new_gradle_content)
+    UI.success(" [Android] Synced versionName to #{version} (versionCode: #{version_code})")
+  else
+    UI.error(" Error: build.gradle not found at #{gradle_file}")
+  end
+
+   # iOS Version Update
+   begin
+    ios_plist_path = File.expand_path("../../ios/Boilerplate/Info.plist", __dir__)
+
+    if File.exist?(ios_plist_path)
+      # Update CFBundleShortVersionString (versionName)
+      set_info_plist_value(
+        path: ios_plist_path,
+        key: "CFBundleShortVersionString",
+        value: version
+      )
+
+      # Update CFBundleVersion (build number)
+      set_info_plist_value(
+        path: ios_plist_path,
+        key: "CFBundleVersion",
+        value: version_code.to_s
+      )
+
+      UI.success(" [iOS] Synced version to #{version} (build number: #{version_code})")
+    else
+      UI.error(" [iOS] Info.plist not found at #{ios_plist_path}")
+    end
+  rescue => e
+    UI.error(" [iOS] Failed to update version: #{e.message}")
+  end
+end
+
+  desc "Deploy a new version to the Google Play"
   lane :deploy_android_production do
-    # Sync versions from package.json first
-    version_info = sync_versions
-    UI.message("📦 Using version: #{version_info[:version]} (code: #{version_info[:version_code]})")
-    
+
+    fetch_and_increment_build_number
+
     gradle(
       task: "bundle",
       build_type: "release",
@@ -38,49 +120,23 @@ platform :android do
       }
     )
     
-    # Read release notes from environment variable
-    release_notes_text = ENV["RELEASE_NOTES"] || ""
-    
-    if release_notes_text.empty?
-      UI.message("⚠️  No release notes provided")
-    else
-      UI.message("📖 Using release notes from RELEASE_NOTES environment variable")
-    end
-    
-    # Prepare release notes for Play Store (supports multiple languages)
-    release_notes_hash = release_notes_text.empty? ? nil : { "en-US" => release_notes_text }
-    
     upload_to_play_store(
       track: "production",
-      release_status: "draft",
       json_key: ENV["ANDROID_JSON_KEY_FILE"],
       skip_upload_apk: true,
-      release_notes: release_notes_hash
     )
-    
-    UI.success("✅ Android app uploaded to Google Play Console (internal track, draft)")
   end
 
-  desc "Deploy APK to Firebase App Distribution (PR Preview)"
+  desc "Deploy APK to Firebase App Distribution"
   lane :pr_deploy do |options|
-    # Sync versions from package.json first
-    version_info = sync_versions
-    UI.message("📦 Using version: #{version_info[:version]} (code: #{version_info[:version_code]})")
-    
-    # Load the deploy script
+    # Load the deploy script.
     load './scripts/firebase_pr_deploy.rb'
-    
-    # Get release notes from environment
-    release_notes = ENV["RELEASE_NOTES"] || ""
-    
     firebase_pr_deploy(
       pr_number: options[:pr_number],
       pr_title: options[:pr_title],
       project_number: options[:project_number],
       app_id: options[:app_id],
-      service_account_path: "/tmp/gcp_key.json",
-      release_notes: release_notes,
-      version_info: version_info  # Pass version info to firebase script
+      service_account_path: "/tmp/gcp_key.json" # Path to GCP service account key
     )
   end
 
@@ -88,12 +144,11 @@ platform :android do
   lane :pr_cleanup do |options|
     # Load the cleanup script
     load './scripts/firebase_pr_cleanup.rb'
-    
     firebase_pr_cleanup(
       pr_number: options[:pr_number],
       project_number: options[:project_number],
       app_id: options[:app_id],
-      service_account_path: "/tmp/gcp_key.json"
+      service_account_path: "/tmp/gcp_key.json" # Path to GCP service account key
     )
   end
 end

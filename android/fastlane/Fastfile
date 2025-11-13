@@ -106,39 +106,69 @@ end
 
   desc "Deploy a new version to the Google Play"
   lane :deploy_android_production do
-
     fetch_and_increment_build_number
 
-    gradle(
-      task: "bundle",
-      build_type: "release",
-      properties: {
-        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
-        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
-        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
-        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
-      }
-    )
+  gradle(
+    task: "bundle",
+    build_type: "release",
+    properties: {
+      "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
+      "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
+      "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+      "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"]
+    }
+  )
+
+    
+    # Read release notes from file if provided
+   release_notes = nil
+    release_notes_file = ENV["RELEASE_NOTES_FILE"]
+    release_notes_language = ENV["RELEASE_NOTES_LANGUAGE"] || "en-US"
+
+    if release_notes_file
+      unless File.file?(release_notes_file)
+        UI.important("⚠️ Release notes file not found: #{release_notes_file}")
+      else
+        release_notes_text = File.read(release_notes_file).strip
+
+        if release_notes_text.empty?
+          UI.important("⚠️ Release notes file is empty: #{release_notes_file}")
+        else
+          release_notes = {
+            release_notes_language => release_notes_text
+          }
+
+          UI.message(
+            "📖 Loaded release notes (#{release_notes_language}) from: #{release_notes_file}"
+          )
+        end
+      end
+    end
     
     upload_to_play_store(
-      track: "production",
+      track: "internal",
+      release_status: "draft",
       json_key: ENV["ANDROID_JSON_KEY_FILE"],
       skip_upload_apk: true,
+      release_notes: release_notes
     )
   end
 
   desc "Deploy APK to Firebase App Distribution"
   lane :pr_deploy do |options|
-    # Load the deploy script.
+    # Load the deploy script
     load './scripts/firebase_pr_deploy.rb'
     firebase_pr_deploy(
       pr_number: options[:pr_number],
       pr_title: options[:pr_title],
       project_number: options[:project_number],
       app_id: options[:app_id],
-      service_account_path: "/tmp/gcp_key.json" # Path to GCP service account key
+      service_account_path: "/tmp/gcp_key.json",
+      release_notes: ENV["RELEASE_NOTES"] 
     )
+
   end
+
 
   desc "Clean up Firebase App Distribution releases for closed PR"
   lane :pr_cleanup do |options|

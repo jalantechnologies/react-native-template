@@ -98,7 +98,9 @@ android {
             println "📱 Using production version code: ${versionCode}"
         }
         versionName "1.0.0"
+
     }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')

@@ -42,19 +42,22 @@ class FirebaseDistributionService
   # Optimizations:
   # - Daemon disabled (stateless)
   # - Limited workers to reduce memory use
-  def build_apk
-    # Clean any old manually-created assets
-    UI.message("🧹 Cleaning old manual assets...")
-    Actions.sh("rm -rf android/app/src/main/assets/")
-    Actions.sh("rm -rf android/app/src/main/res/drawable-*")
-    Actions.sh("rm -rf android/app/src/main/res/raw/")
-    
-    # Set Gradle environment options
+  def build_apk(pr_number:)
+    # Read package.json
+    package_json_path = File.expand_path("../../../package.json", __dir__)
+    UI.user_error!("❌ package.json not found at #{package_json_path}") unless File.exist?(package_json_path)
+
+    package_json = JSON.parse(File.read(package_json_path))
+    version = package_json["version"]
+    UI.user_error!("❌ Version not found in package.json") unless version
+
+    major, minor, patch = version.split('.').map(&:to_i)
+    version_code = (major * 10000) + (minor * 100) + patch
+
     ENV["GRADLE_OPTS"] = "-Xmx6g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"
 
     UI.message("🔨 Building APK with Gradle...")
-    
-    # Use Fastlane's Gradle action - it handles directory changes automatically
+
     Actions::GradleAction.run(
       gradle_path: "./gradlew",
       task: "assembleDebug",
@@ -71,7 +74,10 @@ class FirebaseDistributionService
     apk = apk_path
     UI.user_error!("❌ APK not found at #{apk}") unless File.exist?(apk)
     UI.success("✅ APK built successfully: #{File.size(apk)} bytes")
+
+    { version: version, version_code: version_code }
   end
+
 
   # Uploads an APK file to Firebase App Distribution.
   # @param apk_path [String] Absolute path to the APK file

@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
 
-  check-version-number:
+  check_version_number:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
@@ -42,7 +42,7 @@ jobs:
 
       - name: Check release notes
         id: check
-        uses: ./.github/actions/release-check
+        uses: ./.github/actions/release_notes_check
         with:
           version_file: 'package.json'
           notes_dir: 'docs/release_notes'
@@ -50,7 +50,7 @@ jobs:
 
   deploy_android:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [release_notes_check]
+    needs: [check_version_number, release_notes_check]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (root for actions)

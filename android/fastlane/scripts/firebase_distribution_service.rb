@@ -42,19 +42,24 @@ class FirebaseDistributionService
   # Optimizations:
   # - Daemon disabled (stateless)
   # - Limited workers to reduce memory use
-  def build_apk
+  def build_apk(pr_number:)
     # Clean any old manually-created assets
     UI.message("🧹 Cleaning old manual assets...")
     Actions.sh("rm -rf android/app/src/main/assets/")
     Actions.sh("rm -rf android/app/src/main/res/drawable-*")
     Actions.sh("rm -rf android/app/src/main/res/raw/")
     
+    # Generate unique version code from package.json version + PR number
+    unique_version_code = generate_version_code(pr_number)
+    
+    UI.message("🔢 Using version code: #{unique_version_code} for PR ##{pr_number}")
+    
     # Set Gradle environment options
     ENV["GRADLE_OPTS"] = "-Xmx6g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"
 
     UI.message("🔨 Building APK with Gradle...")
     
-    # Use Fastlane's Gradle action - version code already set by sync_versions
+    # Use Fastlane's Gradle action - it handles directory changes automatically
     Actions::GradleAction.run(
       gradle_path: "./gradlew",
       task: "assembleDebug",
@@ -62,7 +67,8 @@ class FirebaseDistributionService
       properties: {
         "BUNDLE_IN_DEBUG" => "true",
         "org.gradle.daemon" => "false",
-        "org.gradle.workers.max" => "4"
+        "org.gradle.workers.max" => "4",
+        "versionCode" => unique_version_code.to_s
       },
       print_command: true,
       print_command_output: true
@@ -71,6 +77,8 @@ class FirebaseDistributionService
     apk = apk_path
     UI.user_error!("❌ APK not found at #{apk}") unless File.exist?(apk)
     UI.success("✅ APK built successfully: #{File.size(apk)} bytes")
+    
+    unique_version_code
   end
 
   # Uploads an APK file to Firebase App Distribution.

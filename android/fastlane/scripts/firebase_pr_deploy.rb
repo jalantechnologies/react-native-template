@@ -30,7 +30,7 @@ def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_
   end
 
   # Build the new APK (version code already set by sync_versions)
-  firebase.build_apk(pr_number)
+  firebase.build_apk
   apk_path = File.expand_path("../../app/build/outputs/apk/debug/app-debug.apk", __dir__)
   UI.user_error!("❌ APK file not found at #{apk_path}") unless File.exist?(apk_path)
 

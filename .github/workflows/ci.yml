@@ -62,7 +62,7 @@ jobs:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
-      - name: Placeholder for scan
+      - name: Placeholder for Scan
         run: |
           echo "Scan placeholder"
           echo "Future implementation: Security and dependency scanning for React Native project"

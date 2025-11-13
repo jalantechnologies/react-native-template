@@ -2,55 +2,6 @@ default_platform(:android)
 
 platform :android do
 
-  desc "Sync version from package.json to Android"
-  lane :sync_versions do
-    require 'json'
-
-    # Read package.json
-    package_json_path = File.expand_path("../../package.json", __dir__)
-
-    if !File.exist?(package_json_path)
-      UI.user_error!("❌ Error: package.json not found at #{package_json_path}")
-    end
-
-    package_json = JSON.parse(File.read(package_json_path))
-    version = package_json["version"]
-
-    if version.nil? || version.empty?
-      UI.user_error!("❌ Error: Version not found in package.json")
-    end
-
-    # Android Version Update
-    begin
-      major, minor, patch = version.split('.').map(&:to_i)
-      version_code = (major * 10000) + (minor * 100) + patch
-
-      # Update Android versionCode
-      increment_version_code(version_code: version_code)
-      UI.success("✅ [Android] Synced version to #{version} (versionCode: #{version_code})")
-    rescue => e
-      UI.error("❌ [Android] Failed to update versionCode: #{e.message}")
-    end
-
-    # Update Android versionName in build.gradle
-    gradle_file = File.expand_path("../app/build.gradle", __dir__)
-
-    if File.exist?(gradle_file)
-      gradle_content = File.read(gradle_file)
-      new_gradle_content = gradle_content.gsub(/versionName\s*=\s*"[\d.]+"?/, "versionName = \"#{version}\"")
-      File.write(gradle_file, new_gradle_content)
-      UI.success("✅ [Android] Synced versionName to #{version}")
-    else
-      UI.error("❌ Error: build.gradle not found at #{gradle_file}")
-    end
-
-    # Return version info for use in other lanes
-    {
-      version: version,
-      version_code: version_code
-    }
-  end
-
   desc "Fetches the latest version code from the Play Console and increments it by 1"
   lane :fetch_and_increment_build_number do
     app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)

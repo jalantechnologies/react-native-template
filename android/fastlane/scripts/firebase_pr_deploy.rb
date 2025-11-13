@@ -14,7 +14,7 @@ require_relative './firebase_distribution_service'
 # @param app_id [String] Firebase app ID
 # @param service_account_path [String] Path to the GCP service account JSON key
 # @param release_notes_file [String] Path to file containing release notes (optional)
-def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_account_path:, release_notes_file: "")
+def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_account_path:, release_notes: "")
   firebase = FirebaseDistributionService.new(
     project_number: project_number,
     app_id: app_id,
@@ -35,13 +35,12 @@ def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_
   UI.user_error!("❌ APK file not found at #{apk_path}") unless File.exist?(apk_path)
   
   # Read release notes if provided
-  release_notes = ""
-  if release_notes_file && File.exist?(release_notes_file)
-    release_notes = File.read(release_notes_file).strip
-    UI.message("📖 Loaded release notes from: #{release_notes_file}")
+  if release_notes && !release_notes.strip.empty?
+    UI.message("📖 Loaded release notes from workflow input")
   else
-    UI.message("⚠️  No release notes file provided or file not found")
+    UI.message("⚠️ No release notes provided")
   end
+
   
   # Upload and process
   operation_name = firebase.upload_apk(apk_path)

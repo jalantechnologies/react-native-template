@@ -145,8 +145,9 @@ end
       project_number: options[:project_number],
       app_id: options[:app_id],
       service_account_path: "/tmp/gcp_key.json",
-      release_notes_file: ENV["RELEASE_NOTES_FILE"]
+      release_notes: ENV["RELEASE_NOTES"] 
     )
+
   end
 
 

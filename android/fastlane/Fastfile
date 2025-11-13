@@ -43,6 +43,20 @@ platform :android do
     package_json_path = File.expand_path("../../package.json", __dir__)
     version_name = JSON.parse(File.read(package_json_path))["version"]
 
+    # Write changelog file for Google Play
+    release_notes = ENV["RELEASE_NOTES"]
+    if release_notes && !release_notes.strip.empty?
+      changelog_dir = "fastlane/metadata/android/en-US/changelogs"
+      FileUtils.mkdir_p(changelog_dir)
+
+      changelog_path = File.join(changelog_dir, "#{updated_version_code}.txt")
+      File.write(changelog_path, release_notes)
+
+      UI.message("📝 Wrote version-specific changelog: #{changelog_path}")
+    else
+      UI.message("⚠️ No release notes provided. Skipping changelog creation.")
+    end
+
     # 3) Build with injected versionCode + versionName
     gradle(
       task: "bundle",
@@ -57,19 +71,7 @@ platform :android do
       }
     )
 
-    # 3. Write changelog file for Google Play
-    release_notes = ENV["RELEASE_NOTES"]
-    if release_notes && !release_notes.strip.empty?
-      changelog_dir = "fastlane/metadata/android/en-US/changelogs"
-      FileUtils.mkdir_p(changelog_dir)
 
-      changelog_path = File.join(changelog_dir, "#{updated_version_code}.txt")
-      File.write(changelog_path, release_notes)
-
-      UI.message("📝 Wrote version-specific changelog: #{changelog_path}")
-    else
-      UI.message("⚠️ No release notes provided. Skipping changelog creation.")
-    end
 
 
     # 4) Upload (supply automatically picks changelog)

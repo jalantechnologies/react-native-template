@@ -57,21 +57,3 @@ jobs:
       - name: Run lint
         working-directory: app
         run: yarn lint
-
-  scan:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
-    steps:
-      - name: Placeholder for Scan
-        run: |
-          echo "Scan placeholder"
-          echo "Future implementation: Security and dependency scanning for React Native project"
-
-  review:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
-    steps:
-      - name: Placeholder for code review
-        run: |
-          echo "Code review placeholder"
-          echo "Future implementation: AI-powered review for React Native architecture, security, and UX best practices"

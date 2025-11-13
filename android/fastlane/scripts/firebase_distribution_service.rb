@@ -11,7 +11,7 @@ include Fastlane
 # - Authenticate via gcloud
 # - Build APKs (optimized for CI)
 # - Upload APKs to Firebase App Distribution
-# - Attach PR metadata to releases
+# - Attach PR metadata and release notes to releases
 # - Clean up preview releases associated with closed PRs
 # Intended to support short-lived PR preview releases, not production deployments.
 class FirebaseDistributionService
@@ -38,20 +38,31 @@ class FirebaseDistributionService
   end
 
   # Builds a debug APK using Gradle with CI-safe options.
+  # Version code is managed by sync_versions lane, not here.
   # Optimizations:
   # - Daemon disabled (stateless)
   # - Limited workers to reduce memory use
   def build_apk
+    # Clean any old manually-created assets
+    UI.message("🧹 Cleaning old manual assets...")
+    Actions.sh("rm -rf android/app/src/main/assets/")
+    Actions.sh("rm -rf android/app/src/main/res/drawable-*")
+    Actions.sh("rm -rf android/app/src/main/res/raw/")
+    
+    # Set Gradle environment options
     ENV["GRADLE_OPTS"] = "-Xmx6g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"
 
+    UI.message("🔨 Building APK with Gradle...")
+    
+    # Use Fastlane's Gradle action - version code already set by sync_versions
     Actions::GradleAction.run(
-      task: "assemble",
-      build_type: "Debug",
-      project_dir: File.expand_path("../..", __dir__),
-      gradle_path: "gradlew",
+      gradle_path: "./gradlew",
+      task: "assembleDebug",
+      project_dir: File.expand_path("../../", __dir__),
       properties: {
+        "BUNDLE_IN_DEBUG" => "true",
         "org.gradle.daemon" => "false",
-        "org.gradle.workers.max" => "2"
+        "org.gradle.workers.max" => "4"
       },
       print_command: true,
       print_command_output: true
@@ -59,6 +70,7 @@ class FirebaseDistributionService
 
     apk = apk_path
     UI.user_error!("❌ APK not found at #{apk}") unless File.exist?(apk)
+    UI.success("✅ APK built successfully: #{File.size(apk)} bytes")
   end
 
   # Uploads an APK file to Firebase App Distribution.
@@ -114,23 +126,40 @@ class FirebaseDistributionService
   end
 
   # Adds contextual release notes to the given Firebase release.
-  # This embeds PR info into the release for traceability and cleanup automation.
+  # This embeds PR info and release notes into the release for traceability.
   # @param release_name [String] Firebase release resource name (e.g. projects/*/apps/*/releases/*)
   # @param pr_number [String] Associated pull request number
   # @param pr_title [String] PR title for extra context
-  def add_release_notes(release_name, pr_number, pr_title)
+  # @param release_notes [String] Release notes content from docs/release_notes
+  # @param version_info [Hash] Version info from sync_versions lane (includes :version and :version_code)
+  def add_release_notes(release_name, pr_number, pr_title, release_notes, version_info)
     uri = URI("https://firebaseappdistribution.googleapis.com/v1/#{release_name}")
-    notes = "PR ##{pr_number}: #{pr_title} - Uploaded on #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}"
+    
+    # Build comprehensive notes with PR info and release notes
+    notes = if release_notes && !release_notes.strip.empty?
+      <<~NOTES
+        📋 **Release Notes:**
+        #{release_notes.strip}
+
+        ---
+        🔍 **Build Info:**
+        PR ##{pr_number}: #{pr_title}
+        Version: #{version_info[:version]} (Code: #{version_info[:version_code]})
+        Uploaded: #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}
+      NOTES
+    else
+      "PR ##{pr_number}: #{pr_title}\nVersion: #{version_info[:version]} (Code: #{version_info[:version_code]})\nUploaded: #{Time.now.strftime('%Y-%m-%d %H:%M:%S')}"
+    end
 
     request = Net::HTTP::Patch.new(uri)
     request["Authorization"] = "Bearer #{@access_token}"
     request["Content-Type"] = "application/json"
-    request.body = { releaseNotes: { text: notes } }.to_json
+    request.body = { releaseNotes: { text: notes.strip } }.to_json
 
     response = @http.request(request)
 
     UI.user_error!("❌ Failed to patch release: #{response.code} - #{response.body}") unless response.code.to_i == 200
-    UI.message("✅ Release notes added for PR ##{pr_number}")
+    UI.message("✅ Release notes added for PR ##{pr_number} (Version: #{version_info[:version]})")
   end
 
   # Fetches all Firebase releases and filters those related to a specific PR.
@@ -171,7 +200,6 @@ class FirebaseDistributionService
   private
 
   # Returns the expected debug APK path.
-  # This method exists to encapsulate assumptions about the project structure.
   def apk_path
     File.expand_path("../../app/build/outputs/apk/debug/app-debug.apk", __dir__)
   end

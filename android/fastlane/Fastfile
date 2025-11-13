@@ -104,41 +104,51 @@ lane :sync_versions do
   end
 end
 
-  desc "Deploy a new version to the Google Play"
+  desc "Deploy a new version to the Google Play (Production)"
   lane :deploy_android_production do
-
     fetch_and_increment_build_number
 
     gradle(
       task: "bundle",
       build_type: "release",
       properties: {
-        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
-        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
-        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
-        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
+        "android.injected.signing.store.file" => ENV["KEYSTORE_FILE"],
+        "android.injected.signing.store.password" => ENV["KEYSTORE_PASSWORD"],
+        "android.injected.signing.key.alias" => ENV["KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["KEY_PASSWORD"],
       }
     )
     
+    # Read release notes from file if provided
+    release_notes = ""
+    if ENV["RELEASE_NOTES_FILE"] && File.exist?(ENV["RELEASE_NOTES_FILE"])
+      release_notes = File.read(ENV["RELEASE_NOTES_FILE"]).strip
+      UI.message("📖 Loaded release notes from: #{ENV["RELEASE_NOTES_FILE"]}")
+    end
+    
     upload_to_play_store(
-      track: "production",
+      track: "internal",
+      release_status: "draft",
       json_key: ENV["ANDROID_JSON_KEY_FILE"],
       skip_upload_apk: true,
+      release_notes: release_notes.empty? ? nil : { "en-US" => release_notes }
     )
   end
 
-  desc "Deploy APK to Firebase App Distribution"
+  desc "Deploy APK to Firebase App Distribution (PR Preview)"
   lane :pr_deploy do |options|
-    # Load the deploy script.
+    # Load the deploy script
     load './scripts/firebase_pr_deploy.rb'
     firebase_pr_deploy(
       pr_number: options[:pr_number],
       pr_title: options[:pr_title],
       project_number: options[:project_number],
       app_id: options[:app_id],
-      service_account_path: "/tmp/gcp_key.json" # Path to GCP service account key
+      service_account_path: "/tmp/gcp_key.json",
+      release_notes_file: ENV["RELEASE_NOTES_FILE"]
     )
   end
+
 
   desc "Clean up Firebase App Distribution releases for closed PR"
   lane :pr_cleanup do |options|

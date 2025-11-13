@@ -2,11 +2,19 @@
 
 This repository uses **GitHub Actions** combined with **Fastlane** to automate the build, testing, and deployment process for the Android app. The primary goals of this CI/CD setup are:
 
-- 🚀 **Fast feedback** on pull requests by distributing builds via **Google Play Console Internal Testing track**.
+- 🚀 **Fast feedback** on pull requests by distributing builds via **Firebase App Distribution** for **Android** and **TestFlight** for **iOS**.
 - 🧹 **Automatic cleanup** of test builds when a PR is closed.
 - 🔒 **Secure handling** of credentials using **GitHub Actions Secrets**.
 
 This ensures contributors and QA can quickly test PR builds without manually compiling the app, and stale builds are cleaned up automatically.
+
+### ✔ CI Checks (Fast & Parallel)
+
+The `ci.yml` workflow runs two core CI jobs:
+- **ci/lint** – Linting directly on source code  
+- **ci/sonarqube** – Code quality analysis for pull requests  
+
+These jobs run **independently and in parallel**, improving feedback time.
 
 ---
 

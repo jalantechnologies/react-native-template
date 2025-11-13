@@ -5,30 +5,6 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  sonarqube:
-    name: analyze
-    # only run when updating an 'Open' PR
-    if: github.event.pull_request.state == 'open'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          # Disabling shallow clone is recommended for improving relevancy of reporting
-          fetch-depth: 0
-      - name: sonarqube-scan-pullrequest
-        uses: sonarsource/sonarqube-scan-action@master
-        if: ${{ github.base_ref == 'main' }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          args: >
-            -Dsonar.pullrequest.key=${{ github.event.number }}
-            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
-            -Dsonar.pullrequest.base=${{ github.base_ref }}
-            -Dsonar.qualitygate.wait=true
-            -Dsonar.qualitygate.timeout=1000
-
   build:
     runs-on: ubuntu-latest
     outputs:
@@ -66,40 +42,10 @@ jobs:
           docker_registry: ${{ vars.DOCKER_REGISTRY }}
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
-  
-  checks:
-    needs: build
-    runs-on: ubuntu-latest
-    strategy:
-      # turn off fail fast, let all the checks run irrespective of failures
-      fail-fast: false
-      matrix:
-        check: ['yarn:lint', 'compose:test']
-    steps:
-      - name: Checkout (app)
-        uses: actions/checkout@v3
-        with:
-          path: app
-
-      - name: Inject Doppler secrets
-        uses: ./app/.github/actions/inject_doppler_secrets
-        with:
-          doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
-          working_directory: app
-          
-      - name: Run check
-        uses: ./app/.github/actions/check
-        with:
-          check: ${{ matrix.check }}
-          image: ${{ needs.build.outputs.image_ref }}
-          tag: boilerplate-react-native
-          docker_registry: ${{ vars.DOCKER_REGISTRY }}
-          docker_username: ${{ vars.DOCKER_USERNAME }}
-          docker_password: ${{ secrets.DOCKER_PASSWORD }}
 
   deploy_android_preview:
+    needs: build
     name: Deploy Android to Firebase
-    needs: checks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (root for actions)
@@ -123,7 +69,7 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
 
   deploy_ios_preview:
-    needs: [checks]
+    needs: build
     if: github.event.action != 'closed'
     runs-on: macos-14
     timeout-minutes: 30

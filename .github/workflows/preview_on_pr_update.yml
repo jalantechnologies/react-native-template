@@ -44,6 +44,7 @@ jobs:
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
 
   deploy_android_preview:
+    needs: build
     name: Deploy Android to Firebase
     runs-on: ubuntu-latest
     steps:
@@ -68,6 +69,7 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
 
   deploy_ios_preview:
+    needs: build
     if: github.event.action != 'closed'
     runs-on: macos-14
     timeout-minutes: 30

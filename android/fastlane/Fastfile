@@ -81,16 +81,6 @@ platform :android do
   end
 
 
-    
-    upload_to_play_store(
-      track: "internal",
-      release_status: "draft",
-      json_key: ENV["ANDROID_JSON_KEY_FILE"],
-      skip_upload_apk: true,
-      skip_upload_metadata: false
-    )
-  end
-
   desc "Deploy APK to Firebase App Distribution (PR Preview)"
   lane :pr_deploy do |options|
     # Load the deploy script

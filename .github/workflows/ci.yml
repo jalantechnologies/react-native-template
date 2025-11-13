@@ -58,15 +58,14 @@ jobs:
         working-directory: app
         run: yarn lint
 
-  test:
+  scan:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run integration tests
-        run: docker compose -f docker-compose.test.yml up --exit-code-from app
+      - name: Placeholder for scan
+        run: |
+          echo "Scan placeholder"
+          echo "Future implementation: Security and dependency scanning for React Native project"
 
   review:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false

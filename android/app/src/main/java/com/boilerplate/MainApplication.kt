@@ -24,9 +24,8 @@ class MainApplication : Application(), ReactApplication {
 
         override fun getJSMainModuleName(): String = "index"
 
-        @Override
-        public boolean getUseDeveloperSupport() {
-          return BuildConfig.DEBUG && BuildConfig.USE_DEV_SUPPORT;
+        override fun getUseDeveloperSupport(): Boolean {
+          return BuildConfig.DEBUG && BuildConfig.USE_DEV_SUPPORT
         }
 
         override val isNewArchEnabled: Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED

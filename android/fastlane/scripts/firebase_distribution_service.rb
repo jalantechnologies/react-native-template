@@ -42,19 +42,24 @@ class FirebaseDistributionService
   # Optimizations:
   # - Daemon disabled (stateless)
   # - Limited workers to reduce memory use
-  def build_apk
+  def build_apk(pr_number:)
     # Clean any old manually-created assets
     UI.message("🧹 Cleaning old manual assets...")
     Actions.sh("rm -rf android/app/src/main/assets/")
     Actions.sh("rm -rf android/app/src/main/res/drawable-*")
     Actions.sh("rm -rf android/app/src/main/res/raw/")
     
+    # Generate unique version code from package.json version + PR number
+    unique_version_code = generate_version_code(pr_number)
+    
+    UI.message("🔢 Using version code: #{unique_version_code} for PR ##{pr_number}")
+    
     # Set Gradle environment options
     ENV["GRADLE_OPTS"] = "-Xmx6g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"
 
     UI.message("🔨 Building APK with Gradle...")
     
-    # Use Fastlane's Gradle action - it handles directory changes automatically
+    # Use Fastlane's Gradle action
     Actions::GradleAction.run(
       gradle_path: "./gradlew",
       task: "assembleDebug",
@@ -63,6 +68,7 @@ class FirebaseDistributionService
         "BUNDLE_IN_DEBUG" => "true",
         "org.gradle.daemon" => "false",
         "org.gradle.workers.max" => "4",
+        "versionCode" => unique_version_code.to_s
       },
       print_command: true,
       print_command_output: true
@@ -71,6 +77,47 @@ class FirebaseDistributionService
     apk = apk_path
     UI.user_error!("❌ APK not found at #{apk}") unless File.exist?(apk)
     UI.success("✅ APK built successfully: #{File.size(apk)} bytes")
+    
+    unique_version_code
+  end
+
+    # Generates a unique version code specially for Firebase App Distribution by combining package.json version with PR number.
+  # Format: Major * 10000000 + Minor * 100000 + Patch * 1000 + PR number
+  # Example: version "1.3.7" + PR #123 → 1*10000000 + 3*100000 + 7*1000 + 123 = 10307123
+  # This ensures:
+  # - Different app versions have different ranges
+  # - PRs within same version are unique
+  # - Max 999 PRs per version (reasonable limit)
+  # @param pr_number [String] PR number
+  # @return [Integer] Unique version code
+  def generate_version_code(pr_number)
+    # Read package.json
+    package_json_path = File.expand_path("../../../package.json", __dir__)
+    UI.user_error!("❌ package.json not found at #{package_json_path}") unless File.exist?(package_json_path)
+    
+    package_json = JSON.parse(File.read(package_json_path))
+    version = package_json["version"]
+    UI.user_error!("❌ Version not found in package.json") unless version
+    
+    # Parse version string (e.g., "1.3.7" → [1, 3, 7])
+    version_parts = version.split(".").map(&:to_i)
+    major, minor, patch = version_parts[0] || 0, version_parts[1] || 0, version_parts[2] || 0
+    
+    pr_num = pr_number.to_i
+    UI.user_error!("❌ PR number must be between 1 and 999") unless pr_num > 0 && pr_num < 1000
+    
+    # Generate version code
+    # Format: MMMNNNNPPPRRR where:
+    # MMM = major (supports up to 999)
+    # NNNN = minor (supports up to 9999, but we use 100 slots)
+    # PPP = patch (supports up to 999)
+    # RRR = PR number (supports up to 999)
+    version_code = (major * 10_000_000) + (minor * 100_000) + (patch * 1_000) + pr_num
+    
+    UI.message("📦 Package version: #{version} (#{major}.#{minor}.#{patch})")
+    UI.message("🔢 Generated version code: #{version_code}")
+    
+    version_code
   end
 
   # Uploads an APK file to Firebase App Distribution.

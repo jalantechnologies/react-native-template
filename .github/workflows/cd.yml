@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  release-notes-check:
+  release_notes_check:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     outputs:
@@ -28,7 +28,7 @@ jobs:
 
   deploy_android:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [release-notes-check]
+    needs: [release_notes_check]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (root for actions)
@@ -50,11 +50,10 @@ jobs:
           ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
-          RELEASE_NOTES: ${{ needs.release-notes-check.outputs.release_notes }}
-
+          RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
   # deploy_ios:
   #   if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-  #   needs: [build, release-notes-check]
+  #   needs: [build, release_notes_check]
   #   runs-on: macos-14
   #   timeout-minutes: 30
   #   steps:

@@ -42,7 +42,7 @@ jobs:
 
       - name: Check release notes
         id: check
-        uses: ./.github/actions/release-check
+        uses: ./.github/actions/release_notes_check
         with:
           version_file: 'package.json'
           notes_dir: 'docs/release_notes'

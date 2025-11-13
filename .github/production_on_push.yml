@@ -1,0 +1,134 @@
+name: production_on_push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sonarqube:
+    name: analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+      
+      - name: sonarqube-scan-branch
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.branch.name=${{ github.event.ref }}
+
+  
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      image_ref: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native@${{ steps.build.outputs.image_digest }}
+    steps:
+      - name: Checkout (app)
+        uses: actions/checkout@v3
+        # make sure to keep checked in code at different directory to avoid colliding with docker caching
+        with:
+          path: app
+
+      - name: Extract branch name
+        id: extract_branch
+        shell: bash
+        run: |
+          BRANCH_NAME=$(echo ${{ github.event.ref }} | sed -e 's/^refs\/heads\///g')
+          BRANCH_HASH=$(sha1sum < <(printf '%s' $BRANCH_NAME) | cut -c -15)
+
+          echo "##[set-output name=branch_hash;]$(echo $BRANCH_HASH)"
+
+      - name: Inject Doppler secrets
+        uses: ./app/.github/actions/inject_doppler_secrets
+        with:
+          doppler_token: ${{ secrets.DOPPLER_PRODUCTION_TOKEN }}
+          working_directory: app
+
+      - name: Build application
+        id: build
+        uses: ./app/.github/actions/build
+        with:
+          tags: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native:${{ steps.extract_branch.outputs.branch_hash }}
+          build_args: NODE_CONFIG_ENV=production
+          build_secrets: ''
+          context: app/
+          docker_registry: ${{ vars.DOCKER_REGISTRY }}
+          docker_username: ${{ vars.DOCKER_USERNAME }}
+          docker_password: ${{ secrets.DOCKER_PASSWORD }}
+
+  deploy-android:
+    needs: build
+    runs-on: ubuntu-latest
+    if: false
+    steps:
+      - name: Checkout (app)
+        uses: actions/checkout@v3
+
+      - name: Deploy Android App to Production
+        id: deploy_android_production
+        uses: ./.github/actions/deploy_android_production
+        with:
+          GPLAY_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
+          ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+  deploy-ios:
+    needs: build
+    runs-on: macos-14
+    steps:
+      - name: Checkout (app)
+        uses: actions/checkout@v3
+
+      - name: Build App and Deploy to AppStore
+        uses: ./.github/actions/deploy_ios_production
+        with:
+          MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
+          IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
+          IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
+          IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
+          IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+          IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+          IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
+          IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
+          IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
+          IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
+          IOS_MATCH_DEPLOY_KEY: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
+
+  checks:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      # turn off fail fast, let all the checks run irrespective of failures
+      fail-fast: false
+      matrix:
+        check: ['yarn:lint', 'compose:test']
+    steps:
+      - name: Checkout (app)
+        uses: actions/checkout@v3
+        with:
+          path: app
+
+      - name: Inject Doppler secrets
+        uses: ./app/.github/actions/inject_doppler_secrets
+        with:
+          doppler_token: ${{ secrets.DOPPLER_PRODUCTION_TOKEN }}
+          working_directory: app
+          
+      - name: Run check
+        uses: ./app/.github/actions/check
+        with:
+          check: ${{ matrix.check }}
+          image: ${{ needs.build.outputs.image_ref }}
+          tag: boilerplate-react-native
+          docker_registry: ${{ vars.DOCKER_REGISTRY }}
+          docker_username: ${{ vars.DOCKER_USERNAME }}
+          docker_password: ${{ secrets.DOCKER_PASSWORD }}

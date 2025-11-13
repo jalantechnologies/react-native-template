@@ -1,4 +1,4 @@
-name: cd_preview
+name: cd
 
 on:
   pull_request:
@@ -26,42 +26,9 @@ jobs:
           notes_dir: 'docs/release_notes'
           notes_ext: '.md'
 
-  build:
+  deploy_android:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: release-notes-check
-    runs-on: ubuntu-latest
-    outputs:
-      image_ref: ${{ steps.build.outputs.image_ref }}
-
-    steps:
-      - name: Checkout (app)
-        uses: actions/checkout@v3
-        with:
-          path: app
-
-      - name: Extract branch name
-        id: extract_branch
-        shell: bash
-        run: |
-          BRANCH="${{ github.event.pull_request.head.ref }}"
-          BRANCH_HASH=$(sha1sum < <(printf '%s' "$BRANCH") | cut -c -15)
-          echo "branch_hash=$BRANCH_HASH" >> $GITHUB_OUTPUT
-
-      - name: Build application
-        id: build
-        uses: ./app/.github/actions/build
-        with:
-          docker_registry: ${{ vars.DOCKER_REGISTRY }}
-          docker_username: ${{ vars.DOCKER_USERNAME }}
-          docker_password: ${{ secrets.DOCKER_PASSWORD }}
-          tags: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native:${{ steps.extract_branch.outputs.branch_hash }}
-          build_args: NODE_CONFIG_ENV=preview
-          build_secrets: ''
-          context: app/
-
-  deploy_android_preview:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [build, release-notes-check]
+    needs: [release-notes-check]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (root for actions)
@@ -85,7 +52,7 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           RELEASE_NOTES: ${{ needs.release-notes-check.outputs.release_notes }}
 
-  # deploy_ios_preview:
+  # deploy_ios:
   #   if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
   #   needs: [build, release-notes-check]
   #   runs-on: macos-14

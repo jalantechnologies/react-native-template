@@ -1,0 +1,69 @@
+name: production
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: cd-production
+  cancel-in-progress: true
+
+jobs:
+  release-notes-check:
+    runs-on: ubuntu-latest
+    outputs:
+      release_notes: ${{ steps.check.outputs.release_notes }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Check release notes
+        id: check
+        uses: ./.github/actions/release-check
+        with:
+          version_file: 'package.json'
+          notes_dir: 'docs/release_notes'
+          notes_ext: '.md'
+
+  deploy-android:
+    runs-on: ubuntu-latest
+    needs: [release-notes-check]
+    steps:
+      - name: Checkout (app)
+        uses: actions/checkout@v3
+
+      - name: Deploy Android app to Play Store
+        id: deploy_android_production
+        uses: ./.github/actions/deploy_android_production
+        with:
+          GPLAY_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
+          ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          RELEASE_NOTES: ${{ needs.release-notes-check.outputs.release_notes }}
+
+  # deploy-ios:
+  #   runs-on: macos-14
+  #   needs: [release-notes-check]
+  #   timeout-minutes: 30
+  #   steps:
+  #     - name: Checkout (app)
+  #       uses: actions/checkout@v3
+
+  #     - name: Deploy iOS app to App Store
+  #       uses: ./.github/actions/deploy_ios_production
+  #       with:
+  #         MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
+  #         IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
+  #         IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}
+  #         IOS_KEYCHAIN_PASSWORD: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
+  #         IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+  #         IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+  #         IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
+  #         IOS_APP_IDENTIFIER: ${{ secrets.IOS_APP_IDENTIFIER }}
+  #         IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
+  #         IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
+  #         IOS_MATCH_DEPLOY_KEY: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
+  #         RELEASE_NOTES: ${{ needs.release-notes-check.outputs.release_notes }}

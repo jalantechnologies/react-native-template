@@ -55,32 +55,22 @@ platform :android do
     release_notes_file = ENV["RELEASE_NOTES_FILE"]
     release_notes_language = ENV["RELEASE_NOTES_LANGUAGE"] || "en-US"
 
-    if release_notes_file
-      unless File.file?(release_notes_file)
-        UI.important("⚠️ Release notes file not found: #{release_notes_file}")
-      else
-        release_notes_text = File.read(release_notes_file).strip
+  if release_notes_text && !release_notes_text.empty?
+    changelog_path = "fastlane/metadata/android/#{release_notes_language}/changelogs/#{updated_version_code}.txt"
 
-        if release_notes_text.empty?
-          UI.important("⚠️ Release notes file is empty: #{release_notes_file}")
-        else
-          release_notes = {
-            release_notes_language => release_notes_text
-          }
+    FileUtils.mkdir_p(File.dirname(changelog_path))
+    File.write(changelog_path, release_notes_text)
 
-          UI.message(
-            "📖 Loaded release notes (#{release_notes_language}) from: #{release_notes_file}"
-          )
-        end
-      end
-    end
+    UI.success("📝 Created Play Store changelog: #{changelog_path}")
+  end
+
     
     upload_to_play_store(
       track: "internal",
       release_status: "draft",
       json_key: ENV["ANDROID_JSON_KEY_FILE"],
       skip_upload_apk: true,
-      release_notes: release_notes
+      skip_upload_metadata: false
     )
   end
 

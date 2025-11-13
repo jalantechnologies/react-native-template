@@ -51,15 +51,14 @@ platform :android do
 
     
     # Read release notes from file if provided
-   release_notes = nil
-    release_notes_file = ENV["RELEASE_NOTES_FILE"]
-    release_notes_language = ENV["RELEASE_NOTES_LANGUAGE"] || "en-US"
+    release_notes = ENV["RELEASE_NOTES"]
+    release_notes_language = "en-US"
 
-  if release_notes_text && !release_notes_text.empty?
+  if release_notes
     changelog_path = "fastlane/metadata/android/#{release_notes_language}/changelogs/#{updated_version_code}.txt"
 
     FileUtils.mkdir_p(File.dirname(changelog_path))
-    File.write(changelog_path, release_notes_text)
+    File.write(changelog_path, release_notes)
 
     UI.success("📝 Created Play Store changelog: #{changelog_path}")
   end

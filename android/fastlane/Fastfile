@@ -38,16 +38,17 @@ platform :android do
   lane :deploy_android_production do
     fetch_and_increment_build_number
 
-    gradle(
-      task: "bundle",
-      build_type: "release",
-      properties: {
-        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
-        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
-        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
-        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
-      }
-    )
+  gradle(
+    task: "bundle",
+    build_type: "release",
+    properties: {
+      "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
+      "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
+      "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+      "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"]
+    }
+  )
+
     
     # Read release notes from file if provided
    release_notes = nil

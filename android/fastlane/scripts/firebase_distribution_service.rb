@@ -66,8 +66,6 @@ class FirebaseDistributionService
         "BUNDLE_IN_DEBUG" => "true",
         "org.gradle.daemon" => "false",
         "org.gradle.workers.max" => "4",
-        "versionCode" => version_code.to_s,
-        "versionName" => version
       },
       print_command: true,
       print_command_output: true

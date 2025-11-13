@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
 
-  check-version-number:
+  check_version_number:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:

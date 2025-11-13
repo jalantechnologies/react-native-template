@@ -2,7 +2,7 @@
 
 This repository uses **GitHub Actions** combined with **Fastlane** to automate the build, testing, and deployment process for the Android app. The primary goals of this CI/CD setup are:
 
-- 🚀 **Fast feedback** on pull requests by distributing builds via **Google Play Console Internal Testing track**.
+- 🚀 **Fast feedback** on pull requests by distributing builds via **Firebase App Distribution** for **Android** and **TestFlight** for **iOS**.
 - 🧹 **Automatic cleanup** of test builds when a PR is closed.
 - 🔒 **Secure handling** of credentials using **GitHub Actions Secrets**.
 

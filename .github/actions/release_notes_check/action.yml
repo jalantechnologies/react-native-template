@@ -54,3 +54,19 @@ runs:
           echo "$CONTENT"
           echo 'EOF'
         } >> $GITHUB_OUTPUT
+        
+    - name: Write release notes to default fastlane changelog
+      id: write_default_changelog
+      shell: bash
+      run: |
+        DEFAULT_CHANGELOG="android/fastlane/metadata/android/en-US/changelogs/default.txt"
+        
+        echo "📄 Writing release notes to $DEFAULT_CHANGELOG"
+
+        # Ensure directory exists
+        mkdir -p "$(dirname "$DEFAULT_CHANGELOG")"
+
+        # Write content
+        echo "${{ steps.check_notes.outputs.release_notes }}" > "$DEFAULT_CHANGELOG"
+
+        echo "✅ default.txt changelog updated"

@@ -7,7 +7,6 @@ on:
 jobs:
   deploy_android_preview:
     name: Deploy Android to Firebase
-    needs: checks
     if: false
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +31,6 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
 
   deploy_ios_preview:
-    needs: [checks]
     if: github.event.action != 'closed' && false
     runs-on: macos-14
     timeout-minutes: 30

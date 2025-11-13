@@ -57,15 +57,15 @@ platform :android do
       }
     )
 
-    # # 4) Create changelog file matching versionCode
-    # release_notes = ENV["RELEASE_NOTES"]
-    # if release_notes && !release_notes.strip.empty?
-    #   release_notes_language = "en-US"
-    #   changelog_path = "fastlane/metadata/android/#{release_notes_language}/changelogs/#{updated_version_code}.txt"
-    #   FileUtils.mkdir_p(File.dirname(changelog_path))
-    #   File.write(changelog_path, release_notes)
-    #   UI.success("📝 Created Play Store changelog: #{changelog_path}")
-    # end
+    # 4) Create changelog file matching versionCode
+    release_notes = ENV["RELEASE_NOTES"]
+    if release_notes && !release_notes.strip.empty?
+      release_notes_language = "en-US"
+      changelog_path = "fastlane/metadata/android/#{release_notes_language}/changelogs/default.txt"
+      FileUtils.mkdir_p(File.dirname(changelog_path))
+      File.write(changelog_path, release_notes)
+      UI.success("📝 Created Play Store changelog: #{changelog_path}")
+    end
 
     # 5) Upload (supply automatically picks changelog)
     upload_to_play_store(

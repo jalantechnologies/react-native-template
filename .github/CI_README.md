@@ -8,6 +8,14 @@ This repository uses **GitHub Actions** combined with **Fastlane** to automate t
 
 This ensures contributors and QA can quickly test PR builds without manually compiling the app, and stale builds are cleaned up automatically.
 
+### ✔ CI Checks (Fast & Parallel)
+
+The `ci.yml` workflow runs two core CI jobs:
+- **ci/lint** – Linting directly on source code  
+- **ci/sonarqube** – Code quality analysis for pull requests  
+
+These jobs run **independently and in parallel**, improving feedback time.
+
 ---
 
 ## 🔧 Environment Variables

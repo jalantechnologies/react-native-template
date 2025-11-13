@@ -70,7 +70,7 @@ platform :android do
     # 5) Upload (supply automatically picks changelog)
     upload_to_play_store(
       track: "internal",
-      release_status: "draft",
+      release_status: "completed",
       json_key: ENV["ANDROID_JSON_KEY_FILE"],
       skip_upload_apk: true,
       skip_upload_metadata: false,

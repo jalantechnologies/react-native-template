@@ -1,3 +1,7 @@
+// Added a shouldBundleInDebug gate so the React Gradle plugin enables JS bundling and emits a USE_DEV_SUPPORT
+def shouldBundleInDebug = project.hasProperty("BUNDLE_IN_DEBUG") &&
+        project.property("BUNDLE_IN_DEBUG").toString().toBoolean()
+
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
@@ -23,6 +27,7 @@ react {
     //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
     // debuggableVariants = ["liteDebug", "prodDebug"]
+    debuggableVariants = shouldBundleInDebug ? [] : ["debug"]
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
@@ -83,7 +88,15 @@ android {
         applicationId "com.bettrsw.boilerplate.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        // Check if versionCode is passed via -P flag (PR builds only)
+        // Otherwise use default production version code
+        if (project.hasProperty('versionCode')) {
+            versionCode project.property('versionCode').toInteger()
+            println "📱 Using custom version code: ${versionCode}"
+        } else {
+            versionCode 1  
+            println "📱 Using production version code: ${versionCode}"
+        }
         versionName "1.0.0"
     }
     signingConfigs {
@@ -97,12 +110,14 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            buildConfigField "boolean", "USE_DEV_SUPPORT", shouldBundleInDebug ? "false" : "true"
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
+            buildConfigField "boolean", "USE_DEV_SUPPORT", "false"
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }

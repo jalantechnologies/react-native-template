@@ -13,31 +13,40 @@ require_relative './firebase_distribution_service'
 # @param project_number [String] Firebase project number
 # @param app_id [String] Firebase app ID
 # @param service_account_path [String] Path to the GCP service account JSON key
-# @param release_notes [String] Release notes content (optional)
-# @param version_info [Hash] Version info from sync_versions lane (includes :version and :version_code)
-def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_account_path:, release_notes: "", version_info: {})
+# @param release_notes_file [String] Path to file containing release notes (optional)
+def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_account_path:, release_notes_file: "")
   firebase = FirebaseDistributionService.new(
     project_number: project_number,
     app_id: app_id,
     service_account_path: service_account_path
   )
-
+  
   # Cleanup old builds for specific PR before creating a new one
   old_releases = firebase.fetch_releases_by_pr_number(pr_number)
   unless old_releases.empty?
     UI.message("🧹 Cleaning up old releases for PR ##{pr_number} before uploading a new one...")
     firebase.delete_releases(old_releases)
   end
-
-  # Build the new APK (version code already set by sync_versions)
-  firebase.build_apk
+  
+  # Build the new APK with unique version code (returns version code)
+  version_code = firebase.build_apk(pr_number: pr_number)
+  
   apk_path = File.expand_path("../../app/build/outputs/apk/debug/app-debug.apk", __dir__)
   UI.user_error!("❌ APK file not found at #{apk_path}") unless File.exist?(apk_path)
-
+  
+  # Read release notes if provided
+  release_notes = ""
+  if release_notes_file && File.exist?(release_notes_file)
+    release_notes = File.read(release_notes_file).strip
+    UI.message("📖 Loaded release notes from: #{release_notes_file}")
+  else
+    UI.message("⚠️  No release notes file provided or file not found")
+  end
+  
   # Upload and process
   operation_name = firebase.upload_apk(apk_path)
   release_name = firebase.poll_for_release(operation_name)
-
-  # Add PR metadata with release notes and version info
-  firebase.add_release_notes(release_name, pr_number, pr_title, release_notes, version_info)
+  
+  # Add PR metadata and release notes
+  firebase.add_release_notes(release_name, pr_number, pr_title, release_notes, version_code)
 end

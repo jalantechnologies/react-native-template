@@ -4,16 +4,16 @@ inputs:
   GPLAY_SERVICE_ACCOUNT_KEY_JSON:
     required: true
     description: 'Service Account Key JSON file for Google Play Store'
-  KEYSTORE_FILE:
+  ANDROID_KEYSTORE_FILE:
     required: true
     description: 'Keystore file for signing the Android app'
-  KEYSTORE_PASSWORD:
+  ANDROID_KEYSTORE_PASSWORD:
     required: true
     description: 'Password for the keystore file'
-  KEY_ALIAS:
+  ANDROID_KEY_ALIAS:
     required: true
     description: 'Key alias for the keystore file'
-  KEY_PASSWORD:
+  ANDROID_KEY_PASSWORD:
     required: true
     description: 'Password for the key alias'
 
@@ -95,7 +95,7 @@ runs:
       id: android_keystore
       with:
         fileName: "android_keystore.keystore"
-        encodedString: ${{ inputs.KEYSTORE_FILE }}
+        encodedString: ${{ inputs.ANDROID_KEYSTORE_FILE }}
   
     - name: Export Release Notes
       run: echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV && echo "${{ inputs.RELEASE_NOTES }}" >> $GITHUB_ENV && echo "EOF" >> $GITHUB_ENV
@@ -106,8 +106,8 @@ runs:
       run: bundle exec fastlane deploy_android_production
       working-directory: android
       env:
-        KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
-        KEYSTORE_PASSWORD: ${{ inputs.KEYSTORE_PASSWORD }}
-        KEY_ALIAS: ${{ inputs.KEY_ALIAS }}
-        KEY_PASSWORD: ${{ inputs.KEY_PASSWORD }}
+        ANDROID_KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
+        ANDROID_KEYSTORE_PASSWORD: ${{ inputs.ANDROID_KEYSTORE_PASSWORD }}
+        ANDROID_KEY_ALIAS: ${{ inputs.ANDROID_KEY_ALIAS }}
+        ANDROID_KEY_PASSWORD: ${{ inputs.ANDROID_KEY_PASSWORD }}
         ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}

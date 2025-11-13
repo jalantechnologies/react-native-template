@@ -137,7 +137,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
             aria-label="Privacy Policy Checkbox"
           />
           <Text fontSize="sm" alignSelf={'center'} lineHeight={16}>
-            By continuing, you agree to our
+            By continuing, we agree to our
             <Link
               _text={{ color: 'primary.500', underline: true, marginLeft: 1 }}
               href="https://jalantechnologies.github.io/react-native-template/"

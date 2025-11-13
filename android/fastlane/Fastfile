@@ -71,9 +71,6 @@ platform :android do
       }
     )
 
-
-
-
     # 4) Upload (supply automatically picks changelog)
     upload_to_play_store(
       track: "internal",
@@ -101,7 +98,6 @@ platform :android do
     )
 
   end
-
 
   desc "Clean up Firebase App Distribution releases for closed PR"
   lane :pr_cleanup do |options|

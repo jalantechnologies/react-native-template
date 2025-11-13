@@ -12,6 +12,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: false
     outputs:
       image_ref: ${{ steps.build.outputs.image_ref }}
       branch_hash: ${{ steps.extract_branch.outputs.branch_hash }}
@@ -45,7 +46,7 @@ jobs:
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           tags: ${{ vars.DOCKER_REGISTRY }}/${{ vars.DOCKER_USERNAME }}/boilerplate-react-native:${{ steps.extract_branch.outputs.branch_hash }}
-          build_args: NODE_CONFIG_ENV=${{ env.BUILD_ENV }}
+          build_args: NODE_CONFIG_ENV=production
           build_secrets: ''
           context: app/
 
@@ -70,6 +71,7 @@ jobs:
   deploy-ios:
     runs-on: macos-14
     needs: build
+    if: false
     timeout-minutes: 30
     steps:
       - name: Checkout (app)

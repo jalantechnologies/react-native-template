@@ -100,7 +100,7 @@ platform :android do
     release_notes_hash = release_notes_text.empty? ? nil : { "en-US" => release_notes_text }
     
     upload_to_play_store(
-      track: "internal",
+      track: "production",
       release_status: "draft",
       json_key: ENV["ANDROID_JSON_KEY_FILE"],
       skip_upload_apk: true,

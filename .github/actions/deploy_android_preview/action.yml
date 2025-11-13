@@ -26,6 +26,10 @@ inputs:
   PR_TITLE:
     description: 'Pull request title'
     required: true
+  RELEASE_NOTES:                      
+    required: true
+    description: 'Release notes for the build'
+    default: ""
 
 runs:
   using: 'composite'
@@ -59,6 +63,10 @@ runs:
 
     # 4. Fastlane setup (local action)
     - uses: ./.github/actions/setup-fastlane
+
+    - name: Export Release Notes
+      run: echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV && echo "${{ inputs.RELEASE_NOTES }}" >> $GITHUB_ENV && echo "EOF" >> $GITHUB_ENV
+      shell: bash
 
     # 5. Decode GCP JSON
     - name: Decode and save GCP service account key

@@ -17,6 +17,11 @@ inputs:
     required: true
     description: 'Password for the key alias'
 
+  RELEASE_NOTES:                      
+    required: true
+    description: 'Release notes for the build'
+    default: ""
+
 runs:
   using: 'composite'
   steps:
@@ -91,6 +96,10 @@ runs:
       with:
         fileName: "android_keystore.keystore"
         encodedString: ${{ inputs.KEYSTORE_FILE }}
+  
+    - name: Export Release Notes
+      run: echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV && echo "${{ inputs.RELEASE_NOTES }}" >> $GITHUB_ENV && echo "EOF" >> $GITHUB_ENV
+      shell: bash
 
     - name: Build and deploy android App via fastlane
       shell: bash

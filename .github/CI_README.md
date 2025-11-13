@@ -20,53 +20,38 @@ These jobs run **independently and in parallel**, improving feedback time.
 
 ***
 
-## 🚀 CD Workflows
+### ✔ CD Checks
+## Preview Deployments (`cd.yml`)
 
-### 📱 Preview Deployment (`cd_preview.yml`)
-
-**Triggers:** Pull request opened, synchronized, reopened, or marked ready for review
-
-**Flow:**
-```
-release-notes-check → build → deploy_android_preview + deploy_ios_preview (parallel)
-``````
+**When it runs:**
+PR opened, updated, reopened, or marked ready for review
 
 **What it does:**
-1. **Release Notes Check** – Validates that `docs/release_notes/{version}.md` exists for the current `package.json` version
-2. **Build** – Builds Docker image with preview configuration and syncs version from `package.json`
-3. **Deploy Android Preview** – Deploys to Firebase App Distribution with release notes
-4. **Deploy iOS Preview** – Deploys to TestFlight with release notes (runs in parallel with Android)
 
-**Key Features:**
-- ✅ Blocks deployment if release notes are missing
-- ✅ Automatically attaches release notes to Firebase and TestFlight
-- ✅ Comments on PR with Firebase console link
-- ✅ Skips draft PRs automatically
+* Validates release notes for the current version
+* Build and Deploy Android (Firebase App Distribution)
+* Build and Deploy iOS (TestFlight)
+* Comments on the PR with Firebase preview link
+
+**Why it matters:**
+Ensures every PR has proper release notes (If no release notes, workflow will fail), produces installable preview builds, and keeps QA feedback fast.
 
 ---
+## Production Deployment (`production.yml`)
 
-### 🏭 Production Deployment (`cd_production.yml`)
-
-**Triggers:** Push to `main` branch
-
-**Flow:**
-```
-release-notes-check → build → deploy-android + deploy-ios (parallel)
-``````
+**When it runs:**
+Push to `main`
 
 **What it does:**
-1. **Release Notes Check** – Validates that `docs/release_notes/{version}.md` exists for the current `package.json` version
-2. **Build** – Builds Docker image with production configuration and syncs version from `package.json`
-3. **Deploy Android** – Deploys to Google Play Console (internal track, draft) with release notes
-4. **Deploy iOS** – Deploys to App Store with release notes (runs in parallel with Android)
 
-**Key Features:**
-- ✅ Blocks deployment if release notes are missing
-- ✅ Automatically attaches release notes to Play Store and App Store
-- ✅ Version code synced from `package.json` using formula: `(major * 10000) + (minor * 100) + patch`
-- ✅ Parallel Android and iOS deployments reduce total deployment time
+* Validates release notes
+* Build and Deploys Android app to Google Play Console
+* BUild and Deploys iOS app to App Store
 
-***
+**Why it matters:**
+Guarantees only versioned, documented builds go to the stores — with release notes and version codes handled automatically.
+
+---
 
 ## 📋 Release Notes Structure
 
@@ -80,23 +65,7 @@ docs/
     └── 1.1.0.md
 ``````
 
-**Example release notes file (`docs/release_notes/1.0.1.md`):**
-```
-# v1.0.1 Release Notes
-
-## Features
-- Added new user authentication flow
-- Improved performance on low-end devices
-
-## Bug Fixes
-- Fixed crash on app startup
-- Resolved memory leak in image cache
-
-## Known Issues
-- Dark mode not fully supported on Android 10
-``````
-
-***
+---
 
 ## 🔧 Environment Variables
 
@@ -138,26 +107,35 @@ These environment variables are used by the GitHub Actions workflows and Fastlan
 | `IOS_MATCH_REPOSITORY_URL`             | GitHub Secret | The Git URL of the private repository used by Fastlane Match to store signing certificates and provisioning profiles.                                |
 
 These variables are decoded and written to disk during the CI process so tools like Fastlane or deployment APIs can use them.
+---
+## 🚀 CD Workflow Summary
 
-***
+### 1. 🔄 PR Build & Deploy to Firebase App Distribution
 
-## 📦 Version Management
+**Why?**  
+To enable quick testing and feedback for each PR by distributing `.apk` builds to testers on the **Firebase App Distribution**.
 
-Version management is centralized in `package.json` and automatically synced to Android and iOS using the `sync_versions` Fastlane lane.
+**How?**
+- Triggered on PR open, reopen, or update (`pull_request` events)
+- Uses Fastlane’s `pr_deploy` lane to:
+  - Build the `.apk` with Gradle (`assembleDebug`)
+  - Upload the `.apk` to **Firebase App Distribution** via Firebase API
+  - Set release notes with the PR number and title
+  - Comment on the PR with the release details (URL, build info)
 
-**Version Code Formula:**
-```ruby
-version_code = (major * 10000) + (minor * 100) + patch
-``````
+---
 
-**Examples:**
-- `1.0.0` → `10000`
-- `1.3.7` → `10307`
-- `2.5.12` → `20512`
+### 2. 🧹 Google Play Cleanup on PR Close
 
-**What gets updated:**
-- Android: `versionCode` and `versionName` in `build.gradle`
-- iOS: `CFBundleShortVersionString` and `CFBundleVersion` in `Info.plist`
+**Why?**  
+To prevent clutter in Google Play Console Internal Testing by automatically removing builds for closed PRs.
+
+**How?**
+- Triggered on PR close (`pull_request.closed`)
+- Uses Fastlane’s `pr_cleanup` lane to:
+  - Authenticate with Google Play Console using the service account
+  - Fetch releases with matching PR identifiers in their release notes
+  - Call the Google Play Console API to delete the releases
 
 ---
 ## 🧪 Local Testing

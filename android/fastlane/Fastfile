@@ -40,7 +40,7 @@ platform :android do
     updated_version_code = fetch_and_increment_build_number
 
     # 2) Read version name
-    package_json_path = File.expand_path("../package.json", __dir__)
+    package_json_path = File.expand_path("../../package.json", __dir__)
     version_name = JSON.parse(File.read(package_json_path))["version"]
 
     # 3) Build with injected versionCode + versionName

@@ -2,6 +2,7 @@ import 'react-native-gesture-handler';
 import { DatadogProvider } from '@datadog/mobile-react-native';
 import { NativeBaseProvider } from 'native-base';
 import React, { useCallback } from 'react';
+import { Provider as PaperProvider } from 'react-native-paper';
 import ErrorBoundary from 'react-native-error-boundary';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 
@@ -10,6 +11,7 @@ import { ErrorFallback } from './components';
 import { AccountContextProvider, AuthContextProvider, TaskContextProvider } from './contexts';
 import Logger from './logger/logger';
 import ApplicationNavigator from './navigators/application';
+import paperTheme from './theme/paper-theme';
 import './translations';
 import DatadogConfig, { onDataDogSDKInitialized } from './services/datadog';
 
@@ -18,6 +20,7 @@ const App = () => {
   const ErrorComponent = useCallback(() => <ErrorFallback />, []);
 
   return (
+    <PaperProvider theme={paperTheme}>
     <NativeBaseProvider theme={appTheme}>
       <ErrorBoundary
         onError={(e, stack) => Logger.error(`App Error: ${e} ${stack}`)}
@@ -36,6 +39,7 @@ const App = () => {
         </DatadogProvider>
       </ErrorBoundary>
     </NativeBaseProvider>
+    </PaperProvider>
   );
 };
 

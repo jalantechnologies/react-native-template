@@ -11,6 +11,7 @@ export type ApplicationStackParamList = {
 // Main stack parameter list
 export type MainParamsList = {
   Authenticated: NavigatorScreenParams<AuthenticatedStackParamsList | AuthenticatedTabParamsList>;
+  Landing: undefined;
   OTPVerify: { countryCode: string; phoneNumber: string };
   PhoneAuth: undefined;
 };

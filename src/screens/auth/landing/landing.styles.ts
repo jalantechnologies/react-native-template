@@ -1,0 +1,186 @@
+import { StyleSheet } from 'react-native';
+
+import { LANDING_COLORS, LANDING_ICON_SIZES, LANDING_SPACING } from './landing.constants';
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#0B0B0F',
+  },
+  screen: {
+    flexGrow: 1,
+    padding: LANDING_SPACING.layoutPadding,
+    alignItems: 'center',
+    minHeight: '100%',
+    width: '100%',
+  },
+  gradient: {
+    flex: 1,
+    padding: LANDING_SPACING.layoutPadding,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  content: {
+    width: '100%',
+    maxWidth: LANDING_SPACING.contentMaxWidth,
+    alignSelf: 'center',
+    justifyContent: 'space-between',
+    flexGrow: 1,
+  },
+  heroSection: {
+    alignItems: 'center',
+    paddingTop: LANDING_SPACING.heroPaddingTop,
+    width: '100%',
+    maxWidth: LANDING_SPACING.contentMaxWidth,
+    alignSelf: 'center',
+  },
+  heroIconWrapper: {
+    position: 'relative',
+    marginBottom: LANDING_SPACING.heroIconMarginBottom,
+    alignItems: 'center',
+  },
+  heroIconSvg: {
+    height: LANDING_ICON_SIZES.hero,
+    width: LANDING_ICON_SIZES.hero,
+  },
+  heroIcon: {
+    alignItems: 'center',
+    backgroundColor: LANDING_COLORS.text,
+    borderRadius: 40,
+    height: LANDING_SPACING.heroIconSize,
+    justifyContent: 'center',
+    width: LANDING_SPACING.heroIconSize,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 8,
+  },
+  badge: {
+    alignItems: 'center',
+    borderRadius: LANDING_SPACING.badgeSize / 2,
+    height: LANDING_SPACING.badgeSize,
+    justifyContent: 'center',
+    position: 'absolute',
+    right: -8,
+    top: -8,
+    width: LANDING_SPACING.badgeSize,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  badgeIcon: {
+    height: LANDING_ICON_SIZES.badge,
+    width: LANDING_ICON_SIZES.badge,
+  },
+  title: {
+    marginTop: 0,
+    marginBottom: LANDING_SPACING.titleMarginBottom,
+    color: LANDING_COLORS.text,
+    fontSize: 36,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  subtitle: {
+    color: LANDING_COLORS.subtitle,
+    fontSize: 18,
+    fontWeight: '400',
+    lineHeight: 26,
+    textAlign: 'center',
+    marginBottom: LANDING_SPACING.subtitleMarginBottom,
+    paddingHorizontal: 16,
+  },
+  cardList: {
+    gap: LANDING_SPACING.cardGap,
+    width: '100%',
+    maxWidth: LANDING_SPACING.contentMaxWidth,
+  },
+  cardSpacing: {
+    marginTop: LANDING_SPACING.cardGap,
+  },
+  card: {
+    borderRadius: LANDING_SPACING.cardBorderRadius,
+    borderWidth: 1,
+    borderColor: LANDING_COLORS.cardBorder,
+    backgroundColor: LANDING_COLORS.cardBackground,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
+  },
+  cardBlur: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: LANDING_SPACING.cardInnerGap,
+    padding: LANDING_SPACING.cardPadding,
+  },
+  cardIcon: {
+    alignItems: 'center',
+    borderRadius: 12,
+    height: LANDING_SPACING.cardIconSize,
+    justifyContent: 'center',
+    width: LANDING_SPACING.cardIconSize,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  cardIconSvg: {
+    height: LANDING_ICON_SIZES.card,
+    width: LANDING_ICON_SIZES.card,
+  },
+  cardTextWrapper: {
+    flex: 1,
+  },
+  cardTitle: {
+    color: LANDING_COLORS.cardText,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  cardDescription: {
+    color: LANDING_COLORS.cardSubText,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  ctaWrapper: {
+    marginTop: LANDING_SPACING.sectionGap,
+    gap: LANDING_SPACING.ctaGap,
+    paddingBottom: LANDING_SPACING.ctaPaddingBottom,
+    width: '100%',
+    maxWidth: LANDING_SPACING.contentMaxWidth,
+    alignSelf: 'center',
+  },
+  ctaButton: {
+    borderRadius: 999,
+    backgroundColor: LANDING_COLORS.text,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+  ctaButtonContent: {
+    height: 56,
+  },
+  ctaButtonLabel: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: LANDING_COLORS.heroIconBorder,
+  },
+  disclaimer: {
+    color: LANDING_COLORS.disclaimer,
+    fontSize: 14,
+    textAlign: 'center',
+  },
+});
+
+export default styles;
+

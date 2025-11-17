@@ -5,3 +5,4 @@ export { default as Dashboard } from './dashboard';
 export { default as RegistrationScreen } from './auth/registration';
 export { default as Profile } from './profile/home';
 export { default as EditProfile } from './profile/edit-profile/edit-profile';
+export { default as LandingScreen } from './auth/landing';

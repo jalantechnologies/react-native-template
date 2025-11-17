@@ -5,6 +5,7 @@ import { MainParamsList } from '../../@types/navigation';
 import { useAuthContext } from '../contexts';
 import OTPVerify from '../screens/auth/otp-verify';
 import PhoneAuth from '../screens/auth/phone-auth';
+import LandingScreen from '../screens/auth/landing';
 
 import AuthenticatedStack from './authenticated';
 
@@ -20,6 +21,7 @@ const MainNavigator = () => {
         <Stack.Screen name="Authenticated" component={AuthenticatedStack} />
       ) : (
         <>
+          <Stack.Screen name="Landing" component={LandingScreen} />
           <Stack.Screen name="PhoneAuth" component={PhoneAuth} />
           <Stack.Screen name="OTPVerify" component={OTPVerify} />
         </>

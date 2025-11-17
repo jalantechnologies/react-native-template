@@ -1,1 +1,3 @@
-This is a default release note
+Version 1.0.2
+- Added automation so Google Play releases reuse docs/release_notes/[version].md when workflows omit custom notes.
+- Seeded the default changelog (init file) to ensure initial uploads always include meaningful release notes.

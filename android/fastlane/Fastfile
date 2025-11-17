@@ -45,6 +45,20 @@ platform :android do
 
     # Write changelog file for Google Play
     release_notes = ENV["RELEASE_NOTES"]
+
+    # Fall back to docs/release_notes/<version>.md when the workflow does not
+    # explicitly pass release notes (e.g. production Play Store releases).
+    if release_notes.nil? || release_notes.strip.empty?
+      release_notes_path = File.expand_path("../../docs/release_notes/#{version_name}.md", __dir__)
+
+      if File.exist?(release_notes_path)
+        release_notes = File.read(release_notes_path)
+        UI.message("📖 Loaded release notes from #{release_notes_path}")
+      else
+        UI.message("⚠️ Release notes file not found: #{release_notes_path}")
+      end
+    end
+
     if release_notes && !release_notes.strip.empty?
       changelog_dir = "android/fastlane/metadata/android/en-US/changelogs"
       FileUtils.mkdir_p(changelog_dir)

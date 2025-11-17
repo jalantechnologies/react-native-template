@@ -3,9 +3,9 @@ import React from 'react';
 
 import { MainParamsList } from '../../@types/navigation';
 import { useAuthContext } from '../contexts';
+import LandingScreen from '../screens/auth/landing';
 import OTPVerify from '../screens/auth/otp-verify';
 import PhoneAuth from '../screens/auth/phone-auth';
-import LandingScreen from '../screens/auth/landing';
 
 import AuthenticatedStack from './authenticated';
 

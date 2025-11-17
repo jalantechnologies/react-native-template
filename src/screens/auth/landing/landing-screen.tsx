@@ -1,14 +1,15 @@
+import { BlurView } from '@react-native-community/blur';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { ScrollView, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import { BlurView } from '@react-native-community/blur';
 import { Button, Card, Surface, Text } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MainScreenProps } from '../../../../@types/navigation';
-import { FEATURE_CARDS, LANDING_COLORS, LANDING_EFFECTS } from './landing.constants';
+
 import { LANDING_ICONS } from './landing-icons';
+import { FEATURE_CARDS, LANDING_COLORS, LANDING_EFFECTS } from './landing.constants';
 import styles from './landing.styles';
 
 const LandingScreen = () => {

@@ -71,18 +71,19 @@ platform :android do
   changelog_path = File.join(changelog_dir, "#{updated_version_code}.txt")
   File.write(changelog_path, release_notes)
 
-  UI.message("📝 Using temporary changelog for Play Store: #{changelog_path}")
+  UI.message("📝 Using changelog for Play Store: #{changelog_path}")
 
   # 5) Upload with metadata_path (NO repo metadata!)
-  upload_to_play_store(
-    track: "internal",
-    release_status: "draft",
-    json_key: ENV["ANDROID_JSON_KEY_FILE"],
-    metadata_path: tmp_metadata,   # ← magic line
-    skip_upload_apk: true,
-    skip_upload_metadata: false,
-    skip_upload_changelogs: false
-  )
+  # 5) Upload with metadata_path (NO repo metadata!)
+upload_to_play_store(
+  track: "internal",
+  release_status: "draft",
+  json_key: ENV["ANDROID_JSON_KEY_FILE"],
+  metadata_path: tmp_metadata,
+  skip_upload_apk: true,
+  skip_upload_metadata: true,
+  skip_upload_changelogs: false
+)
 end
 
 

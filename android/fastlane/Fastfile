@@ -36,51 +36,48 @@ platform :android do
   end
 
   lane :deploy_android_production do
-    # 1) Must capture returned value!
-    updated_version_code = fetch_and_increment_build_number
+  updated_version_code = fetch_and_increment_build_number
 
-    # 2) Read version name
-    package_json_path = File.expand_path("../../package.json", __dir__)
-    version_name = JSON.parse(File.read(package_json_path))["version"]
+  # 1) Get version name
+  package_json_path = File.expand_path("../../package.json", __dir__)
+  version_name = JSON.parse(File.read(package_json_path))["version"]
 
-    # Write changelog file for Google Play
-    release_notes = ENV["RELEASE_NOTES"]
-    if release_notes && !release_notes.strip.empty?
-      changelog_dir = "android/fastlane/metadata/android/en-US/changelogs"
-      FileUtils.mkdir_p(changelog_dir)
+  # 2) Load from docs/release_notes/x.y.z.md
+  release_notes_path = File.expand_path("../../docs/release_notes/#{version_name}.md", __dir__)
+  UI.user_error!("❌ Release notes not found at #{release_notes_path}") unless File.exist?(release_notes_path)
 
-      changelog_path = File.join(changelog_dir, "#{updated_version_code}.txt")
-      File.write(changelog_path, release_notes)
+  release_notes = File.read(release_notes_path)
 
-      UI.message("📝 Wrote version-specific changelog: #{changelog_path}")
-    else
-      UI.message("⚠️ No release notes provided. Skipping changelog creation.")
-    end
+  # 3) Build app
+  gradle(
+    task: "bundle",
+    build_type: "release",
+    properties: {
+      "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
+      "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
+      "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+      "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
+      "versionCode" => updated_version_code.to_s,
+      "versionName" => version_name
+    }
+  )
 
-    # 3) Build with injected versionCode + versionName
-    gradle(
-      task: "bundle",
-      build_type: "release",
-      properties: {
-        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
-        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
-        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
-        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
-        "versionCode" => updated_version_code.to_s,
-        "versionName" => version_name
+  # 4) Upload directly with inline release notes 🚀
+  upload_to_play_store(
+    track: "internal",
+    release_status: "draft",
+    json_key: ENV["ANDROID_JSON_KEY_FILE"],
+    skip_upload_apk: true,
+    skip_upload_metadata: true,
+    skip_upload_changelogs: true,
+    release_notes: [
+      {
+        locale: "en-US",
+        text: release_notes
       }
-    )
-
-    # 4) Upload (supply automatically picks changelog)
-    upload_to_play_store(
-      track: "internal",
-      release_status: "draft",
-      json_key: ENV["ANDROID_JSON_KEY_FILE"],
-      skip_upload_apk: true,
-      skip_upload_metadata: false,
-      skip_upload_changelogs: false
-    )
-  end
+    ]
+  )
+end
 
 
 

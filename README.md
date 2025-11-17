@@ -288,4 +288,3 @@ To fix this, follow these steps:
     You will again see a warning prompt saying "Running "Android Emulator" will harm your computer"
     Click on open
     ```
-

@@ -3,7 +3,7 @@ name: cd
 on:
   push:
     branches:
-      - main
+      - punith/test/preview-workflows
 
 concurrency:
   group: cd-production

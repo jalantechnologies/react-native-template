@@ -80,7 +80,7 @@ platform :android do
     skip_upload_changelogs: false
   )
 
-
+  end
 
   desc "Deploy APK to Firebase App Distribution (PR Preview)"
   lane :pr_deploy do |options|

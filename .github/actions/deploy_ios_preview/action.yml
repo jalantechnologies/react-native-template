@@ -37,6 +37,9 @@ inputs:
   PR_NUMBER:
     required: false
     description: 'Pull request number for PR-specific builds'
+  GITHUB_TOKEN:
+    required: false
+    description: 'GitHub token for posting PR comments'
 
 runs:
   using: 'composite'
@@ -103,7 +106,7 @@ runs:
     - name: Set up SSH for Match
       uses: webfactory/ssh-agent@v0.7.0
       with:
-        ssh-private-key: ${{ env.IOS_MATCH_DEPLOY_KEY }}
+        ssh-private-key: ${{ inputs.IOS_MATCH_DEPLOY_KEY }}
 
     - name: Add GitHub to known hosts
       run: |
@@ -113,15 +116,27 @@ runs:
 
     - name: Setup Keychain
       run: |
-        security create-keychain -p ${{ env.IOS_KEYCHAIN_PASSWORD }} ios.keychain
+        security create-keychain -p "${{ inputs.IOS_KEYCHAIN_PASSWORD }}" ios.keychain
         security set-keychain-settings -lut 21600 ios.keychain
-        security unlock-keychain -p ${{ env.IOS_KEYCHAIN_PASSWORD }} ios.keychain
+        security unlock-keychain -p "${{ inputs.IOS_KEYCHAIN_PASSWORD }}" ios.keychain
         security list-keychains -s ios.keychain
         security default-keychain -d user -s ios.keychain
       shell: bash
 
-    - name: Export Match password
-      run: echo "MATCH_PASSWORD=${{ env.MATCH_PASSWORD }}" >> $GITHUB_ENV
+    - name: Export environment variables for Fastlane
+      run: |
+        echo "MATCH_PASSWORD=${{ inputs.IOS_MATCH_PASSWORD }}" >> $GITHUB_ENV
+        echo "IOS_MATCH_REPOSITORY_URL=${{ inputs.IOS_MATCH_REPOSITORY_URL }}" >> $GITHUB_ENV
+        echo "IOS_APPLE_ID=${{ inputs.IOS_APPLE_ID }}" >> $GITHUB_ENV
+        echo "IOS_KEYCHAIN_PASSWORD=${{ inputs.IOS_KEYCHAIN_PASSWORD }}" >> $GITHUB_ENV
+        echo "IOS_APP_STORE_CONNECT_API_KEY_ID=${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ID }}" >> $GITHUB_ENV
+        echo "IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID=${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}" >> $GITHUB_ENV
+        echo "IOS_APP_STORE_CONNECT_API_KEY_B64=${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_B64 }}" >> $GITHUB_ENV
+        echo "IOS_APP_IDENTIFIER=${{ inputs.IOS_APP_IDENTIFIER }}" >> $GITHUB_ENV
+        echo "IOS_APP_STORE_TEAM_ID=${{ inputs.IOS_APP_STORE_TEAM_ID }}" >> $GITHUB_ENV
+        echo "IOS_DEV_EMAIL=${{ inputs.IOS_DEV_EMAIL }}" >> $GITHUB_ENV
+        echo "PR_NUMBER=${{ inputs.PR_NUMBER }}" >> $GITHUB_ENV
+        echo "FASTLANE_USER=${{ inputs.IOS_DEV_EMAIL }}" >> $GITHUB_ENV
       shell: bash
 
     - name: Install code signing certificates via Match
@@ -145,6 +160,17 @@ runs:
 
     - name: iOS PR Deploy to TestFlight
       working-directory: ios
+      env:
+        PR_NUMBER: ${{ inputs.PR_NUMBER }}
+        IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
+        IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+        IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+        IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
+        IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
+        IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}
+        FASTLANE_USER: ${{ inputs.IOS_DEV_EMAIL }}
+        IOS_APP_STORE_TEAM_ID: ${{ inputs.IOS_APP_STORE_TEAM_ID }}
+        MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}
       run: bundle exec fastlane ios pr_deploy
       shell: bash
     
@@ -165,13 +191,14 @@ runs:
         path: /Users/runner/Library/Logs/gym/*.log
 
     - name: Post PR comment with TestFlight link
-      if: ${{ env.PR_NUMBER != '' }}
+      if: ${{ inputs.PR_NUMBER != '' && inputs.GITHUB_TOKEN != '' }}
       env:
-        GH_TOKEN: ${{ env.GITHUB_TOKEN }}
-        PR_NUMBER: ${{ env.PR_NUMBER }}
+        GH_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+        PR_NUMBER: ${{ inputs.PR_NUMBER }}
         BUILD_HASH: ${{ github.sha }}
-        IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ env.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-        IOS_APPLE_ID: ${{ env.IOS_APPLE_ID }}
+        IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+        IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}
+        IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
       run: |
         brew install gh
         gh auth setup-git
@@ -179,7 +206,7 @@ runs:
         gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
 
         - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
-        - 🆔 App ID: \`${{ env.IOS_APP_IDENTIFIER }}\`
+        - 🆔 App ID: \`$IOS_APP_IDENTIFIER\`
         - 🧱 Build Hash: \`$BUILD_HASH\`
 
         _This build was deployed by CI using Fastlane._"

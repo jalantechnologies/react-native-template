@@ -1,0 +1,43 @@
+name: auto-version-bump
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  bump_version:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.13.1
+
+      - name: Increment patch version
+        run: yarn version:bump
+
+      - name: Commit version bump
+        run: |
+          if git status --short | grep package.json; then
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git config user.name "github-actions[bot]"
+            git add package.json
+            git commit -m "chore: auto bump package version"
+            git push origin HEAD:${{ github.event.pull_request.head.ref }}
+          else
+            echo "No version change detected."
+          fi
+

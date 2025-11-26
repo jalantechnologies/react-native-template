@@ -15,7 +15,8 @@
     "test": "jest",
     "type-check": "tsc",
     "test:report": "jest --collectCoverage --coverageDirectory=\"./coverage\" --ci --reporters=default --reporters=jest-junit --coverage",
-    "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install && cd .."
+    "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install && cd ..",
+    "version:bump": "tsx scripts/bump-version.ts"
   },
   "dependencies": {
     "@datadog/mobile-react-native": "^2.8.0",
@@ -79,6 +80,7 @@
     "react-dom": "^19.1.1",
     "react-native-svg-transformer": "^1.5.1",
     "react-test-renderer": "18.3.1",
+    "tsx": "^4.19.2",
     "typescript": "5.0.4"
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"

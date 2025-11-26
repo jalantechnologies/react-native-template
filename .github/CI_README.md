@@ -63,7 +63,13 @@ docs/
     ├── 1.0.0.md
     ├── 1.0.1.md
     └── 1.1.0.md
-``````
+```
+
+### 🔁 Automated PR Version Bump
+
+- Whenever a PR targeting `main` is opened, the `auto-version-bump.yml` workflow checks out the PR branch, runs `yarn version:bump patch`, commits the updated `package.json`, `yarn.lock`, and release-note stub, then pushes the commit.
+- The generated release note remains a template—developers must edit the markdown file with store-ready notes before merging.
+- If you need a `minor` or `major` increment, run the script locally and push the change before opening the PR (or update it after the automation runs).
 
 ---
 

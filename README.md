@@ -102,6 +102,22 @@ yarn -v # Verify installation
     - `.github/workflows/preview_on_pr_update.yml`
     - `.github/workflows/production_on_push.yml`
  
+## Versioning & Release Notes
+
+Use the automated script to keep the app version and release notes in sync:
+
+1. Run `yarn version:bump [major|minor|patch]` (defaults to `patch`).
+2. The script updates the `version` field inside `package.json`.
+3. A release-note stub is generated at `docs/release_notes/<new_version>.md`. Replace the placeholder text with human-friendly notes that can be published to the stores before tagging or distributing the build.
+
+### PR automation
+
+- When a PR targeting `main` is opened, CI automatically runs the patch version bump and creates the stub release note.
+- The workflow commits the `package.json`, `yarn.lock`, and the generated stub release note back to the PR branch.
+- Update the generated markdown file manually with real release notes before merging. The workflow deliberately keeps placeholder content so devs remain accountable for meaningful notes.
+- Run `yarn version:bump` locally if you need a `minor` or `major` increment and push that change before opening the PR (or adjust it after the automated bump runs).
+
+# Android Setup
 
 # Android Setup
 

@@ -15,3 +15,6 @@ _For each manual test case, list the steps to test or reproduce the PR._
 - _Description of manual test 1_
 - _Description of manual test 2_
 - _Description of manual test 3_
+
+## Release Notes
+- [ ] Added or updated `docs/release_notes/<version>.md` with store-ready text (auto-generated stubs must be edited manually).

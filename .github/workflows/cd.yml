@@ -10,6 +10,139 @@ concurrency:
 
 jobs:
 
+  auto_version_bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      bumped: ${{ steps.bump_state.outputs.bumped }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Initialize state
+        run: echo "AUTO_BUMPED=false" >> "$GITHUB_ENV"
+
+      - name: Ensure branch is up to date with main
+        run: |
+          git fetch origin main --depth=1
+          if ! git merge-base --is-ancestor origin/main HEAD; then
+            echo "::error::This branch is behind main. Please rebase or merge the latest main before pushing."
+            exit 1
+          fi
+          BASE_VERSION=$(git show origin/main:package.json | jq -r .version)
+          echo "BASELINE_VERSION=${BASE_VERSION}" >> "$GITHUB_ENV"
+
+      - name: Determine if bump already applied
+        id: evaluate
+        run: |
+          NEEDS=$(node - <<'EOF'
+            const fs = require('fs');
+            const pkgVersion = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
+            const baseVersion = process.env.BASELINE_VERSION || pkgVersion;
+            const parse = (v) => v.split('.').map(Number);
+            const cmp = (a, b) => {
+              for (let i = 0; i < Math.max(a.length, b.length); i += 1) {
+                const left = a[i] ?? 0;
+                const right = b[i] ?? 0;
+                if (left !== right) return left - right;
+              }
+              return 0;
+            };
+            const needs = cmp(parse(pkgVersion), parse(baseVersion)) <= 0 ? 'true' : 'false';
+            process.stdout.write(needs);
+          EOF
+          )
+          echo "needs=${NEEDS}" >> "$GITHUB_OUTPUT"
+
+      - name: Bump patch version in package.json
+        if: steps.evaluate.outputs.needs == 'true'
+        id: bump
+        run: |
+          NEW_VERSION=$(node - <<'EOF'
+            const fs = require('fs');
+            const path = 'package.json';
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const baseline = process.env.BASELINE_VERSION || pkg.version;
+            const parse = (v) => v.split('.').map(Number);
+            const cmp = (a, b) => {
+              for (let i = 0; i < Math.max(a.length, b.length); i += 1) {
+                const left = a[i] ?? 0;
+                const right = b[i] ?? 0;
+                if (left !== right) return left - right;
+              }
+              return 0;
+            };
+            const pkgParts = parse(pkg.version);
+            const baseParts = parse(baseline);
+            const source = cmp(pkgParts, baseParts) >= 0 ? pkgParts : baseParts;
+            source[2] = (source[2] ?? 0) + 1;
+            pkg.version = source.join('.');
+            fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + '\n');
+            process.stdout.write(pkg.version);
+          EOF
+          )
+          echo "Auto-bumped version to ${NEW_VERSION}"
+          git status --short package.json
+          echo "AUTO_VERSION=${NEW_VERSION}" >> "$GITHUB_ENV"
+          NOTES_FILE="docs/release_notes/${NEW_VERSION}.md"
+          echo "RELEASE_NOTES_FILE=${NOTES_FILE}" >> "$GITHUB_ENV"
+          if [ ! -f "${NOTES_FILE}" ]; then
+            mkdir -p "$(dirname "${NOTES_FILE}")"
+            {
+              echo "# Release notes for ${NEW_VERSION}"
+              echo
+              echo "- TODO: Describe changes included in this release."
+            } > "${NOTES_FILE}"
+            echo "Created stub release-notes file at ${NOTES_FILE}"
+          else
+            echo "Release-notes file already exists at ${NOTES_FILE}, leaving as is."
+          fi
+
+      - name: Commit version bump
+        if: steps.evaluate.outputs.needs == 'true'
+        run: |
+          if git diff --quiet -- package.json; then
+            echo "::error::Version bump did not modify package.json"
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "${RELEASE_NOTES_FILE:-}" ] && [ -f "${RELEASE_NOTES_FILE}" ]; then
+            git add package.json "${RELEASE_NOTES_FILE}"
+          else
+            git add package.json
+          fi
+          COMMIT_MSG="chore: auto bump version to ${AUTO_VERSION:-$(jq -r .version package.json)} [auto-bump]"
+          git commit -m "${COMMIT_MSG}"
+
+      - name: Push auto bump commit
+        if: steps.evaluate.outputs.needs == 'true'
+        run: |
+          set +e
+          git push origin HEAD:${{ github.head_ref }}
+          status=$?
+          set -e
+          if [ $status -eq 0 ]; then
+            echo "AUTO_BUMPED=true" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          echo "Push failed, checking for existing auto bump commit..."
+          git fetch origin ${{ github.head_ref }}
+          git reset --hard origin/${{ github.head_ref }}
+          LAST_MSG="$(git log -1 --pretty=%B)"
+          if [[ "$LAST_MSG" == *"[auto-bump]"* ]]; then
+            echo "AUTO_BUMPED=true" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          echo "::error::Auto version bump push failed. Please resolve manually."
+          exit 1
+
+      - name: Emit bump state
+        id: bump_state
+        run: echo "bumped=${AUTO_BUMPED:-false}" >> "$GITHUB_OUTPUT"
+
   check_version_number:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
@@ -32,6 +165,7 @@ jobs:
           fi
 
   release_notes_check:
+    needs: auto_version_bump
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     outputs:

@@ -38,21 +38,12 @@ class FirebaseDistributionService
   end
 
   # Builds a debug APK using Gradle with CI-safe options.
-  # Version code is managed by sync_versions lane, not here.
+  # Version code and name are derived from package.json and injected via Gradle properties.
   # Optimizations:
   # - Daemon disabled (stateless)
   # - Limited workers to reduce memory use
   def build_apk(pr_number:)
-    # Read package.json
-    package_json_path = File.expand_path("../../../package.json", __dir__)
-    UI.user_error!("❌ package.json not found at #{package_json_path}") unless File.exist?(package_json_path)
-
-    package_json = JSON.parse(File.read(package_json_path))
-    version = package_json["version"]
-    UI.user_error!("❌ Version not found in package.json") unless version
-
-    major, minor, patch = version.split('.').map(&:to_i)
-    version_code = (major * 10000) + (minor * 100) + patch
+    version_info = read_version_info
 
     ENV["GRADLE_OPTS"] = "-Xmx6g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"
 
@@ -66,6 +57,8 @@ class FirebaseDistributionService
         "BUNDLE_IN_DEBUG" => "true",
         "org.gradle.daemon" => "false",
         "org.gradle.workers.max" => "4",
+        "versionCode" => version_info[:version_code],
+        "versionName" => version_info[:version],
       },
       print_command: true,
       print_command_output: true
@@ -75,7 +68,7 @@ class FirebaseDistributionService
     UI.user_error!("❌ APK not found at #{apk}") unless File.exist?(apk)
     UI.success("✅ APK built successfully: #{File.size(apk)} bytes")
 
-    { version: version, version_code: version_code }
+    version_info
   end
 
 
@@ -203,6 +196,21 @@ class FirebaseDistributionService
   end
 
   private
+
+  # Reads version name and calculates version code from package.json
+  def read_version_info
+    package_json_path = File.expand_path("../../../package.json", __dir__)
+    UI.user_error!("❌ package.json not found at #{package_json_path}") unless File.exist?(package_json_path)
+
+    package_json = JSON.parse(File.read(package_json_path))
+    version = package_json["version"]
+    UI.user_error!("❌ Version not found in package.json") unless version
+
+    major, minor, patch = version.split('.').map(&:to_i)
+    version_code = (major * 10000) + (minor * 100) + patch
+
+    { version: version, version_code: version_code }
+  end
 
   # Returns the expected debug APK path.
   def apk_path

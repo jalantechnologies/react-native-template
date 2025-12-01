@@ -47,6 +47,11 @@ function updatePackageJson(nextVersion) {
 }
 
 function renameReleaseNotes(previousVersion, nextVersion) {
+  if (previousVersion === nextVersion) {
+    console.log(`ℹ️  Version unchanged (${nextVersion}); skipping release notes rename.`);
+    return path.join(RELEASE_NOTES_DIR, `${nextVersion}.md`);
+  }
+
   const previousPath = path.join(RELEASE_NOTES_DIR, `${previousVersion}.md`);
   const nextPath = path.join(RELEASE_NOTES_DIR, `${nextVersion}.md`);
 
@@ -56,7 +61,9 @@ function renameReleaseNotes(previousVersion, nextVersion) {
   }
 
   if (!existsSync(previousPath)) {
-    console.warn(`⚠️  No release notes found for ${previousVersion}. Create ${nextPath} manually if needed.`);
+    console.warn(
+      `⚠️  No release notes found for ${previousVersion}. Create ${nextPath} manually if needed.`
+    );
     return nextPath;
   }
 
@@ -66,6 +73,9 @@ function renameReleaseNotes(previousVersion, nextVersion) {
 }
 
 function main() {
+  const currentPackage = JSON.parse(readFileSync(PACKAGE_JSON, 'utf8'));
+  const currentVersion = currentPackage.version;
+
   const mainPackage = fetchMainPackageJson();
   const mainVersion = mainPackage.version;
   if (!mainVersion) {
@@ -74,7 +84,7 @@ function main() {
 
   const nextVersion = incrementPatch(mainVersion);
   updatePackageJson(nextVersion);
-  renameReleaseNotes(mainVersion, nextVersion);
+  renameReleaseNotes(currentVersion, nextVersion);
 
   console.log(`✅ Updated package.json version to ${nextVersion}`);
 }

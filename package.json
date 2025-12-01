@@ -1,6 +1,6 @@
 {
   "name": "react-native-template",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Boilerplate project for React Native apps.",
   "engines": {
@@ -15,7 +15,8 @@
     "test": "jest",
     "type-check": "tsc",
     "test:report": "jest --collectCoverage --coverageDirectory=\"./coverage\" --ci --reporters=default --reporters=jest-junit --coverage",
-    "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install && cd .."
+    "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install && cd ..",
+    "version:auto": "node scripts/bumpVersion.js"
   },
   "dependencies": {
     "@datadog/mobile-react-native": "^2.8.0",

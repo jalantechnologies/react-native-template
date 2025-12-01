@@ -23,11 +23,22 @@ jobs:
           git fetch origin main
           MAIN_VERSION=$(jq -r .version <(git show origin/main:package.json))
           PR_VERSION=$(jq -r .version < package.json)
+
+          NEXT_VERSION=$(MAIN_VERSION=$MAIN_VERSION node - <<'EOF'
+            const [major, minor, patch] = (process.env.MAIN_VERSION || '').split('.').map(Number)
+            if ([major, minor, patch].some(Number.isNaN)) {
+              throw new Error(`Invalid main version: ${process.env.MAIN_VERSION}`)
+            }
+            console.log([major, minor, patch + 1].join('.'))
+          EOF
+          )
+
           echo "Main branch version: $MAIN_VERSION"
+          echo "Expected next version: $NEXT_VERSION"
           echo "PR branch version: $PR_VERSION"
-          # Compare versions
-          if [ "$(printf '%s\n%s' "$MAIN_VERSION" "$PR_VERSION" | sort -V | head -n1)" != "$MAIN_VERSION" ] || [ "$MAIN_VERSION" == "$PR_VERSION" ]; then
-            echo "Error: PR version ($PR_VERSION) must be strictly greater than main version ($MAIN_VERSION)."
+
+          if [ "$PR_VERSION" != "$NEXT_VERSION" ]; then
+            echo "Error: PR version ($PR_VERSION) must be exactly one patch above main ($MAIN_VERSION)."
             exit 1
           fi
 

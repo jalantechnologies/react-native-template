@@ -34,10 +34,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    # 1. Checkout repo (caller workflow decides path)
-    - uses: actions/checkout@v3
-
-    # 2. Node.js setup
+    # 1. Node.js setup (caller workflow is responsible for checkout and any bumped artifacts)
     - uses: actions/setup-node@v3
       with:
         node-version-file: '.nvmrc'

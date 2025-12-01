@@ -96,16 +96,36 @@ runs:
         fileName: "android_keystore.keystore"
         encodedString: ${{ inputs.ANDROID_KEYSTORE_FILE }}
   
-    - name: Export Release Notes
-      run: echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV && echo "${{ inputs.RELEASE_NOTES }}" >> $GITHUB_ENV && echo "EOF" >> $GITHUB_ENV
+    - name: Normalize Release Notes for Play Store
+      id: normalize_notes
       shell: bash
+      run: |
+        NOTES="${{ inputs.RELEASE_NOTES }}"
+        MAX_LEN=500
+
+        if [ ${#NOTES} -gt $MAX_LEN ]; then
+          echo "Release notes exceed ${MAX_LEN} characters; truncating for Play Store."
+          NOTES="${NOTES:0:$((MAX_LEN-3))}..."
+        fi
+
+        {
+          echo 'RELEASE_NOTES<<EOF'
+          echo "$NOTES"
+          echo 'EOF'
+        } >> $GITHUB_ENV
+
+        {
+          echo 'normalized<<EOF'
+          echo "$NOTES"
+          echo 'EOF'
+        } >> $GITHUB_OUTPUT
 
     - name: Update Play Store changelog
       shell: bash
       run: |
         DEST="android/fastlane/metadata/android/en-US/changelogs"
         mkdir -p "$DEST"
-        printf "%s\n" "${{ inputs.RELEASE_NOTES }}" > "$DEST/default.txt"
+        printf "%s\n" "${{ steps.normalize_notes.outputs.normalized }}" > "$DEST/default.txt"
 
     - name: Build and deploy android App via fastlane
       shell: bash

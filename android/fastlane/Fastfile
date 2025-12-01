@@ -31,16 +31,22 @@ platform :android do
     # Write changelog file for Google Play
     release_notes = ENV["RELEASE_NOTES"]
     if release_notes && !release_notes.strip.empty?
+      trimmed_notes = release_notes.strip
+      if trimmed_notes.length > 500
+        UI.message("✂️ Release notes exceed 500 characters; truncating for Play Store upload.")
+        trimmed_notes = "#{trimmed_notes[0, 497]}..."
+      end
+
       changelog_dir = "android/fastlane/metadata/android/en-US/changelogs"
       FileUtils.mkdir_p(changelog_dir)
 
       default_changelog_path = File.join(changelog_dir, "default.txt")
       version_changelog_path = File.join(changelog_dir, "#{updated_version_code}.txt")
 
-      File.write(default_changelog_path, release_notes)
-      File.write(version_changelog_path, release_notes)
+      File.write(default_changelog_path, trimmed_notes)
+      File.write(version_changelog_path, trimmed_notes)
 
-      UI.message("📝 Wrote changelogs: #{default_changelog_path}, #{version_changelog_path}")
+      UI.message("📝 Wrote changelogs: #{default_changelog_path}, #{version_changelog_path} (#{trimmed_notes.length} chars)")
     else
       UI.message("⚠️ No release notes provided. Skipping changelog creation.")
     end

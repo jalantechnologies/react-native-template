@@ -59,9 +59,60 @@ jobs:
           notes_dir: 'docs/release_notes'
           notes_ext: '.md'
 
-  deploy_android:
+  auto_version_bump:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     needs: [release_notes_check]
+    runs-on: ubuntu-latest
+    outputs:
+      release_notes: ${{ steps.capture_notes.outputs.release_notes }}
+      version: ${{ steps.read_version.outputs.version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Bump version and rename release notes
+        run: node scripts/bumpVersion.js
+
+      - name: Read bumped version
+        id: read_version
+        run: |
+          VERSION=$(jq -r .version < package.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Capture bumped release notes
+        id: capture_notes
+        run: |
+          NOTES_FILE="docs/release_notes/${{ steps.read_version.outputs.version }}.md"
+          if [ ! -f "$NOTES_FILE" ]; then
+            echo "::error::❌ Release notes file not found after bump: $NOTES_FILE"
+            exit 1
+          fi
+
+          CONTENT=$(cat "$NOTES_FILE")
+          {
+            echo 'release_notes<<EOF'
+            echo "$CONTENT"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+
+      - name: Upload bumped artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bumped-version
+          path: |
+            package.json
+            docs/release_notes/${{ steps.read_version.outputs.version }}.md
+
+  deploy_android:
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
+    needs: [release_notes_check, auto_version_bump]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (root for actions)
@@ -71,6 +122,18 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: app
+
+      - name: Download bumped version artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: bumped-version
+          path: bumped
+
+      - name: Apply bumped artifacts
+        run: |
+          cp bumped/package.json package.json
+          mkdir -p docs/release_notes
+          cp bumped/docs/release_notes/*.md docs/release_notes/
 
       - name: Deploy android app to Firebase App Distribution
         uses: ./.github/actions/deploy_android_preview
@@ -83,7 +146,7 @@ jobs:
           ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
-          RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
+          RELEASE_NOTES: ${{ needs.auto_version_bump.outputs.release_notes }}
   # deploy_ios:
   #   if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
   #   needs: [build, release_notes_check]

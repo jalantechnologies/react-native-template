@@ -1,1 +1,4 @@
-This is a default release note
+Automated version bumps now read the latest version from main, increment it, and rename matching release notes for builds.
+Release note validation runs before deployments to ensure notes exist and contain content.
+Android builds pull the bumped version name/code into Gradle and Fastlane so releases align with package metadata.
+Release artifacts reuse workflow-provided files to avoid overwriting versioned outputs during deployment.

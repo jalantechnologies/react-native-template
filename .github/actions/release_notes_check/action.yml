@@ -23,9 +23,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
     - name: Extract version from JSON
       id: get_version
       shell: bash

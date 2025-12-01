@@ -25,7 +25,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - uses: actions/checkout@v3
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
@@ -100,6 +99,13 @@ runs:
     - name: Export Release Notes
       run: echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV && echo "${{ inputs.RELEASE_NOTES }}" >> $GITHUB_ENV && echo "EOF" >> $GITHUB_ENV
       shell: bash
+
+    - name: Update Play Store changelog
+      shell: bash
+      run: |
+        DEST="android/fastlane/metadata/android/en-US/changelogs"
+        mkdir -p "$DEST"
+        printf "%s\n" "${{ inputs.RELEASE_NOTES }}" > "$DEST/default.txt"
 
     - name: Build and deploy android App via fastlane
       shell: bash

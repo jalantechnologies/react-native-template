@@ -17,31 +17,16 @@ default_platform(:android)
 
 platform :android do
 
-  desc "Fetches the latest version code from the Play Console and increments it by 1"
-  lane :fetch_and_increment_build_number do
-    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
-
-    version_codes = google_play_track_version_codes(
-      package_name: app_identifier,
-      track: "internal",
-      json_key: ENV["ANDROID_JSON_KEY_FILE"]
-    )
-    
-    updated_version_code = version_codes[0] + 1
-    
-    increment_version_code(
-      version_code: updated_version_code
-    )
-    updated_version_code
-  end
-
   lane :deploy_android_production do
-    # 1) Must capture returned value!
-    updated_version_code = fetch_and_increment_build_number
-
-    # 2) Read version name
+    # 1) Read version name from package.json (bumped in workflow)
     package_json_path = File.expand_path("../../package.json", __dir__)
-    version_name = JSON.parse(File.read(package_json_path))["version"]
+    package_version = JSON.parse(File.read(package_json_path))["version"]
+
+    version_parts = package_version.to_s.split(".").map(&:to_i)
+    UI.user_error!("❌ Invalid package version: #{package_version}") if version_parts.length != 3
+
+    updated_version_code = (version_parts[0] * 10_000) + (version_parts[1] * 100) + version_parts[2]
+    version_name = package_version
 
     # Write changelog file for Google Play
     release_notes = ENV["RELEASE_NOTES"]
@@ -49,15 +34,18 @@ platform :android do
       changelog_dir = "android/fastlane/metadata/android/en-US/changelogs"
       FileUtils.mkdir_p(changelog_dir)
 
-      changelog_path = File.join(changelog_dir, "#{updated_version_code}.txt")
-      File.write(changelog_path, release_notes)
+      default_changelog_path = File.join(changelog_dir, "default.txt")
+      version_changelog_path = File.join(changelog_dir, "#{updated_version_code}.txt")
 
-      UI.message("📝 Wrote version-specific changelog: #{changelog_path}")
+      File.write(default_changelog_path, release_notes)
+      File.write(version_changelog_path, release_notes)
+
+      UI.message("📝 Wrote changelogs: #{default_changelog_path}, #{version_changelog_path}")
     else
       UI.message("⚠️ No release notes provided. Skipping changelog creation.")
     end
 
-    # 3) Build with injected versionCode + versionName
+    # 2) Build with injected versionCode + versionName
     gradle(
       task: "bundle",
       build_type: "release",
@@ -71,7 +59,7 @@ platform :android do
       }
     )
 
-    # 4) Upload (supply automatically picks changelog)
+    # 3) Upload (supply automatically picks changelog)
     upload_to_play_store(
       track: "internal",
       release_status: "draft",

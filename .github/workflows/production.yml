@@ -40,12 +40,74 @@ jobs:
           name: play-release-notes
           path: android/fastlane/metadata/android/en-US/changelogs/default.txt
 
-  deploy_android:
+  auto_version_bump:
     runs-on: ubuntu-latest
     needs: [release_notes_check]
+    outputs:
+      release_notes: ${{ steps.capture_notes.outputs.release_notes }}
+      version: ${{ steps.read_version.outputs.version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Bump version and rename release notes
+        run: node scripts/bumpVersion.js
+
+      - name: Read bumped version
+        id: read_version
+        run: |
+          VERSION=$(jq -r .version < package.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Capture bumped release notes
+        id: capture_notes
+        run: |
+          NOTES_FILE="docs/release_notes/${{ steps.read_version.outputs.version }}.md"
+          if [ ! -f "$NOTES_FILE" ]; then
+            echo "::error::❌ Release notes file not found after bump: $NOTES_FILE"
+            exit 1
+          fi
+
+          CONTENT=$(cat "$NOTES_FILE")
+          {
+            echo 'release_notes<<EOF'
+            echo "$CONTENT"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+
+      - name: Upload bumped artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bumped-version
+          path: |
+            package.json
+            docs/release_notes/${{ steps.read_version.outputs.version }}.md
+
+  deploy_android:
+    runs-on: ubuntu-latest
+    needs: [release_notes_check, auto_version_bump]
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v3
+
+      - name: Download bumped version artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: bumped-version
+          path: bumped
+
+      - name: Apply bumped artifacts
+        run: |
+          cp bumped/package.json package.json
+          mkdir -p docs/release_notes
+          cp bumped/docs/release_notes/*.md docs/release_notes/
 
       - name: Download Play Store changelog
         uses: actions/download-artifact@v4
@@ -62,7 +124,7 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
+          RELEASE_NOTES: ${{ needs.auto_version_bump.outputs.release_notes }}
 
   # deploy-ios:
   #   runs-on: macos-14

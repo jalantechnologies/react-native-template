@@ -90,6 +90,7 @@ runs:
         FIREBASE_API_KEY: "${{ inputs.ANDROID_FIREBASE_API_KEY }}"
         ANDROID_FIREBASE_PROJECT_NUMBER: "${{ inputs.ANDROID_FIREBASE_PROJECT_NUMBER }}"
         ANDROID_FIREBASE_APP_ID: "${{ inputs.ANDROID_FIREBASE_APP_ID }}"
+        ANDROID_JSON_KEY_FILE: "/tmp/gcp_key.json"
       shell: bash
       run: |
         bundle exec fastlane android pr_deploy \

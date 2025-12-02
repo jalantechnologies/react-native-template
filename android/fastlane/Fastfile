@@ -41,8 +41,23 @@ platform :android do
     version_name = package_json["version"]
     UI.user_error!("❌ Version not found in package.json") unless version_name
 
-    major, minor, patch = version_name.split('.').map(&:to_i)
-    version_code = (major * 10000) + (minor * 100) + patch
+    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+    UI.user_error!("❌ App identifier not configured") unless app_identifier
+
+    version_codes = google_play_track_version_codes(
+      package_name: app_identifier,
+      track: "internal",
+      json_key: ENV["ANDROID_JSON_KEY_FILE"]
+    )
+
+    version_code = if version_codes&.any?
+      latest_code = version_codes.max
+      UI.message("📦 Latest Play Console versionCode detected: #{latest_code}")
+      latest_code + 1
+    else
+      UI.message("ℹ️ No existing version codes found on Play Console. Starting at 1.")
+      1
+    end
 
     # Write changelog file for Google Play
     release_notes = ENV["RELEASE_NOTES"]

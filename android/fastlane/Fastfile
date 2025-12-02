@@ -36,12 +36,13 @@ platform :android do
   end
 
   lane :deploy_android_production do
-    # 1) Must capture returned value!
-    updated_version_code = fetch_and_increment_build_number
-
-    # 2) Read version name
     package_json_path = File.expand_path("../../package.json", __dir__)
-    version_name = JSON.parse(File.read(package_json_path))["version"]
+    package_json = JSON.parse(File.read(package_json_path))
+    version_name = package_json["version"]
+    UI.user_error!("❌ Version not found in package.json") unless version_name
+
+    major, minor, patch = version_name.split('.').map(&:to_i)
+    version_code = (major * 10000) + (minor * 100) + patch
 
     # Write changelog file for Google Play
     release_notes = ENV["RELEASE_NOTES"]
@@ -49,7 +50,7 @@ platform :android do
       changelog_dir = "android/fastlane/metadata/android/en-US/changelogs"
       FileUtils.mkdir_p(changelog_dir)
 
-      changelog_path = File.join(changelog_dir, "#{updated_version_code}.txt")
+      changelog_path = File.join(changelog_dir, "#{version_code}.txt")
       File.write(changelog_path, release_notes)
 
       UI.message("📝 Wrote version-specific changelog: #{changelog_path}")
@@ -66,7 +67,7 @@ platform :android do
         "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
         "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
         "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
-        "versionCode" => updated_version_code.to_s,
+        "versionCode" => version_code.to_s,
         "versionName" => version_name
       }
     )

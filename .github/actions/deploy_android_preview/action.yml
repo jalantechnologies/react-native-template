@@ -31,15 +31,12 @@ inputs:
     description: 'Release notes for the build'
     default: ""
 
-runs:
-  using: 'composite'
-  steps:
-    # 1. Checkout repo (caller workflow decides path)
-    - uses: actions/checkout@v3
-
-    # 2. Node.js setup
-    - uses: actions/setup-node@v3
-      with:
+  runs:
+    using: 'composite'
+    steps:
+      # 2. Node.js setup
+      - uses: actions/setup-node@v3
+        with:
         node-version-file: '.nvmrc'
 
     - name: Install Yarn

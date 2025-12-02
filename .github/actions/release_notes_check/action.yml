@@ -57,10 +57,7 @@ runs:
         CHANGELOG_DIR="android/fastlane/metadata/android/en-US/changelogs"
         mkdir -p "$CHANGELOG_DIR"
 
-        IFS='.' read -r MAJOR MINOR PATCH <<<"${{ steps.get_version.outputs.version }}"
-        VERSION_CODE=$((MAJOR * 10000 + MINOR * 100 + PATCH))
-        CHANGELOG_PATH="$CHANGELOG_DIR/${VERSION_CODE}.txt"
-
+        CHANGELOG_PATH="$CHANGELOG_DIR/default.txt"
         printf "%s" "$TRIMMED_CONTENT" > "$CHANGELOG_PATH"
         echo "📝 Wrote changelog to $CHANGELOG_PATH"
 

@@ -38,7 +38,7 @@ class FirebaseDistributionService
   end
 
   # Builds a debug APK using Gradle with CI-safe options.
-  # Version code is managed by sync_versions lane, not here.
+  # Versioning is derived from package.json for preview builds.
   # Optimizations:
   # - Daemon disabled (stateless)
   # - Limited workers to reduce memory use
@@ -51,27 +51,8 @@ class FirebaseDistributionService
     version = package_json["version"]
     UI.user_error!("❌ Version not found in package.json") unless version
 
-    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier) ||
-                     CredentialsManager::AppfileConfig.try_fetch_value(:package_name)
-    UI.user_error!("❌ App identifier not configured") unless app_identifier
-
-    json_key_path = ENV["ANDROID_JSON_KEY_FILE"]
-    UI.user_error!("❌ Google Play JSON key not provided") unless json_key_path && File.exist?(json_key_path)
-
-    version_codes = Actions::GooglePlayTrackVersionCodesAction.run(
-      package_name: app_identifier,
-      track: "internal",
-      json_key: json_key_path
-    )
-
-    version_code = if version_codes&.any?
-      latest = version_codes.max
-      UI.message("📦 Latest Play Console versionCode detected: #{latest}")
-      latest + 1
-    else
-      UI.message("ℹ️ No existing version codes found on Play Console. Starting at 1.")
-      1
-    end
+    major, minor, patch = version.split('.').map(&:to_i)
+    version_code = (major * 10_000) + (minor * 100) + patch
 
     ENV["GRADLE_OPTS"] = "-Xmx6g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"
 

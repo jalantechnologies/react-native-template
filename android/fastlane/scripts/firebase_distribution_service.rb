@@ -58,7 +58,7 @@ class FirebaseDistributionService
     json_key_path = ENV["ANDROID_JSON_KEY_FILE"]
     UI.user_error!("❌ Google Play JSON key not provided") unless json_key_path && File.exist?(json_key_path)
 
-    version_codes = google_play_track_version_codes(
+    version_codes = Actions::GooglePlayTrackVersionCodesAction.run(
       package_name: app_identifier,
       track: "internal",
       json_key: json_key_path

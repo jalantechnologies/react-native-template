@@ -3,7 +3,7 @@
 This repository uses **GitHub Actions** combined with **Fastlane** to automate the build, testing, and deployment process for the Android and iOS apps. The primary goals of this CI/CD setup are:
 
 - 🚀 **Fast feedback** on pull requests by distributing builds via **Firebase App Distribution** for **Android** and **TestFlight** for **iOS**.
-- 📋 **Mandatory release notes** validation before any deployment.
+- 📋 **Mandatory release notes** and **version** validation before any deployment.
 - 🧹 **Automatic cleanup** of test builds when a PR is closed.
 - 🔒 **Secure handling** of credentials using **GitHub Actions Secrets**.
 - 📦 **Automated version synchronization** from `package.json` to Android and iOS.
@@ -13,8 +13,8 @@ This ensures contributors and QA can quickly test PR builds without manually com
 ### ✔ CI Checks (Fast & Parallel)
 
 The `ci.yml` workflow runs two core CI jobs:
-- **ci/lint** – Linting directly on source code  
-- **ci/sonarqube** – Code quality analysis for pull requests  
+- **ci/lint** – Linting directly on source code
+- **ci/sonarqube** – Code quality analysis for pull requests
 
 These jobs run **independently and in parallel**, improving feedback time.
 
@@ -28,10 +28,13 @@ PR opened, updated, reopened, or marked ready for review
 
 **What it does:**
 
-* Validates release notes for the current version
-* Build and Deploy Android (Firebase App Distribution)
-* Build and Deploy iOS (TestFlight)
-* Comments on the PR with Firebase preview link
+* Confirms the PR `package.json` version is newer than `main` before any deploy logic runs.
+* Validates release notes for the current version: the file must exist at `docs/release_notes/{version}.md`, be non-empty, and stay at or under **500 characters**. The validated text is emitted as workflow output and copied into `android/fastlane/metadata/android/en-US/changelogs/default.txt` for downstream tooling.
+* Builds and deploys Android (Firebase App Distribution) with explicit Gradle overrides so CI never uses manifest defaults:
+  * `versionNameOverride` comes from `package.json`.
+  * `versionCodeOverride` is derived from the semantic version (`major*10000 + minor*100 + patch`).
+* Builds and deploys iOS (TestFlight).
+* Comments on the PR with the Firebase preview link.
 
 **Why it matters:**
 Ensures every PR has proper release notes (If no release notes, workflow will fail), produces installable preview builds, and keeps QA feedback fast.
@@ -43,10 +46,10 @@ Ensures every PR has proper release notes (If no release notes, workflow will fa
 Push to `main`
 
 **What it does:**
-
-* Validates release notes
-* Build and Deploys Android app to Google Play Console
-* BUild and Deploys iOS app to App Store
+* Confirms the PR `package.json` version is newer than `main` before any deploy logic runs.
+* Validates release notes with the same presence/non-empty/≤500 character rules; copies the text to `android/fastlane/metadata/android/en-US/changelogs/default.txt` and emits the content as workflow output. For production runs, Fastlane also writes a `{versionCode}.txt` changelog using the final version code.
+* Builds and deploys the Android app to Google Play Console. Gradle receives the `package.json` version as `versionNameOverride` and the latest Play Console version code (fetched then incremented) as `versionCodeOverride` so store uploads align with live numbering.
+* Uses the `package.json` version for iOS and deploys to the App Store/TestFlight.
 
 **Why it matters:**
 Guarantees only versioned, documented builds go to the stores — with release notes and version codes handled automatically.
@@ -55,7 +58,8 @@ Guarantees only versioned, documented builds go to the stores — with release n
 
 ## 📋 Release Notes Structure
 
-Release notes must be created in `docs/release_notes/{version}.md` before deployment:
+Release notes for previews and production:
+Must be created in `docs/release_notes/{version}.md` before deployment:
 
 ```
 docs/
@@ -65,35 +69,38 @@ docs/
     └── 1.1.0.md
 ``````
 
+Additional rules enforced by `release_notes_check` in both CD workflows:
+
+- The release note file for the current version **must exist**, cannot be empty, and must be **≤ 500 characters**. The version is read from `package.json`.
+- The validated content is emitted as a workflow output and written to `android/fastlane/metadata/android/en-US/changelogs/default.txt` for downstream Fastlane steps.
+- Production runs also write `{versionCode}.txt` beside the default file using the Play Console version code that is fetched and incremented during the run.
+
 ---
 
 ## 🔧 Environment Variables
 
 These environment variables are used by the GitHub Actions workflows and Fastlane scripts to authenticate, configure builds, and upload to deployment platforms.
 
-| Name                            | Source                | Description                                                                                                                                         |
-|---------------------------------|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| Name                            | Source                | Description                                                                                      |
+|---------------------------------|-----------------------|-------------------------------------------------------------------------------------------------|
 | `ANDROID_GCP_JSON_BASE64`       | GitHub Secret         | Base64-encoded GCP service account JSON. Decoded and written to `/tmp/gcp_key.json` to authenticate `gcloud` and Firebase App Distribution.        |
-| `ANDROID_FIREBASE_PROJECT_NUMBER` | GitHub Secret       | Firebase project number for Android app distribution.                                                                                              |
-| `ANDROID_FIREBASE_APP_ID`       | GitHub Secret         | Firebase App Distribution app ID for the Android app.                                                                                              |
-| `ANDROID_FIREBASE_PROJECT_ID`   | GitHub Secret         | Firebase project ID used for console links.                                                                                                        |
-| `ANDROID_FIREBASE_APP_PACKAGE`  | GitHub Secret         | Android app package name used in Firebase.                                                                                                         |
-| `ANDROID_FIREBASE_API_KEY`      | GitHub Secret         | Firebase API key for Android deployment.                                                                                                           |
-| `ANDROID_KEYSTORE_FILE`         | GitHub Secret         | Base64-encoded Android keystore file. Decoded and used to sign Android builds during Play Store deployments.                                       |
-| `ANDROID_KEYSTORE_PASSWORD`     | GitHub Secret         | Password for the Android keystore file used in signing builds.                                                                                     |
-| `ANDROID_KEY_ALIAS`             | GitHub Secret         | Alias used inside the keystore to refer to the signing key.                                                                                        |
-| `ANDROID_KEY_PASSWORD`          | GitHub Secret         | Password for the key alias used in Android app signing.                                                                                            |
-| `DOPPLER_PREVIEW_TOKEN`         | GitHub Secret         | Used to inject preview environment secrets via Doppler during PR builds and checks.                                                                |
-| `DOPPLER_PRODUCTION_TOKEN`      | GitHub Secret         | Used to inject production environment secrets via Doppler during production builds and checks.                                                     |
-| `DOCKER_PASSWORD`               | GitHub Secret         | Docker registry password used for authenticating image pulls and pushes in CI.                                                                     |
+| `ANDROID_FIREBASE_PROJECT_NUMBER` | GitHub Secret       | Firebase project number for Android app distribution.                                                                                       |
+| `ANDROID_FIREBASE_APP_ID`       | GitHub Secret         | Firebase App Distribution app ID for the Android app.                                                                                       |
+| `ANDROID_FIREBASE_PROJECT_ID`   | GitHub Secret         | Firebase project ID used for console links.                                                                                       |
+| `ANDROID_FIREBASE_APP_PACKAGE`  | GitHub Secret         | Android app package name used in Firebase.                                                                                       |
+| `ANDROID_FIREBASE_API_KEY`      | GitHub Secret         | Firebase API key for Android deployment.                                                                                       |
+| `KEYSTORE_FILE`         | GitHub Secret         | Base64-encoded Android keystore file. Decoded and used to sign Android builds during Play Store deployments.                                       |
+| `KEYSTORE_PASSWORD`     | GitHub Secret         | Password for the Android keystore file used in signing builds.                                                                               |
+| `KEY_ALIAS`             | GitHub Secret         | Alias used inside the keystore to refer to the signing key.                                                                               |
+| `KEY_PASSWORD`          | GitHub Secret         | Password for the key alias used in Android app signing.                                                                               |
 | `GPLAY_SERVICE_ACCOUNT_KEY_JSON`| GitHub Secret         | Google Play service account key for uploading Android production builds via Fastlane and GitHub Action.                                            |
-| `SONAR_TOKEN`                   | GitHub Secret         | Authentication token for SonarQube analysis API access.                                                                                            |
+| `SONAR_TOKEN`                   | GitHub Secret         | Authentication token for SonarQube analysis API access.                                                                                       |
 | `SONAR_HOST_URL`                | GitHub Secret         | URL of your SonarQube server used in PR and branch scan jobs.                                                                                      |
 
 ### iOS Variables (TestFlight & App Store Deploy)
 
-| Name                                   | Source        | Description                                                                                                                                           |
-|----------------------------------------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Name                                   | Source        | Description                                                                                          |
+|----------------------------------------|---------------|------------------------------------------------------------------------------------------------------|
 | `IOS_APPLE_ID`                         | GitHub Secret | Apple Developer App-specific Apple ID. Used by Fastlane and App Store Connect APIs for identifying the app owner.                                    |
 | `IOS_APP_IDENTIFIER`                   | GitHub Secret | iOS app bundle identifier. Used during iOS build and upload processes.                                                                                |
 | `IOS_APP_STORE_CONNECT_API_KEY_B64`    | GitHub Secret | Base64-encoded contents of your App Store Connect API key (.p8 file). Used by Fastlane for secure authentication with Apple APIs.                   |
@@ -112,30 +119,52 @@ These variables are decoded and written to disk during the CI process so tools l
 
 ### 1. 🔄 PR Build & Deploy to Firebase App Distribution
 
-**Why?**  
-To enable quick testing and feedback for each PR by distributing `.apk` builds to testers on the **Firebase App Distribution**.
+**Why?**
+To enable quick testing and feedback for each PR by distributing `.apk` builds to testers on **Firebase App Distribution**.
 
 **How?**
-- Triggered on PR open, reopen, or update (`pull_request` events)
-- Uses Fastlane’s `pr_deploy` lane to:
-  - Build the `.apk` with Gradle (`assembleDebug`)
-  - Upload the `.apk` to **Firebase App Distribution** via Firebase API
-  - Set release notes with the PR number and title
-  - Comment on the PR with the release details (URL, build info)
+
+* Triggered on PR open, reopen, or update (`pull_request` events)
+* Uses Fastlane’s `pr_deploy` lane to:
+
+  * Build the `.apk` with Gradle (`assembleDebug`)
+  * Upload the build to Firebase App Distribution
+  * Attach release notes containing the PR number/title
+  * Comment on the PR with a link to the uploaded build
 
 ---
 
 ### 2. 🧹 Google Play Cleanup on PR Close
 
-**Why?**  
-To prevent clutter in Google Play Console Internal Testing by automatically removing builds for closed PRs.
+**Why?**
+To keep Google Play Internal Testing clean by removing preview builds once a PR is closed.
 
 **How?**
-- Triggered on PR close (`pull_request.closed`)
-- Uses Fastlane’s `pr_cleanup` lane to:
-  - Authenticate with Google Play Console using the service account
-  - Fetch releases with matching PR identifiers in their release notes
-  - Call the Google Play Console API to delete the releases
+
+* Triggered on PR close (`pull_request.closed`)
+* Uses Fastlane’s `pr_cleanup` lane to:
+
+  * Find releases tagged with the PR number
+  * Delete them via the Google Play/Firebase App Distribution API
+
+---
+
+### 3. 📦 Production Build & Deploy to Google Play Console
+
+**Why?**
+To publish the final Android build to **Google Play Console (Internal track)** when changes are merged.
+
+**How?**
+
+* Triggered on push to `main`
+* Uses Fastlane’s `deploy_android_production` lane to:
+
+  * Fetch and increment the versionCode from Google Play
+  * Build the signed release bundle (`.aab`)
+  * Automatically pick up release notes stored in
+    `fastlane/metadata/android/en-US/changelogs/{versionCode}.txt`
+    (falls back to `default.txt` if missing)
+  * Upload the bundle to Google Play Internal track with `draft` status
 
 ---
 ## 🧪 Local Testing
@@ -150,3 +179,4 @@ bundle exec fastlane android pr_deploy \
   pr_number:123 \
   json_key_file:"<GPLAY_SERVICE_ACCOUNT_KEY_JSON>" \
   package_name:"<ANDROID_APP_PACKAGE>"
+```

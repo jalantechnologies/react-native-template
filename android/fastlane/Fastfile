@@ -19,7 +19,8 @@ platform :android do
 
   desc "Fetches the latest version code from the Play Console and increments it by 1"
   lane :fetch_and_increment_build_number do
-    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier) ||
+                     CredentialsManager::AppfileConfig.try_fetch_value(:package_name)
 
     version_codes = google_play_track_version_codes(
       package_name: app_identifier,
@@ -41,7 +42,8 @@ platform :android do
     version_name = package_json["version"]
     UI.user_error!("❌ Version not found in package.json") unless version_name
 
-    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier)
+    app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier) ||
+                     CredentialsManager::AppfileConfig.try_fetch_value(:package_name)
     UI.user_error!("❌ App identifier not configured") unless app_identifier
 
     version_codes = google_play_track_version_codes(

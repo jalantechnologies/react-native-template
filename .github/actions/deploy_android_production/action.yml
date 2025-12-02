@@ -1,5 +1,6 @@
 name: 'Deploy Android App to Production'
 description: 'Build and deploy the Android app to Production using Fastlane'
+
 inputs:
   GPLAY_SERVICE_ACCOUNT_KEY_JSON:
     required: true
@@ -16,8 +17,7 @@ inputs:
   ANDROID_KEY_PASSWORD:
     required: true
     description: 'Password for the key alias'
-
-  RELEASE_NOTES:                      
+  RELEASE_NOTES:
     required: true
     description: 'Release notes for the build'
     default: ""
@@ -25,13 +25,13 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - uses: actions/checkout@v3
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
         distribution: zulu
         java-version: 17
-    - name: Set up NODE
+
+    - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 22.13.1
@@ -49,6 +49,7 @@ runs:
       with:
         path: ~/.gradle/wrapper
         key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+
     - name: Cache Gradle Dependencies
       uses: actions/cache@v4
       with:
@@ -63,7 +64,8 @@ runs:
       env:
         CI: true
 
-    - uses: ruby/setup-ruby@v1
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
       with:
         ruby-version: "3.3"
         bundler-cache: true
@@ -96,15 +98,26 @@ runs:
       with:
         fileName: "android_keystore.keystore"
         encodedString: ${{ inputs.ANDROID_KEYSTORE_FILE }}
-  
+
     - name: Export Release Notes
-      run: echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV && echo "${{ inputs.RELEASE_NOTES }}" >> $GITHUB_ENV && echo "EOF" >> $GITHUB_ENV
       shell: bash
+      run: |
+        echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+        echo "${{ inputs.RELEASE_NOTES }}" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
+    - name: Write Fastlane default changelog
+      shell: bash
+      run: |
+        CHANGELOG_PATH="android/fastlane/metadata/android/en-US/changelogs/default.txt"
+        mkdir -p "$(dirname "$CHANGELOG_PATH")"
+        printf "%s" "${{ inputs.RELEASE_NOTES }}" > "$CHANGELOG_PATH"
+        echo "📝 Updated default changelog at $CHANGELOG_PATH"
 
     - name: Build and deploy android App via fastlane
       shell: bash
-      run: bundle exec fastlane deploy_android_production
       working-directory: android
+      run: bundle exec fastlane deploy_android_production
       env:
         ANDROID_KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
         ANDROID_KEYSTORE_PASSWORD: ${{ inputs.ANDROID_KEYSTORE_PASSWORD }}

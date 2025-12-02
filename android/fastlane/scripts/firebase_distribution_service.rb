@@ -38,7 +38,7 @@ class FirebaseDistributionService
   end
 
   # Builds a debug APK using Gradle with CI-safe options.
-  # Version code is managed by sync_versions lane, not here.
+  # Versioning is derived from package.json for preview builds.
   # Optimizations:
   # - Daemon disabled (stateless)
   # - Limited workers to reduce memory use
@@ -52,7 +52,7 @@ class FirebaseDistributionService
     UI.user_error!("❌ Version not found in package.json") unless version
 
     major, minor, patch = version.split('.').map(&:to_i)
-    version_code = (major * 10000) + (minor * 100) + patch
+    version_code = (major * 10_000) + (minor * 100) + patch
 
     ENV["GRADLE_OPTS"] = "-Xmx6g -XX:MaxMetaspaceSize=2g -Dfile.encoding=UTF-8"
 
@@ -66,6 +66,8 @@ class FirebaseDistributionService
         "BUNDLE_IN_DEBUG" => "true",
         "org.gradle.daemon" => "false",
         "org.gradle.workers.max" => "4",
+        "versionName" => version,
+        "versionCode" => version_code
       },
       print_command: true,
       print_command_output: true

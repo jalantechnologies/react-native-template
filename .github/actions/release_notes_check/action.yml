@@ -23,9 +23,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
     - name: Extract version from JSON
       id: get_version
       shell: bash
@@ -40,17 +37,33 @@ runs:
       run: |
         NOTES_FILE="${{ inputs.notes_dir }}/${{ steps.get_version.outputs.version }}${{ inputs.notes_ext }}"
         echo "Checking release notes file: $NOTES_FILE"
-        
+
         if [ ! -f "$NOTES_FILE" ]; then
           echo "::error::❌ Release notes file not found: $NOTES_FILE"
           exit 1
         fi
-        
+
         echo "✅ Release notes file found: $NOTES_FILE"
 
         CONTENT=$(cat "$NOTES_FILE")
+        CONTENT_LENGTH=$(printf "%s" "$CONTENT" | wc -c | tr -d ' ')
+
+        if [ "$CONTENT_LENGTH" -gt 500 ]; then
+          echo "::warning::Release notes exceed 500 characters (${CONTENT_LENGTH}), truncating."
+        fi
+
+        TRIMMED_CONTENT=$(printf "%s" "$CONTENT" | head -c 500)
+
+        CHANGELOG_DIR="android/fastlane/metadata/android/en-US/changelogs"
+        mkdir -p "$CHANGELOG_DIR"
+
+        CHANGELOG_PATH="$CHANGELOG_DIR/default.txt"
+        printf "%s" "$TRIMMED_CONTENT" > "$CHANGELOG_PATH"
+        echo "📝 Wrote changelog to $CHANGELOG_PATH"
+
         {
           echo 'release_notes<<EOF'
-          echo "$CONTENT"
+          echo "$TRIMMED_CONTENT"
           echo 'EOF'
         } >> $GITHUB_OUTPUT
+

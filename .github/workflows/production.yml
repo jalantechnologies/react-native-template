@@ -10,6 +10,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
+  check_version_number:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Compare package.json versions
+        run: |
+          # Fetch the main branch package.json
+          git fetch origin main
+          MAIN_VERSION=$(jq -r .version <(git show origin/main:package.json))
+          PR_VERSION=$(jq -r .version < package.json)
+          echo "Main branch version: $MAIN_VERSION"
+          echo "PR branch version: $PR_VERSION"
+          # Compare versions
+          if [ "$(printf '%s\n%s' "$MAIN_VERSION" "$PR_VERSION" | sort -V | head -n1)" != "$MAIN_VERSION" ] || [ "$MAIN_VERSION" == "$PR_VERSION" ]; then
+            echo "Error: PR version ($PR_VERSION) must be strictly greater than main version ($MAIN_VERSION)."
+            exit 1
+          fi
+          
   release_notes_check:
     runs-on: ubuntu-latest
     outputs:
@@ -38,10 +59,10 @@ jobs:
         uses: ./.github/actions/deploy_android_production
         with:
           GPLAY_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.GPLAY_SERVICE_ACCOUNT_KEY_JSON }}
-          ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
 
   # deploy-ios:

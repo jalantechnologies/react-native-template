@@ -1,5 +1,9 @@
+require 'fastlane_core/ui/ui'
+UI = FastlaneCore::UI unless defined?(UI)
+
 def ios_deploy_production!(options = {})
   require 'base64'
+  require 'json'
   require 'fastlane'
 
   app_identifier = options.fetch(:app_identifier)
@@ -12,9 +16,30 @@ def ios_deploy_production!(options = {})
   keychain_password = options.fetch(:keychain_password)
   team_id = options.fetch(:team_id)
 
-  # For production: we do NOT increment build_number here
-  # because it's already set in sync_versions lane.
-  # Just ensure Xcode project versioning is respected.
+  package_json_path = File.expand_path('../../../package.json', __dir__)
+  package_json = JSON.parse(File.read(package_json_path))
+  marketing_version = package_json['version']
+
+  UI.user_error!("❌ Version not found in package.json") unless marketing_version
+
+  # Ensure the Xcode project uses the bundle identifier that matches the
+  # provisioned profiles before resolving signing assets.
+  update_app_identifier(
+    xcodeproj: "Boilerplate.xcodeproj",
+    plist_path: "Boilerplate/Info.plist",
+    app_identifier: app_identifier
+  )
+
+  # Ensure signing assets are present for the build.
+  match(
+    type: "appstore",
+    readonly: true,
+    verbose: true,
+    keychain_name: keychain_name,
+    keychain_password: keychain_password
+  )
+
+  profile_name = "match AppStore #{app_identifier}"
 
   app_store_connect_api_key(
     key_id: api_key_id,
@@ -23,24 +48,49 @@ def ios_deploy_production!(options = {})
     is_key_content_base64: true,
   )
 
+  UI.message("🧾 Setting iOS marketing version from package.json: #{marketing_version}")
+  increment_version_number(
+    xcodeproj: "Boilerplate.xcodeproj",
+    version_number: marketing_version
+  )
+
+  latest_build_number = begin
+    latest_testflight_build_number(
+      app_identifier: app_identifier,
+      version: marketing_version,
+      platform: "ios"
+    )
+  rescue StandardError
+    nil
+  end
+
+  next_build_number = (latest_build_number || 0).to_i + 1
+
+  UI.message("📈 Setting iOS build number to #{next_build_number} for version #{marketing_version}")
+  increment_build_number(
+    xcodeproj: "Boilerplate.xcodeproj",
+    build_number: next_build_number
+  )
+
   # Build IPA for production
   build_app(
-  workspace: workspace,
-  scheme: scheme,
-  clean: true,
-  configuration: "Release",
-  export_method: "app-store",
-  export_options: {
-    compileBitcode: false,
-    provisioningProfiles: {
-      app_identifier => "match AppStore #{app_identifier}"
+    workspace: workspace,
+    scheme: scheme,
+    clean: true,
+    configuration: "Release",
+    export_method: "app-store",
+    xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER='#{profile_name}' PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
+    export_options: {
+      compileBitcode: false,
+      signingStyle: "manual",
+      provisioningProfiles: {
+        app_identifier => profile_name
+      }
     }
-  }
-)
+  )
 
   # Upload IPA to App Store (for distribution)
   upload_to_app_store(
-    changelog: "App uploaded via CI/CD",
     skip_screenshots: true,
     skip_metadata: true,
     skip_app_version_update: true,
@@ -48,3 +98,4 @@ def ios_deploy_production!(options = {})
     precheck_include_in_app_purchases: false,
   )
 end
+

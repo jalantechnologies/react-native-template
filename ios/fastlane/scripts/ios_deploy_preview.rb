@@ -1,8 +1,11 @@
+require 'fastlane_core/ui/ui'
+UI = FastlaneCore::UI unless defined?(UI)
+
 def ios_deploy_preview!(options = {})
   require 'fileutils'
   require 'base64'
+  require 'json'
   require 'fastlane'
-  require 'fastlane_core/ui/ui'
 
   # Required inputs passed from the Fastlane lane or script that invokes this deploy logic.
   pr_number = options.fetch(:pr_number)
@@ -17,6 +20,12 @@ def ios_deploy_preview!(options = {})
   apple_id = options.fetch(:apple_id)
   username = options.fetch(:username)
   team_id = options.fetch(:team_id)
+
+  package_json_path = File.expand_path('../../../package.json', __dir__)
+  package_json = JSON.parse(File.read(package_json_path))
+  marketing_version = package_json['version']
+
+  UI.user_error!("❌ Version not found in package.json") unless marketing_version
 
   # Remove old builds for this PR before deploying
   require_relative "ios_cleanup_preview"
@@ -36,6 +45,11 @@ def ios_deploy_preview!(options = {})
     verbose: true,
     keychain_name: keychain_name,
     keychain_password: keychain_password
+  )
+  UI.message("🧾 Setting iOS marketing version from package.json: #{marketing_version}")
+  increment_version_number(
+    xcodeproj: xcodeproj,
+    version_number: marketing_version
   )
   # Set the build number using current datetime + PR number to ensure uniqueness across PR builds.
   increment_build_number(

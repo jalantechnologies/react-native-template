@@ -46,6 +46,14 @@ runs:
         ruby-version: 3.1
         bundler-cache: true
 
+    - name: Select Xcode 16.2
+      run: |
+        sudo xcode-select -s /Applications/Xcode_16.2.app
+        export DEVELOPER_DIR="/Applications/Xcode_16.2.app/Contents/Developer"
+        xcode-select -p
+        xcodebuild -version
+      shell: bash
+
     - name: Install Bundler
       run: gem install bundler
       shell: bash
@@ -115,6 +123,11 @@ runs:
       working-directory: ios
       run: bundle exec fastlane ci_signing_setup
       shell: bash
+      env:
+        MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}
+        IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
+        IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
+        IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
 
     - name: Clear Derived Data
       run: rm -rf ~/Library/Developer/Xcode/DerivedData

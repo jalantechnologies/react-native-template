@@ -39,6 +39,18 @@ def ios_deploy_production!(options = {})
     keychain_password: keychain_password
   )
 
+  # Force manual signing in the Xcode project so the matched provisioning
+  # profile is honored during the archive.
+  update_project_provisioning(
+    xcodeproj: "Boilerplate.xcodeproj",
+    profile: "match AppStore #{app_identifier}",
+    target_filter: "^Boilerplate$",
+    build_configuration: "Release",
+    code_signing_identity: "Apple Distribution",
+    use_automatic_signing: false,
+    team_id: team_id
+  )
+
   app_store_connect_api_key(
     key_id: api_key_id,
     issuer_id: issuer_id,
@@ -77,9 +89,10 @@ def ios_deploy_production!(options = {})
     clean: true,
     configuration: "Release",
     export_method: "app-store",
-    xcargs: "PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier} DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER='match AppStore #{app_identifier}'",
+    xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER='match AppStore #{app_identifier}' PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
     export_options: {
       compileBitcode: false,
+      signingStyle: "manual",
       provisioningProfiles: {
         app_identifier => "match AppStore #{app_identifier}"
       }

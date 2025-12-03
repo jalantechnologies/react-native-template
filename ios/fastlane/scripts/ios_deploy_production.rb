@@ -22,10 +22,6 @@ def ios_deploy_production!(options = {})
 
   UI.user_error!("❌ Version not found in package.json") unless marketing_version
 
-  # For production: we do NOT increment build_number here
-  # because it's already set in sync_versions lane.
-  # Just ensure Xcode project versioning is respected.
-
   app_store_connect_api_key(
     key_id: api_key_id,
     issuer_id: issuer_id,
@@ -39,20 +35,38 @@ def ios_deploy_production!(options = {})
     version_number: marketing_version
   )
 
+  latest_build_number = begin
+    latest_testflight_build_number(
+      app_identifier: app_identifier,
+      version: marketing_version,
+      platform: "ios"
+    )
+  rescue StandardError
+    nil
+  end
+
+  next_build_number = (latest_build_number || 0).to_i + 1
+
+  UI.message("📈 Setting iOS build number to #{next_build_number} for version #{marketing_version}")
+  increment_build_number(
+    xcodeproj: "Boilerplate.xcodeproj",
+    build_number: next_build_number
+  )
+
   # Build IPA for production
   build_app(
-  workspace: workspace,
-  scheme: scheme,
-  clean: true,
-  configuration: "Release",
-  export_method: "app-store",
-  export_options: {
-    compileBitcode: false,
-    provisioningProfiles: {
-      app_identifier => "match AppStore #{app_identifier}"
+    workspace: workspace,
+    scheme: scheme,
+    clean: true,
+    configuration: "Release",
+    export_method: "app-store",
+    export_options: {
+      compileBitcode: false,
+      provisioningProfiles: {
+        app_identifier => "match AppStore #{app_identifier}"
+      }
     }
-  }
-)
+  )
 
   # Upload IPA to App Store (for distribution)
   upload_to_app_store(

@@ -54,7 +54,7 @@ def ios_deploy_production!(options = {})
     version_number: marketing_version
   )
 
-  latest_build_number = begin
+  latest_testflight = begin
     latest_testflight_build_number(
       app_identifier: app_identifier,
       version: marketing_version,
@@ -64,9 +64,23 @@ def ios_deploy_production!(options = {})
     nil
   end
 
-  next_build_number = (latest_build_number || 0).to_i + 1
+  latest_app_store = begin
+    app_store_build_number(
+      app_identifier: app_identifier,
+      version: marketing_version,
+      platform: "ios"
+    )
+  rescue StandardError
+    nil
+  end
 
-  UI.message("📈 Setting iOS build number to #{next_build_number} for version #{marketing_version}")
+  highest_existing_build = [latest_testflight, latest_app_store].compact.map(&:to_i).max
+  next_build_number = (highest_existing_build || 0) + 1
+
+  UI.message(
+    "📈 Setting iOS build number to #{next_build_number} for version #{marketing_version} " \
+    "(latest TestFlight: #{latest_testflight || 'none'}, latest App Store: #{latest_app_store || 'none'})"
+  )
   increment_build_number(
     xcodeproj: "Boilerplate.xcodeproj",
     build_number: next_build_number

@@ -1,9 +1,10 @@
-name: cd-production
+name: production
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 concurrency:
   group: cd

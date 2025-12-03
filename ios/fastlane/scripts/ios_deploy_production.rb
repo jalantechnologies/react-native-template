@@ -39,23 +39,7 @@ def ios_deploy_production!(options = {})
     keychain_password: keychain_password
   )
 
-  profile_env_key = app_identifier.tr('.', '_')
-  profile_path = ENV["sigh_#{profile_env_key}_appstore_profile-path"] || lane_context[SharedValues::SIGH_PROFILE_PATH]
-  UI.user_error!("❌ Unable to locate provisioning profile path from match") unless profile_path && File.exist?(profile_path)
-
-  profile_name = ENV["sigh_#{profile_env_key}_appstore_profile-name"] || "match AppStore #{app_identifier}"
-
-  # Force manual signing in the Xcode project so the matched provisioning
-  # profile is honored during the archive.
-  update_project_provisioning(
-    xcodeproj: "Boilerplate.xcodeproj",
-    profile: profile_path,
-    target_filter: "^Boilerplate$",
-    build_configuration: "Release",
-    code_signing_identity: "Apple Distribution",
-    use_automatic_signing: false,
-    team_id: team_id
-  )
+  profile_name = "match AppStore #{app_identifier}"
 
   app_store_connect_api_key(
     key_id: api_key_id,

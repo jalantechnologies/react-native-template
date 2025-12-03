@@ -32,6 +32,14 @@ jobs:
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v3
+      
+      - name: Inject Doppler Production Secrets
+        uses: ./.github/actions/inject_doppler_secrets
+        with:
+          doppler_token: ${{ secrets.DOPPLER_PRODUCTION_TOKEN }}
+          doppler_project: picket-mobile-app
+          doppler_environment: production
+          working_directory: .     
 
       - name: Deploy Android app to Play Store
         id: deploy_android_production

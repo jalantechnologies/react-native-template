@@ -22,6 +22,14 @@ def ios_deploy_production!(options = {})
 
   UI.user_error!("❌ Version not found in package.json") unless marketing_version
 
+  # Ensure the Xcode project uses the bundle identifier that matches the
+  # provisioned profiles before resolving signing assets.
+  update_app_identifier(
+    xcodeproj: "Boilerplate.xcodeproj",
+    plist_path: "Boilerplate/Info.plist",
+    app_identifier: app_identifier
+  )
+
   # Ensure signing assets are present for the build.
   match(
     type: "appstore",
@@ -69,6 +77,7 @@ def ios_deploy_production!(options = {})
     clean: true,
     configuration: "Release",
     export_method: "app-store",
+    xcargs: "PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier} DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER='match AppStore #{app_identifier}'",
     export_options: {
       compileBitcode: false,
       provisioningProfiles: {

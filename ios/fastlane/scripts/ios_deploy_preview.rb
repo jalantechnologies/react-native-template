@@ -5,6 +5,8 @@ def ios_deploy_preview!(options = {})
   require 'fastlane'
   require 'fastlane_core/ui/ui'
 
+  UI = FastlaneCore::UI unless defined?(UI)
+
   # Required inputs passed from the Fastlane lane or script that invokes this deploy logic.
   pr_number = options.fetch(:pr_number)
   app_identifier = options.fetch(:app_identifier)

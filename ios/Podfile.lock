@@ -27,7 +27,7 @@ PODS:
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.72.1)
   - FBReactNativeSpec (0.72.1):
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - RCTRequired (= 0.72.1)
     - RCTTypeSafety (= 0.72.1)
     - React-Core (= 0.72.1)
@@ -103,18 +103,18 @@ PODS:
   - OpenSSL-Universal (1.1.1100)
   - OpenTelemetrySwiftApi (1.6.0)
   - PLCrashReporter (1.11.3)
-  - RCT-Folly (2021.07.22.00):
+  - RCT-Folly (2024.01.01.00):
     - boost
     - DoubleConversion
     - fmt (~> 9.1.0)
     - glog
-    - RCT-Folly/Default (= 2021.07.22.00)
-  - RCT-Folly/Default (2021.07.22.00):
+    - RCT-Folly/Default (= 2024.01.01.00)
+  - RCT-Folly/Default (2024.01.01.00):
     - boost
     - DoubleConversion
     - fmt (~> 9.1.0)
     - glog
-  - RCT-Folly/Futures (2021.07.22.00):
+  - RCT-Folly/Futures (2024.01.01.00):
     - boost
     - DoubleConversion
     - fmt (~> 9.1.0)
@@ -157,7 +157,7 @@ PODS:
   - React-Core (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default (= 0.72.1)
     - React-cxxreact
     - React-hermes
@@ -171,7 +171,7 @@ PODS:
   - React-Core/CoreModulesHeaders (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default
     - React-cxxreact
     - React-hermes
@@ -185,7 +185,7 @@ PODS:
   - React-Core/Default (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-cxxreact
     - React-hermes
     - React-jsi
@@ -198,7 +198,7 @@ PODS:
   - React-Core/DevSupport (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default (= 0.72.1)
     - React-Core/RCTWebSocket (= 0.72.1)
     - React-cxxreact
@@ -214,7 +214,7 @@ PODS:
   - React-Core/RCTActionSheetHeaders (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default
     - React-cxxreact
     - React-hermes
@@ -228,7 +228,7 @@ PODS:
   - React-Core/RCTAnimationHeaders (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default
     - React-cxxreact
     - React-hermes
@@ -242,7 +242,7 @@ PODS:
   - React-Core/RCTBlobHeaders (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default
     - React-cxxreact
     - React-hermes
@@ -256,7 +256,7 @@ PODS:
   - React-Core/RCTImageHeaders (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default
     - React-cxxreact
     - React-hermes
@@ -270,7 +270,7 @@ PODS:
   - React-Core/RCTLinkingHeaders (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default
     - React-cxxreact
     - React-hermes
@@ -284,7 +284,7 @@ PODS:
   - React-Core/RCTNetworkHeaders (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default
     - React-cxxreact
     - React-hermes
@@ -298,7 +298,7 @@ PODS:
   - React-Core/RCTSettingsHeaders (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default
     - React-cxxreact
     - React-hermes
@@ -312,7 +312,7 @@ PODS:
   - React-Core/RCTTextHeaders (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default
     - React-cxxreact
     - React-hermes
@@ -326,7 +326,7 @@ PODS:
   - React-Core/RCTVibrationHeaders (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default
     - React-cxxreact
     - React-hermes
@@ -340,7 +340,7 @@ PODS:
   - React-Core/RCTWebSocket (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Core/Default (= 0.72.1)
     - React-cxxreact
     - React-hermes
@@ -352,7 +352,7 @@ PODS:
     - SocketRocket (= 0.6.1)
     - Yoga
   - React-CoreModules (0.72.1):
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - RCTTypeSafety (= 0.72.1)
     - React-Codegen (= 0.72.1)
     - React-Core/CoreModulesHeaders (= 0.72.1)
@@ -366,7 +366,7 @@ PODS:
     - DoubleConversion
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-callinvoker (= 0.72.1)
     - React-jsi (= 0.72.1)
     - React-jsinspector (= 0.72.1)
@@ -378,8 +378,8 @@ PODS:
     - DoubleConversion
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
-    - RCT-Folly/Futures (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
+    - RCT-Folly/Futures (= 2024.01.01.00)
     - React-cxxreact (= 0.72.1)
     - React-jsi
     - React-jsiexecutor (= 0.72.1)
@@ -390,12 +390,12 @@ PODS:
     - DoubleConversion
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
   - React-jsiexecutor (0.72.1):
     - DoubleConversion
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-cxxreact (= 0.72.1)
     - React-jsi (= 0.72.1)
     - React-perflogger (= 0.72.1)
@@ -430,7 +430,7 @@ PODS:
   - React-RCTActionSheet (0.72.1):
     - React-Core/RCTActionSheetHeaders (= 0.72.1)
   - React-RCTAnimation (0.72.1):
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - RCTTypeSafety (= 0.72.1)
     - React-Codegen (= 0.72.1)
     - React-Core/RCTAnimationHeaders (= 0.72.1)
@@ -450,7 +450,7 @@ PODS:
     - ReactCommon/turbomodule/core
   - React-RCTBlob (0.72.1):
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Codegen (= 0.72.1)
     - React-Core/RCTBlobHeaders (= 0.72.1)
     - React-Core/RCTWebSocket (= 0.72.1)
@@ -458,7 +458,7 @@ PODS:
     - React-RCTNetwork (= 0.72.1)
     - ReactCommon/turbomodule/core (= 0.72.1)
   - React-RCTImage (0.72.1):
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - RCTTypeSafety (= 0.72.1)
     - React-Codegen (= 0.72.1)
     - React-Core/RCTImageHeaders (= 0.72.1)
@@ -471,14 +471,14 @@ PODS:
     - React-jsi (= 0.72.1)
     - ReactCommon/turbomodule/core (= 0.72.1)
   - React-RCTNetwork (0.72.1):
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - RCTTypeSafety (= 0.72.1)
     - React-Codegen (= 0.72.1)
     - React-Core/RCTNetworkHeaders (= 0.72.1)
     - React-jsi (= 0.72.1)
     - ReactCommon/turbomodule/core (= 0.72.1)
   - React-RCTSettings (0.72.1):
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - RCTTypeSafety (= 0.72.1)
     - React-Codegen (= 0.72.1)
     - React-Core/RCTSettingsHeaders (= 0.72.1)
@@ -487,7 +487,7 @@ PODS:
   - React-RCTText (0.72.1):
     - React-Core/RCTTextHeaders (= 0.72.1)
   - React-RCTVibration (0.72.1):
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-Codegen (= 0.72.1)
     - React-Core/RCTVibrationHeaders (= 0.72.1)
     - React-jsi (= 0.72.1)
@@ -498,20 +498,20 @@ PODS:
   - React-runtimescheduler (0.72.1):
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-callinvoker
     - React-debug
     - React-jsi
     - React-runtimeexecutor
   - React-utils (0.72.1):
     - glog
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-debug
   - ReactCommon/turbomodule/bridging (0.72.1):
     - DoubleConversion
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-callinvoker (= 0.72.1)
     - React-cxxreact (= 0.72.1)
     - React-jsi (= 0.72.1)
@@ -521,7 +521,7 @@ PODS:
     - DoubleConversion
     - glog
     - hermes-engine
-    - RCT-Folly (= 2021.07.22.00)
+    - RCT-Folly (= 2024.01.01.00)
     - React-callinvoker (= 0.72.1)
     - React-cxxreact (= 0.72.1)
     - React-jsi (= 0.72.1)
@@ -689,7 +689,7 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2023-03-20-RNv0.72.0-49794cfc7c81fb8f69fd60c3bbf85a7480cc5a77
-  RCT-Folly:
+  RCT-Folly: 173b16648df2a43ad8a154aaa5f7c5488bfe8953
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
     :path: "../node_modules/react-native/Libraries/RCTRequired"
@@ -805,7 +805,6 @@ SPEC CHECKSUMS:
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   OpenTelemetrySwiftApi: 657da8071c2908caecce11548e006f779924ff9c
   PLCrashReporter: 97cef386c199b54662e744d1a62c19f7bfe08e90
-  RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: c52ee8fb2b35c1b54031dd8e92d88ad4dba8f2ce
   RCTTypeSafety: 75fa444becadf0ebfa0a456b8c64560c7c89c7df
   React: 3e5b3962f27b7334eaf5517a35b3434503df35ad

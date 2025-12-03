@@ -1,4 +1,4 @@
-name: cd-production
+name: cd
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - main
 
 concurrency:
-  group: cd-production
+  group: cd
   cancel-in-progress: true
 
 jobs:

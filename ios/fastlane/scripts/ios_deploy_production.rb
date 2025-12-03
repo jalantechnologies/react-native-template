@@ -22,6 +22,15 @@ def ios_deploy_production!(options = {})
 
   UI.user_error!("❌ Version not found in package.json") unless marketing_version
 
+  # Ensure signing assets are present for the build.
+  match(
+    type: "appstore",
+    readonly: true,
+    verbose: true,
+    keychain_name: keychain_name,
+    keychain_password: keychain_password
+  )
+
   app_store_connect_api_key(
     key_id: api_key_id,
     issuer_id: issuer_id,

@@ -48,39 +48,39 @@ jobs:
           notes_dir: 'docs/release_notes'
           notes_ext: '.md'
 
-  # deploy_android:
-  #   if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-  #   needs: [check_version_number, release_notes_check]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout (root for actions)
-  #       uses: actions/checkout@v3
+  deploy_android:
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
+    needs: [check_version_number, release_notes_check]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (root for actions)
+        uses: actions/checkout@v3
 
-  #     - name: Checkout (app code)
-  #       uses: actions/checkout@v3
-  #       with:
-  #         path: app
+      - name: Checkout (app code)
+        uses: actions/checkout@v3
+        with:
+          path: app
 
-  #     - name: Inject Doppler Preview Secrets
-  #       uses: ./.github/actions/inject_doppler_secrets
-  #       with:
-  #         doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
-  #         doppler_project: react-native-template
-  #         doppler_environment: preview
-  #         working_directory: app
+      - name: Inject Doppler Preview Secrets
+        uses: ./.github/actions/inject_doppler_secrets
+        with:
+          doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
+          doppler_project: react-native-template
+          doppler_environment: preview
+          working_directory: app
 
-  #     - name: Deploy android app to Firebase App Distribution
-  #       uses: ./.github/actions/deploy_android_preview
-  #       with:
-  #         ANDROID_GCP_JSON_BASE64: ${{ secrets.ANDROID_GCP_JSON_BASE64 }}
-  #         ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
-  #         ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
-  #         ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
-  #         ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
-  #         ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
-  #         PR_NUMBER: ${{ github.event.pull_request.number }}
-  #         PR_TITLE: ${{ github.event.pull_request.title }}
-  #         RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
+      - name: Deploy android app to Firebase App Distribution
+        uses: ./.github/actions/deploy_android_preview
+        with:
+          ANDROID_GCP_JSON_BASE64: ${{ secrets.ANDROID_GCP_JSON_BASE64 }}
+          ANDROID_FIREBASE_PROJECT_NUMBER: ${{ secrets.ANDROID_FIREBASE_PROJECT_NUMBER }}
+          ANDROID_FIREBASE_APP_ID: ${{ secrets.ANDROID_FIREBASE_APP_ID }}
+          ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
+          ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
+          ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
   deploy_ios:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     needs: [check_version_number, release_notes_check]

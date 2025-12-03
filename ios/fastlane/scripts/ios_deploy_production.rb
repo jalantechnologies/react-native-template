@@ -91,7 +91,6 @@ def ios_deploy_production!(options = {})
 
   # Upload IPA to App Store (for distribution)
   upload_to_app_store(
-    changelog: "App uploaded via CI/CD",
     skip_screenshots: true,
     skip_metadata: true,
     skip_app_version_update: true,

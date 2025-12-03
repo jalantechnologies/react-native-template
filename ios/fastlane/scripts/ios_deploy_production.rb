@@ -1,5 +1,6 @@
 def ios_deploy_production!(options = {})
   require 'base64'
+  require 'json'
   require 'fastlane'
 
   app_identifier = options.fetch(:app_identifier)
@@ -12,6 +13,12 @@ def ios_deploy_production!(options = {})
   keychain_password = options.fetch(:keychain_password)
   team_id = options.fetch(:team_id)
 
+  package_json_path = File.expand_path('../../../package.json', __dir__)
+  package_json = JSON.parse(File.read(package_json_path))
+  marketing_version = package_json['version']
+
+  UI.user_error!("❌ Version not found in package.json") unless marketing_version
+
   # For production: we do NOT increment build_number here
   # because it's already set in sync_versions lane.
   # Just ensure Xcode project versioning is respected.
@@ -21,6 +28,12 @@ def ios_deploy_production!(options = {})
     issuer_id: issuer_id,
     key_content: api_key_b64,
     is_key_content_base64: true,
+  )
+
+  UI.message("🧾 Setting iOS marketing version from package.json: #{marketing_version}")
+  increment_version_number(
+    xcodeproj: "Boilerplate.xcodeproj",
+    version_number: marketing_version
   )
 
   # Build IPA for production

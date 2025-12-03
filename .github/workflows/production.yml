@@ -37,7 +37,7 @@ jobs:
         uses: ./.github/actions/inject_doppler_secrets
         with:
           doppler_token: ${{ secrets.DOPPLER_PRODUCTION_TOKEN }}
-          doppler_project: picket-mobile-app
+          doppler_project: react-native-template
           doppler_environment: production
           working_directory: .     
 

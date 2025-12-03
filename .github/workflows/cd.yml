@@ -60,6 +60,14 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: app
+          
+      - name: Inject Doppler Preview Secrets
+        uses: ./.github/actions/inject_doppler_secrets
+        with:
+          doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
+          doppler_project: react-native-template
+          doppler_environment: preview
+          working_directory: app
 
       - name: Deploy android app to Firebase App Distribution
         uses: ./.github/actions/deploy_android_preview

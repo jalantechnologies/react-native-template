@@ -1,10 +1,10 @@
+require 'fastlane_core/ui/ui'
+UI = FastlaneCore::UI unless defined?(UI)
+
 def ios_deploy_production!(options = {})
   require 'base64'
   require 'json'
   require 'fastlane'
-  require 'fastlane_core/ui/ui'
-
-  UI = FastlaneCore::UI unless defined?(UI)
 
   app_identifier = options.fetch(:app_identifier)
   workspace = options.fetch(:workspace)

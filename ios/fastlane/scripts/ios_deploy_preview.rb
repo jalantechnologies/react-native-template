@@ -20,6 +20,7 @@ def ios_deploy_preview!(options = {})
   apple_id = options.fetch(:apple_id)
   username = options.fetch(:username)
   team_id = options.fetch(:team_id)
+  release_notes = ENV["RELEASE_NOTES"]&.strip
 
   package_json_path = File.expand_path('../../../package.json', __dir__)
   package_json = JSON.parse(File.read(package_json_path))
@@ -146,9 +147,15 @@ def ios_deploy_preview!(options = {})
       rm -rf temp_payload
     BASH
   # Upload the build to TestFlight (internal only) with a changelog indicating the PR number.
-  begin  
+  begin
+    changelog_message = if release_notes && !release_notes.empty?
+                          release_notes
+                        else
+                          "PR ##{pr_number} Build - automated upload"
+                        end
+
     upload_to_testflight(
-      changelog: "PR ##{pr_number} Build - automated upload",
+      changelog: changelog_message,
       distribute_external: false,
       username: username,
       apple_id: apple_id,

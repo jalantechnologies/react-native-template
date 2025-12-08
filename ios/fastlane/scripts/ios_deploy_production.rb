@@ -15,6 +15,7 @@ def ios_deploy_production!(options = {})
   keychain_name = options.fetch(:keychain_name)
   keychain_password = options.fetch(:keychain_password)
   team_id = options.fetch(:team_id)
+  release_notes = ENV["RELEASE_NOTES"]&.strip
 
   package_json_path = File.expand_path('../../../package.json', __dir__)
   package_json = JSON.parse(File.read(package_json_path))
@@ -115,10 +116,14 @@ def ios_deploy_production!(options = {})
   # Upload IPA to App Store (for distribution)
   upload_to_app_store(
     skip_screenshots: true,
-    skip_metadata: true,
+    skip_metadata: false,
     skip_app_version_update: true,
     force: true,
     precheck_include_in_app_purchases: false,
+    metadata_path: "fastlane/metadata",
+    release_notes: {
+      'default' => release_notes && !release_notes.empty? ? release_notes : "Production release for version #{marketing_version}"
+    }
   )
 end
 

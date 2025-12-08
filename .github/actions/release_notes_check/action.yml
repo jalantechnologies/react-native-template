@@ -61,6 +61,18 @@ runs:
         printf "%s" "$TRIMMED_CONTENT" > "$CHANGELOG_PATH"
         echo "📝 Wrote changelog to $CHANGELOG_PATH"
 
+        IOS_METADATA_DIR="ios/fastlane/metadata/default"
+        mkdir -p "$IOS_METADATA_DIR"
+
+        IOS_RELEASE_NOTES_PATH="$IOS_METADATA_DIR/release_notes.txt"
+        printf "%s" "$TRIMMED_CONTENT" > "$IOS_RELEASE_NOTES_PATH"
+        echo "🍏 Wrote iOS release notes to $IOS_RELEASE_NOTES_PATH"
+
+        IOS_EN_METADATA_DIR="ios/fastlane/metadata/en-US"
+        mkdir -p "$IOS_EN_METADATA_DIR"
+        printf "%s" "$TRIMMED_CONTENT" > "$IOS_EN_METADATA_DIR/release_notes.txt"
+        echo "🍏 Wrote localized iOS release notes to $IOS_EN_METADATA_DIR/release_notes.txt"
+
         {
           echo 'release_notes<<EOF'
           echo "$TRIMMED_CONTENT"

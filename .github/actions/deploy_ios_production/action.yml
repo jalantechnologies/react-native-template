@@ -40,6 +40,27 @@ runs:
   steps:
     - uses: actions/checkout@v3
 
+    - name: Write iOS changelog from release notes
+      shell: bash
+      run: |
+        CHANGELOG_PATH="ios/fastlane/changelog.txt"
+
+        if [ -z "${RELEASE_NOTES}" ]; then
+          echo "::error::Release notes are missing; ensure release_notes_check ran and passed."
+          exit 1
+        fi
+
+        echo "Populating $CHANGELOG_PATH with release notes"
+        mkdir -p "$(dirname "$CHANGELOG_PATH")"
+        printf "%s" "$RELEASE_NOTES" > "$CHANGELOG_PATH"
+
+        if [ ! -s "$CHANGELOG_PATH" ]; then
+          echo "::error::Release notes file at $CHANGELOG_PATH is empty after write."
+          exit 1
+        fi
+
+        echo "✅ Wrote release notes to $CHANGELOG_PATH"
+
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:

@@ -48,6 +48,11 @@ runs:
         CONTENT=$(cat "$NOTES_FILE")
         CONTENT_LENGTH=$(printf "%s" "$CONTENT" | wc -c | tr -d ' ')
 
+        if [ "$CONTENT_LENGTH" -eq 0 ]; then
+          echo "::error::❌ Release notes file is empty: $NOTES_FILE"
+          exit 1
+        fi
+
         if [ "$CONTENT_LENGTH" -gt 500 ]; then
           echo "::warning::Release notes exceed 500 characters (${CONTENT_LENGTH}), truncating."
         fi

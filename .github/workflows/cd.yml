@@ -48,6 +48,17 @@ jobs:
           notes_dir: 'docs/release_notes'
           notes_ext: '.md'
 
+      - name: Upload release notes artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes-${{ github.run_id }}
+          path: |
+            android/fastlane/metadata/android/en-US/changelogs/default.txt
+            ios/fastlane/changelog.txt
+            ios/fastlane/metadata/default/release_notes.txt
+            ios/fastlane/metadata/en-US/release_notes.txt
+          if-no-files-found: error
+
   deploy_android:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     needs: [check_version_number, release_notes_check]
@@ -89,6 +100,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Download release notes artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes-${{ github.run_id }}
+          path: .
 
       - name: Deploy iOS Preview to TestFlight
         uses: ./.github/actions/deploy_ios_preview

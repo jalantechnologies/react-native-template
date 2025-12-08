@@ -1,6 +1,5 @@
 name: Release Notes Check
-description: Checks if release notes file exists for the current version and outputs the content.
-
+description: Checks if release notes exist for current version and distributes to Android/iOS metadata
 inputs:
   version_file:
     description: 'Path to the version file (default: package.json)'
@@ -14,12 +13,13 @@ inputs:
     description: 'Release notes file extension (default: .md)'
     required: false
     default: '.md'
-
 outputs:
   release_notes:
     description: 'Content of the release notes file'
-    value: ${{ steps.check_notes.outputs.release_notes }}
-
+    value: ${{ steps.process_notes.outputs.release_notes }}
+  version:
+    description: 'Extracted version number'
+    value: ${{ steps.get_version.outputs.version }}
 runs:
   using: "composite"
   steps:
@@ -28,42 +28,110 @@ runs:
       shell: bash
       run: |
         VERSION=$(jq -r .version < "${{ inputs.version_file }}")
-        echo "Extracted version: $VERSION"
         echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "✅ Extracted version: $VERSION"
 
-    - name: Check for release notes file
-      id: check_notes
+    - name: Validate and Process Release Notes
+      id: process_notes
       shell: bash
       run: |
         NOTES_FILE="${{ inputs.notes_dir }}/${{ steps.get_version.outputs.version }}${{ inputs.notes_ext }}"
-        echo "Checking release notes file: $NOTES_FILE"
-
+        echo "🔍 Checking: $NOTES_FILE"
+        
+        # Validate file exists and is not empty
         if [ ! -f "$NOTES_FILE" ]; then
-          echo "::error::❌ Release notes file not found: $NOTES_FILE"
+          echo "::error::Release notes file not found: $NOTES_FILE"
+          echo "::error::Expected format: docs/release_notes/<version>.md"
+          echo "::error::Example: docs/release_notes/1.2.0.md"
           exit 1
         fi
-
-        echo "✅ Release notes file found: $NOTES_FILE"
-
-        CONTENT=$(cat "$NOTES_FILE")
-        CONTENT_LENGTH=$(printf "%s" "$CONTENT" | wc -c | tr -d ' ')
-
-        if [ "$CONTENT_LENGTH" -gt 500 ]; then
-          echo "::warning::Release notes exceed 500 characters (${CONTENT_LENGTH}), truncating."
+        
+        if [ ! -s "$NOTES_FILE" ]; then
+          echo "::error::Release notes file is empty: $NOTES_FILE"
+          exit 1
         fi
-
-        TRIMMED_CONTENT=$(printf "%s" "$CONTENT" | head -c 500)
-
-        CHANGELOG_DIR="android/fastlane/metadata/android/en-US/changelogs"
-        mkdir -p "$CHANGELOG_DIR"
-
-        CHANGELOG_PATH="$CHANGELOG_DIR/default.txt"
-        printf "%s" "$TRIMMED_CONTENT" > "$CHANGELOG_PATH"
-        echo "📝 Wrote changelog to $CHANGELOG_PATH"
-
+        
+        # Read and clean content (remove leading/trailing whitespace, Windows line endings)
+        CONTENT=$(cat "$NOTES_FILE" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | tr -d '\r')
+        
+        if [ -z "$CONTENT" ]; then
+          echo "::error::Release notes contain only whitespace"
+          exit 1
+        fi
+        
+        # Check character limits (TestFlight = 4000 chars, App Store = 4000 chars)
+        CHAR_COUNT=${#CONTENT}
+        echo "✅ Valid release notes found ($CHAR_COUNT chars)"
+        
+        if [ $CHAR_COUNT -gt 4000 ]; then
+          echo "::warning::Release notes exceed 4000 characters ($CHAR_COUNT). May be truncated by Apple."
+        fi
+        
+        # Set output for GitHub Actions
+        EOF_MARKER=$(echo "$CONTENT" | sha256sum | cut -c1-8)
         {
-          echo 'release_notes<<EOF'
-          echo "$TRIMMED_CONTENT"
-          echo 'EOF'
+          echo "release_notes<<EOF_${EOF_MARKER}"
+          echo "$CONTENT"
+          echo "EOF_${EOF_MARKER}"
         } >> $GITHUB_OUTPUT
-
+        
+        echo "📝 Release notes preview (first 200 chars):"
+        echo "$CONTENT" | head -c 200
+        echo ""
+        echo "..."
+        
+        # --- ANDROID DISTRIBUTION ---
+        echo ""
+        echo "🤖 === ANDROID SETUP ==="
+        ANDROID_DIR="android/fastlane/metadata/android/en-US/changelogs"
+        mkdir -p "$ANDROID_DIR"
+        echo "$CONTENT" > "$ANDROID_DIR/default.txt"
+        
+        if [ -f "$ANDROID_DIR/default.txt" ]; then
+          echo "✅ Created: $ANDROID_DIR/default.txt"
+        else
+          echo "::error::Failed to create Android changelog"
+          exit 1
+        fi
+        
+        # --- iOS DISTRIBUTION ---
+        echo ""
+        echo "🍏 === iOS SETUP ==="
+        
+        # 1. Create changelog.txt for TestFlight (preview/PR builds)
+        IOS_DIR="ios/fastlane"
+        mkdir -p "$IOS_DIR"
+        echo "$CONTENT" > "$IOS_DIR/changelog.txt"
+        
+        if [ -f "$IOS_DIR/changelog.txt" ]; then
+          echo "✅ Created: $IOS_DIR/changelog.txt (for TestFlight)"
+        else
+          echo "::error::Failed to create iOS changelog.txt"
+          exit 1
+        fi
+        
+        # 2. Create release_notes.txt for App Store (production builds)
+        IOS_METADATA_DIR="ios/fastlane/metadata/en-US"
+        mkdir -p "$IOS_METADATA_DIR"
+        echo "$CONTENT" > "$IOS_METADATA_DIR/release_notes.txt"
+        
+        if [ -f "$IOS_METADATA_DIR/release_notes.txt" ]; then
+          echo "✅ Created: $IOS_METADATA_DIR/release_notes.txt (for App Store)"
+        else
+          echo "::error::Failed to create iOS release_notes.txt"
+          exit 1
+        fi
+        
+        # 3. Optional: Multi-language support
+        # Uncomment if your app supports multiple languages
+        # for lang in hi-IN de-DE fr-FR es-ES; do
+        #   LANG_DIR="ios/fastlane/metadata/$lang"
+        #   mkdir -p "$LANG_DIR"
+        #   cp "$IOS_METADATA_DIR/release_notes.txt" "$LANG_DIR/"
+        #   echo "✅ Created: $LANG_DIR/release_notes.txt"
+        # done
+        
+        echo ""
+        echo "✅ === DISTRIBUTION COMPLETE ==="
+        echo "📱 Android: Ready for Play Store"
+        echo "📱 iOS: Ready for TestFlight + App Store"

@@ -27,6 +27,17 @@ jobs:
           notes_dir: 'docs/release_notes'
           notes_ext: '.md'
 
+      - name: Upload release notes artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes-${{ github.run_id }}
+          path: |
+            android/fastlane/metadata/android/en-US/changelogs/default.txt
+            ios/fastlane/changelog.txt
+            ios/fastlane/metadata/default/release_notes.txt
+            ios/fastlane/metadata/en-US/release_notes.txt
+          if-no-files-found: error
+
   deploy_android:
     runs-on: ubuntu-latest
     needs: [release_notes_check]
@@ -61,6 +72,12 @@ jobs:
       - name: Checkout (app)
         uses: actions/checkout@v3
 
+      - name: Download release notes artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes-${{ github.run_id }}
+          path: .
+
       - name: Deploy iOS app to App Store
         uses: ./.github/actions/deploy_ios_production
         with:
@@ -75,3 +92,5 @@ jobs:
           IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
           IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
           IOS_MATCH_DEPLOY_KEY: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
+        env:
+          RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}

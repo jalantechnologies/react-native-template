@@ -15,7 +15,11 @@ def ios_deploy_production!(options = {})
   keychain_name = options.fetch(:keychain_name)
   keychain_password = options.fetch(:keychain_password)
   team_id = options.fetch(:team_id)
-  release_notes = ENV["RELEASE_NOTES"]&.strip
+  changelog_path = File.expand_path('../changelog.txt', __dir__)
+  UI.user_error!("❌ Release notes file not found at: #{changelog_path}. Ensure release_notes_check has populated changelog.txt") unless File.exist?(changelog_path)
+
+  release_notes = File.read(changelog_path).strip
+  UI.user_error!("❌ Release notes file at #{changelog_path} is empty. Please provide release notes before building.") if release_notes.empty?
 
   package_json_path = File.expand_path('../../../package.json', __dir__)
   package_json = JSON.parse(File.read(package_json_path))
@@ -47,6 +51,12 @@ def ios_deploy_production!(options = {})
     issuer_id: issuer_id,
     key_content: api_key_b64,
     is_key_content_base64: true,
+  )
+
+  set_changelog(
+    app_identifier: app_identifier,
+    version: marketing_version,
+    changelog: release_notes
   )
 
   UI.message("🧾 Setting iOS marketing version from package.json: #{marketing_version}")

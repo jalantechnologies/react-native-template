@@ -73,6 +73,11 @@ runs:
         printf "%s" "$TRIMMED_CONTENT" > "$IOS_EN_METADATA_DIR/release_notes.txt"
         echo "🍏 Wrote localized iOS release notes to $IOS_EN_METADATA_DIR/release_notes.txt"
 
+        IOS_CHANGELOG_PATH="ios/fastlane/changelog.txt"
+        mkdir -p "$(dirname "$IOS_CHANGELOG_PATH")"
+        printf "%s" "$TRIMMED_CONTENT" > "$IOS_CHANGELOG_PATH"
+        echo "🍏 Wrote iOS changelog to $IOS_CHANGELOG_PATH"
+
         {
           echo 'release_notes<<EOF'
           echo "$TRIMMED_CONTENT"

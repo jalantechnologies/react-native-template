@@ -15,11 +15,13 @@ def ios_deploy_production!(options = {})
   keychain_name = options.fetch(:keychain_name)
   keychain_password = options.fetch(:keychain_password)
   team_id = options.fetch(:team_id)
-  changelog_path = File.expand_path('../changelog.txt', __dir__)
-  UI.user_error!("❌ Release notes file not found at: #{changelog_path}. Ensure release_notes_check has populated changelog.txt") unless File.exist?(changelog_path)
+  
+  # For App Store, read from metadata/en-US/release_notes.txt (not changelog.txt)
+  release_notes_path = File.expand_path('../metadata/en-US/release_notes.txt', __dir__)
+  UI.user_error!("❌ Release notes file not found at: #{release_notes_path}. Ensure release_notes.txt exists in metadata/en-US/") unless File.exist?(release_notes_path)
 
-  release_notes = File.read(changelog_path).strip
-  UI.user_error!("❌ Release notes file at #{changelog_path} is empty. Please provide release notes before building.") if release_notes.empty?
+  release_notes = File.read(release_notes_path).strip
+  UI.user_error!("❌ Release notes file at #{release_notes_path} is empty. Please provide release notes before building.") if release_notes.empty?
 
   package_json_path = File.expand_path('../../../package.json', __dir__)
   package_json = JSON.parse(File.read(package_json_path))
@@ -53,11 +55,8 @@ def ios_deploy_production!(options = {})
     is_key_content_base64: true,
   )
 
-  set_changelog(
-    app_identifier: app_identifier,
-    version: marketing_version,
-    changelog: release_notes
-  )
+  # REMOVED: set_changelog is not needed when using upload_to_app_store with metadata_path
+  # The release_notes.txt in metadata folder will be used automatically
 
   UI.message("🧾 Setting iOS marketing version from package.json: #{marketing_version}")
   increment_version_number(
@@ -123,17 +122,16 @@ def ios_deploy_production!(options = {})
     }
   )
 
-  # Upload IPA to App Store (for distribution)
+  # Upload IPA to App Store
+  # The metadata_path will automatically use release_notes.txt from metadata/en-US/
   upload_to_app_store(
     skip_screenshots: true,
-    skip_metadata: false,
+    skip_metadata: false,           # Must be false to upload release notes
     skip_app_version_update: true,
     force: true,
     precheck_include_in_app_purchases: false,
-    metadata_path: "fastlane/metadata",
-    release_notes: {
-      'default' => release_notes && !release_notes.empty? ? release_notes : "Production release for version #{marketing_version}"
-    }
+    metadata_path: "./metadata"     # Points to fastlane/metadata folder
   )
+  
+  UI.success("✅ Production build uploaded successfully with release notes from #{release_notes_path}")
 end
-

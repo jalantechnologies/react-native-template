@@ -159,11 +159,13 @@ def ios_deploy_preview!(options = {})
                         end
 
     upload_to_testflight(
-      changelog: changelog_message,
+      changelog: "This is a test changelog",
+      skip_waiting_for_build_processing: false,
       distribute_external: false,
       username: username,
       apple_id: apple_id,
-      app_identifier: app_identifier
+      app_identifier: app_identifier,
+                        
     )
   rescue => e
     # In case of failure, cleanup any temp IPA directories

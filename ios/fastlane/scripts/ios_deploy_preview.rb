@@ -54,7 +54,7 @@ def ios_deploy_preview!(options = {})
   # Set the build number using current datetime + PR number to ensure uniqueness across PR builds.
   increment_build_number(
     xcodeproj: xcodeproj,
-    build_number: "#{Time.now.strftime('%Y%m%d.%H%M')}.#{pr_number}"
+    build_number: "#{Time.now.utc.strftime('%Y%m%d.%H%M%S')}.#{pr_number}"
   )
 
   app_store_connect_api_key(

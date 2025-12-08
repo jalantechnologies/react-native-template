@@ -74,8 +74,17 @@ def ios_deploy_production!(options = {})
     nil
   end
 
-  highest_existing_build = [latest_testflight, latest_app_store].compact.map(&:to_i).max
-  next_build_number = (highest_existing_build || 0) + 1
+  sanitize_build_number = lambda do |build|
+    next nil unless build
+
+    digits_only = build.to_s.scan(/\d+/).join
+    digits_only.empty? ? nil : digits_only.to_i
+  end
+
+  existing_builds = [latest_testflight, latest_app_store].map { |build| sanitize_build_number.call(build) }.compact
+  highest_existing_build = existing_builds.max
+  timestamp_build = Time.now.utc.strftime('%Y%m%d%H%M%S').to_i
+  next_build_number = [timestamp_build, (highest_existing_build || 0) + 1].max
 
   UI.message(
     "📈 Setting iOS build number to #{next_build_number} for version #{marketing_version} " \
@@ -83,7 +92,7 @@ def ios_deploy_production!(options = {})
   )
   increment_build_number(
     xcodeproj: "Boilerplate.xcodeproj",
-    build_number: next_build_number
+    build_number: next_build_number.to_s
   )
 
   # Build IPA for production

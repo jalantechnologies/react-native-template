@@ -51,10 +51,17 @@ def ios_deploy_preview!(options = {})
     xcodeproj: xcodeproj,
     version_number: marketing_version
   )
-  # Set the build number using current datetime + PR number to ensure uniqueness across PR builds.
+  # Set the build number using a compact UTC timestamp + PR number (max 18 chars for App Store).
+  compact_timestamp = Time.now.utc.strftime('%y%m%d%H%M%S')
+  build_number = "#{compact_timestamp}#{pr_number}"
+
+  if build_number.length > 18
+    UI.user_error!("❌ Generated build number #{build_number} exceeds 18 characters. Please shorten PR number or adjust logic.")
+  end
+
   increment_build_number(
     xcodeproj: xcodeproj,
-    build_number: "#{Time.now.utc.strftime('%Y%m%d.%H%M%S')}.#{pr_number}"
+    build_number: build_number
   )
 
   app_store_connect_api_key(

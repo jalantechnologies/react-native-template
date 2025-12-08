@@ -38,7 +38,7 @@ inputs:
     required: false
     description: 'Pull request number for PR-specific builds'
 
-  runs:
+runs:
   using: 'composite'
   steps:
     - uses: actions/checkout@v3

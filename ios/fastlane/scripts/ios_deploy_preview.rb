@@ -21,6 +21,8 @@ def ios_deploy_preview!(options = {})
   username = options.fetch(:username)
   team_id = options.fetch(:team_id)
 
+  UI.message("✅ Using APPLE ID: #{apple_id}")
+
   package_json_path = File.expand_path('../../../package.json', __dir__)
   package_json = JSON.parse(File.read(package_json_path))
   marketing_version = package_json['version']
@@ -81,8 +83,7 @@ def ios_deploy_preview!(options = {})
     api_key: api_key
   ) || 0
 
-  # next_build = (latest_build.to_i + 1).to_s
-  next_build = 1
+  next_build = (latest_build.to_i + 1).to_s
   UI.message("📊 Latest: #{latest_build} → Next build: #{next_build}")
 
   increment_build_number(
@@ -196,12 +197,14 @@ def ios_deploy_preview!(options = {})
   # Upload to TestFlight
   begin
     UI.message("☁️ Uploading to TestFlight...")
+    set_changelog(app_identifier: app_identifier, version: "1.0.11", changelog: testflight_changelog)
     upload_to_testflight(
       ipa: ipa_path,
       changelog: testflight_changelog,
       username: username,
       apple_id: apple_id,
       app_identifier: app_identifier,
+      skip_waiting_for_build_processing: false,
       distribute_external: false
     )
     UI.success("✅ TestFlight upload complete! Build: #{next_build}")

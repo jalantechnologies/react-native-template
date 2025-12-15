@@ -1,14 +1,7 @@
 import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
-import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
-
-// Cast to fix TypeScript compatibility issue with react-native-vector-icons
-const Icon = FontAwesome6Icon as unknown as React.ComponentType<{
-  name: string;
-  color: string;
-  size: number;
-}>;
+import Icon from 'react-native-vector-icons/FontAwesome6';
 
 import { CheckboxProps, CheckboxSize, CheckboxShape } from '../../types/checkbox';
 

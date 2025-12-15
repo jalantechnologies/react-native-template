@@ -199,9 +199,10 @@ def ios_deploy_preview!(options = {})
     upload_to_testflight(
       ipa: ipa_path,
       changelog: testflight_changelog,
-      distribute_external: false,
-      skip_waiting_for_build_processing: true,
-      reject_build_on_upload_failure: true
+      username: username,
+      apple_id: apple_id,
+      app_identifier: app_identifier,
+      distribute_external: false
     )
     UI.success("✅ TestFlight upload complete! Build: #{next_build}")
   rescue => e

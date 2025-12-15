@@ -37,6 +37,9 @@ inputs:
   PR_NUMBER:
     required: false
     description: 'Pull request number for PR-specific builds'
+  RELEASE_NOTES:
+    required: true
+    description: 'Release notes text to upload to TestFlight'
 
 runs:
   using: 'composite'
@@ -123,6 +126,14 @@ runs:
     - name: Export Match password
       run: echo "MATCH_PASSWORD=${{ env.MATCH_PASSWORD }}" >> $GITHUB_ENV
       shell: bash
+
+    - name: Write iOS changelog for Fastlane
+      shell: bash
+      run: |
+        CHANGELOG_PATH="ios/fastlane/changelog.txt"
+        mkdir -p "$(dirname "$CHANGELOG_PATH")"
+        printf "%s" "${{ inputs.RELEASE_NOTES }}" > "$CHANGELOG_PATH"
+        echo "📝 Wrote iOS changelog to $CHANGELOG_PATH"
 
     - name: Install code signing certificates via Match
       working-directory: ios

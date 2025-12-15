@@ -34,6 +34,9 @@ inputs:
   IOS_MATCH_DEPLOY_KEY:
     required: true
     description: 'SSH private key for Match repo'
+  RELEASE_NOTES:
+    required: true
+    description: 'Release notes text to upload to App Store Connect'
 
 runs:
   using: 'composite'
@@ -128,6 +131,14 @@ runs:
         IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
         IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
         IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
+
+    - name: Write iOS changelog for Fastlane
+      shell: bash
+      run: |
+        CHANGELOG_PATH="ios/fastlane/changelog.txt"
+        mkdir -p "$(dirname "$CHANGELOG_PATH")"
+        printf "%s" "${{ inputs.RELEASE_NOTES }}" > "$CHANGELOG_PATH"
+        echo "📝 Wrote iOS changelog to $CHANGELOG_PATH"
 
     - name: Clear Derived Data
       run: rm -rf ~/Library/Developer/Xcode/DerivedData

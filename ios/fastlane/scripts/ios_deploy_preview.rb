@@ -145,10 +145,28 @@ def ios_deploy_preview!(options = {})
 
       rm -rf temp_payload
     BASH
+  changelog_path = File.expand_path('../changelog.txt', __dir__)
+  changelog_content = if File.exist?(changelog_path)
+    content = File.read(changelog_path).strip
+    unless content.empty?
+      UI.message("📝 Using TestFlight changelog from #{changelog_path}")
+    end
+    content
+  else
+    UI.important("⚠️ Changelog file not found at #{changelog_path}. Using fallback message.")
+    nil
+  end
+
+  testflight_changelog = if changelog_content.nil? || changelog_content.empty?
+    "PR ##{pr_number} Build - automated upload"
+  else
+    changelog_content
+  end
+
   # Upload the build to TestFlight (internal only) with a changelog indicating the PR number.
   begin  
     upload_to_testflight(
-      changelog: "PR ##{pr_number} Build - automated upload",
+      changelog: testflight_changelog,
       distribute_external: false,
       username: username,
       apple_id: apple_id,

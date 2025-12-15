@@ -197,7 +197,6 @@ def ios_deploy_preview!(options = {})
   # Upload to TestFlight
   begin
     UI.message("☁️ Uploading to TestFlight...")
-    set_changelog(app_identifier: app_identifier, version: "1.0.11", changelog: testflight_changelog)
     upload_to_testflight(
       ipa: ipa_path,
       changelog: testflight_changelog,

@@ -159,6 +159,13 @@ runs:
     - name: Clean Match cache
       run: rm -rf ~/.match
       shell: bash
+    - name: Write iOS changelog for Fastlane
+      shell: bash
+      run: |
+        CHANGELOG_PATH="ios/fastlane/changelog.txt"
+        mkdir -p "$(dirname "$CHANGELOG_PATH")"
+        printf "%s" "${{ inputs.RELEASE_NOTES }}" > "$CHANGELOG_PATH"
+        echo "📝 Wrote iOS changelog to $CHANGELOG_PATH"
 
     - name: Install code signing certificates via Match
       working-directory: ios

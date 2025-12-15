@@ -26,7 +26,13 @@ These jobs run **independently and in parallel**, improving feedback time.
 
 **When it runs**
 
-- On pull requests targeting `main` when they are opened, synchronized (updated), reopened, or marked “ready for review”.
+* Confirms the PR `package.json` version is newer than `main` before any deploy logic runs.
+* Validates release notes for the current version: the file must exist at `docs/release_notes/{version}.md`, be non-empty, and stay at or under **500 characters**. The validated text is emitted as workflow output and copied into `android/fastlane/metadata/android/en-US/changelogs/default.txt` and `ios/fastlane/changelog.txt` for downstream tooling (Fastlane uses the iOS file for TestFlight uploads).
+* Builds and deploys Android (Firebase App Distribution) with explicit Gradle overrides so CI never uses manifest defaults:
+  * `versionNameOverride` comes from `package.json`.
+  * `versionCodeOverride` is derived from the semantic version (`major*10000 + minor*100 + patch`).
+* Builds and deploys iOS (TestFlight).
+* Comments on the PR with the Firebase preview link.
 
 **What it does**
 

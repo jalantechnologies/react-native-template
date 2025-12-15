@@ -104,23 +104,19 @@ def ios_deploy_preview!(options = {})
   build_app(
     clean: true,
     scheme: scheme,
-    workspace: "./Boilerplate.xcworkspace", 
+    workspace: "./Boilerplate.xcworkspace",  
     export_method: "app-store",
     verbose: true,
-    xcargs: "-allowProvisioningUpdates",
+    xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER=\"match AppStore #{app_identifier}\" PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
     export_options: {
-      method: "app-store",
       compileBitcode: false,
       signingStyle: "manual",
-      teamID: team_id,
       provisioningProfiles: {
         app_identifier => profile_name
-      },
-      signingCertificate: "Apple Distribution"
-    },
-    codesigning_identity: "Apple Distribution",
-    skip_profile_detection: false
+      }
+    }
   )
+
 
   # Hermes bitcode stripping
   ipa_path = lane_context[:IPA_OUTPUT_PATH]

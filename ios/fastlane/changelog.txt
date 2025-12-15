@@ -1,0 +1,3 @@
+PR #284 Preview Build
+• Added better build number version logic
+• Added changelog.txt file

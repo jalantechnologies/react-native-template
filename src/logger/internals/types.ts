@@ -9,6 +9,7 @@ export default interface Logger {
 
   critical(message: string): void;
 }
+
 export enum LoggerTransport {
   Console = 'console',
   Datadog = 'datadog',

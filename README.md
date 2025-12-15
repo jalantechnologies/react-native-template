@@ -13,8 +13,12 @@ A production-ready React Native boilerplate with TypeScript, navigation, state m
 | Ruby | 3.2.3 | `brew install rbenv ruby-build && rbenv install 3.2.3` |
 
 ### iOS Only
-- Xcode (latest version from App Store)
+- Xcode 16.x (stable release, not beta)
 - CocoaPods: `gem install cocoapods`
+- After installing Xcode, set the developer directory:
+  ```sh
+  sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+  ```
 
 ### Android Only
 - [Android Studio](https://developer.android.com/studio) with SDK & Emulator
@@ -169,6 +173,16 @@ yarn start --reset-cache
 ```sh
 cd ios && rm -rf Pods Podfile.lock && bundle exec pod install
 ```
+
+### Xcode Beta Compatibility
+React Native may not work with Xcode beta versions. If builds fail with a beta Xcode, install the stable release:
+
+1. Download Xcode 16.x from [Apple Developer Downloads](https://developer.apple.com/download/all/?q=Xcode)
+2. Extract and move to `/Applications/Xcode.app`
+3. Set as active:
+   ```sh
+   sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+   ```
 
 ## License
 

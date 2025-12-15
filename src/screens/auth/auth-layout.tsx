@@ -1,8 +1,8 @@
-import { Box, Heading, ScrollView, KeyboardAvoidingView } from 'native-base';
 import React, { PropsWithChildren } from 'react';
-import { Keyboard, Platform, TouchableWithoutFeedback } from 'react-native';
+import { Keyboard, Platform, TouchableWithoutFeedback, View, Text, ScrollView, KeyboardAvoidingView, StyleSheet, StatusBar } from 'react-native';
 
 import ChangeApiUrlButton from './change-api-url/change-api-url';
+
 interface AuthLayoutProps {
   primaryTitle: string;
   secondaryTitle: string;
@@ -14,33 +14,74 @@ const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
   children,
 }) => {
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} flex={1}>
-        <ScrollView _contentContainerStyle={styles.contentContainerStyle} bounces={false}>
-          <Box flex={1} backgroundColor={'primary.500'}>
-            <Box pt={'10%'} px={'10%'} fontWeight={'bold'} alignSelf={'flex-start'}>
-              <Heading size="3xl" color={'secondary.50'}>
-                {primaryTitle}
-              </Heading>
-              <Heading size="3xl" color={'secondary.50'}>
-                {secondaryTitle}
-              </Heading>
-            </Box>
-            <ChangeApiUrlButton />
-            <Box py="8" px="10%" w="100%" flex={1} bg={'white'} roundedTop={36}>
-              {children}
-            </Box>
-          </Box>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+    <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
+          <ScrollView contentContainerStyle={styles.scrollContent} bounces={false}>
+            <View style={styles.header}>
+              <View style={styles.titleRow}>
+                <View style={styles.titleContainer}>
+                  <Text style={styles.title}>{primaryTitle}</Text>
+                  <Text style={styles.title}>{secondaryTitle}</Text>
+                </View>
+                <ChangeApiUrlButton />
+              </View>
+            </View>
+            <View style={styles.cardContainer}>
+              <View style={styles.cardContent}>
+                {children}
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </View>
   );
 };
 
-const styles = {
-  contentContainerStyle: {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#007AFF',
+  },
+  flex: {
+    flex: 1,
+  },
+  scrollContent: {
     flexGrow: 1,
   },
-};
+  header: {
+    backgroundColor: '#007AFF',
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 16 : 56,
+    paddingBottom: 16,
+    paddingHorizontal: '5%',
+  },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  titleContainer: {
+    flex: 1,
+    paddingHorizontal: '5%',
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  cardContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+  },
+  cardContent: {
+    flex: 1,
+    paddingTop: 24,
+    paddingBottom: 32,
+    paddingHorizontal: '10%',
+  },
+});
 
 export default AuthLayout;

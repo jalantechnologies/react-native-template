@@ -70,12 +70,12 @@ runs:
       with:
         node-version-file: .nvmrc
 
-    - name: Install Yarn
-      run: npm install -g yarn
+    - name: Enable Corepack
+      run: corepack enable
       shell: bash
 
     - name: Install dependencies
-      run: yarn install
+      run: yarn install --immutable
       shell: bash
 
     - name: Patch Boost Podspec with Custom Source

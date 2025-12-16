@@ -47,12 +47,12 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: 'app/yarn.lock'
 
-      - name: Install Yarn
-        run: npm install -g yarn
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install dependencies
         working-directory: app
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Run lint
         working-directory: app

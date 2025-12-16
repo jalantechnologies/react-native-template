@@ -134,19 +134,19 @@ def ios_deploy_production!(options = {})
     }
   )
 
-  # Set App Store release notes ("What's New") if changelog is present
-  if changelog_content && !changelog_content.empty?
-    UI.message("📝 Setting App Store release notes for version #{marketing_version}...")
-    set_changelog(
-      app_identifier: app_identifier,
-      version: marketing_version,
-      changelog: changelog_content,
-      api_key: api_key,
-      platform: 'ios'
-    )
-  else
-    UI.important("⚠️ Skipping set_changelog because no production changelog content was provided.")
-  end
+  # # Set App Store release notes ("What's New") if changelog is present
+  # if changelog_content && !changelog_content.empty?
+  #   UI.message("📝 Setting App Store release notes for version #{marketing_version}...")
+  #   set_changelog(
+  #     app_identifier: app_identifier,
+  #     version: marketing_version,
+  #     changelog: changelog_content,
+  #     api_key: api_key,
+  #     platform: 'ios'
+  #   )
+  # else
+  #   UI.important("⚠️ Skipping set_changelog because no production changelog content was provided.")
+  # end
 
   # Upload IPA to App Store Connect
   UI.message("☁️ Uploading IPA to App Store Connect...")
@@ -156,7 +156,11 @@ def ios_deploy_production!(options = {})
     skip_metadata: true,          # metadata already handled by set_changelog
     skip_app_version_update: true,
     force: true,
-    precheck_include_in_app_purchases: false
+    precheck_include_in_app_purchases: false,
+    release_notes: {
+      'en-US' => changelog_content, 
+      'default' => changelog_content 
+    }
   )
 
   UI.success("✅ Production upload complete! Version #{marketing_version} (#{next_build})")

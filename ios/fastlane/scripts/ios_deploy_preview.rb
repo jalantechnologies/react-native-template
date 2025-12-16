@@ -81,8 +81,7 @@ def ios_deploy_preview!(options = {})
     api_key: api_key
   ) || 0
 
-  # next_build = (latest_build.to_i + 1).to_s
-  next_build = 7
+  next_build = (latest_build.to_i + 1).to_s
   UI.message("📊 Latest: #{latest_build} → Next build: #{next_build}")
 
   increment_build_number(

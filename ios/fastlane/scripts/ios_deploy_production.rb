@@ -97,44 +97,23 @@ def ios_deploy_production!(options = {})
     xcodeproj: "Boilerplate.xcodeproj",
     version_number: marketing_version
   )
-
-  # Build number logic: max(TestFlight, App Store) + 1
-  UI.message("🔢 Fetching latest build numbers for production...")
-  latest_tf_build = begin
-    latest_testflight_build_number(
-      app_identifier: app_identifier,
-      api_key: api_key
-    )
-  rescue StandardError
-    nil
-  end
-
-  latest_store_build = begin
+  latest_app_store_build = begin
     app_store_build_number(
       app_identifier: app_identifier,
       version: marketing_version,
+      platform: "ios",
       api_key: api_key
     )
   rescue StandardError
     nil
   end
 
-  sanitize_build = lambda do |build|
-    next nil unless build
-    digits_only = build.to_s.scan(/\d+/).join
-    digits_only.empty? ? nil : digits_only.to_i
-  end
+  next_build_number = ((latest_app_store_build || 0).to_i + 1).to_s
 
-  existing_builds = [latest_tf_build, latest_store_build].map { |b| sanitize_build.call(b) }.compact
-  highest_existing = existing_builds.max || 0
-  next_build       = (highest_existing + 1).to_s
-
-  UI.message("📈 Production build number → #{next_build} " \
-             "(latest TestFlight: #{latest_tf_build || 'none'}, latest App Store: #{latest_store_build || 'none'})")
-
+  UI.message("📈 Setting iOS build number via App Store Connect: #{next_build_number} (previous: #{latest_app_store_build || 'none'})")
   increment_build_number(
-    xcodeproj: "Boilerplate.xcodeproj",
-    build_number: next_build
+    xcodeproj: xcodeproj,
+    build_number: next_build_number
   )
 
   # Build IPA for production

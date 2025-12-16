@@ -20,17 +20,6 @@ def ios_deploy_production!(options = {})
   package_json_path = File.expand_path('../../../package.json', __dir__)
   package_json      = JSON.parse(File.read(package_json_path))
   marketing_version = package_json['version']
-  changelog_path = File.expand_path('../changelog.txt', __dir__)
-  changelog_content = if File.exist?(changelog_path)
-    content = File.read(changelog_path).strip
-    unless content.empty?
-      UI.message("📝 Using App Store changelog from #{changelog_path}")
-    end
-    content
-  else
-    UI.important("⚠️ Changelog file not found at #{changelog_path}. Release notes will be skipped.")
-    nil
-  end
   UI.user_error!("❌ Version not found in package.json") unless marketing_version
   UI.message("📱 Production marketing version: #{marketing_version}")
 

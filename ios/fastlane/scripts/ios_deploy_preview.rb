@@ -21,8 +21,6 @@ def ios_deploy_preview!(options = {})
   username = options.fetch(:username)
   team_id = options.fetch(:team_id)
 
-  UI.message("✅ Using APPLE ID: #{apple_id}")
-
   package_json_path = File.expand_path('../../../package.json', __dir__)
   package_json = JSON.parse(File.read(package_json_path))
   marketing_version = package_json['version']

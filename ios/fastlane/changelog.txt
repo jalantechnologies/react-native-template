@@ -1,3 +1,4 @@
-PR #284 Preview Build
-• Added better build number version logic
-• Added changelog.txt file
+What's New?
+This is latest release notes for test
+- Add release notes support for IOS in fastlane
+- Fixed and added Doppler Secret Injection for IOS

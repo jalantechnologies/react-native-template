@@ -1,4 +1,4 @@
-package com.bettrsw.boilerplate
+package com.bettrsw.boilerplate.app
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

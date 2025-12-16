@@ -91,8 +91,8 @@ const Alert: React.FC<AlertProps> & {
           style={[
             styles.overlay,
             position === AlertPosition.BOTTOM
-              ? { justifyContent: 'flex-end' }
-              : { justifyContent: 'center' },
+              ? styles.overlayBottom
+              : styles.overlayCenter,
           ]}
         >
           <TouchableWithoutFeedback onPress={() => {}}>

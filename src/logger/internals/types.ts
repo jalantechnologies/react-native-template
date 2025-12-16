@@ -1,4 +1,4 @@
-export default interface Logger {
+interface Logger {
   info(message: string): void;
 
   debug(message: string): void;
@@ -9,6 +9,8 @@ export default interface Logger {
 
   critical(message: string): void;
 }
+
+export default Logger;
 
 export enum LoggerTransport {
   Console = 'console',

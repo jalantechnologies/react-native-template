@@ -1,6 +1,7 @@
 // Tag.tsx
 import { Box, Text, Pressable } from 'native-base';
 import React from 'react';
+
 import Close from '../../../assets/icons/close.svg';
 
 import { useTagStyles } from './tag.styles';

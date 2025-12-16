@@ -7,7 +7,7 @@ A production-ready React Native boilerplate with TypeScript, navigation, state m
 | Tool | Version | Installation |
 |------|---------|--------------|
 | Node.js | 22.13.1 | `brew install node@22` or use [nvm](https://github.com/nvm-sh/nvm) |
-| Yarn | 1.22.22 | `corepack enable && yarn -v` |
+| Yarn | 3.6.4 | `corepack enable && yarn -v` |
 | Watchman | Latest | `brew install watchman` |
 | JDK | 17 | `brew install openjdk@17` |
 | Ruby | 3.2.3 | `brew install rbenv ruby-build && rbenv install 3.2.3` |

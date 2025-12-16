@@ -124,7 +124,7 @@ Set `LOGGER=datadog` or `LOGGER=console,datadog` to enable Datadog logging.
 | NativeBase | UI components |
 | Formik + Yup | Form handling & validation |
 | Axios | HTTP client |
-| React Native MMKV | Local storage |
+| AsyncStorage | Local storage |
 | Datadog RUM | Monitoring & analytics |
 | i18next | Internationalization |
 | React Native Reanimated | Animations |

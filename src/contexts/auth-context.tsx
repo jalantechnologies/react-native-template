@@ -2,7 +2,9 @@ import React, {
   Context,
   createContext,
   PropsWithChildren,
+  useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -13,7 +15,8 @@ import { PhoneNumber, AccessToken } from '../types';
 import { useLocalStorage } from '../utils';
 
 interface AuthContextInterface {
-  getAccessToken: () => AccessToken;
+  getAccessToken: () => AccessToken | null;
+  isAuthLoading: boolean;
   isSendOTPLoading: boolean;
   isUserAuthenticated: boolean;
   isVerifyOTPLoading: boolean;
@@ -30,32 +33,53 @@ export const useAuthContext = (): AuthContextInterface =>
 export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const authService = useMemo(() => new AuthService(), []);
 
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isSendOTPLoading, setIsSendOTPLoading] = useState(false);
   const [isVerifyOTPLoading, setIsVerifyOTPLoading] = useState(false);
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
+  const [cachedToken, setCachedToken] = useState<AccessToken | null>(null);
 
   const { getFromStorage, removeFromStorage, setToStorage } = useLocalStorage();
 
-  const getAccessToken = (): AccessToken => {
-    const token = getFromStorage(AuthOptions.AccessTokenStorageKey) as string;
-    return JSON.parse(token) as AccessToken;
-  };
+  // Load auth state on mount
+  useEffect(() => {
+    const loadAuthState = async () => {
+      try {
+        const tokenStr = await getFromStorage(AuthOptions.AccessTokenStorageKey);
+        if (tokenStr) {
+          const token = JSON.parse(tokenStr) as AccessToken;
+          setCachedToken(token);
+          setIsUserAuthenticated(true);
+        }
+      } catch (error) {
+        console.warn('Failed to load auth state:', error);
+      } finally {
+        setIsAuthLoading(false);
+      }
+    };
+    loadAuthState();
+  }, [getFromStorage]);
 
-  const [isUserAuthenticated, setIsUserAuthenticated] = useState(!!getAccessToken());
+  const getAccessToken = useCallback((): AccessToken | null => {
+    return cachedToken;
+  }, [cachedToken]);
 
-  const setAccessToken = (token: AccessToken) => {
-    setToStorage(AuthOptions.AccessTokenStorageKey, JSON.stringify(token));
-  };
+  const setAccessToken = useCallback(async (token: AccessToken) => {
+    await setToStorage(AuthOptions.AccessTokenStorageKey, JSON.stringify(token));
+    setCachedToken(token);
+  }, [setToStorage]);
 
-  const clearAccessToken = (): void => {
-    removeFromStorage(AuthOptions.AccessTokenStorageKey);
-  };
+  const clearAccessToken = useCallback(async (): Promise<void> => {
+    await removeFromStorage(AuthOptions.AccessTokenStorageKey);
+    setCachedToken(null);
+  }, [removeFromStorage]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     clearAccessToken();
     setIsUserAuthenticated(false);
-  };
+  }, [clearAccessToken]);
 
-  const sendOTP = async (phoneNumber: PhoneNumber) => {
+  const sendOTP = useCallback(async (phoneNumber: PhoneNumber) => {
     setIsSendOTPLoading(true);
     const { error } = await authService.sendOTP(phoneNumber);
     if (error) {
@@ -63,27 +87,28 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
       throw error;
     }
     setIsSendOTPLoading(false);
-  };
+  }, [authService]);
 
-  const verifyOTP = async (otp: string, phoneNumber: PhoneNumber) => {
+  const verifyOTP = useCallback(async (otp: string, phoneNumber: PhoneNumber) => {
     setIsVerifyOTPLoading(true);
     const { data, error } = await authService.verifyOTP(otp, phoneNumber);
 
     if (data) {
       const token = new AccessToken({ ...data });
-      setAccessToken(token);
+      await setAccessToken(token);
       setIsUserAuthenticated(true);
       setIsVerifyOTPLoading(false);
     } else {
       setIsVerifyOTPLoading(false);
       throw error;
     }
-  };
+  }, [authService, setAccessToken]);
 
   return (
     <AuthContext.Provider
       value={{
         getAccessToken,
+        isAuthLoading,
         isSendOTPLoading,
         isUserAuthenticated,
         isVerifyOTPLoading,

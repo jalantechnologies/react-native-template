@@ -29,13 +29,28 @@ def ios_deploy_production!(options = {})
   UI.message("📂 Exists? #{File.exist?(changelog_path)}")
 
   changelog_content = if File.exist?(changelog_path)
-    content = File.read(changelog_path).strip
-    UI.message("📝 Raw production changelog (#{content.length} chars): #{content[0..200]}#{content.length > 200 ? '...' : ''}")
-    content.empty? ? nil : content
+    raw = File.read(changelog_path).strip
+    if raw.empty?
+      UI.important("⚠️ Production changelog file is empty; release notes will be skipped.")
+      nil
+    else
+      UI.message("📝 Raw production changelog (#{raw.length} chars): #{raw[0..200]}#{raw.length > 200 ? '...' : ''}")
+
+      # App Store "What’s New" hard limit (500 chars)
+      max_len = 500
+      if raw.length > max_len
+        truncated = raw[0...max_len]
+        UI.important("⚠️ Production changelog is #{raw.length} chars; truncating to #{max_len} for App Store.")
+        truncated
+      else
+        raw
+      end
+    end
   else
-    UI.important("⚠️ No changelog file for production; App Store release notes will be skipped.")
+    UI.important("⚠️ No production changelog file found; App Store release notes will be skipped.")
     nil
   end
+
 
   # Ensure Xcode bundle id matches profiles
   update_app_identifier(

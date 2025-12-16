@@ -1,4 +1,2 @@
-What's New?
-This is latest release notes for test
-- Add release notes support for IOS in fastlane
-- Fixed and added Doppler Secret Injection for IOS
+This file contains the changelogs / release notes for the ios builds, which will be copy pasted here
+from the docs/release_notes folder when workflow runs.

@@ -137,6 +137,7 @@ runs:
       run: |
         CHANGELOG_PATH="ios/fastlane/changelog.txt"
         mkdir -p "$(dirname "$CHANGELOG_PATH")"
+        echo "Release notes: ${{ inputs.RELEASE_NOTES }}."
         printf "%s" "${{ inputs.RELEASE_NOTES }}" > "$CHANGELOG_PATH"
         echo "📝 Wrote iOS changelog to $CHANGELOG_PATH"
 

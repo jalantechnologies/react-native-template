@@ -1,10 +1,9 @@
-name: production
+name: cd
 
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - vikram/feat/add-release-notes-ios
 
 concurrency:
   group: cd
@@ -83,3 +82,4 @@ jobs:
           IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
           IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
           IOS_MATCH_DEPLOY_KEY: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
+          RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}

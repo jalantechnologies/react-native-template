@@ -44,8 +44,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: 'app/.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: 'app/yarn.lock'
 
       - name: Enable Corepack
         run: corepack enable

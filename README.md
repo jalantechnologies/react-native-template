@@ -4,13 +4,15 @@ A production-ready React Native boilerplate with TypeScript, navigation, state m
 
 ## Prerequisites
 
+This project uses [asdf](https://asdf-vm.com/) for version management. The `.tool-versions` file specifies the required Node.js and Ruby versions.
+
 | Tool | Version | Installation |
 |------|---------|--------------|
-| Node.js | 22.13.1 | `brew install node@22` or use [nvm](https://github.com/nvm-sh/nvm) |
-| Yarn | 3.6.4 | `corepack enable && yarn -v` |
-| Watchman | Latest | `brew install watchman` |
+| Node.js | 22.13.1 | Via [asdf](https://asdf-vm.com/): `asdf plugin add nodejs && asdf install nodejs` |
+| Yarn | 3.6.4 | `corepack enable && yarn -v` (uses version from `package.json`) |
+| Watchman | Latest | `brew install watchman` (required, not managed by asdf) |
 | JDK | 17 | `brew install openjdk@17` |
-| Ruby | 3.2.3 | `brew install rbenv ruby-build && rbenv install 3.2.3` |
+| Ruby | 3.2.3 | Via [asdf](https://asdf-vm.com/): `asdf plugin add ruby && asdf install ruby` |
 
 ### iOS Only
 - Xcode 16.x (stable release, not beta):

@@ -55,3 +55,7 @@ jobs:
       - name: Run lint
         working-directory: app
         run: yarn lint
+
+      - name: Run type-check
+        working-directory: app
+        run: yarn type-check

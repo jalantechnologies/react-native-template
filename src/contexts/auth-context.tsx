@@ -15,7 +15,7 @@ import { PhoneNumber, AccessToken } from '../types';
 import { useLocalStorage } from '../utils';
 
 interface AuthContextInterface {
-  getAccessToken: () => AccessToken | null;
+  getAccessToken: () => AccessToken;
   isAuthLoading: boolean;
   isSendOTPLoading: boolean;
   isUserAuthenticated: boolean;
@@ -60,7 +60,10 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
     loadAuthState();
   }, [getFromStorage]);
 
-  const getAccessToken = useCallback((): AccessToken | null => {
+  const getAccessToken = useCallback((): AccessToken => {
+    if (!cachedToken) {
+      throw new Error('User is not authenticated');
+    }
     return cachedToken;
   }, [cachedToken]);
 

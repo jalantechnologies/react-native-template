@@ -1,22 +1,36 @@
-import { MMKV } from 'react-native-mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class LocalStorageService {
-  private static storage = new MMKV();
-
-  public static getFromStorage(key: string): string | null {
-    const value = this.storage.getString(key);
-    return value ?? null;
+  public static async getFromStorage(key: string): Promise<string | null> {
+    try {
+      return await AsyncStorage.getItem(key);
+    } catch (error) {
+      console.warn('LocalStorageService.getFromStorage error:', error);
+      return null;
+    }
   }
 
-  public static setToStorage(key: string, value: string): void {
-    this.storage.set(key, value);
+  public static async setToStorage(key: string, value: string): Promise<void> {
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch (error) {
+      console.warn('LocalStorageService.setToStorage error:', error);
+    }
   }
 
-  public static removeFromStorage(key: string): void {
-    this.storage.delete(key);
+  public static async removeFromStorage(key: string): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(key);
+    } catch (error) {
+      console.warn('LocalStorageService.removeFromStorage error:', error);
+    }
   }
 
-  public static clearStorage(): void {
-    this.storage.clearAll();
+  public static async clearStorage(): Promise<void> {
+    try {
+      await AsyncStorage.clear();
+    } catch (error) {
+      console.warn('LocalStorageService.clearStorage error:', error);
+    }
   }
 }

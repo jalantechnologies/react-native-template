@@ -77,12 +77,12 @@ runs:
         restore-keys: |
           ${{ runner.os }}-node-modules-
 
-    - name: Install Yarn
-      run: npm install -g yarn
+    - name: Enable Corepack
+      run: corepack enable
       shell: bash
 
     - name: Install JS dependencies
-      run: yarn install --frozen-lockfile
+      run: yarn install --immutable
       shell: bash
 
     - name: Cache CocoaPods

@@ -70,35 +70,55 @@ runs:
       with:
         node-version-file: .nvmrc
 
-    - name: Install Yarn
-      run: npm install -g yarn
+    - name: Enable Corepack
+      run: corepack enable
       shell: bash
 
     - name: Install dependencies
-      run: yarn install
+      run: yarn install --immutable
       shell: bash
 
-    - name: Patch Boost Podspec with Custom Source
-      working-directory: node_modules/react-native/third-party-podspecs
-      run: |
-        awk '
-        /spec.source/ {
-          print "  spec.source = { :http => '\''https://archives.boost.io/release/1.84.0/source/boost_1_84_0.tar.gz'\'', :sha256 => '\''a5800f405508f5df8114558ca9855d2640a2de8f0445f051fa1c7c3383045724'\'' }";
-          skip=1; next
-        }
-        skip && /\}/ { skip=0; next }
-        skip && /:sha256/ { next }
-        { print }
-        ' boost.podspec > boost.podspec.tmp && mv boost.podspec.tmp boost.podspec
+    - name: Setup App Icon for Release
       shell: bash
+      run: |
+        # Copy the 1024x1024 icon to AppIcon.appiconset
+        cp ios/Resources/AppIcon-1024.png ios/Boilerplate/Images.xcassets/AppIcon.appiconset/AppIcon.png
+        # Update Contents.json to use single icon format
+        cat > ios/Boilerplate/Images.xcassets/AppIcon.appiconset/Contents.json << 'EOF'
+        {
+          "images" : [
+            {
+              "filename" : "AppIcon.png",
+              "idiom" : "universal",
+              "platform" : "ios",
+              "size" : "1024x1024"
+            }
+          ],
+          "info" : {
+            "author" : "xcode",
+            "version" : 1
+          }
+        }
+        EOF
+
+    - name: Cache CocoaPods
+      uses: actions/cache@v4
+      with:
+        path: |
+          ios/Pods
+          ~/Library/Caches/CocoaPods
+          ~/.cocoapods
+        key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pods-
 
     - name: Install CocoaPods dependencies
       working-directory: ios
-      run: |
-        rm -rf Pods
-        rm -f Podfile.lock
-        bundle exec pod install --repo-update
       shell: bash
+      run: |
+        pod repo update
+        bundle exec pod update boost --no-repo-update
+        bundle exec pod install
 
     - name: Set up SSH for Match
       uses: webfactory/ssh-agent@v0.7.0
@@ -122,6 +142,10 @@ runs:
 
     - name: Export Match password
       run: echo "MATCH_PASSWORD=${{ env.MATCH_PASSWORD }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Clean Match cache
+      run: rm -rf ~/.match
       shell: bash
 
     - name: Install code signing certificates via Match

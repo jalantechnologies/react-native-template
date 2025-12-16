@@ -8,10 +8,21 @@ import { ButtonKind } from 'react-native-template/src/types/button';
 
 import ChangeApiUrlModal from './change-api-url-modal';
 
+const useChangeApiUrlStyles = () => {
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    buttonContainer: {
+      paddingTop: Number(theme.space['2']),
+    },
+  });
+};
+
 const ChangeApiUrlButton = () => {
   const isNonProdEnv = Config.ENVIRONMENT !== 'production';
 
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = useChangeApiUrlStyles();
 
   const [isChangeAPIUrlModalOpen, setIsChangeAPIUrlModalOpen] = useState(false);
 
@@ -24,7 +35,7 @@ const ChangeApiUrlButton = () => {
       <>
         <View style={styles.buttonContainer}>
           <Button onClick={() => setIsChangeAPIUrlModalOpen(true)} kind={ButtonKind.LINK}>
-            <GearIcon width={24} height={24} fill={colors.secondary[100]} />
+            <GearIcon width={24} height={24} fill={theme.colors.secondary[100]} />
           </Button>
         </View>
         <ChangeApiUrlModal
@@ -35,14 +46,5 @@ const ChangeApiUrlButton = () => {
     )
   );
 };
-
-const styles = StyleSheet.create({
-  buttonContainer: {
-    top: 55,
-    right: 30,
-    position: 'absolute',
-    zIndex: 1000,
-  },
-});
 
 export default ChangeApiUrlButton;

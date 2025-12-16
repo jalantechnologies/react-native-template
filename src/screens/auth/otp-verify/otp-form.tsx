@@ -1,4 +1,4 @@
-import { Box, Center, Container, Heading, Link, Text, VStack } from 'native-base';
+import { Box, Center, Container, Heading, HStack, Link, Text, VStack } from 'native-base';
 import React from 'react';
 
 import { Button, FormControl, OTPInput } from '../../../components';
@@ -55,20 +55,18 @@ const OTPForm: React.FC<OTPFormProps> = ({
             </Center>
           </FormControl>
 
-          <Text size="xs" lineHeight={18} mt={2}>
-            Didn’t receive the OTP?{' '}
+          <HStack flexWrap="wrap" alignItems="baseline" mt={2}>
+            <Text fontSize="xs">Didn't receive the OTP? </Text>
             <Link
               onPress={handleResendOTP}
               _text={{
-                fontSize: 12,
-                alignSelf: 'center',
-                lineHeight: 16,
+                fontSize: 'xs',
                 color: isResendEnabled ? 'primary.500' : 'coolGray.600',
               }}
             >
               {isResendEnabled ? 'Resend OTP' : `Resend OTP in 00:${remainingSecondsStr}`}
             </Link>
-          </Text>
+          </HStack>
         </Box>
       </VStack>
 

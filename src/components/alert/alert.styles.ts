@@ -10,8 +10,13 @@ export const useAlertStyles = () => {
     overlay: {
       flex: 1,
       backgroundColor: 'rgba(0,0,0,0.5)',
-      justifyContent: 'center',
       alignItems: 'center',
+    },
+    overlayBottom: {
+      justifyContent: 'flex-end',
+    },
+    overlayCenter: {
+      justifyContent: 'center',
     },
     centerContainer: {
       backgroundColor: theme.colors.white,

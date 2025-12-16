@@ -6,10 +6,12 @@
       "@types",
       "./node_modules/@types"
     ],
-    "baseUrl": "..",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "types/*": ["./@types/*"]
+      "@/*": ["src/*"],
+      "types/*": ["@types/*"],
+      "react-native-template/*": ["./*"],
+      "react-native-template/src/*": ["src/*"]
     }
   }
 }

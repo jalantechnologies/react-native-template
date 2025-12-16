@@ -3,21 +3,20 @@ import { useCallback } from 'react';
 import { LocalStorageService } from './localstorage.service';
 
 export const useLocalStorage = () => {
-  const getFromStorage = useCallback((key: string): string | null => {
-    const value = LocalStorageService.getFromStorage(key);
-    return value ?? null;
+  const getFromStorage = useCallback(async (key: string): Promise<string | null> => {
+    return LocalStorageService.getFromStorage(key);
   }, []);
 
-  const setToStorage = useCallback((key: string, value: string): void => {
-    LocalStorageService.setToStorage(key, value);
+  const setToStorage = useCallback(async (key: string, value: string): Promise<void> => {
+    await LocalStorageService.setToStorage(key, value);
   }, []);
 
-  const removeFromStorage = useCallback((key: string): void => {
-    LocalStorageService.removeFromStorage(key);
+  const removeFromStorage = useCallback(async (key: string): Promise<void> => {
+    await LocalStorageService.removeFromStorage(key);
   }, []);
 
-  const clearStorage = useCallback((): void => {
-    LocalStorageService.clearStorage();
+  const clearStorage = useCallback(async (): Promise<void> => {
+    await LocalStorageService.clearStorage();
   }, []);
 
   return {

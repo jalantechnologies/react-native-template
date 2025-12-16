@@ -1,46 +1,94 @@
-import { Box, Heading, ScrollView, KeyboardAvoidingView } from 'native-base';
+import { useTheme } from 'native-base';
 import React, { PropsWithChildren } from 'react';
-import { Keyboard, Platform, TouchableWithoutFeedback } from 'react-native';
+import { Keyboard, Platform, TouchableWithoutFeedback, View, Text, ScrollView, KeyboardAvoidingView, StyleSheet, StatusBar } from 'react-native';
 
 import ChangeApiUrlButton from './change-api-url/change-api-url';
+
 interface AuthLayoutProps {
   primaryTitle: string;
   secondaryTitle: string;
 }
+
+const useAuthLayoutStyles = () => {
+  const theme = useTheme();
+
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.primary['500'],
+    },
+    flex: {
+      flex: 1,
+    },
+    scrollContent: {
+      flexGrow: 1,
+    },
+    header: {
+      backgroundColor: theme.colors.primary['500'],
+      paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + Number(theme.space['4']) : Number(theme.space['10']) + Number(theme.space['4']),
+      paddingBottom: Number(theme.space['4']),
+      paddingHorizontal: '5%',
+    },
+    titleRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+    },
+    titleContainer: {
+      flex: 1,
+      paddingHorizontal: '5%',
+    },
+    title: {
+      fontSize: Number(theme.fontSizes['4xl']),
+      fontWeight: 'bold',
+      color: theme.colors.secondary['50'],
+    },
+    cardContainer: {
+      flex: 1,
+      backgroundColor: theme.colors.white,
+      borderTopLeftRadius: Number(theme.radii['2xl']),
+      borderTopRightRadius: Number(theme.radii['2xl']),
+    },
+    cardContent: {
+      flex: 1,
+      paddingTop: Number(theme.space['6']),
+      paddingBottom: Number(theme.space['8']),
+      paddingHorizontal: '10%',
+    },
+  });
+};
 
 const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
   primaryTitle,
   secondaryTitle,
   children,
 }) => {
-  return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} flex={1}>
-        <ScrollView _contentContainerStyle={styles.contentContainerStyle} bounces={false}>
-          <Box flex={1} backgroundColor={'primary.500'}>
-            <Box pt={'10%'} px={'10%'} fontWeight={'bold'} alignSelf={'flex-start'}>
-              <Heading size="3xl" color={'secondary.50'}>
-                {primaryTitle}
-              </Heading>
-              <Heading size="3xl" color={'secondary.50'}>
-                {secondaryTitle}
-              </Heading>
-            </Box>
-            <ChangeApiUrlButton />
-            <Box py="8" px="10%" w="100%" flex={1} bg={'white'} roundedTop={36}>
-              {children}
-            </Box>
-          </Box>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
-  );
-};
+  const styles = useAuthLayoutStyles();
 
-const styles = {
-  contentContainerStyle: {
-    flexGrow: 1,
-  },
+  return (
+    <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
+          <ScrollView contentContainerStyle={styles.scrollContent} bounces={false}>
+            <View style={styles.header}>
+              <View style={styles.titleRow}>
+                <View style={styles.titleContainer}>
+                  <Text style={styles.title}>{primaryTitle}</Text>
+                  <Text style={styles.title}>{secondaryTitle}</Text>
+                </View>
+                <ChangeApiUrlButton />
+              </View>
+            </View>
+            <View style={styles.cardContainer}>
+              <View style={styles.cardContent}>
+                {children}
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </View>
+  );
 };
 
 export default AuthLayout;

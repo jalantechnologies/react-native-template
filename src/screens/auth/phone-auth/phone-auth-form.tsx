@@ -127,7 +127,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
           ) : null}
         </FormControl>
 
-        <HStack alignItems="center" space={2} mt={2}>
+        <HStack alignItems="flex-start" space={2} mt={2}>
           <Checkbox
             isChecked={isChecked}
             onChange={setIsChecked}
@@ -135,17 +135,18 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
             value="agreePrivacyPolicy"
             icon={<CheckIcon width={12} height={12} color={themeColor} />}
             aria-label="Privacy Policy Checkbox"
+            mt={0.5}
           />
-          <Text fontSize="sm" alignSelf={'center'} lineHeight={16}>
-            By continuing, you agree to our
+          <HStack flexWrap="wrap" alignItems="baseline" flex={1}>
+            <Text fontSize="sm">By continuing, you agree to our </Text>
             <Link
-              _text={{ color: 'primary.500', underline: true, marginLeft: 1 }}
+              _text={{ color: 'primary.500', underline: true, fontSize: 'sm' }}
               href="https://jalantechnologies.github.io/react-native-template/"
               isExternal
             >
               Privacy Policy
             </Link>
-          </Text>
+          </HStack>
         </HStack>
       </VStack>
 

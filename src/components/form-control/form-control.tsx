@@ -8,7 +8,7 @@ interface FormControlProps {
   label?: string;
 }
 
-const FormControl: React.FC<PropsWithChildren<FormControlProps>> = ({ children, error, label }) => {
+const FormControl: React.FC<PropsWithChildren<FormControlProps>> = ({ children, error = undefined, label = undefined }) => {
   const styles = useFormControlStyles();
 
   const inputContainerStyle = [
@@ -23,11 +23,6 @@ const FormControl: React.FC<PropsWithChildren<FormControlProps>> = ({ children, 
       {error && <Text style={styles.error}>{error}</Text>}
     </View>
   );
-};
-
-FormControl.defaultProps = {
-  error: undefined,
-  label: undefined,
 };
 
 export default FormControl;

@@ -121,6 +121,10 @@ runs:
       run: echo "MATCH_PASSWORD=${{ env.MATCH_PASSWORD }}" >> $GITHUB_ENV
       shell: bash
 
+    - name: Clean Match cache
+      run: rm -rf ~/.match
+      shell: bash
+
     - name: Install code signing certificates via Match
       working-directory: ios
       run: bundle exec fastlane ci_signing_setup

@@ -5,7 +5,7 @@ This repository uses **GitHub Actions** combined with **Fastlane** to automate t
 - 🚀 **Fast feedback** on pull requests by distributing builds via **Firebase App Distribution** for **Android** and **TestFlight** for **iOS**.
 - 📋 **Mandatory release notes** and **version** validation before any deployment.
 - 🧹 **Automatic cleanup** of test builds when a PR is closed.
-- 🔒 **Secure handling** of credentials using **GitHub Actions Secrets**.
+- 🔒 **Secure handling** of credentials using **GitHub Actions Secrets** and **Doppler Secrets** Injection.
 - 📦 **Automated version synchronization** from `package.json` to Android and iOS.
 
 This ensures contributors and QA can quickly test PR builds without manually compiling the app, and stale builds are cleaned up automatically.
@@ -20,13 +20,11 @@ These jobs run **independently and in parallel**, improving feedback time.
 
 ***
 
-### ✔ CD Checks
-## Preview Deployments (`cd.yml`)
+## ✔ CD Checks
 
-**When it runs:**
-PR opened, updated, reopened, or marked ready for review
+### Preview Deployments (`cd.yml`)
 
-**What it does:**
+**When it runs**
 
 * Confirms the PR `package.json` version is newer than `main` before any deploy logic runs.
 * Validates release notes for the current version: the file must exist at `docs/release_notes/{version}.md`, be non-empty, and stay at or under **500 characters**. The validated text is emitted as workflow output and copied into `android/fastlane/metadata/android/en-US/changelogs/default.txt` and `ios/fastlane/changelog.txt` for downstream tooling (Fastlane uses the iOS file for TestFlight uploads).
@@ -36,20 +34,71 @@ PR opened, updated, reopened, or marked ready for review
 * Builds and deploys iOS (TestFlight).
 * Comments on the PR with the Firebase preview link.
 
-**Why it matters:**
-Ensures every PR has proper release notes (If no release notes, workflow will fail), produces installable preview builds, and keeps QA feedback fast.
+**What it does**
 
----
-## Production Deployment (`production.yml`)
+- Validates that the PR’s `package.json` **version** is strictly greater than the version on `main`.  
+  If the version is not bumped, the workflow fails and no deployment occurs.
+- Validates **release notes** for the current version:
+  - Expects a file at `docs/release_notes/{version}.md`.
+  - File must be non-empty and ≤ **500 characters** (after trimming whitespace).
+  - The validated snippet is exposed as workflow output and injected into:
+    - `ios/fastlane/changelog.txt` for TestFlight “What to Test”.
+    - `android/fastlane/metadata/android/en-US/changelogs/preview.txt` (or similar) for Firebase notes.
+- Injects environment variables from **Doppler** into `.env` files:
+  - Uses environment-specific configs (Preview vs Production).
+  - Overwrites runtime config for both Android and iOS builds for consistency with target environment.
+- Builds and deploys **Android preview** to **Firebase App Distribution**:
+  - `versionNameOverride` is taken from `package.json` (e.g., `1.2.3`).
+  - `versionCodeOverride` is computed from semantic version as  
+    `major * 10000 + minor * 100 + patch` (e.g., `1.2.3 → 10203`).
+  - Uploads the `.apk` (or `.aab` for preview if configured) to a preview group.
+  - Attaches the same validated release notes as Firebase release notes.
+- Builds and deploys **iOS preview** to **TestFlight**:
+  - Marketing `version` comes from `package.json`.
+  - `build_number` is computed by:
+    - Fetching the latest TestFlight build number for the app.
+    - Incrementing it by 1 and writing it into the Xcode project.
+  - Uses Fastlane to:
+    - Build the IPA with App Store signing (manual for the main app target).
+    - Strip Hermes bitcode and re-sign frameworks if needed.
+    - Upload to TestFlight with the release notes mapped into **“What to Test”**.
+- Adds a **PR comment** summarizing preview artifacts:
+  - Firebase App Distribution link for the Android build.
+  - TestFlight build information / link for the iOS build.
+  - Optionally echoes the short release-notes snippet used for this preview.
+
+**Why it matters**
+
+This workflow enforces semantic versioning and release notes at PR time, ensures environment-correct configuration via Doppler, and produces installable preview builds on both Android and iOS so QA and stakeholders can test every change before merge.
+
+***
+
+### Production Deployment (`production.yml`)
+
+**When it runs**
+
+- On `push` events to the `main` branch (typically after PR merge).
+
+**What it does**
+
+- Re-validates `package.json` version and release notes (same rules as preview).
+- Builds and signs Android and iOS release artifacts with production credentials.
+- Publishes Android to **Google Play** Internal track and iOS builds to **App Store Connect** for review.
+- Fails fast if any of the signing, versioning, or upload steps are inconsistent with the current state in Google Play or App Store Connect.
 
 **When it runs:**
 Push to `main`
 
 **What it does:**
 * Confirms the PR `package.json` version is newer than `main` before any deploy logic runs.
-* Validates release notes with the same presence/non-empty/≤500 character rules; copies the text to `android/fastlane/metadata/android/en-US/changelogs/default.txt` and emits the content as workflow output. For production runs, Fastlane also writes a `{versionCode}.txt` changelog using the final version code.
-* Builds and deploys the Android app to Google Play Console. Gradle receives the `package.json` version as `versionNameOverride` and the latest Play Console version code (fetched then incremented) as `versionCodeOverride` so store uploads align with live numbering.
-* Uses the `package.json` version for iOS and deploys to the App Store/TestFlight.
+* Validates release notes for the current version: the file must exist at `docs/release_notes/{version}.md`, be non-empty, and stay at or under **500 characters**. The validated text is emitted as workflow output and copied into **fastlane metadata** folders of both android and ios for downstream tooling.
+* Uses Doppler Secret Injection in the workflows, to fetch and overwrite the .env of the project with the secret variables, dependent on the environment i.e. Production / Preview (Development)
+* Builds and deploys Android apk to **Google Play Console**:
+  * `versionNameOverride` comes from `package.json`.
+  * `versionCodeOverride` is derived from the semantic version (`major*10000 + minor*100 + patch`).
+* Builds and deploys iOS to the **Apple Store Connect**:
+  * `version` number comes from `package.json`.
+  * `build_number` is calculated by fetching lates build from testflight and incrementing it by .
 
 **Why it matters:**
 Guarantees only versioned, documented builds go to the stores — with release notes and version codes handled automatically.
@@ -117,61 +166,114 @@ These variables are decoded and written to disk during the CI process so tools l
 ---
 ## 🚀 CD Workflow Summary
 
-### 1. 🔄 PR Build & Deploy to Firebase App Distribution
+### 1. 🔄 PR Build & Deploy to Firebase App Distribution (Android)
 
-**Why?**
-To enable quick testing and feedback for each PR by distributing `.apk` builds to testers on **Firebase App Distribution**.
-
-**How?**
-
-* Triggered on PR open, reopen, or update (`pull_request` events)
-* Uses Fastlane’s `pr_deploy` lane to:
-
-  * Build the `.apk` with Gradle (`assembleDebug`)
-  * Upload the build to Firebase App Distribution
-  * Attach release notes containing the PR number/title
-  * Comment on the PR with a link to the uploaded build
-
----
-
-### 2. 🧹 Google Play Cleanup on PR Close
-
-**Why?**
-To keep Google Play Internal Testing clean by removing preview builds once a PR is closed.
+**Why?**  
+To enable quick testing and feedback for each PR on Android by distributing preview builds to testers via **Firebase App Distribution**.
 
 **How?**
 
-* Triggered on PR close (`pull_request.closed`)
-* Uses Fastlane’s `pr_cleanup` lane to:
+- Triggered on PR open, reopen, update, or ready-for-review.
+- Uses an Android Fastlane lane (e.g., `android pr_deploy`) to:
+  - Read the semantic version from `package.json`.
+  - Compute `versionCode` as `major * 10000 + minor * 100 + patch`.
+  - Build the app with Gradle (`assembleDebug` or preview flavor).
+  - Upload the artifact to Firebase App Distribution with:
+    - Target testers / groups.
+    - Release notes based on the validated `docs/release_notes/{version}.md`.
+  - Comment on the PR with:
+    - Firebase download link.
+    - Version and build information.
 
-  * Find releases tagged with the PR number
-  * Delete them via the Google Play/Firebase App Distribution API
+***
 
----
+### 2. 🔄 PR Build & Deploy to TestFlight (iOS)
 
-### 3. 📦 Production Build & Deploy to Google Play Console
-
-**Why?**
-To publish the final Android build to **Google Play Console (Internal track)** when changes are merged.
+**Why?**  
+To provide parity with Android preview builds by shipping an iOS TestFlight build for every PR, with the same versioning and release notes.
 
 **How?**
 
-* Triggered on push to `main`
-* Uses Fastlane’s `deploy_android_production` lane to:
+- Triggered by the same PR events as the Android preview workflow.
+- Uses an iOS Fastlane lane (e.g., `ios pr_deploy` / `ios_deploy_preview!`) to:
+  - Read `version` from `package.json` and set it as the marketing version in the Xcode project.
+  - Fetch the latest TestFlight **build number** for the app and increment it by 1, then write it back to the project.
+  - Ensure signing via `match` and a dedicated preview keychain.
+  - Build the IPA (App Store export) and post-process (Hermes bitcode stripping and re-signing).
+  - Read release notes from:
+    - `docs/release_notes/{version}.md` → injected into `ios/fastlane/changelog.txt`.
+  - Upload the IPA to **TestFlight** with:
+    - “What to Test” populated from `changelog.txt`.
+    - Internal-only distribution (preview groups).
+  - Comment on the PR with:
+    - The TestFlight build number / link.
+    - The short release-notes snippet.
 
-  * Fetch and increment the versionCode from Google Play
-  * Build the signed release bundle (`.aab`)
-  * Automatically pick up release notes stored in
-    `fastlane/metadata/android/en-US/changelogs/{versionCode}.txt`
-    (falls back to `default.txt` if missing)
-  * Upload the bundle to Google Play Internal track with `draft` status
+***
 
----
+### 3. 🧹 Preview Cleanup on PR Close
+
+**Why?**  
+To keep preview environments clean and avoid accumulating obsolete builds.
+
+**How?**
+
+- Triggered when a PR is closed (merged or discarded).
+- Runs cleanup lanes for both platforms:
+  - **Android:** finds Firebase or internal Google Play preview artifacts tagged with the PR number and deletes or expires them.
+  - **iOS:** optionally calls a Fastlane cleanup lane (e.g., `ios_cleanup_preview`) that:
+    - Uses App Store Connect API to locate TestFlight builds associated with the PR.
+    - Expires or removes them from preview groups if configured.
+
+This keeps both Firebase and TestFlight uncluttered and ensures that only active work-in-progress PRs have live preview builds.
+
+***
+
+### 4. 📦 Production Build & Deploy to Google Play Console (Android)
+
+**Why?**  
+To automate promotion of tested changes to **Google Play Console (Internal track or higher)** with consistent versioning and release notes.
+
+**How?**
+
+- Triggered on pushes to `main` (or a dedicated release branch, depending on configuration).
+- Uses a production Android Fastlane lane (e.g., `deploy_android_production`) to:
+  - Determine the next `versionCode` by querying Google Play for the latest existing build and incrementing it.
+  - Build the signed release bundle (`.aab`) with the production keystore.
+  - Populate release notes from:
+    - `fastlane/metadata/android/en-US/changelogs/{versionCode}.txt`,  
+      falling back to `default.txt` when specific notes are missing.
+  - Upload the bundle to the appropriate Google Play track (typically Internal) as a draft or for review.
+
+***
+
+### 5. 🍏 Production Build & Deploy to App Store Connect (iOS)
+
+**Why?**  
+To automate iOS App Store submissions with consistent versioning, build numbers, and release notes derived from the same source as Android.
+
+**How?**
+
+- Triggered together with the Android production deployment on push to `main`.
+- Uses an iOS Fastlane lane (e.g., `ios_deploy_production!`) to:
+  - Read `version` from `package.json` and set the marketing version in `Boilerplate.xcodeproj`.
+  - Query both:
+    - Latest TestFlight build number.
+    - Latest App Store build number for the current version.
+  - Compute the next `build_number` as **max(existing TestFlight, App Store) + 1** and update the Xcode project.
+  - Use `match` (readonly) and a production keychain for signing.
+  - Build a release IPA with App Store export options.
+  - Read release notes from the shared `ios/fastlane/changelog.txt` (populated from `docs/release_notes/{version}.md`).
+  - Apply the changelog as App Store “What’s New” for the target locales using the App Store Connect API.
+  - Upload the IPA to **App Store Connect** via `upload_to_app_store`, skipping screenshots and most metadata because the changelog is handled explicitly.
+
+***
+
 ## 🧪 Local Testing
 
-You can test CI/CD behavior locally using Fastlane to simulate the GitHub Actions environment.
+You can exercise most of the CI/CD behavior locally by invoking the same Fastlane lanes that the workflows use.
 
-### Deploy a PR build:
+### Android: deploy a PR build locally
 
 ```bash
 cd android
@@ -179,4 +281,19 @@ bundle exec fastlane android pr_deploy \
   pr_number:123 \
   json_key_file:"<GPLAY_SERVICE_ACCOUNT_KEY_JSON>" \
   package_name:"<ANDROID_APP_PACKAGE>"
+```
+
+### iOS: deploy a preview TestFlight build locally
+
+```bash
+cd ios
+bundle exec fastlane ios pr_deploy \
+  pr_number:123 \
+  app_identifier:"<IOS_BUNDLE_ID>" \
+  api_key_id:"<ASC_API_KEY_ID>" \
+  issuer_id:"<ASC_API_ISSUER_ID>" \
+  api_key_b64:"<BASE64_P8_CONTENT>" \
+  keychain_name:"ios.preview.keychain" \
+  keychain_password:"<KEYCHAIN_PASSWORD>" \
+  team_id:"<APPLE_TEAM_ID>"
 ```

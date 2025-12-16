@@ -36,7 +36,8 @@ A production-ready React Native boilerplate with TypeScript, navigation, state m
 # Install dependencies
 yarn install
 
-# iOS: Install pods
+# iOS: Install Ruby gems and pods
+bundle install
 yarn pod-install
 
 # Start Metro bundler (in a separate terminal)

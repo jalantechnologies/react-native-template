@@ -112,7 +112,7 @@ def ios_deploy_production!(options = {})
 
   UI.message("📈 Setting iOS build number via App Store Connect: #{next_build_number} (previous: #{latest_app_store_build || 'none'})")
   increment_build_number(
-    xcodeproj: xcodeproj,
+    xcodeproj: "Boilerplate.xcodeproj",
     build_number: next_build_number
   )
 

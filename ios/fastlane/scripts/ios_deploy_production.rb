@@ -108,12 +108,13 @@ def ios_deploy_production!(options = {})
     nil
   end
 
-  next_build_number = ((latest_app_store_build || 0).to_i + 1).to_s
+  next_build = ((latest_app_store_build || 0).to_i + 1).to_s
 
-  UI.message("📈 Setting iOS build number via App Store Connect: #{next_build_number} (previous: #{latest_app_store_build || 'none'})")
+  UI.message("📈 Setting iOS build number via App Store Connect: #{next_build} (previous: #{latest_app_store_build || 'none'})")
   increment_build_number(
     xcodeproj: "Boilerplate.xcodeproj",
-    build_number: next_build_number
+    build_number: next_build
+
   )
 
   # Build IPA for production
@@ -133,27 +134,12 @@ def ios_deploy_production!(options = {})
       }
     }
   )
-
-  # # Set App Store release notes ("What's New") if changelog is present
-  # if changelog_content && !changelog_content.empty?
-  #   UI.message("📝 Setting App Store release notes for version #{marketing_version}...")
-  #   set_changelog(
-  #     app_identifier: app_identifier,
-  #     version: marketing_version,
-  #     changelog: changelog_content,
-  #     api_key: api_key,
-  #     platform: 'ios'
-  #   )
-  # else
-  #   UI.important("⚠️ Skipping set_changelog because no production changelog content was provided.")
-  # end
-
   # Upload IPA to App Store Connect
   UI.message("☁️ Uploading IPA to App Store Connect...")
   upload_to_app_store(
     app_identifier: app_identifier,
     skip_screenshots: true,
-    skip_metadata: true,          # metadata already handled by set_changelog
+    skip_metadata: fasle,          
     skip_app_version_update: true,
     force: true,
     precheck_include_in_app_purchases: false,

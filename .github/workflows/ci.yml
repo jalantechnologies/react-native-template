@@ -44,16 +44,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: 'app/.nvmrc'
-          cache: 'yarn'
-          cache-dependency-path: 'app/yarn.lock'
 
-      - name: Install Yarn
-        run: npm install -g yarn
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install dependencies
         working-directory: app
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Run lint
         working-directory: app
         run: yarn lint
+
+      - name: Run type-check
+        working-directory: app
+        run: yarn type-check

@@ -103,6 +103,18 @@ const appTheme = extendTheme({
   colors: {
     ...ICOLORHUES,
   },
+  lineHeights: {
+    '2xs': 16,
+    xs: 18,
+    sm: 20,
+    md: 22,
+    lg: 24,
+    xl: 28,
+    '2xl': 32,
+    '3xl': 40,
+    '4xl': 48,
+    '5xl': 64,
+  },
   components: {
     Button: {
       baseStyle: {
@@ -161,13 +173,19 @@ const appTheme = extendTheme({
       sizes: {
         lg: {
           fontWeight: '600',
+          lineHeight: 32,
         },
         xs: {
           fontWeight: '500',
           color: 'coolGray.600',
+          lineHeight: 20,
         },
         '2xl': {
           color: 'white',
+          lineHeight: 40,
+        },
+        '3xl': {
+          lineHeight: 48,
         },
       },
     },

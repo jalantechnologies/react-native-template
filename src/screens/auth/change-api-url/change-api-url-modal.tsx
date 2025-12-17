@@ -1,5 +1,5 @@
 import { Toast } from 'native-base';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Config from 'react-native-config';
 import { FormControl, Input, Modal } from 'react-native-template/src/components';
 import { ModalProps } from 'react-native-template/src/components/modal/modal';
@@ -8,11 +8,19 @@ import { useLocalStorage } from 'react-native-template/src/utils';
 const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose }) => {
   const localStorage = useLocalStorage();
 
-  const [apiBaseUrl, setApiBaseUrl] = useState(
-    localStorage.getFromStorage('apiBaseUrl') || (Config.API_BASE_URL as string),
-  );
+  const [apiBaseUrl, setApiBaseUrl] = useState(Config.API_BASE_URL as string);
 
-  const handleSaveChanges = () => {
+  useEffect(() => {
+    const loadApiBaseUrl = async () => {
+      const storedUrl = await localStorage.getFromStorage('apiBaseUrl');
+      if (storedUrl) {
+        setApiBaseUrl(storedUrl);
+      }
+    };
+    loadApiBaseUrl();
+  }, [localStorage]);
+
+  const handleSaveChanges = async () => {
     if (!apiBaseUrl) {
       Toast.show({
         title: 'API Base URL can not be empty',
@@ -20,7 +28,7 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
       return;
     }
 
-    localStorage.setToStorage('apiBaseUrl', apiBaseUrl);
+    await localStorage.setToStorage('apiBaseUrl', apiBaseUrl);
 
     if (handleModalClose) {
       handleModalClose();

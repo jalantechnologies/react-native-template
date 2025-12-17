@@ -39,13 +39,13 @@ runs:
       with:
         node-version-file: '.nvmrc'
 
-    - name: Install Yarn
+    - name: Enable Corepack
       shell: bash
-      run: npm install -g yarn
+      run: corepack enable
 
     - name: Install dependencies
       shell: bash
-      run: yarn install
+      run: yarn install --immutable
 
     - name: Set up Java 17
       uses: actions/setup-java@v3

@@ -11,7 +11,7 @@ type Props = {
   width?: number | string;
 };
 
-const Brand: React.FC<Props> = ({ height, width }) => {
+const Brand: React.FC<Props> = ({ height = '100%', width = '100%' }) => {
   const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
   const LOGO_SIZE = 150;
@@ -71,8 +71,8 @@ const Brand: React.FC<Props> = ({ height, width }) => {
     <Box
       testID="brand-img-wrapper"
       backgroundColor={colors.primary['500']}
-      height={height ?? '100%'}
-      width={width ?? '100%'}
+      height={height}
+      width={width}
       position="relative"
     >
       <Animated.View style={[styles.logoContainer, dynamicStyles.logoAnim]}>
@@ -119,10 +119,5 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
 });
-
-Brand.defaultProps = {
-  height: undefined,
-  width: undefined,
-};
 
 export default Brand;

@@ -74,7 +74,7 @@ def ios_deploy_production!(options = {})
   )
 
   # ---------------------------------------------------------------------------
-  # Set marketing version + compute next build number (App Store only)
+  # Set marketing version + compute production build number from it
   # ---------------------------------------------------------------------------
   UI.message("🧾 Setting iOS marketing version from package.json: #{marketing_version}")
   increment_version_number(
@@ -82,8 +82,15 @@ def ios_deploy_production!(options = {})
     version_number: marketing_version
   )
 
-  UI.message('🔢 Fetching latest App Store build number for this version...')
-  latest_app_store_build = begin
+  # Encode marketing_version (e.g. "1.0.13" -> "1013")
+  base_build = marketing_version.split('.').map { |p| p.to_i.to_s.rjust(2, '0') }.join.to_i
+  # "1.0.13" -> "010013" -> 10013 (to avoid leading zero)
+  base_build = [base_build, 1].max
+
+  UI.message("🔢 Base production build from marketing version #{marketing_version}: #{base_build}")
+
+  # Ensure we don't go backwards vs App Store
+  latest_store_build = begin
     app_store_build_number(
       app_identifier: app_identifier,
       version: marketing_version,
@@ -95,24 +102,19 @@ def ios_deploy_production!(options = {})
     nil
   end
 
-  numeric_latest = if latest_app_store_build
-    digits = latest_app_store_build.to_s.scan(/\d+/).join
-    digits.empty? ? 0 : digits.to_i
-  else
-    0
-  end
-
-  next_build_number = (numeric_latest + 1).to_s
+  latest_int = latest_store_build.to_i
+  final_build = base_build <= latest_int ? latest_int + 1 : base_build
 
   UI.message(
-    "📈 Using production build number: #{next_build_number} " \
-    "(previous App Store build: #{latest_app_store_build || 'none'})"
+    "📈 Using PRODUCTION build number: #{final_build} " \
+    "(latest App Store build for this version: #{latest_store_build || 'none'})"
   )
 
   increment_build_number(
     xcodeproj: 'Boilerplate.xcodeproj',
-    build_number: next_build_number
+    build_number: final_build.to_s
   )
+
 
   # ---------------------------------------------------------------------------
   # Build IPA for production

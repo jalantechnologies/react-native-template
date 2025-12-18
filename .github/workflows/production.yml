@@ -2,7 +2,7 @@ name: cd
 on:
   push:
     branches:
-      - vikram/fix/ios-ruby-version-compatibility  
+      - main  
 
 concurrency:
   group: cd

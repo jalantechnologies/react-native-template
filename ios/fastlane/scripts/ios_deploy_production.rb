@@ -111,7 +111,7 @@ def ios_deploy_production!(options = {})
 
   increment_build_number(
     xcodeproj: 'Boilerplate.xcodeproj',
-    build_number: 2
+    build_number: next_build_number
   )
 
   # ---------------------------------------------------------------------------

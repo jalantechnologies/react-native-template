@@ -204,36 +204,12 @@ def ios_deploy_preview!(options = {})
   BASH
 
   # ---------------------------------------------------------------------------
-  # TestFlight changelog (simple, PR‑centric)
-  # ---------------------------------------------------------------------------
-  changelog_path = File.expand_path('../changelog.txt', __dir__)
-  UI.message("🔍 Changelog path: #{changelog_path}")
-  UI.message("📂 Exists? #{File.exist?(changelog_path)}")
-
-  changelog_content = if File.exist?(changelog_path)
-    content = File.read(changelog_path).strip
-    UI.message("📝 Raw (#{content.length} chars): #{content[0..200]}#{content.length > 200 ? '...' : ''}")
-    content.empty? ? nil : content
-  else
-    UI.important('⚠️ No changelog file')
-    nil
-  end
-
-  testflight_changelog = changelog_content || "PR ##{pr_number} (Build #{next_build}) - Automated preview"
-
-  UI.message("🚀 FINAL CHANGELOG (#{testflight_changelog.length} chars):")
-  UI.message('=' * 50)
-  UI.message(testflight_changelog)
-  UI.message('=' * 50)
-
-  # ---------------------------------------------------------------------------
   # Upload to TestFlight
   # ---------------------------------------------------------------------------
   begin
     UI.message('☁️ Uploading to TestFlight...')
     upload_to_testflight(
       ipa: ipa_path,
-      changelog: testflight_changelog,
       username: username,
       apple_id: apple_id,
       app_identifier: app_identifier,

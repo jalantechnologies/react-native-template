@@ -29,36 +29,6 @@ def ios_deploy_production!(options = {})
   UI.message("📱 Production marketing version: #{marketing_version}")
 
   # ---------------------------------------------------------------------------
-  # Shared changelog (What’s New)
-  # ---------------------------------------------------------------------------
-  changelog_path = File.expand_path('../changelog.txt', __dir__)
-  UI.message("🔍 Production changelog path: #{changelog_path}")
-  UI.message("📂 Exists? #{File.exist?(changelog_path)}")
-
-  changelog_content = if File.exist?(changelog_path)
-    raw = File.read(changelog_path).strip
-    if raw.empty?
-      UI.important('⚠️ Production changelog file is empty; release notes will be skipped.')
-      nil
-    else
-      UI.message("📝 Raw production changelog (#{raw.length} chars): " \
-                 "#{raw[0..200]}#{raw.length > 200 ? '...' : ''}")
-
-      max_len = 500
-      if raw.length > max_len
-        truncated = raw[0...max_len]
-        UI.important("⚠️ Production changelog is #{raw.length} chars; truncating to #{max_len} for App Store.")
-        truncated
-      else
-        raw
-      end
-    end
-  else
-    UI.important('⚠️ No production changelog file found; App Store release notes will be skipped.')
-    nil
-  end
-
-  # ---------------------------------------------------------------------------
   # Ensure Xcode bundle id matches profiles
   # ---------------------------------------------------------------------------
   update_app_identifier(
@@ -235,11 +205,10 @@ def ios_deploy_production!(options = {})
   upload_to_app_store(
     app_identifier: app_identifier,
     skip_screenshots: true,
-    skip_metadata: !changelog_content,
+    skip_metadata: true,         
     skip_app_version_update: true,
     force: true,
-    precheck_include_in_app_purchases: false,
-    release_notes: changelog_content ? { 'en-US' => changelog_content } : nil
+    precheck_include_in_app_purchases: false
   )
 
   UI.success("✅ Production upload complete! Version #{marketing_version} (#{next_build_number})")

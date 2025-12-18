@@ -46,7 +46,8 @@ runs:
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.1
+        ruby-version-file: '.ruby-version'
+        bundler-cache: true
         
     - name: Select Xcode 16.2
       run: |
@@ -54,15 +55,6 @@ runs:
         export DEVELOPER_DIR="/Applications/Xcode_16.2.app/Contents/Developer"
         xcode-select -p
         xcodebuild -version
-      shell: bash
-
-    - name: Install Bundler
-      run: gem install bundler
-      shell: bash
-
-    - name: Install Ruby dependencies
-      working-directory: ios
-      run: bundle install
       shell: bash
 
     - name: Set Node Version

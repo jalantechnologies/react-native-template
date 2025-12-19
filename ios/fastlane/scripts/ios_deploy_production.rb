@@ -116,7 +116,7 @@ def ios_deploy_production!(options = {})
   # )
   increment_build_number(
     xcodeproj: 'Boilerplate.xcodeproj',
-    build_number: 3
+    build_number: 4
   )
 
   # ---------------------------------------------------------------------------
@@ -216,7 +216,7 @@ def ios_deploy_production!(options = {})
     precheck_include_in_app_purchases: false
   )
 
-  UI.success("✅ Production upload complete! Version #{marketing_version} (#{next_build_number})")
+  UI.success("✅ Production upload complete! Version #{marketing_version} (#{final_build})")
 ensure
   UI.message('🧹 Cleaning up production keychain...')
   begin

@@ -74,29 +74,6 @@ runs:
       run: yarn install --immutable
       shell: bash
 
-    - name: Setup App Icon for Release
-      shell: bash
-      run: |
-        # Copy the 1024x1024 icon to AppIcon.appiconset
-        cp ios/Resources/AppIcon-1024.png ios/Boilerplate/Images.xcassets/AppIcon.appiconset/AppIcon.png
-        # Update Contents.json to use single icon format
-        cat > ios/Boilerplate/Images.xcassets/AppIcon.appiconset/Contents.json << 'EOF'
-        {
-          "images" : [
-            {
-              "filename" : "AppIcon.png",
-              "idiom" : "universal",
-              "platform" : "ios",
-              "size" : "1024x1024"
-            }
-          ],
-          "info" : {
-            "author" : "xcode",
-            "version" : 1
-          }
-        }
-        EOF
-
     - name: Cache CocoaPods
       uses: actions/cache@v4
       with:

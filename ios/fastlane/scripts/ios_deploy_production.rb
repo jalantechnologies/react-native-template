@@ -3,8 +3,10 @@ UI = FastlaneCore::UI unless defined?(UI)
 
 def ios_deploy_production!(options = {})
   require 'base64'
+  require 'fileutils'
   require 'json'
   require 'fastlane'
+  require_relative 'release_notes_helper'
 
   # ---------------------------------------------------------------------------
   # Inputs
@@ -115,6 +117,22 @@ def ios_deploy_production!(options = {})
     xcodeproj: 'Boilerplate.xcodeproj',
     build_number: final_build.to_s
   )
+
+    # ---------------------------------------------------------------------------
+  # Release notes (App Store "What's New")
+  # ---------------------------------------------------------------------------
+  app_store_release_notes = build_app_store_release_notes(release_notes)
+  release_notes_path = File.join(
+    __dir__,
+    '..',
+    'metadata',
+    'en-US',
+    'release_notes.txt'
+  )
+  FileUtils.mkdir_p(File.dirname(release_notes_path))
+  File.write(release_notes_path, app_store_release_notes)
+  UI.message("📝 Wrote App Store release notes: #{release_notes_path}")
+
 
   # ---------------------------------------------------------------------------
   # Build IPA for production

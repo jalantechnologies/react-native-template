@@ -6,6 +6,7 @@ def ios_deploy_preview!(options = {})
   require 'base64'
   require 'json'
   require 'fastlane'
+  require_relative 'release_notes_helper'
 
   # ---------------------------------------------------------------------------
   # Required inputs
@@ -209,7 +210,11 @@ def ios_deploy_preview!(options = {})
 
   UI.message("🚀 RELEASE NOTES FOUND FROM ENVIRONMENT: #{release_notes}")
     
-  testflight_changelog = release_notes || "PR ##{pr_number} (Build #{next_build}) - Automated preview"
+  testflight_changelog = build_testflight_changelog(
+    release_notes,
+    pr_number: pr_number,
+    build_number: next_build
+  )
 
   UI.message("🚀 FINAL RELEASE NOTES: #{testflight_changelog}")
 

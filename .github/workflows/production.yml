@@ -2,7 +2,7 @@ name: cd
 on:
   push:
     branches:
-      - main  
+      - vikram/feat/add-ios-release-notes  
 
 concurrency:
   group: cd

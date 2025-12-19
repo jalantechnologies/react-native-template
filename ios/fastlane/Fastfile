@@ -67,7 +67,8 @@ platform :ios do
       api_key_b64: ENV["IOS_APP_STORE_CONNECT_API_KEY_B64"],
       keychain_name: "ios.keychain",
       keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
-      team_id: ENV["IOS_APP_STORE_TEAM_ID"]
+      team_id: ENV["IOS_APP_STORE_TEAM_ID"],
+      release_notes: ENV["RELEASE_NOTES"]
     )
   end
 end

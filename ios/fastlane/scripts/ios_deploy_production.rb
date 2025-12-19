@@ -18,6 +18,7 @@ def ios_deploy_production!(options = {})
   keychain_name     = options.fetch(:keychain_name)
   keychain_password = options.fetch(:keychain_password)
   team_id           = options.fetch(:team_id)
+  release_notes     = options.fetch(:release_notes)
 
   # ---------------------------------------------------------------------------
   # Version from package.json

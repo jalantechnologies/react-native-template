@@ -1,10 +1,8 @@
-name: production
-
+name: cd
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - main  
 
 concurrency:
   group: cd
@@ -17,8 +15,7 @@ jobs:
       release_notes: ${{ steps.check.outputs.release_notes }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
       - name: Check release notes
         id: check
         uses: ./.github/actions/release_notes_check
@@ -32,8 +29,7 @@ jobs:
     needs: [release_notes_check]
     steps:
       - name: Checkout (app)
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
       - name: Inject Doppler Production Secrets
         uses: ./.github/actions/inject_doppler_secrets
         with:
@@ -41,7 +37,6 @@ jobs:
           doppler_project: react-native-template
           doppler_environment: production
           working_directory: .
-
       - name: Deploy Android app to Play Store
         id: deploy_android_production
         uses: ./.github/actions/deploy_android_production
@@ -53,17 +48,24 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
 
-  deploy-ios:
+  deploy_ios:
     runs-on: macos-14
     needs: [release_notes_check]
     timeout-minutes: 30
     steps:
       - name: Checkout (app)
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
+      - name: Inject Doppler Production Secrets
+        uses: ./.github/actions/inject_doppler_secrets
+        with:
+          doppler_token: ${{ secrets.DOPPLER_PRODUCTION_TOKEN }}
+          doppler_project: react-native-template
+          doppler_environment: production
+          working_directory: . 
       - name: Deploy iOS app to App Store
         uses: ./.github/actions/deploy_ios_production
         with:
+          RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
           IOS_MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
           IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
           IOS_APPLE_ID: ${{ secrets.IOS_APPLE_ID }}

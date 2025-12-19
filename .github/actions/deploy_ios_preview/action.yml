@@ -37,6 +37,9 @@ inputs:
   PR_NUMBER:
     required: false
     description: 'Pull request number for PR-specific builds'
+  RELEASE_NOTES:
+    required: true
+    description: 'Release notes text to upload to TestFlight'
 
 runs:
   using: 'composite'
@@ -46,7 +49,9 @@ runs:
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.1
+        ruby-version: '.ruby-version'
+        bundler-cache: true
+        working-directory: ios
 
     - name: Select Xcode 16.2
       run: |
@@ -54,15 +59,6 @@ runs:
         export DEVELOPER_DIR="/Applications/Xcode_16.2.app/Contents/Developer"
         xcode-select -p
         xcodebuild -version
-      shell: bash
-
-    - name: Install Bundler
-      run: gem install bundler
-      shell: bash
-
-    - name: Install Ruby dependencies
-      working-directory: ios
-      run: bundle install
       shell: bash
 
     - name: Set Node Version
@@ -77,29 +73,6 @@ runs:
     - name: Install dependencies
       run: yarn install --immutable
       shell: bash
-
-    - name: Setup App Icon for Release
-      shell: bash
-      run: |
-        # Copy the 1024x1024 icon to AppIcon.appiconset
-        cp ios/Resources/AppIcon-1024.png ios/Boilerplate/Images.xcassets/AppIcon.appiconset/AppIcon.png
-        # Update Contents.json to use single icon format
-        cat > ios/Boilerplate/Images.xcassets/AppIcon.appiconset/Contents.json << 'EOF'
-        {
-          "images" : [
-            {
-              "filename" : "AppIcon.png",
-              "idiom" : "universal",
-              "platform" : "ios",
-              "size" : "1024x1024"
-            }
-          ],
-          "info" : {
-            "author" : "xcode",
-            "version" : 1
-          }
-        }
-        EOF
 
     - name: Cache CocoaPods
       uses: actions/cache@v4
@@ -123,7 +96,7 @@ runs:
     - name: Set up SSH for Match
       uses: webfactory/ssh-agent@v0.7.0
       with:
-        ssh-private-key: ${{ env.IOS_MATCH_DEPLOY_KEY }}
+        ssh-private-key: ${{ inputs.IOS_MATCH_DEPLOY_KEY }}
 
     - name: Add GitHub to known hosts
       run: |
@@ -131,19 +104,18 @@ runs:
         ssh-keyscan github.com >> ~/.ssh/known_hosts
       shell: bash
 
-    - name: Setup Keychain
-      run: |
-        security create-keychain -p ${{ env.IOS_KEYCHAIN_PASSWORD }} ios.keychain
-        security set-keychain-settings -lut 21600 ios.keychain
-        security unlock-keychain -p ${{ env.IOS_KEYCHAIN_PASSWORD }} ios.keychain
-        security list-keychains -s ios.keychain
-        security default-keychain -d user -s ios.keychain
-      shell: bash
-
     - name: Export Match password
-      run: echo "MATCH_PASSWORD=${{ env.MATCH_PASSWORD }}" >> $GITHUB_ENV
+      run: echo "MATCH_PASSWORD=${{ inputs.IOS_MATCH_PASSWORD }}" >> $GITHUB_ENV
       shell: bash
 
+    - name: Write iOS changelog for Fastlane
+      shell: bash
+      run: |
+        CHANGELOG_PATH="ios/fastlane/changelog.txt"
+        mkdir -p "$(dirname "$CHANGELOG_PATH")"
+        printf "%s" "${{ inputs.RELEASE_NOTES }}" > "$CHANGELOG_PATH"
+        echo "📝 Wrote iOS changelog to $CHANGELOG_PATH"
+        
     - name: Clean Match cache
       run: rm -rf ~/.match
       shell: bash
@@ -152,6 +124,11 @@ runs:
       working-directory: ios
       run: bundle exec fastlane ci_signing_setup
       shell: bash
+      env:
+        MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}
+        IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
+        IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
+        IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
 
     - name: Clear Derived Data
       run: rm -rf ~/Library/Developer/Xcode/DerivedData
@@ -171,6 +148,19 @@ runs:
       working-directory: ios
       run: bundle exec fastlane ios pr_deploy
       shell: bash
+      env:
+        MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}
+        IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
+        IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}
+        IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
+        IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+        IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+        IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
+        IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
+        IOS_APP_STORE_TEAM_ID: ${{ inputs.IOS_APP_STORE_TEAM_ID }}
+        IOS_DEV_EMAIL: ${{ inputs.IOS_DEV_EMAIL }}
+        FASTLANE_USER: ${{ inputs.IOS_DEV_EMAIL }}
+        PR_NUMBER: ${{ inputs.PR_NUMBER }}
     
     - name: Upload .ipa artifact
       uses: actions/upload-artifact@v4
@@ -189,13 +179,14 @@ runs:
         path: /Users/runner/Library/Logs/gym/*.log
 
     - name: Post PR comment with TestFlight link
-      if: ${{ env.PR_NUMBER != '' }}
+      if: ${{ inputs.PR_NUMBER != '' }}
       env:
-        GH_TOKEN: ${{ env.GITHUB_TOKEN }}
-        PR_NUMBER: ${{ env.PR_NUMBER }}
+        GH_TOKEN: ${{ github.token }}
+        PR_NUMBER: ${{ inputs.PR_NUMBER }}
         BUILD_HASH: ${{ github.sha }}
-        IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ env.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-        IOS_APPLE_ID: ${{ env.IOS_APPLE_ID }}
+        IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+        IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}
+        IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
       run: |
         brew install gh
         gh auth setup-git
@@ -203,7 +194,7 @@ runs:
         gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
 
         - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
-        - 🆔 App ID: \`${{ env.IOS_APP_IDENTIFIER }}\`
+        - 🆔 App ID: \`$IOS_APP_IDENTIFIER\`
         - 🧱 Build Hash: \`$BUILD_HASH\`
 
         _This build was deployed by CI using Fastlane._"

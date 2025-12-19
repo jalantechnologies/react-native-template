@@ -34,6 +34,9 @@ inputs:
   IOS_MATCH_DEPLOY_KEY:
     required: true
     description: 'SSH private key for Match repo'
+  RELEASE_NOTES:
+    required: true
+    description: 'Release notes text to upload to App Store Connect'
 
 runs:
   using: 'composite'
@@ -43,24 +46,16 @@ runs:
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.1
+        ruby-version-file: '.ruby-version'
         bundler-cache: true
-
+        working-directory: ios
+        
     - name: Select Xcode 16.2
       run: |
         sudo xcode-select -s /Applications/Xcode_16.2.app
         export DEVELOPER_DIR="/Applications/Xcode_16.2.app/Contents/Developer"
         xcode-select -p
         xcodebuild -version
-      shell: bash
-
-    - name: Install Bundler
-      run: gem install bundler
-      shell: bash
-
-    - name: Install Ruby dependencies
-      working-directory: ios
-      run: bundle install
       shell: bash
 
     - name: Set Node Version
@@ -128,6 +123,15 @@ runs:
         IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
         IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
         IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
+
+    - name: Write iOS changelog for Fastlane
+      shell: bash
+      run: |
+        CHANGELOG_PATH="ios/fastlane/changelog.txt"
+        mkdir -p "$(dirname "$CHANGELOG_PATH")"
+        echo "Release notes: ${{ inputs.RELEASE_NOTES }}."
+        printf "%s" "${{ inputs.RELEASE_NOTES }}" > "$CHANGELOG_PATH"
+        echo "📝 Wrote iOS changelog to $CHANGELOG_PATH"
 
     - name: Clear Derived Data
       run: rm -rf ~/Library/Developer/Xcode/DerivedData

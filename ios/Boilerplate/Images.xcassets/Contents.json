@@ -1,6 +1,13 @@
 {
+  "assets" : [
+    {
+      "filename" : "AppIcon.appiconset",
+      "idiom" : "universal",
+      "role" : "primary-app-icon"
+    }
+  ],
   "info" : {
     "version" : 1,
-    "author" : "xcode"
+    "author" : "manual"
   }
 }

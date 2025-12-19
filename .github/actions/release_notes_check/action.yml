@@ -47,6 +47,12 @@ runs:
 
         CONTENT=$(cat "$NOTES_FILE")
         CONTENT_LENGTH=$(printf "%s" "$CONTENT" | wc -c | tr -d ' ')
+        echo "📏 Raw release notes length: $CONTENT_LENGTH"
+
+        if [ "$CONTENT_LENGTH" -eq 0 ]; then
+          echo "::error::❌ Release notes file is empty: $NOTES_FILE"
+          exit 1
+        fi
 
         if [ "$CONTENT_LENGTH" -gt 500 ]; then
           echo "::warning::Release notes exceed 500 characters (${CONTENT_LENGTH}), truncating."
@@ -54,12 +60,17 @@ runs:
 
         TRIMMED_CONTENT=$(printf "%s" "$CONTENT" | head -c 500)
 
-        CHANGELOG_DIR="android/fastlane/metadata/android/en-US/changelogs"
-        mkdir -p "$CHANGELOG_DIR"
+        ANDROID_CHANGELOG_DIR="android/fastlane/metadata/android/en-US/changelogs"
+        mkdir -p "$ANDROID_CHANGELOG_DIR"
 
-        CHANGELOG_PATH="$CHANGELOG_DIR/default.txt"
-        printf "%s" "$TRIMMED_CONTENT" > "$CHANGELOG_PATH"
-        echo "📝 Wrote changelog to $CHANGELOG_PATH"
+        ANDROID_CHANGELOG_PATH="$ANDROID_CHANGELOG_DIR/default.txt"
+        printf "%s" "$TRIMMED_CONTENT" > "$ANDROID_CHANGELOG_PATH"
+        echo "📝 Wrote Android changelog to $ANDROID_CHANGELOG_PATH"
+
+        IOS_CHANGELOG_PATH="ios/fastlane/changelog.txt"
+        mkdir -p "$(dirname "$IOS_CHANGELOG_PATH")"
+        printf "%s" "$TRIMMED_CONTENT" > "$IOS_CHANGELOG_PATH"
+        echo "🍏 Wrote iOS changelog to $IOS_CHANGELOG_PATH"
 
         {
           echo 'release_notes<<EOF'

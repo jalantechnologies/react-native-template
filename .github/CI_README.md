@@ -26,7 +26,13 @@ These jobs run **independently and in parallel**, improving feedback time.
 
 **When it runs**
 
-- On pull requests targeting `main` when they are opened, synchronized (updated), reopened, or marked “ready for review”.
+* Confirms the PR `package.json` version is newer than `main` before any deploy logic runs.
+* Validates release notes for the current version: the file must exist at `docs/release_notes/{version}.md`, be non-empty, and stay at or under **500 characters**. The validated text is emitted as workflow output and copied into `android/fastlane/metadata/android/en-US/changelogs/default.txt` and `ios/fastlane/changelog.txt` for downstream tooling (Fastlane uses the iOS file for TestFlight uploads).
+* Builds and deploys Android (Firebase App Distribution) with explicit Gradle overrides so CI never uses manifest defaults:
+  * `versionNameOverride` comes from `package.json`.
+  * `versionCodeOverride` is derived from the semantic version (`major*10000 + minor*100 + patch`).
+* Builds and deploys iOS (TestFlight).
+* Comments on the PR with the Firebase preview link.
 
 **What it does**
 
@@ -50,12 +56,11 @@ These jobs run **independently and in parallel**, improving feedback time.
 - Builds and deploys **iOS preview** to **TestFlight**:
   - Marketing `version` comes from `package.json`.
   - `build_number` is computed by:
-    - Fetching the latest TestFlight build number for the app.
-    - Incrementing it by 1 and writing it into the Xcode project.
+    - Using the combination of the PR number + timestamp to differentiate builds for different PR.
+    - Build number pattern: <PR_NUMBER><YYMMDDHHMM>.
   - Uses Fastlane to:
     - Build the IPA with App Store signing (manual for the main app target).
     - Strip Hermes bitcode and re-sign frameworks if needed.
-    - Upload to TestFlight with the release notes mapped into **“What to Test”**.
 - Adds a **PR comment** summarizing preview artifacts:
   - Firebase App Distribution link for the Android build.
   - TestFlight build information / link for the iOS build.
@@ -92,7 +97,7 @@ Push to `main`
   * `versionCodeOverride` is derived from the semantic version (`major*10000 + minor*100 + patch`).
 * Builds and deploys iOS to the **Apple Store Connect**:
   * `version` number comes from `package.json`.
-  * `build_number` is calculated by fetching lates build from testflight and incrementing it by .
+  * `build_number` is calculated by encoding the version / marketing version (e.g. "1.0.13" -> "1013").
 
 **Why it matters:**
 Guarantees only versioned, documented builds go to the stores — with release notes and version codes handled automatically.
@@ -191,7 +196,7 @@ To provide parity with Android preview builds by shipping an iOS TestFlight buil
 - Triggered by the same PR events as the Android preview workflow.
 - Uses an iOS Fastlane lane (e.g., `ios pr_deploy` / `ios_deploy_preview!`) to:
   - Read `version` from `package.json` and set it as the marketing version in the Xcode project.
-  - Fetch the latest TestFlight **build number** for the app and increment it by 1, then write it back to the project.
+  - Creates build number by combination of the PR number + timestamp to differentiate builds for different PR, then write it back to the project.
   - Ensure signing via `match` and a dedicated preview keychain.
   - Build the IPA (App Store export) and post-process (Hermes bitcode stripping and re-signing).
   - Read release notes from:
@@ -251,14 +256,9 @@ To automate iOS App Store submissions with consistent versioning, build numbers,
 - Triggered together with the Android production deployment on push to `main`.
 - Uses an iOS Fastlane lane (e.g., `ios_deploy_production!`) to:
   - Read `version` from `package.json` and set the marketing version in `Boilerplate.xcodeproj`.
-  - Query both:
-    - Latest TestFlight build number.
-    - Latest App Store build number for the current version.
-  - Compute the next `build_number` as **max(existing TestFlight, App Store) + 1** and update the Xcode project.
+  - Compute the next `build_number` by encoding the marketing version ("1.0.13" → 10013, "1.2.5" → 10205) and update the Xcode project.
   - Use `match` (readonly) and a production keychain for signing.
   - Build a release IPA with App Store export options.
-  - Read release notes from the shared `ios/fastlane/changelog.txt` (populated from `docs/release_notes/{version}.md`).
-  - Apply the changelog as App Store “What’s New” for the target locales using the App Store Connect API.
   - Upload the IPA to **App Store Connect** via `upload_to_app_store`, skipping screenshots and most metadata because the changelog is handled explicitly.
 
 ***

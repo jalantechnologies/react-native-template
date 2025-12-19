@@ -214,12 +214,68 @@ def ios_deploy_preview!(options = {})
   UI.message("🚀 FINAL RELEASE NOTES: #{testflight_changelog}")
 
   # ---------------------------------------------------------------------------
-  # Upload to TestFlight
+  # Upload to TestFlight with Changelog Support
   # ---------------------------------------------------------------------------
-
-  # External testers see the "What to Test" section with your changelog. 
-  # Internal testers don't get this feature by design from Apple
-  # So make sure External Testing is enabled on the Apple Store Connect for the project
+  # 
+  # CHANGELOG VISIBILITY:
+  # - External testers: CAN see the "What to Test" section with changelog
+  # - Internal testers: CANNOT see changelog (Apple's design limitation)
+  # - The changelog parameter only appears in TestFlight app for external testers
+  #
+  # PREREQUISITES (MUST be configured in App Store Connect):
+  # 1. External Testing Setup:
+  #    - Go to: App Store Connect → TestFlight → External Testing
+  #    - Click the (+) button to create an "External Testers" group
+  #    - Add testers to this group with their email addresses
+  #
+  # 2. Beta App Information (REQUIRED for external testing):
+  #    - Go to: App Store Connect → TestFlight → App Information (left sidebar)
+  #    - Fill in ALL required fields:
+  #      * Beta App Description (e.g., "Preview build for testing new features")
+  #      * Feedback Email (e.g., "feedback@yourcompany.com")
+  #      * Marketing URL (optional but recommended)
+  #      * Privacy Policy URL (if app collects data)
+  #    - Save changes
+  #
+  # 3. Beta App Review Information (REQUIRED for first external build):
+  #    - Go to: App Store Connect → TestFlight → Test Information
+  #    - Provide:
+  #      * Contact Information (name, phone, email)
+  #      * Demo Account (if app requires login)
+  #      * Notes for reviewer (optional)
+  #
+  # 4. Export Compliance:
+  #    - Add 'ITSAppUsesNonExemptEncryption' to Info.plist to skip encryption questions
+  #    - Or manually answer compliance questions in App Store Connect after upload
+  #
+  # COMMON ERRORS & SOLUTIONS:
+  # - "Beta App Description is missing": Fill in App Information section in TestFlight
+  # - "Export compliance required": Set ITSAppUsesNonExemptEncryption in Info.plist
+  # - "No external groups found": Create at least one external testing group
+  # - Changelog not visible: Ensure distribute_external is true and group name matches exactly
+  #
+  # GROUP NAMES:
+  # - Must match EXACTLY as shown in App Store Connect (case-sensitive)
+  # - Current groups: ["External Testers", "Tester"]
+  # - "External Testers" = external group (sees changelog)
+  # - "Tester" = internal group (no changelog visibility)
+  #
+  # WORKFLOW:
+  # 1. Build uploads to TestFlight
+  # 2. Apple processes build (2-5 minutes)
+  # 3. If first external build: Goes to Beta App Review (24-48 hours)
+  # 4. After approval: External testers receive notification with changelog
+  # 5. Subsequent builds: Automatically distributed (no review needed)
+  #
+  # REAL-WORLD USAGE:
+  # - Use external testing for: QA team, stakeholders, PR previews
+  # - Use internal testing for: Dev team quick tests (no changelog needed)
+  # - PR-based builds: Changelog shows PR number, timestamp, and changes
+  #
+  # REFERENCES:
+  # - fastlane docs: https://docs.fastlane.tools/actions/upload_to_testflight/
+  # - Apple TestFlight: https://developer.apple.com/testflight/
+  #
   begin
     UI.message('☁️ Uploading to TestFlight...')
     upload_to_testflight(
@@ -229,9 +285,9 @@ def ios_deploy_preview!(options = {})
       apple_id: apple_id,
       app_identifier: app_identifier,
       skip_waiting_for_build_processing: false,
-      distribute_external: true,  
-      groups: ["External Testers", "Tester"],  
-      notify_external_testers: true
+      distribute_external: true,  # Enable external distribution for changelog visibility
+      groups: ["External Testers", "Tester"],  # Distribute to both groups (only External sees changelog)
+      notify_external_testers: true  # Send email notification to external testers
     )
     UI.success("✅ TestFlight upload complete! Build: #{next_build}")
   rescue => e

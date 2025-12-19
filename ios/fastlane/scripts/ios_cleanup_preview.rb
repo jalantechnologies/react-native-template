@@ -2,6 +2,7 @@ require 'spaceship'
 require 'base64'
 require 'fastlane'
 require 'fastlane_core/ui/ui'
+UI = FastlaneCore::UI unless defined?(UI)
 
 # =============================================================================
 # iOS Preview Build Cleanup
@@ -39,8 +40,7 @@ require 'fastlane_core/ui/ui'
 # =============================================================================
 
 def ios_cleanup_preview!(pr_number:, app_identifier:, api_key_id:, issuer_id:, api_key_b64:)
-  UI = FastlaneCore::UI unless defined?(UI)
-  
+
   # ---------------------------------------------------------------------------
   # Normalize PR number to match build number format
   # ---------------------------------------------------------------------------

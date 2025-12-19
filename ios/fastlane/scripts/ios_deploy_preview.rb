@@ -216,6 +216,10 @@ def ios_deploy_preview!(options = {})
   # ---------------------------------------------------------------------------
   # Upload to TestFlight
   # ---------------------------------------------------------------------------
+
+  # External testers see the "What to Test" section with your changelog. 
+  # Internal testers don't get this feature by design from Apple
+  # So make sure External Testing is enabled on the Apple Store Connect for the project
   begin
     UI.message('☁️ Uploading to TestFlight...')
     upload_to_testflight(
@@ -225,7 +229,9 @@ def ios_deploy_preview!(options = {})
       apple_id: apple_id,
       app_identifier: app_identifier,
       skip_waiting_for_build_processing: false,
-      distribute_external: false
+      distribute_external: true,  
+      groups: ["External Testers", "Tester"],  
+      notify_external_testers: true
     )
     UI.success("✅ TestFlight upload complete! Build: #{next_build}")
   rescue => e

@@ -229,7 +229,8 @@ def ios_deploy_production!(options = {})
   upload_to_app_store(
     app_identifier: app_identifier,
     skip_screenshots: true,
-    skip_metadata: true,         
+    skip_metadata: false,
+    metadata_path: File.join(__dir__, '..', 'metadata'),         
     skip_app_version_update: true,
     force: true,
     precheck_include_in_app_purchases: false

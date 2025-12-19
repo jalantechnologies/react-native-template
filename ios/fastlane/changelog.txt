@@ -1,4 +1,1 @@
-What's New?
-This is latest release notes for test
-- Add release notes support for IOS in fastlane
-- Fixed and added Doppler Secret Injection for IOS
+This is a default changelog for IOS

@@ -22,6 +22,7 @@ def ios_deploy_preview!(options = {})
   apple_id          = options.fetch(:apple_id)
   username          = options.fetch(:username)
   team_id           = options.fetch(:team_id)
+  release_notes     = options.fetch(:release_notes)
 
   # ---------------------------------------------------------------------------
   # Version (from package.json)
@@ -202,6 +203,15 @@ def ios_deploy_preview!(options = {})
     rm -rf temp_payload
     echo "✅ IPA ready"
   BASH
+  # ---------------------------------------------------------------------------
+  # TestFlight changelog
+  # ---------------------------------------------------------------------------
+
+  UI.message("🚀 RELEASE NOTES FOUND FROM ENVIRONMENT: #{release_notes}")
+    
+  testflight_changelog = release_notes || "PR ##{pr_number} (Build #{next_build}) - Automated preview"
+
+  UI.message("🚀 FINAL RELEASE NOTES: #{testflight_changelog}")
 
   # ---------------------------------------------------------------------------
   # Upload to TestFlight
@@ -210,6 +220,7 @@ def ios_deploy_preview!(options = {})
     UI.message('☁️ Uploading to TestFlight...')
     upload_to_testflight(
       ipa: ipa_path,
+      changelog: testflight_changelog,
       username: username,
       apple_id: apple_id,
       app_identifier: app_identifier,

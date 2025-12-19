@@ -36,6 +36,7 @@ platform :ios do
       apple_id: ENV["IOS_APPLE_ID"],
       username: ENV["FASTLANE_USER"],
       team_id: ENV["IOS_APP_STORE_TEAM_ID"]
+      release_notes: ENV["RELEASE_NOTES"]
     )
   end
   # Removes any Preview builds uploaded via pr_deploy for this PR.

@@ -113,6 +113,7 @@ runs:
       run: |
         CHANGELOG_PATH="ios/fastlane/changelog.txt"
         mkdir -p "$(dirname "$CHANGELOG_PATH")"
+        echo "RELEASE NOTES: ${{ inputs.RELEASE_NOTES }}"
         printf "%s" "${{ inputs.RELEASE_NOTES }}" > "$CHANGELOG_PATH"
         echo "📝 Wrote iOS changelog to $CHANGELOG_PATH"
         
@@ -161,6 +162,7 @@ runs:
         IOS_DEV_EMAIL: ${{ inputs.IOS_DEV_EMAIL }}
         FASTLANE_USER: ${{ inputs.IOS_DEV_EMAIL }}
         PR_NUMBER: ${{ inputs.PR_NUMBER }}
+        RELEASE_NOTES: ${{ inputs.RELEASE_NOTES }}
     
     - name: Upload .ipa artifact
       uses: actions/upload-artifact@v4

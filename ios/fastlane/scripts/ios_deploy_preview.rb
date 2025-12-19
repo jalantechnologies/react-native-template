@@ -243,35 +243,6 @@ def ios_deploy_preview!(options = {})
   #      * Contact Information (name, phone, email)
   #      * Demo Account (if app requires login)
   #      * Notes for reviewer (optional)
-  #
-  # 4. Export Compliance:
-  #    - Add 'ITSAppUsesNonExemptEncryption' to Info.plist to skip encryption questions
-  #    - Or manually answer compliance questions in App Store Connect after upload
-  #
-  # COMMON ERRORS & SOLUTIONS:
-  # - "Beta App Description is missing": Fill in App Information section in TestFlight
-  # - "Export compliance required": Set ITSAppUsesNonExemptEncryption in Info.plist
-  # - "No external groups found": Create at least one external testing group
-  # - Changelog not visible: Ensure distribute_external is true and group name matches exactly
-  #
-  # GROUP NAMES:
-  # - Must match EXACTLY as shown in App Store Connect (case-sensitive)
-  # - Current groups: ["External Testers", "Tester"]
-  # - "External Testers" = external group (sees changelog)
-  # - "Tester" = internal group (no changelog visibility)
-  #
-  # WORKFLOW:
-  # 1. Build uploads to TestFlight
-  # 2. Apple processes build (2-5 minutes)
-  # 3. If first external build: Goes to Beta App Review (24-48 hours)
-  # 4. After approval: External testers receive notification with changelog
-  # 5. Subsequent builds: Automatically distributed (no review needed)
-  #
-  # REAL-WORLD USAGE:
-  # - Use external testing for: QA team, stakeholders, PR previews
-  # - Use internal testing for: Dev team quick tests (no changelog needed)
-  # - PR-based builds: Changelog shows PR number, timestamp, and changes
-  #
   # REFERENCES:
   # - fastlane docs: https://docs.fastlane.tools/actions/upload_to_testflight/
   # - Apple TestFlight: https://developer.apple.com/testflight/
@@ -285,9 +256,7 @@ def ios_deploy_preview!(options = {})
       apple_id: apple_id,
       app_identifier: app_identifier,
       skip_waiting_for_build_processing: false,
-      distribute_external: true,  # Enable external distribution for changelog visibility
-      groups: ["External Testers", "Tester"],  # Distribute to both groups (only External sees changelog)
-      notify_external_testers: true  # Send email notification to external testers
+      distribute_external: false
     )
     UI.success("✅ TestFlight upload complete! Build: #{next_build}")
   rescue => e

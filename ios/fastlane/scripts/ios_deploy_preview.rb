@@ -216,51 +216,49 @@ def ios_deploy_preview!(options = {})
     build_number: next_build
   )
 
+  localized_build_info = {
+    "default" => { whats_new: testflight_changelog },
+    "en-US"   => { whats_new: testflight_changelog }
+  }
+
   UI.message("🚀 FINAL RELEASE NOTES: #{testflight_changelog}")
 
   # ---------------------------------------------------------------------------
   # Upload to TestFlight with Changelog Support
   # ---------------------------------------------------------------------------
-  # 
-  # CHANGELOG VISIBILITY:
-  # - External testers: CAN see the "What to Test" section with changelog
-  # - Internal testers: CANNOT see changelog (Apple's design limitation)
-  # - The changelog parameter only appears in TestFlight app for external testers
+  # PREREQUISITES (one‑time per app, done manually in App Store Connect):
+  # 1. In App Store Connect → TestFlight:
+  #    - Configure "Beta App Information" (description, feedback email, URLs).
+  #    - Configure "Test Information" (contact info, demo account, notes).
+  # 2. Create at least one External Testers group, e.g. "QA" or "Beta".
+  # 3. Add testers to that group.
   #
-  # PREREQUISITES (MUST be configured in App Store Connect):
-  # 1. External Testing Setup:
-  #    - Go to: App Store Connect → TestFlight → External Testing
-  #    - Click the (+) button to create an "External Testers" group
-  #    - Add testers to this group with their email addresses
-  #
-  # 2. Beta App Information (REQUIRED for external testing):
-  #    - Go to: App Store Connect → TestFlight → App Information (left sidebar)
-  #    - Fill in ALL required fields:
-  #      * Beta App Description (e.g., "Preview build for testing new features")
-  #      * Feedback Email (e.g., "feedback@yourcompany.com")
-  #      * Marketing URL (optional but recommended)
-  #      * Privacy Policy URL (if app collects data)
-  #    - Save changes
-  #
-  # 3. Beta App Review Information (REQUIRED for first external build):
-  #    - Go to: App Store Connect → TestFlight → Test Information
-  #    - Provide:
-  #      * Contact Information (name, phone, email)
-  #      * Demo Account (if app requires login)
-  #      * Notes for reviewer (optional)
-  # REFERENCES:
-  # - fastlane docs: https://docs.fastlane.tools/actions/upload_to_testflight/
-  # - Apple TestFlight: https://developer.apple.com/testflight/
-  #
+  # After that, this script only needs:
+  # - API key
+  # - app_identifier
+  # - groups name(s)
+  # - release_notes (from CI / commit / PR)
+
+  # IMPORTANT:
+  # - Assumes Beta App Info + Test Info already configured in App Store Connect.
+  # - Assumes external group "QA" exists and has testers.
   begin
     UI.message('☁️ Uploading to TestFlight...')
     upload_to_testflight(
-      ipa: ipa_path,
-      changelog: testflight_changelog,
-      username: username,
-      apple_id: apple_id,
+      api_key: api_key,                 # from app_store_connect_api_key above
       app_identifier: app_identifier,
-      skip_waiting_for_build_processing: false,
+      ipa: ipa_path,
+
+      # Per-build metadata
+      changelog: testflight_changelog,  # "What to Test"
+      localized_build_info: localized_build_info,
+
+      # Distribution
+      skip_waiting_for_build_processing: false,  # wait so changelog can be attached
+      distribute_external: true,                 # send to external testers
+      groups: ["External Testers", "Tester"],    # <-- project-specific, see comment
+      notify_external_testers: true,             # send email/notification
+      submit_beta_review: true                   # trigger Beta App Review when needed
     )
     UI.success("✅ TestFlight upload complete! Build: #{next_build}")
   rescue => e

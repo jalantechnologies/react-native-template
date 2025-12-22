@@ -119,7 +119,7 @@ def ios_deploy_production!(options = {})
   # )
   increment_build_number(
     xcodeproj: 'Boilerplate.xcodeproj',
-    build_number: 3
+    build_number: 4
   )
 
   # ---------------------------------------------------------------------------
@@ -225,16 +225,27 @@ def ios_deploy_production!(options = {})
   # ---------------------------------------------------------------------------
   # Upload IPA to App Store Connect
   # ---------------------------------------------------------------------------
+  # EXPECTATION (per project):
+  #   - Default language folder exists: ios/fastlane/metadata/en-US/
+  #   - This script will overwrite release_notes.txt for each release.
+  #   - All other metadata (description, URLs, screenshots) is managed manually
+  #     in App Store Connect.
   UI.message('☁️ Uploading IPA to App Store Connect...')
   upload_to_app_store(
-    app_identifier: app_identifier,
-    skip_screenshots: true,
-    skip_metadata: false,
-    metadata_path: File.join(__dir__, '..', 'metadata'),         
-    skip_app_version_update: true,
-    force: true,
+    api_key: api_key,                                   # generic: comes from CI/env
+    app_identifier: app_identifier,                    # per‑project
+    ipa: ipa_path,                                     # built above
+
+    # Use only localized metadata folder; everything else can be edited in ASC UI
+    metadata_path: File.join(__dir__, '..', 'metadata'),
+    skip_screenshots: true,                            # screenshots managed in ASC
+    skip_metadata: false,                              # so release_notes.txt is read
+    skip_app_version_update: false,                    # create/update version entry
+    submit_for_review: false,                          # let teams decide how to submit
+    force: true,                                       # no HTML preview
     precheck_include_in_app_purchases: false
   )
+
 
   UI.success("✅ Production upload complete! Version #{marketing_version} (#{final_build})")
 ensure

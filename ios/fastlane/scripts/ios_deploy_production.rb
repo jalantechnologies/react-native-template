@@ -244,6 +244,7 @@ def ios_deploy_production!(options = {})
     skip_app_version_update: false,
     submit_for_review: false,
     force: true,
+    precheck_include_in_app_purchases: false,
     release_notes: {                         # optional override
       'default' => app_store_release_notes,  # used for en-US if no specific key
       'en-US'   => app_store_release_notes

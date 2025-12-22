@@ -131,7 +131,11 @@ def ios_deploy_production!(options = {})
   )
   FileUtils.mkdir_p(File.dirname(release_notes_path))
   File.write(release_notes_path, app_store_release_notes)
-  UI.message("📝 Wrote App Store release notes: #{release_notes_path}")
+
+  written_content = File.read(release_notes_path)
+  UI.message("📝 Wrote App Store release notes at: #{release_notes_path}")
+  UI.message("📝 Written content for release notes: #{written_content}")
+
 
 
   # ---------------------------------------------------------------------------
@@ -226,21 +230,26 @@ def ios_deploy_production!(options = {})
   #   - This script will overwrite release_notes.txt for each release.
   #   - All other metadata (description, URLs, screenshots) is managed manually
   #     in App Store Connect.
+  # Ensure the app has at least one released version; Apple ignores “What’s New” for the very first version, 
+  # and Fastlane logs Skipping 'release_notes'... this is the first version of the app.
+
   UI.message('☁️ Uploading IPA to App Store Connect...')
   upload_to_app_store(
-    api_key: api_key,                                   # generic: comes from CI/env
-    app_identifier: app_identifier,                    # per‑project
-    ipa: ipa_path,                                     # built above
-
-    # Use only localized metadata folder; everything else can be edited in ASC UI
+    api_key: api_key,
+    app_identifier: app_identifier,
+    ipa: ipa_path,
     metadata_path: File.join(__dir__, '..', 'metadata'),
-    skip_screenshots: true,                            # screenshots managed in ASC
-    skip_metadata: false,                              # so release_notes.txt is read
-    skip_app_version_update: false,                    # create/update version entry
-    submit_for_review: false,                          # let teams decide how to submit
-    force: true,                                       # no HTML preview
-    precheck_include_in_app_purchases: false
+    skip_screenshots: true,
+    skip_metadata: false,
+    skip_app_version_update: false,
+    submit_for_review: false,
+    force: true,
+    release_notes: {                         # optional override
+      'default' => app_store_release_notes,  # used for en-US if no specific key
+      'en-US'   => app_store_release_notes
+    }
   )
+
 
 
   UI.success("✅ Production upload complete! Version #{marketing_version} (#{final_build})")

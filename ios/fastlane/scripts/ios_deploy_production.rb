@@ -113,13 +113,9 @@ def ios_deploy_production!(options = {})
     "(latest App Store build for this version: #{latest_store_build || 'none'})"
   )
 
-  # increment_build_number(
-  #   xcodeproj: 'Boilerplate.xcodeproj',
-  #   build_number: final_build.to_s
-  # )
   increment_build_number(
     xcodeproj: 'Boilerplate.xcodeproj',
-    build_number: 4
+    build_number: final_build.to_s
   )
 
   # ---------------------------------------------------------------------------

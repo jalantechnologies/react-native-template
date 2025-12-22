@@ -258,7 +258,6 @@ def ios_deploy_preview!(options = {})
       distribute_external: true,                 # send to external testers
       groups: ["External Testers", "Tester"],    # <-- project-specific, see comment
       notify_external_testers: true,             # send email/notification
-      submit_beta_review: true                   # trigger Beta App Review when needed
     )
     UI.success("✅ TestFlight upload complete! Build: #{next_build}")
   rescue => e

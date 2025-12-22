@@ -100,6 +100,7 @@ def ios_deploy_production!(options = {})
       platform: 'ios',
       api_key: api_key
     )
+    
   rescue StandardError => e
     UI.important("⚠️ Could not fetch App Store build number for #{marketing_version}: #{e.message}")
     nil
@@ -108,18 +109,15 @@ def ios_deploy_production!(options = {})
   latest_int = latest_store_build.to_i
   final_build = base_build <= latest_int ? latest_int + 1 : base_build
 
+  #Currently we are using base_build, to differentiate the build numbers of production and testflight app
   UI.message(
-    "📈 Using PRODUCTION build number: #{final_build} " \
+    "📈 Using PRODUCTION build number: #{base_build} " \
     "(latest App Store build for this version: #{latest_store_build || 'none'})"
   )
 
-  # increment_build_number(
-  #   xcodeproj: 'Boilerplate.xcodeproj',
-  #   build_number: final_build.to_s
-  # )
   increment_build_number(
     xcodeproj: 'Boilerplate.xcodeproj',
-    build_number: 1
+    build_number: base_build.to_s
   )
 
   # ---------------------------------------------------------------------------

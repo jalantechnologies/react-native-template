@@ -14,6 +14,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        
       - name: Compare package.json versions
         run: |
           # Fetch the main branch package.json
@@ -36,6 +37,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
       - name: Check release notes
         id: check
         uses: ./.github/actions/release_notes_check
@@ -51,10 +53,12 @@ jobs:
     steps:
       - name: Checkout (root for actions)
         uses: actions/checkout@v4
+
       - name: Checkout (app code)
         uses: actions/checkout@v4
         with:
           path: app
+
       - name: Inject Doppler Preview Secrets
         uses: ./.github/actions/inject_doppler_secrets
         with:
@@ -62,6 +66,7 @@ jobs:
           doppler_project: react-native-template
           doppler_environment: preview
           working_directory: app
+
       - name: Deploy android app to Firebase App Distribution
         uses: ./.github/actions/deploy_android_preview
         with:
@@ -83,6 +88,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Inject Doppler Preview Secrets
         uses: ./.github/actions/inject_doppler_secrets
         with:
@@ -90,6 +96,7 @@ jobs:
           doppler_project: react-native-template
           doppler_environment: preview
           working_directory: "."
+
       - name: Deploy iOS Preview to TestFlight
         uses: ./.github/actions/deploy_ios_preview
         with:

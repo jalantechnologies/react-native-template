@@ -162,6 +162,7 @@ runs:
           IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
           IOS_APP_STORE_TEAM_ID: ${{ inputs.IOS_APP_STORE_TEAM_ID }}
           IOS_DEV_EMAIL: ${{ inputs.IOS_DEV_EMAIL }}
+          RELEASE_NOTES: ${{ inputs.RELEASE_NOTES }}
 
     - name: Upload Xcode build logs
       if: failure()

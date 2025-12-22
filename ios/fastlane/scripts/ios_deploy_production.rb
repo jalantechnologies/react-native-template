@@ -3,8 +3,10 @@ UI = FastlaneCore::UI unless defined?(UI)
 
 def ios_deploy_production!(options = {})
   require 'base64'
+  require 'fileutils'
   require 'json'
   require 'fastlane'
+  require_relative 'release_notes_helper'
 
   # ---------------------------------------------------------------------------
   # Inputs
@@ -18,6 +20,7 @@ def ios_deploy_production!(options = {})
   keychain_name     = options.fetch(:keychain_name)
   keychain_password = options.fetch(:keychain_password)
   team_id           = options.fetch(:team_id)
+  release_notes     = options.fetch(:release_notes)
 
   # ---------------------------------------------------------------------------
   # Version from package.json
@@ -116,6 +119,22 @@ def ios_deploy_production!(options = {})
   )
 
   # ---------------------------------------------------------------------------
+  # Release notes (App Store "What's New")
+  # ---------------------------------------------------------------------------
+  app_store_release_notes = build_app_store_release_notes(release_notes)
+  release_notes_path = File.join(
+    __dir__,
+    '..',
+    'metadata',
+    'en-US',
+    'release_notes.txt'
+  )
+  FileUtils.mkdir_p(File.dirname(release_notes_path))
+  File.write(release_notes_path, app_store_release_notes)
+  UI.message("📝 Wrote App Store release notes: #{release_notes_path}")
+
+
+  # ---------------------------------------------------------------------------
   # Build IPA for production
   # ---------------------------------------------------------------------------
   UI.message('🏗️ Building production IPA...')
@@ -202,15 +221,27 @@ def ios_deploy_production!(options = {})
   # ---------------------------------------------------------------------------
   # Upload IPA to App Store Connect
   # ---------------------------------------------------------------------------
+  # EXPECTATION (per project):
+  #   - Default language folder exists: ios/fastlane/metadata/en-US/
+  #   - This script will overwrite release_notes.txt for each release.
+  #   - All other metadata (description, URLs, screenshots) is managed manually
+  #     in App Store Connect.
   UI.message('☁️ Uploading IPA to App Store Connect...')
   upload_to_app_store(
-    app_identifier: app_identifier,
-    skip_screenshots: true,
-    skip_metadata: true,         
-    skip_app_version_update: true,
-    force: true,
+    api_key: api_key,                                   # generic: comes from CI/env
+    app_identifier: app_identifier,                    # per‑project
+    ipa: ipa_path,                                     # built above
+
+    # Use only localized metadata folder; everything else can be edited in ASC UI
+    metadata_path: File.join(__dir__, '..', 'metadata'),
+    skip_screenshots: true,                            # screenshots managed in ASC
+    skip_metadata: false,                              # so release_notes.txt is read
+    skip_app_version_update: false,                    # create/update version entry
+    submit_for_review: false,                          # let teams decide how to submit
+    force: true,                                       # no HTML preview
     precheck_include_in_app_purchases: false
   )
+
 
   UI.success("✅ Production upload complete! Version #{marketing_version} (#{final_build})")
 ensure

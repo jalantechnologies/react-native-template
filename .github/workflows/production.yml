@@ -16,6 +16,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
       - name: Check release notes
         id: check
         uses: ./.github/actions/release_notes_check
@@ -30,6 +31,7 @@ jobs:
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v4
+
       - name: Inject Doppler Production Secrets
         uses: ./.github/actions/inject_doppler_secrets
         with:
@@ -37,6 +39,7 @@ jobs:
           doppler_project: react-native-template
           doppler_environment: production
           working_directory: .
+
       - name: Deploy Android app to Play Store
         id: deploy_android_production
         uses: ./.github/actions/deploy_android_production
@@ -55,6 +58,7 @@ jobs:
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v4
+        
       - name: Inject Doppler Production Secrets
         uses: ./.github/actions/inject_doppler_secrets
         with:
@@ -62,6 +66,7 @@ jobs:
           doppler_project: react-native-template
           doppler_environment: production
           working_directory: . 
+          
       - name: Deploy iOS app to App Store
         uses: ./.github/actions/deploy_ios_production
         with:

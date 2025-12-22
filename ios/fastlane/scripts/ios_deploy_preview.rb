@@ -6,6 +6,7 @@ def ios_deploy_preview!(options = {})
   require 'base64'
   require 'json'
   require 'fastlane'
+  require_relative 'release_notes_helper'
 
   # ---------------------------------------------------------------------------
   # Required inputs
@@ -22,6 +23,7 @@ def ios_deploy_preview!(options = {})
   apple_id          = options.fetch(:apple_id)
   username          = options.fetch(:username)
   team_id           = options.fetch(:team_id)
+  release_notes     = options.fetch(:release_notes)
 
   # ---------------------------------------------------------------------------
   # Version (from package.json)
@@ -202,19 +204,60 @@ def ios_deploy_preview!(options = {})
     rm -rf temp_payload
     echo "✅ IPA ready"
   BASH
+  # ---------------------------------------------------------------------------
+  # TestFlight changelog
+  # ---------------------------------------------------------------------------
+
+  UI.message("🚀 RELEASE NOTES FOUND FROM ENVIRONMENT: #{release_notes}")
+    
+  testflight_changelog = build_testflight_changelog(
+    release_notes,
+    pr_number: pr_number,
+    build_number: next_build
+  )
+
+  localized_build_info = {
+    "default" => { whats_new: testflight_changelog },
+    "en-US"   => { whats_new: testflight_changelog }
+  }
+
+  UI.message("🚀 FINAL RELEASE NOTES: #{testflight_changelog}")
 
   # ---------------------------------------------------------------------------
-  # Upload to TestFlight
+  # Upload to TestFlight with Changelog Support
   # ---------------------------------------------------------------------------
+  # PREREQUISITES (one‑time per app, done manually in App Store Connect):
+  # 1. In App Store Connect → TestFlight:
+  #    - Configure "Beta App Information" (description, feedback email, URLs).
+  #    - Configure "Test Information" (contact info, demo account, notes).
+  # 2. Create at least one External Testers group, e.g. "QA" or "Beta".
+  # 3. Add testers to that group.
+  #
+  # After that, this script only needs:
+  # - API key
+  # - app_identifier
+  # - groups name(s)
+  # - release_notes (from CI / commit / PR)
+
+  # IMPORTANT:
+  # - Assumes Beta App Info + Test Info already configured in App Store Connect.
+  # - Assumes external group "QA" exists and has testers.
   begin
     UI.message('☁️ Uploading to TestFlight...')
     upload_to_testflight(
-      ipa: ipa_path,
-      username: username,
-      apple_id: apple_id,
+      api_key: api_key,                 # from app_store_connect_api_key above
       app_identifier: app_identifier,
-      skip_waiting_for_build_processing: false,
-      distribute_external: false
+      ipa: ipa_path,
+
+      # Per-build metadata
+      changelog: testflight_changelog,  # "What to Test"
+      localized_build_info: localized_build_info,
+
+      # Distribution
+      skip_waiting_for_build_processing: false,  # wait so changelog can be attached
+      distribute_external: true,                 # send to external testers
+      groups: ["External Testers"],    # <-- project-specific, see comment
+      notify_external_testers: true,             # send email/notification
     )
     UI.success("✅ TestFlight upload complete! Build: #{next_build}")
   rescue => e

@@ -105,7 +105,7 @@ Set `LOGGER=datadog` or `LOGGER=console,datadog` to enable Datadog logging.
 2. **Android:**
    - `android/settings.gradle`: Update `rootProject.name`
    - `android/app/build.gradle`: Update `namespace` and `applicationId`
-   - Rename package directories under `android/app/src/*/java/com/boilerplate/`
+   - Rename package directories under `android/app/src/*/java/com/bettrsw/boilerplate/app/`
    - Update package declarations in Java/Kotlin files
    - `android/app/src/main/res/values/strings.xml`: Update `app_name`
 

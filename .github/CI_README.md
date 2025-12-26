@@ -121,6 +121,7 @@ Additional rules enforced by `release_notes_check` in both CD workflows:
 
 - The release note file for the current version **must exist**, cannot be empty, and must be **≤ 500 characters**. The version is read from `package.json`.
 - The validated content is emitted as a workflow output and written to `android/fastlane/metadata/android/en-US/changelogs/default.txt` for downstream Fastlane steps.
+- As well as the content of the release notes is given as an output and then set as an ENV variable, so that workflows and fastlane scripts can use them to pass along with the builds.
 - Production runs also write `{versionCode}.txt` beside the default file using the Play Console version code that is fetched and incremented during the run.
 
 ---
@@ -201,6 +202,7 @@ To provide parity with Android preview builds by shipping an iOS TestFlight buil
   - Build the IPA (App Store export) and post-process (Hermes bitcode stripping and re-signing).
   - Read release notes from:
     - `docs/release_notes/{version}.md` → injected into `ios/fastlane/changelog.txt`.
+    - as well as set as an ENV and used in fastlane ruby script using ios/fastlane/scripts/release_notes_helper script
   - Upload the IPA to **TestFlight** with:
     - “What to Test” populated from `changelog.txt`.
     - Internal-only distribution (preview groups).
@@ -258,6 +260,7 @@ To automate iOS App Store submissions with consistent versioning, build numbers,
   - Read `version` from `package.json` and set the marketing version in `Boilerplate.xcodeproj`.
   - Compute the next `build_number` by encoding the marketing version ("1.0.13" → 10013, "1.2.5" → 10205) and update the Xcode project.
   - Use `match` (readonly) and a production keychain for signing.
+  - Script reads release notes from release_notes argument and writes content in fastlane/metadata/en-US/release_notes.txt file using release notes helper script, so that it will be passed with the build.
   - Build a release IPA with App Store export options.
   - Upload the IPA to **App Store Connect** via `upload_to_app_store`, skipping screenshots and most metadata because the changelog is handled explicitly.
 

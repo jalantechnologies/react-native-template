@@ -13,7 +13,7 @@ import './translations';
 import DatadogConfig, { onDataDogSDKInitialized } from './services/datadog';
 import { PaperProvider } from 'react-native-paper';
 import { theme } from './theme';
-import { Icon,Text } from 'react-native-paper';
+
 const App = () => {
   Logger.initializeLoggers();
   const ErrorComponent = useCallback(() => <ErrorFallback />, []);

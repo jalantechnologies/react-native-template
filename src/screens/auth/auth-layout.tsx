@@ -48,7 +48,7 @@ const useAuthLayoutStyles = () => {
     },
     cardContainer: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.surface,
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
     },

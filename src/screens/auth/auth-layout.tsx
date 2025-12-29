@@ -1,6 +1,6 @@
-import { useTheme } from 'native-base';
+import { useTheme,Text } from 'react-native-paper';
 import React, { PropsWithChildren } from 'react';
-import { Keyboard, Platform, TouchableWithoutFeedback, View, Text, ScrollView, KeyboardAvoidingView, StyleSheet, StatusBar } from 'react-native';
+import { Keyboard, Platform, TouchableWithoutFeedback, View, ScrollView, KeyboardAvoidingView, StyleSheet, StatusBar } from 'react-native';
 
 import ChangeApiUrlButton from './change-api-url/change-api-url';
 
@@ -15,7 +15,7 @@ const useAuthLayoutStyles = () => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.primary['500'],
+      backgroundColor: theme.colors.primary,
     },
     flex: {
       flex: 1,
@@ -24,9 +24,12 @@ const useAuthLayoutStyles = () => {
       flexGrow: 1,
     },
     header: {
-      backgroundColor: theme.colors.primary['500'],
-      paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + Number(theme.space['4']) : Number(theme.space['10']) + Number(theme.space['4']),
-      paddingBottom: Number(theme.space['4']),
+      backgroundColor: theme.colors.primary,
+      paddingTop:
+        Platform.OS === 'android'
+          ? (StatusBar.currentHeight || 24) + 16
+          : 44,
+      paddingBottom: 16,
       paddingHorizontal: '5%',
     },
     titleRow: {
@@ -39,24 +42,25 @@ const useAuthLayoutStyles = () => {
       paddingHorizontal: '5%',
     },
     title: {
-      fontSize: Number(theme.fontSizes['4xl']),
-      fontWeight: 'bold',
-      color: theme.colors.secondary['50'],
+      fontSize: 32,
+      fontWeight: '700',
+      color: theme.colors.surfaceVariant,
     },
     cardContainer: {
       flex: 1,
-      backgroundColor: theme.colors.white,
-      borderTopLeftRadius: Number(theme.radii['2xl']),
-      borderTopRightRadius: Number(theme.radii['2xl']),
+      backgroundColor: theme.colors.background,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
     },
     cardContent: {
       flex: 1,
-      paddingTop: Number(theme.space['6']),
-      paddingBottom: Number(theme.space['8']),
+      paddingTop: 24,
+      paddingBottom: 32,
       paddingHorizontal: '10%',
     },
   });
 };
+
 
 const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
   primaryTitle,
@@ -73,7 +77,7 @@ const AuthLayout: React.FC<PropsWithChildren<AuthLayoutProps>> = ({
             <View style={styles.header}>
               <View style={styles.titleRow}>
                 <View style={styles.titleContainer}>
-                  <Text style={styles.title}>{primaryTitle}</Text>
+                  <Text style={styles.title} >{primaryTitle}</Text>
                   <Text style={styles.title}>{secondaryTitle}</Text>
                 </View>
                 <ChangeApiUrlButton />

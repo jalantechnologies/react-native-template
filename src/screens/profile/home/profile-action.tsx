@@ -1,24 +1,54 @@
-import { Pressable, HStack, Heading, IPressableProps, useTheme } from 'native-base';
 import React from 'react';
+import { View, Pressable } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import ChevronRightIcon from 'react-native-template/assets/icons/chevron-right.svg';
 
-interface ProfileActionProps extends IPressableProps {
+interface ProfileActionProps {
   title: string;
-  icon: Element;
+  icon: React.ReactNode;
+  onPress?: () => void;
 }
 
-const ProfileAction: React.FC<ProfileActionProps> = ({ title, icon, ...props }) => {
-  const theme = useTheme();
+const ProfileAction: React.FC<ProfileActionProps> = ({
+  title,
+  icon,
+  onPress,
+}) => {
+  const { colors } = useTheme();
 
   return (
-    <Pressable _pressed={{ bg: 'coolGray.200' }} py={2} {...props}>
-      <HStack justifyContent={'space-between'} alignItems={'center'}>
-        <HStack space={2}>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => ({
+        paddingVertical: 12,
+        paddingHorizontal: 4,
+        backgroundColor: pressed ? colors.surfaceVariant : 'transparent',
+      })}
+    >
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
           {icon}
-          <Heading size={'sm'}>{title}</Heading>
-        </HStack>
-        <ChevronRightIcon width={20} height={20} fill={theme.colors.primary['500']} />
-      </HStack>
+          <Text variant="titleMedium">{title}</Text>
+        </View>
+
+        <ChevronRightIcon
+          width={20}
+          height={20}
+          fill={colors.primary}
+        />
+      </View>
     </Pressable>
   );
 };

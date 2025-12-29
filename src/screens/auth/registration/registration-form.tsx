@@ -1,9 +1,8 @@
-import { Container, Heading, VStack } from 'native-base';
 import React from 'react';
-import { Button, FormControl, Input } from 'react-native-template/src/components';
-
+import { View, StyleSheet } from 'react-native';
+import { Text, TextInput, Button, HelperText } from 'react-native-paper';
+import {useRegistrationStyles} from './registration.styles'
 import { AsyncError } from '../../../types';
-
 import useRegistrationForm from './registration-form-hook';
 
 interface RegistrationFormProps {
@@ -17,33 +16,56 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
     onRegistrationSuccess: onSuccess,
   });
 
+  const styles = useRegistrationStyles()
+
   return (
-    <VStack space={4}>
-      <Container>
-        <Heading size="lg">New User Registration</Heading>
-        <Heading mt={2} size="xs">
-          Please fill the form to create an account
-        </Heading>
-      </Container>
-      <FormControl label={'First Name'} error={formik.errors.firstName}>
-        <Input
-          onChangeText={formik.handleChange('firstName')}
-          value={formik.values.firstName}
+    <View >
+      <View style={styles.header}>
+        <Text variant="titleLarge">New User Registration</Text>
+        <Text variant="bodyMedium" style={styles.subtitle}>
+          Please fill the form to create an {'\n'} account
+        </Text>
+      </View>
+
+      <View>
+        <Text style={styles.text}>First Name</Text>
+        <TextInput
           placeholder="First Name"
+          mode="outlined"
+          value={formik.values.firstName}
+          onChangeText={formik.handleChange('firstName')}
+          error={!!formik.errors.firstName}
         />
-      </FormControl>
-      <FormControl label={'Last Name'} error={formik.errors.lastName}>
-        <Input
-          onChangeText={formik.handleChange('lastName')}
-          value={formik.values.lastName}
+        <HelperText type="error" visible={!!formik.errors.firstName}>
+          {formik.errors.firstName}
+        </HelperText>
+      </View>
+
+      <View>
+        <Text style={styles.text}>Last Name</Text>
+        <TextInput
           placeholder="Last Name"
+          mode="outlined"
+          value={formik.values.lastName}
+          onChangeText={formik.handleChange('lastName')}
+          error={!!formik.errors.lastName}
         />
-      </FormControl>
-      <Button onClick={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
+        <HelperText type="error" visible={!!formik.errors.lastName}>
+          {formik.errors.lastName}
+        </HelperText>
+      </View>
+
+      <Button
+        mode="contained"
+        loading={isUpdateAccountLoading}
+        onPress={() => formik.handleSubmit()}
+        style={styles.Button}
+      >
         Create Account
       </Button>
-    </VStack>
+    </View>
   );
 };
 
 export default RegistrationForm;
+

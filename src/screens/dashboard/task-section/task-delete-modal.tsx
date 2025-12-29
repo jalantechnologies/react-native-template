@@ -1,11 +1,22 @@
+import React, { useState } from 'react';
+import { View } from 'react-native';
 import { t } from 'i18next';
-import { Box, Text, Toast, useTheme } from 'native-base';
-import React from 'react';
+import {
+  Dialog,
+  Portal,
+  useTheme,
+  IconButton,
+  Text,
+  Button,
+  Snackbar,
+} from 'react-native-paper';
+
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
-import { Button, Modal } from 'react-native-template/src/components';
+import Close from 'react-native-template/assets/icons/close.svg';
+
 import { useTaskContext } from 'react-native-template/src/contexts';
 import { AsyncError, Task } from 'react-native-template/src/types';
-import { ButtonKind, ButtonColor } from 'react-native-template/src/types/button';
+import { taskModalStyles } from './task.style';
 
 interface TaskDeleteModalProps {
   handleModalClose: () => void;
@@ -18,21 +29,26 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
   handleModalClose,
   isModalOpen,
 }) => {
+  const { deleteTask, isDeleteTaskLoading } = useTaskContext();
+  const styles = taskModalStyles();
   const theme = useTheme();
 
-  const { deleteTask, isDeleteTaskLoading } = useTaskContext();
+  const [snackbar, setSnackbar] = useState<{
+    visible: boolean;
+    message: string;
+  }>({ visible: false, message: '' });
 
-  const onTaskOperationComplete = (desc: string) => {
-    Toast.show({
-      title: 'Success',
-      description: desc,
+  const onTaskOperationComplete = (message: string) => {
+    setSnackbar({
+      visible: true,
+      message,
     });
   };
 
   const onTaskOperationFailure = (err: AsyncError) => {
-    Toast.show({
-      title: 'Error',
-      description: err.message,
+    setSnackbar({
+      visible: true,
+      message: err.message,
     });
   };
 
@@ -42,38 +58,82 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
         onTaskOperationComplete(t('task:deleteTaskSuccess'));
         handleModalClose();
       })
-      .catch(err => {
+      .catch((err: AsyncError) => {
         onTaskOperationFailure(err);
       });
   };
 
   return (
-    <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose}>
-      <Modal.Header title="Delete Task" onClose={handleModalClose} />
-      <Modal.Body>
-        <Box alignItems="center">
-          <Text textAlign={'center'}>Are you sure you want to delete this task?</Text>
-        </Box>
-      </Modal.Body>
-      <Modal.Footer>
-        <Box flex={1} mr={2}>
-          <Button onClick={handleModalClose} kind={ButtonKind.OUTLINED}>
-            Cancel
-          </Button>
-        </Box>
-        <Box flex={1} ml={2}>
-          <Button
-            isLoading={isDeleteTaskLoading}
-            onClick={handleDeleteTask}
-            kind={ButtonKind.CONTAINED}
-            color={ButtonColor.DANGER}
-            startEnhancer={<DeleteIcon width={16} height={16} fill={theme.colors.secondary[50]} />}
-          >
-            Delete
-          </Button>
-        </Box>
-      </Modal.Footer>
-    </Modal>
+    <Portal>
+      <Dialog
+        visible={isModalOpen}
+        onDismiss={handleModalClose}
+        style={styles.dialog}
+      >
+        <Dialog.Title>
+          <Text variant="titleLarge" style={styles.heading}>
+            Delete Task
+          </Text>
+        </Dialog.Title>
+
+        <IconButton
+          icon={() => (
+            <Close width={26} height={26} fill={theme.colors.primary} />
+          )}
+          onPress={handleModalClose}
+          style={styles.close}
+        />
+
+        <Dialog.Content>
+          <View style={styles.deleteText}>
+            <Text>Are you sure you want to delete this task?</Text>
+          </View>
+        </Dialog.Content>
+
+        <Dialog.Actions>
+          <View style={styles.deleteFooter}>
+            <Button
+              mode="outlined"
+              onPress={handleModalClose}
+              style={styles.button}
+              theme={{
+                colors: {
+                  outline: theme.colors.primary,
+                },
+              }}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              mode="contained"
+              onPress={handleDeleteTask}
+              loading={isDeleteTaskLoading}
+              buttonColor={theme.colors.error}
+              style={styles.button}
+              icon={() => (
+                <DeleteIcon
+                  width={16}
+                  height={16}
+                  fill={theme.colors.onError}
+                />
+              )}
+            >
+              Delete
+            </Button>
+          </View>
+        </Dialog.Actions>
+      </Dialog>
+
+      <Snackbar
+        visible={snackbar.visible}
+        onDismiss={() =>
+          setSnackbar({ visible: false, message: '' })
+        }
+      >
+        {snackbar.message}
+      </Snackbar>
+    </Portal>
   );
 };
 

@@ -1,11 +1,13 @@
-import { Box } from 'native-base';
 import React, { PropsWithChildren } from 'react';
-
+import { View} from 'react-native';
+import { useStyles}  from './styles'
 const ProfileLayout = ({ children }: PropsWithChildren) => {
+  const styles = useStyles()
+
   return (
-    <Box flex={1} bg={'white'} p={4}>
+    <View style={styles.profileLayout}>
       {children}
-    </Box>
+    </View>
   );
 };
 

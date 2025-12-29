@@ -1,9 +1,9 @@
-import { Box, Text, useTheme } from 'native-base';
 import React from 'react';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
-import { Button, Modal } from 'react-native-template/src/components';
-import { ButtonKind, ButtonColor } from 'react-native-template/src/types/button';
-
+import { Dialog, Portal, useTheme, IconButton, Text, Button } from 'react-native-paper';
+import { View} from 'react-native';
+import Close from 'react-native-template/assets/icons/close.svg';
+import { useStyles}  from './styles'
 interface AccountDeleteModalProps {
   handleDeleteAccountPress: () => void;
   isDeleteAccountLoading: boolean;
@@ -18,40 +18,65 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
   setIsModalOpen,
 }) => {
   const theme = useTheme();
+  const styles = useStyles()
 
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
 
   return (
-    <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose}>
-      <Modal.Header title="Delete Account" onClose={handleModalClose} />
-      <Modal.Body>
-        <Box alignItems="center">
-          <Text textAlign={'center'}>Are you sure you want to delete your account?</Text>
-        </Box>
-      </Modal.Body>
-      <Modal.Footer>
-        <Box flex={1} mr={2}>
-          <Button onClick={handleModalClose} kind={ButtonKind.OUTLINED}>
-            Cancel
-          </Button>
-        </Box>
-        <Box flex={1} ml={2}>
-          <Button
-            isLoading={isDeleteAccountLoading}
-            onClick={handleDeleteAccountPress}
-            kind={ButtonKind.CONTAINED}
-            color={ButtonColor.DANGER}
-            startEnhancer={
-              <DeleteIcon width={20} height={20} fill={theme.colors.secondary['50']} />
-            }
-          >
-            Delete
-          </Button>
-        </Box>
-      </Modal.Footer>
-    </Modal>
+    <Portal>
+      <Dialog visible={isModalOpen} onDismiss={handleModalClose} style={styles.dialog} >
+        <Dialog.Title>
+          <Text variant="titleLarge" style={styles.heading}>
+            Delete Account
+          </Text>
+        </Dialog.Title>
+        <IconButton
+          icon={() => (
+            <Close width={26} height={26} fill={theme.colors.primary} />
+          )}
+          onPress={handleModalClose}
+          style={styles.close}
+        />
+        <Dialog.Content>
+          <View style={styles.deleteText}>
+            <Text>
+              Are you sure you want to delete your account?
+            </Text>
+          </View>
+
+        </Dialog.Content>
+        <Dialog.Actions>
+          <View style={styles.deleteFooter}>
+            <Button
+              mode="outlined"
+              onPress={handleModalClose}
+              style={styles.button}
+              theme={{
+                colors: {
+                  outline: theme.colors.primary,
+                },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              mode="contained"
+              onPress={handleDeleteAccountPress}
+              loading={isDeleteAccountLoading}
+              buttonColor={theme.colors.error}
+              style={styles.button}
+              icon={() => (
+                <DeleteIcon width={16} height={16} fill={theme.colors.onError} />
+              )}>
+
+              Delete
+            </Button>
+          </View>
+        </Dialog.Actions>
+      </Dialog>
+    </Portal>
   );
 };
 

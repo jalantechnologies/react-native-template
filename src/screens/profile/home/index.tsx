@@ -1,50 +1,58 @@
-import { Box, Divider, Toast, useTheme, VStack } from 'native-base';
 import React, { useState } from 'react';
+import { View } from 'react-native';
+import { useTheme, Divider, Snackbar, Button } from 'react-native-paper';
+
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import LogoutIcon from 'react-native-template/assets/icons/logout.svg';
-import { Button } from 'react-native-template/src/components';
 
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
 import { useAccountContext, useAuthContext } from '../../../contexts';
 import { AsyncError } from '../../../types';
-import ProfileLayout from '../profile-layout';
 
+import ProfileLayout from '../profile-layout';
+import { useStyles } from './styles';
 import AccountDeleteModal from './account-delete-modal';
 import ProfileAction from './profile-action';
 import ProfileInfoSection from './profile-info-section';
 
-const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
-  const theme = useTheme();
+const Profile: React.FC<
+  ProfileStackScreenProps<'Home'>
+> = ({ navigation }) => {
+  const { colors } = useTheme();
+  const styles = useStyles();
 
-  const [isAccountDeleteModalOpen, setIsAccountDeleteModalOpen] = useState(false);
+  const [isAccountDeleteModalOpen, setIsAccountDeleteModalOpen] =
+    useState(false);
 
-  const { deleteAccount, isDeleteAccountLoading, accountDetails } = useAccountContext();
+  const [snackbar, setSnackbar] = useState({
+    visible: false,
+    message: '',
+  });
+
+  const { deleteAccount, isDeleteAccountLoading, accountDetails } =
+    useAccountContext();
   const { logout } = useAuthContext();
 
   const handleAccountDeleteSuccess = () => {
     logout();
-    Toast.show({
-      title: 'Account Deleted',
-      description: 'Your account has been deleted successfully',
+    setSnackbar({
+      visible: true,
+      message: 'Your account has been deleted successfully',
     });
   };
 
   const handleAccountDeleteError = (err: AsyncError) => {
-    Toast.show({
-      title: 'Account Deletion Failed',
-      description: err.message,
+    setSnackbar({
+      visible: true,
+      message: err.message,
     });
   };
 
   const handleDeleteAccount = async () => {
     setIsAccountDeleteModalOpen(false);
     deleteAccount()
-      .then(() => {
-        handleAccountDeleteSuccess();
-      })
-      .catch((err: AsyncError) => {
-        handleAccountDeleteError(err);
-      });
+      .then(handleAccountDeleteSuccess)
+      .catch(handleAccountDeleteError);
   };
 
   const handleEditProfilePress = () => {
@@ -53,17 +61,26 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
 
   return (
     <ProfileLayout>
-      <VStack w={'100%'} space={4} divider={<Divider />}>
+      <View style={styles.profileSpacing}>
         <ProfileInfoSection
           accountDetails={accountDetails}
           handleEditProfilePress={handleEditProfilePress}
         />
+
+        <Divider style={{ marginVertical: 12 }} />
+
         <ProfileAction
-          title={'Delete Account'}
-          icon={<DeleteIcon width={20} height={20} fill={theme.colors.primary['500']} />}
+          title="Delete Account"
+          icon={
+            <DeleteIcon
+              width={20}
+              height={20}
+              fill={colors.primary}
+            />
+          }
           onPress={() => setIsAccountDeleteModalOpen(true)}
         />
-      </VStack>
+      </View>
 
       <AccountDeleteModal
         handleDeleteAccountPress={handleDeleteAccount}
@@ -72,14 +89,31 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
         setIsModalOpen={setIsAccountDeleteModalOpen}
       />
 
-      <Box w="50%" alignSelf="center" position="absolute" bottom={4}>
+      <View style={styles.buttonSpacing}>
         <Button
-          onClick={logout}
-          startEnhancer={<LogoutIcon width={20} height={20} fill={theme.colors.secondary['50']} />}
+          mode="contained"
+          onPress={logout}
+          style={styles.button}
+          icon={() => (
+            <LogoutIcon
+              width={20}
+              height={20}
+              fill={colors.onPrimary}
+            />
+          )}
         >
           Logout
         </Button>
-      </Box>
+      </View>
+
+      <Snackbar
+        visible={snackbar.visible}
+        onDismiss={() =>
+          setSnackbar({ visible: false, message: '' })
+        }
+      >
+        {snackbar.message}
+      </Snackbar>
     </ProfileLayout>
   );
 };

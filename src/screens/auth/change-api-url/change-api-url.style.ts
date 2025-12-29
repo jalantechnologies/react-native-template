@@ -1,4 +1,3 @@
-import { Button } from "native-base";
 import { StyleSheet } from "react-native";
 import { useTheme } from "react-native-paper";
 export const ChangeApiUrlStyles = () => {
@@ -23,7 +22,7 @@ export const ChangeApiUrlStyles = () => {
         text:{
             color:theme.colors.primary,
             marginBottom:10,
-            fontWeight:600
+            fontWeight:'600'
         },
         heading:{
             color:theme.colors.primary,

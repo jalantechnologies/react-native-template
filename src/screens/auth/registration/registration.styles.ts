@@ -21,7 +21,10 @@ export const useRegistrationStyles = () => {
         text: {
             color: theme.colors.primary,
             paddingBottom: 8,
-            fontWeight:600
+            fontWeight:'600'
+        },
+        textBox:{
+            backgroundColor:theme.colors.surface
         }
     })
 }

@@ -1,7 +1,6 @@
-import { Toast } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import Config from 'react-native-config';
-import { Dialog, Portal, Text, useTheme, IconButton, TextInput, HelperText, Button, Snackbar } from 'react-native-paper';
+import { Dialog, Portal, Text, useTheme, IconButton, TextInput, Button, Snackbar } from 'react-native-paper';
 import { ModalProps } from 'react-native-template/src/components/modal/modal';
 import { useLocalStorage } from 'react-native-template/src/utils';
 import Close from 'react-native-template/assets/icons/close.svg';
@@ -10,7 +9,6 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
   const localStorage = useLocalStorage();
   const theme = useTheme()
   const styles = ChangeApiUrlStyles()
-  const [error, setError] = useState('');
 
   const [apiBaseUrl, setApiBaseUrl] = useState(Config.API_BASE_URL as string);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -61,17 +59,13 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
             value={apiBaseUrl}
             onChangeText={text => {
               setApiBaseUrl(text)
-              if (error) setError('');
             }}
             mode="outlined"
             autoCapitalize="none"
             autoCorrect={false}
             style={{ backgroundColor: theme.colors.surface }}
-            error={!!error}
           />
-          <HelperText type="error" visible={!!error}>
-            {error}
-          </HelperText>
+
         </Dialog.Content>
         <Dialog.Actions style={styles.ButtonSection}>
           <Button

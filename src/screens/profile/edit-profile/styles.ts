@@ -12,7 +12,7 @@ export const useStyles = () => {
         text: {
             color: theme.colors.primary,
             marginBottom: 8,
-            fontWeight: 600
+            fontWeight: '600'
         },
         Button: {
             borderRadius: 6,

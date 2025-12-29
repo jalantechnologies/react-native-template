@@ -11,6 +11,7 @@ export const useOtpFormStyles = () => {
         input: {
             width: 68,
             textAlign: 'center',
+            backgroundColor:theme.colors.surface
         },
         container: {
             flex: 1,

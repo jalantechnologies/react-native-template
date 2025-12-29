@@ -110,9 +110,8 @@ const fontConfig = {
   },
 };
 
-export const theme= {
+export const theme = {
   ...MD3LightTheme,
-  myOwnProperty: true,
   
   colors: {
     ...MD3LightTheme.colors,

@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View} from 'react-native';
 import { Text, TextInput, Button, HelperText } from 'react-native-paper';
 import {useRegistrationStyles} from './registration.styles'
 import { AsyncError } from '../../../types';
 import useRegistrationForm from './registration-form-hook';
+import { background } from 'native-base/lib/typescript/theme/styled-system';
 
 interface RegistrationFormProps {
   onError: (error: AsyncError) => void;
@@ -35,6 +36,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
           value={formik.values.firstName}
           onChangeText={formik.handleChange('firstName')}
           error={!!formik.errors.firstName}
+          style={styles.textBox}
         />
         <HelperText type="error" visible={!!formik.errors.firstName}>
           {formik.errors.firstName}
@@ -49,6 +51,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
           value={formik.values.lastName}
           onChangeText={formik.handleChange('lastName')}
           error={!!formik.errors.lastName}
+          style={styles.textBox}
         />
         <HelperText type="error" visible={!!formik.errors.lastName}>
           {formik.errors.lastName}

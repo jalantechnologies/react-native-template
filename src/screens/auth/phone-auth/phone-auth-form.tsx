@@ -1,5 +1,5 @@
 import { Button, useTheme, TextInput, HelperText,Menu,Text} from 'react-native-paper';
-import { Platform, Linking, View,Pressable, ScrollView} from 'react-native';
+import { Linking, View,Pressable, ScrollView} from 'react-native';
 import React, { useState } from 'react';
 import CheckIcon from 'react-native-template/assets/icons/check.svg';
 import { CountrySelectOptions } from '../../../constants';
@@ -54,7 +54,7 @@ return (
 
 const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => {
   const themeColor = useThemeColor('primary.500');
-  const theme = useTheme()
+  const theme = useTheme();
   const styles = usePhoneAuthFormStyles();
   const { formik, isSendOTPLoading } = usePhoneAuthForm({
     onSendOTPSuccess: onSuccess,
@@ -107,6 +107,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
                 keyboardType="numeric"
                 placeholder={phoneNumberPlaceholder}
                 mode='outlined'
+                style={{backgroundColor:theme.colors.surface}}
               />
             </View>
           </View>

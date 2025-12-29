@@ -26,6 +26,7 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   };
 
   const onVerifyOTPSuccess = () => {
+    setSnackbarVisible(true);
   };
 
   return (

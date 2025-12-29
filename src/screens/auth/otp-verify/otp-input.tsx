@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, StyleSheet, NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native';
+import { View, NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useOtpFormStyles } from './otp-form.styles';
 interface PaperOTPInputProps {

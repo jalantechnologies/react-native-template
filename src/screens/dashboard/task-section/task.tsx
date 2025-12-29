@@ -32,7 +32,7 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
   return (
     <>
       <Card mode="outlined" >
-        <Card.Title title={title} titleStyle={{ paddingVertical:16,color: theme.colors.onPrimaryContainer,fontWeight:700 }} titleVariant='titleMedium' />
+        <Card.Title title={title} titleStyle={{ paddingVertical:16,color: theme.colors.onPrimaryContainer,fontWeight:'700' }} titleVariant='titleMedium' />
         <Card.Content>
           <Text>{description}</Text>
         </Card.Content>

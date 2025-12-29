@@ -1,4 +1,3 @@
-import { profile } from 'console';
 import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
@@ -38,7 +37,7 @@ export const useStyles = () => {
 
   },
   profile:{
-    borderRadius:"full",
+    borderRadius:9999,
     padding:1,
     flexDirection:'row',
     alignItems:'center',

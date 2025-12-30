@@ -113,16 +113,28 @@ def ios_deploy_preview!(options = {})
   )
 
   # ---------------------------------------------------------------------------
-  # Verify JS bundle (.env.preview)
+  # Bundle and Verify React Native for iOS (preview env)
   # ---------------------------------------------------------------------------
-  Dir.chdir('..') do
-    ENV['ENVFILE']  = '.env.preview'
-    ENV['NODE_ENV'] = 'production'
-    js_bundle_path  = File.expand_path('main.jsbundle')
+  envfile_path = File.expand_path('../../../.env', __dir__)
+  ENV['ENVFILE']  = envfile_path
+  ENV['NODE_ENV'] = 'production'
+  repo_root = File.expand_path('../../..', __dir__)
 
-    UI.message("🔍 JS bundle: #{js_bundle_path}")
-    UI.user_error!('❌ main.jsbundle missing') unless File.exist?(js_bundle_path)
-  end
+  UI.message('📦 Bundling React Native for iOS (preview)...')
+  sh <<~BASH
+    cd "#{repo_root}"
+    ENVFILE=.env NODE_ENV=production npx react-native bundle \\
+      --entry-file index.js \\
+      --platform ios \\
+      --dev false \\
+      --bundle-output ios/main.jsbundle \\
+      --assets-dest .
+  BASH
+
+  js_bundle_path = File.expand_path('../../main.jsbundle', __dir__)
+  UI.message("🔍 Checking for main.jsbundle at: #{js_bundle_path}")
+  UI.user_error!('❌ main.jsbundle not found') unless File.exist?(js_bundle_path)
+
 
   # ---------------------------------------------------------------------------
   # Build IPA (Boilerplate workspace)

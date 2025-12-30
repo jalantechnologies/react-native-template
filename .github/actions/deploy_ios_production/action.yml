@@ -135,16 +135,6 @@ runs:
       run: rm -rf ~/Library/Developer/Xcode/DerivedData
       shell: bash
 
-    - name: Bundle React Native for iOS
-      run: |
-        ENVFILE=.env.production NODE_ENV=production npx react-native bundle \
-          --entry-file index.js \
-          --platform ios \
-          --dev false \
-          --bundle-output ios/main.jsbundle \
-          --assets-dest .
-      shell: bash
-
     - name: Deploy the iOS app to Production
       working-directory: ios
       run: bundle exec fastlane ios production_deploy

@@ -115,18 +115,18 @@ def ios_deploy_production!(options = {})
     "(latest App Store build for this version: #{latest_store_build || 'none'})"
   )
 
-  # For production, use the following increment logic, comment it out when testing any changes to this script.
-  increment_build_number(
-    xcodeproj: 'Boilerplate.xcodeproj',
-    build_number: base_build.to_s
-  )
+  # # For production, use the following increment logic, comment it out when testing any changes to this script.
+  # increment_build_number(
+  #   xcodeproj: 'Boilerplate.xcodeproj',
+  #   build_number: base_build.to_s
+  # )
 
   # Uncomment this method ans use the hardcoded build numbers to test any changes to production, so it will 
   # separate actual production build and test production builds
-  # increment_build_number(
-  #   xcodeproj: 'Boilerplate.xcodeproj',
-  #   build_number: 1
-  # )
+  increment_build_number(
+    xcodeproj: 'Boilerplate.xcodeproj',
+    build_number: 1
+  )
 
   # ---------------------------------------------------------------------------
   # Release notes (App Store "What's New")
@@ -145,6 +145,33 @@ def ios_deploy_production!(options = {})
   written_content = File.read(release_notes_path)
   UI.message("📝 Wrote App Store release notes at: #{release_notes_path}")
   UI.message("📝 Written content for release notes: #{written_content}")
+
+
+  # ---------------------------------------------------------------------------
+  # Bundle and Verify React Native for iOS (production env)
+  # ---------------------------------------------------------------------------
+  envfile_path = File.expand_path('../../../.env', __dir__)
+  ENV['ENVFILE']  = envfile_path
+  ENV['NODE_ENV'] = 'production'
+  repo_root = File.expand_path('../../..', __dir__)
+
+  UI.message('📦 Bundling React Native for iOS (production)...')
+
+  sh <<~BASH
+    cd "#{repo_root}"    
+    ENVFILE=.env NODE_ENV=production npx react-native bundle \\
+      --entry-file index.js \\
+      --platform ios \\
+      --dev false \\
+      --bundle-output ios/main.jsbundle \\
+      --assets-dest .
+    
+    echo "✅ Bundle complete"
+  BASH
+
+  js_bundle_path = File.expand_path('../../main.jsbundle', __dir__)
+  UI.message("🔍 Checking for main.jsbundle at: #{js_bundle_path}")
+  UI.user_error!('❌ main.jsbundle not found') unless File.exist?(js_bundle_path)
 
 
 

@@ -1,6 +1,6 @@
-import { useTheme,Text } from 'react-native-paper';
 import React, { PropsWithChildren } from 'react';
 import { Keyboard, Platform, TouchableWithoutFeedback, View, ScrollView, KeyboardAvoidingView, StyleSheet, StatusBar } from 'react-native';
+import { useTheme,Text } from 'react-native-paper';
 
 import ChangeApiUrlButton from './change-api-url/change-api-url';
 

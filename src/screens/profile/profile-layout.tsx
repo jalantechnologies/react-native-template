@@ -1,8 +1,9 @@
 import React, { PropsWithChildren } from 'react';
-import { View} from 'react-native';
-import { useStyles}  from './styles'
+import { View } from 'react-native';
+
+import { useStyles }  from './styles';
 const ProfileLayout = ({ children }: PropsWithChildren) => {
-  const styles = useStyles()
+  const styles = useStyles();
 
   return (
     <View style={styles.profileLayout}>

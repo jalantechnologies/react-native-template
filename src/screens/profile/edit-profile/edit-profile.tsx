@@ -8,17 +8,19 @@ import {
   Button,
   Snackbar,
 } from 'react-native-paper';
+
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
 import { AsyncError } from '../../../types';
 import ProfileLayout from '../profile-layout';
-import  {useStyles}  from './styles';
+
 import useProfileUpdateForm from './profile-update-form.hook';
+import  { useStyles }  from './styles';
 
 const EditProfile: React.FC<
   ProfileStackScreenProps<'EditProfile'>
 > = ({ navigation }) => {
   const { colors } = useTheme();
-  const styles = useStyles()
+  const styles = useStyles();
   const [snackbar, setSnackbar] = React.useState<{
     visible: boolean;
     message: string;
@@ -51,7 +53,7 @@ const EditProfile: React.FC<
   return (
     <ProfileLayout>
       <KeyboardAvoidingView
-        style={{ flex: 1,justifyContent:'space-between'}}
+        style={{ flex: 1,justifyContent:'space-between' }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
       >

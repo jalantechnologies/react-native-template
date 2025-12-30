@@ -1,13 +1,15 @@
-import { Button, useTheme, TextInput, HelperText,Menu,Text} from 'react-native-paper';
-import { Linking, View,Pressable, ScrollView} from 'react-native';
+import { Checkbox } from 'native-base';
 import React, { useState } from 'react';
+import { Linking, View,Pressable, ScrollView } from 'react-native';
+import { Button, useTheme, TextInput, HelperText,Menu,Text } from 'react-native-paper';
 import CheckIcon from 'react-native-template/assets/icons/check.svg';
+
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError, PhoneNumber } from '../../../types';
+
 import usePhoneAuthForm from './phone-auth-form-hook';
 import { usePhoneAuthFormStyles } from './phone-auth-form.styles';
-import { Checkbox } from 'native-base';
-import { useThemeColor } from 'react-native-template/src/utils';
+
 
 interface PhoneAuthFormProps {
   onSuccess: () => void;
@@ -20,8 +22,9 @@ const renderCountrySelectMenu = (
   onOpen: () => void,
   onClose: () => void,
   handleSelectChange: (value: string) => void,
+  styles: ReturnType<typeof usePhoneAuthFormStyles>,
 ) => {
-  const styles = usePhoneAuthFormStyles();
+
 return (
 <Menu
   visible={isOpen}
@@ -50,10 +53,9 @@ return (
     ))}
   </ScrollView>
 </Menu>
-)};
+);};
 
 const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => {
-  const themeColor = useThemeColor('primary.500');
   const theme = useTheme();
   const styles = usePhoneAuthFormStyles();
   const { formik, isSendOTPLoading } = usePhoneAuthForm({
@@ -89,12 +91,12 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
     <View style={styles.phoneAuthScreen}>
       <View style={styles.Login}>
         <View style={{ paddingBottom: 24 }}>
-          <Text variant='headlineMedium'>Login</Text>
+          <Text variant="headlineMedium">Login</Text>
         </View>
         <View>
           <Text style={styles.text}>Mobile Number</Text>
           <View style={styles.row}>
-            {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange)}
+            {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange,styles)}
             <View
               style={[
                 styles.inputBox,
@@ -106,8 +108,8 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
                 onChangeText={formik.handleChange('phoneNumber')}
                 keyboardType="numeric"
                 placeholder={phoneNumberPlaceholder}
-                mode='outlined'
-                style={{backgroundColor:theme.colors.surface}}
+                mode="outlined"
+                style={{ backgroundColor:theme.colors.surface }}
               />
             </View>
           </View>
@@ -126,12 +128,12 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
             onChange={setIsChecked}
             accessibilityLabel="Agree to privacy policy"
             value="agreePrivacyPolicy"
-            icon={<CheckIcon width={12} height={12} color={themeColor} />}
+            icon={<CheckIcon width={12} height={12} fill={theme.colors.primary} />}
             aria-label="Privacy Policy Checkbox"
             mt={0.5}
           />
 
-          <View style={{marginLeft:12}}>
+          <View style={{ marginLeft:12 }}>
             <Text >By continuing, you agree to our </Text>
             <Text
               style={{ color: theme.colors.primary, textDecorationLine: 'underline' }}
@@ -149,7 +151,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
 
 
       <Button
-        mode='contained'
+        mode="contained"
         disabled={!isChecked}
         loading={isSendOTPLoading}
         onPress={() => formik.handleSubmit()}

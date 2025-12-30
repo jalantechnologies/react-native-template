@@ -3,7 +3,7 @@ import { useTheme } from 'react-native-paper';
 
 
 export const useStyles = () => {
-    const theme = useTheme()
+    const theme = useTheme();
 
     return StyleSheet.create({
         dialog: {
@@ -12,12 +12,12 @@ export const useStyles = () => {
     },
     button: {
       borderRadius: 6,
-      paddingHorizontal: 6
+      paddingHorizontal: 6,
     },
     heading:{
       color:theme.colors.primary,
       textAlign:'center',
-      paddingBottom:28
+      paddingBottom:28,
     },
     close: {
     position: 'absolute',
@@ -33,7 +33,7 @@ export const useStyles = () => {
   },
   deleteText:{
     marginVertical:12,
-    alignItems:'center'
+    alignItems:'center',
 
   },
   profile:{
@@ -41,7 +41,7 @@ export const useStyles = () => {
     padding:1,
     flexDirection:'row',
     alignItems:'center',
-    justifyContent:'center'
+    justifyContent:'center',
   },
   avatar:{
     backgroundColor:theme.colors.secondaryContainer,
@@ -55,8 +55,8 @@ export const useStyles = () => {
     width:'50%',
     alignSelf:'center',
     position:'absolute',
-    bottom:10
-  }
+    bottom:10,
+  },
 
-    })
+    });
 };

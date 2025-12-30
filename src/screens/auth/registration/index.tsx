@@ -3,6 +3,7 @@ import { Snackbar } from 'react-native-paper';
 
 import { AsyncError } from '../../../types';
 import AuthLayout from '../auth-layout';
+
 import RegistrationForm from './registration-form';
 
 const RegistrationScreen: React.FC = () => {

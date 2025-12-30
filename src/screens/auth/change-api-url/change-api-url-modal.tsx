@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import Config from 'react-native-config';
 import { Dialog, Portal, Text, useTheme, IconButton, TextInput, Button, Snackbar } from 'react-native-paper';
+import Close from 'react-native-template/assets/icons/close.svg';
 import { ModalProps } from 'react-native-template/src/components/modal/modal';
 import { useLocalStorage } from 'react-native-template/src/utils';
-import Close from 'react-native-template/assets/icons/close.svg';
+
 import { ChangeApiUrlStyles } from './change-api-url.style';
 const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose }) => {
   const localStorage = useLocalStorage();
-  const theme = useTheme()
-  const styles = ChangeApiUrlStyles()
+  const theme = useTheme();
+  const styles = ChangeApiUrlStyles();
 
   const [apiBaseUrl, setApiBaseUrl] = useState(Config.API_BASE_URL as string);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -58,7 +59,7 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
           <TextInput
             value={apiBaseUrl}
             onChangeText={text => {
-              setApiBaseUrl(text)
+              setApiBaseUrl(text);
             }}
             mode="outlined"
             autoCapitalize="none"
@@ -69,7 +70,7 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
         </Dialog.Content>
         <Dialog.Actions style={styles.ButtonSection}>
           <Button
-            mode='outlined'
+            mode="outlined"
             style={styles.button}
             onPress={handleModalClose}
             theme={{
@@ -80,7 +81,7 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
             Cancel
           </Button>
           <Button
-            mode='contained'
+            mode="contained"
             style={styles.button}
             onPress={handleSaveChanges}>
             Save Changes

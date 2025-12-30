@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
+import { Card, Text, useTheme, Button } from 'react-native-paper';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import EditIcon from 'react-native-template/assets/icons/edit.svg';
 import { Task } from 'react-native-template/src/types';
-import { Card, Text, useTheme, Button } from 'react-native-paper';
+
 import TaskDeleteModal from './task-delete-modal';
 import { useTaskStyles } from './task.style';
 
@@ -32,7 +33,7 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
   return (
     <>
       <Card mode="outlined" >
-        <Card.Title title={title} titleStyle={{ paddingVertical:16,color: theme.colors.onPrimaryContainer,fontWeight:'700' }} titleVariant='titleMedium' />
+        <Card.Title title={title} titleStyle={{ paddingVertical:16,color: theme.colors.onPrimaryContainer,fontWeight:'700' }} titleVariant="titleMedium" />
         <Card.Content>
           <Text>{description}</Text>
         </Card.Content>
@@ -52,7 +53,7 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
               Edit
             </Button>
             <Button
-              mode='text'
+              mode="text"
               textColor={theme.colors.error}
               icon={() => (
                 <DeleteIcon width={16} height={16} fill={theme.colors.error} />

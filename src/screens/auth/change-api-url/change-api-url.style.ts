@@ -1,7 +1,7 @@
-import { StyleSheet } from "react-native";
-import { useTheme } from "react-native-paper";
+import { StyleSheet } from 'react-native';
+import { useTheme } from 'react-native-paper';
 export const ChangeApiUrlStyles = () => {
-    const theme = useTheme()
+    const theme = useTheme();
     return StyleSheet.create({
         close: {
             position: 'absolute',
@@ -16,22 +16,22 @@ export const ChangeApiUrlStyles = () => {
         },
         button: {
             borderRadius: 6,
-            paddingHorizontal:12
+            paddingHorizontal:12,
 
         },
         text:{
             color:theme.colors.primary,
             marginBottom:10,
-            fontWeight:'600'
+            fontWeight:'600',
         },
         heading:{
             color:theme.colors.primary,
             textAlign:'center',
-            marginBottom:43
+            marginBottom:43,
         },
         ButtonSection:{
             justifyContent:'center',
-            gap:24
-        }
-    })
-}
+            gap:24,
+        },
+    });
+};

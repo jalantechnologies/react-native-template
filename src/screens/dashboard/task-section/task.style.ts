@@ -1,13 +1,13 @@
-import { StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper'
 import { useMemo } from 'react';
+import { StyleSheet } from 'react-native';
+import { useTheme } from 'react-native-paper';
 export const useTaskStyles = () => {
-  const theme = useTheme ();
+  const theme = useTheme();
 
   return useMemo(()=>
   StyleSheet.create({
     title:{
-     color:theme.colors.onPrimaryContainer
+     color:theme.colors.onPrimaryContainer,
     },
     container: {
       flexDirection: 'row',
@@ -32,16 +32,16 @@ export const useTaskStyles = () => {
     center:{
       alignItems: 'center',
       paddingVertical: 12,
-    }
+    },
 
-  }),[theme])
-   
-  
+  }),[theme]);
+
+
 };
 
 
-export const taskModalStyles = () => {
-  const theme = useTheme ();
+export const useTaskModalStyles = () => {
+  const theme = useTheme();
 
   return useMemo(()=>
   StyleSheet.create({
@@ -55,12 +55,12 @@ export const taskModalStyles = () => {
     },
     button: {
       borderRadius: 6,
-      paddingHorizontal: 6
+      paddingHorizontal: 6,
     },
     heading:{
       color:theme.colors.primary,
       textAlign:'center',
-      paddingBottom:28
+      paddingBottom:28,
     },
     close: {
     position: 'absolute',
@@ -76,20 +76,20 @@ export const taskModalStyles = () => {
   },
   deleteText:{
     marginVertical:12,
-    alignItems:'center'
+    alignItems:'center',
 
   },
   box:{
     backgroundColor: theme.colors.surface,
-    marginTop:6
+    marginTop:6,
   },
   text:{
     color:theme.colors.primary,
-    paddingBottom:8
-  }
+    paddingBottom:8,
+  },
 
-  }),[theme])
-  
-  
-  
-}
+  }),[theme]);
+
+
+
+};

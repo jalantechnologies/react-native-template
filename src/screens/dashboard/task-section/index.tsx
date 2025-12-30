@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, ScrollView, RefreshControl } from 'react-native';
 import { Text, Snackbar } from 'react-native-paper';
-import { useTranslation } from 'react-i18next';
 
 import { TaskOperation } from '../../../constants';
 import { useTaskContext } from '../../../contexts';

@@ -3,6 +3,7 @@ import { Snackbar } from 'react-native-paper';
 
 import { AsyncError } from '../../../types';
 import AuthLayout from '../auth-layout';
+
 import PhoneAuthForm from './phone-auth-form';
 
 const PhoneAuth: React.FC = () => {

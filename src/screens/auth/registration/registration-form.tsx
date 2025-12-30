@@ -1,10 +1,11 @@
 import React from 'react';
-import { View} from 'react-native';
+import { View } from 'react-native';
 import { Text, TextInput, Button, HelperText } from 'react-native-paper';
-import {useRegistrationStyles} from './registration.styles'
+
 import { AsyncError } from '../../../types';
+
 import useRegistrationForm from './registration-form-hook';
-import { background } from 'native-base/lib/typescript/theme/styled-system';
+import { useRegistrationStyles } from './registration.styles';
 
 interface RegistrationFormProps {
   onError: (error: AsyncError) => void;
@@ -17,7 +18,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
     onRegistrationSuccess: onSuccess,
   });
 
-  const styles = useRegistrationStyles()
+  const styles = useRegistrationStyles();
 
   return (
     <View >

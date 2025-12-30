@@ -1,9 +1,10 @@
 import React from 'react';
-import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
+import { View } from 'react-native';
 import { Dialog, Portal, useTheme, IconButton, Text, Button } from 'react-native-paper';
-import { View} from 'react-native';
 import Close from 'react-native-template/assets/icons/close.svg';
-import { useStyles}  from './styles'
+import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
+
+import { useStyles }  from './styles';
 interface AccountDeleteModalProps {
   handleDeleteAccountPress: () => void;
   isDeleteAccountLoading: boolean;
@@ -18,7 +19,7 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
   setIsModalOpen,
 }) => {
   const theme = useTheme();
-  const styles = useStyles()
+  const styles = useStyles();
 
   const handleModalClose = () => {
     setIsModalOpen(false);

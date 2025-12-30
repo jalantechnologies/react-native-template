@@ -1,6 +1,6 @@
+import { t } from 'i18next';
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { t } from 'i18next';
 import {
   Dialog,
   Portal,
@@ -10,13 +10,12 @@ import {
   Button,
   Snackbar,
 } from 'react-native-paper';
-
-import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import Close from 'react-native-template/assets/icons/close.svg';
-
+import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import { useTaskContext } from 'react-native-template/src/contexts';
 import { AsyncError, Task } from 'react-native-template/src/types';
-import { taskModalStyles } from './task.style';
+
+import { useTaskModalStyles } from './task.style';
 
 interface TaskDeleteModalProps {
   handleModalClose: () => void;
@@ -30,7 +29,7 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
   isModalOpen,
 }) => {
   const { deleteTask, isDeleteTaskLoading } = useTaskContext();
-  const styles = taskModalStyles();
+  const styles = useTaskModalStyles();
   const theme = useTheme();
 
   const [snackbar, setSnackbar] = useState<{

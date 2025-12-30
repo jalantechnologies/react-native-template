@@ -112,7 +112,7 @@ const fontConfig = {
 
 export const theme = {
   ...MD3LightTheme,
-  
+
   colors: {
     ...MD3LightTheme.colors,
 
@@ -120,35 +120,35 @@ export const theme = {
     primaryContainer: ICOLORHUES.primary['100'],
     onPrimary: '#FFFFFF',
     onPrimaryContainer: ICOLORHUES.primary['900'],
- 
+
 
     secondary: ICOLORHUES.secondary['500'],
     secondaryContainer: ICOLORHUES.secondary['200'],
     onSecondary: '#FFFFFF',
     onSecondaryContainer: ICOLORHUES.secondary['900'],
 
-    
+
     error: ICOLORHUES.danger['500'],
     errorContainer: ICOLORHUES.danger['100'],
     onError: '#FFFFFF',
     onErrorContainer: ICOLORHUES.danger['900'],
 
-    surface: '#FFFFFF', 
+    surface: '#FFFFFF',
     surfaceVariant: ICOLORHUES.secondary['50'],
     onSurface: ICOLORHUES.secondary['900'],
     onSurfaceVariant: ICOLORHUES.secondary['700'],
     outline: ICOLORHUES.secondary['200'],
-    
+
     success: ICOLORHUES.success['500'],
     successContainer: ICOLORHUES.success['100'],
     onSuccess: '#FFFFFF',
     onSuccessContainer: ICOLORHUES.success['900'],
-    
+
     warning: ICOLORHUES.warning['500'],
     warningContainer: ICOLORHUES.warning['100'],
     onWarning: '#000000',
     onWarningContainer: ICOLORHUES.warning['900'],
-    
+
     info: ICOLORHUES.info['500'],
     infoContainer: ICOLORHUES.info['100'],
     onInfo: '#FFFFFF',

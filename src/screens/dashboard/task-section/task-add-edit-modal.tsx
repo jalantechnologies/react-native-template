@@ -10,12 +10,13 @@ import {
   TextInput,
   HelperText,
 } from 'react-native-paper';
+import Close from 'react-native-template/assets/icons/close.svg';
 
 import { TaskModal, TaskOperation } from '../../../constants';
 import { AsyncError, Nullable, Task } from '../../../types';
-import Close from 'react-native-template/assets/icons/close.svg';
+
 import useTaskAddEditForm from './task-add-edit-form-hook';
-import { taskModalStyles } from './task.style';
+import { useTaskModalStyles } from './task.style';
 
 interface TaskAddEditModalProps {
   isModalOpen: boolean;
@@ -35,7 +36,7 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
   taskOperation,
 }) => {
   const theme = useTheme();
-  const styles = taskModalStyles();
+  const styles = useTaskModalStyles();
   const [submitted, setSubmitted] = React.useState(false);
 
   const handleModalClose = () => {

@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { useTheme, Divider, Snackbar, Button } from 'react-native-paper';
-
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import LogoutIcon from 'react-native-template/assets/icons/logout.svg';
 
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
 import { useAccountContext, useAuthContext } from '../../../contexts';
 import { AsyncError } from '../../../types';
-
 import ProfileLayout from '../profile-layout';
-import { useStyles } from './styles';
+
 import AccountDeleteModal from './account-delete-modal';
 import ProfileAction from './profile-action';
 import ProfileInfoSection from './profile-info-section';
+import { useStyles } from './styles';
 
 const Profile: React.FC<
   ProfileStackScreenProps<'Home'>

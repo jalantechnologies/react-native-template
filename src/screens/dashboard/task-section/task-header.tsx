@@ -1,7 +1,8 @@
 import React from 'react';
-import AddIcon from 'react-native-template/assets/icons/add.svg';
-import { Text, useTheme, Button } from 'react-native-paper';
 import { View } from 'react-native';
+import { Text, useTheme, Button } from 'react-native-paper';
+import AddIcon from 'react-native-template/assets/icons/add.svg';
+
 import { useTaskStyles } from './task.style';
 interface TaskHeaderProps {
   onHeaderButtonPress: () => void;

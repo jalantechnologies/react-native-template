@@ -4,9 +4,10 @@ import { Text, Button } from 'react-native-paper';
 
 import { AuthOptions } from '../../../constants';
 import { AsyncError } from '../../../types';
+
 import useOTPForm from './otp-form-hook';
-import PaperOTPInput from './otp-input';
 import { useOtpFormStyles } from './otp-form.styles';
+import PaperOTPInput from './otp-input';
 interface OTPFormProps {
   countryCode: string;
   isResendEnabled: boolean;
@@ -33,7 +34,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
     countryCode,
     phoneNumber,
   });
-  const styles= useOtpFormStyles()
+  const styles = useOtpFormStyles();
 
   return (
     <View style={styles.container}>
@@ -57,7 +58,7 @@ const OTPForm: React.FC<OTPFormProps> = ({
             style={[
               styles.resend,
               !isResendEnabled && styles.resendDisabled,
-              
+
             ]}
             onPress={isResendEnabled ? handleResendOTP : undefined}
           >

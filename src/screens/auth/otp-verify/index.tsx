@@ -1,11 +1,13 @@
 import React from 'react';
+import { useState } from 'react';
 import { Alert } from 'react-native';
 import { Snackbar } from 'react-native-paper';
+
 import { MainScreenProps } from '../../../../@types/navigation';
 import { AsyncError } from '../../../types';
 import useTimer from '../../../utils/use-timer.hook';
 import AuthLayout from '../auth-layout';
-import { useState } from 'react';
+
 import OTPForm from './otp-form';
 
 const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {

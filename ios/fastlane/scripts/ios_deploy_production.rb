@@ -100,6 +100,7 @@ def ios_deploy_production!(options = {})
       platform: 'ios',
       api_key: api_key
     )
+    
   rescue StandardError => e
     UI.important("⚠️ Could not fetch App Store build number for #{marketing_version}: #{e.message}")
     nil
@@ -108,15 +109,24 @@ def ios_deploy_production!(options = {})
   latest_int = latest_store_build.to_i
   final_build = base_build <= latest_int ? latest_int + 1 : base_build
 
+  #Currently we are using base_build, to differentiate the build numbers of production and testflight app
   UI.message(
-    "📈 Using PRODUCTION build number: #{final_build} " \
+    "📈 Using PRODUCTION build number: #{base_build} " \
     "(latest App Store build for this version: #{latest_store_build || 'none'})"
   )
 
+  # For production, use the following increment logic, comment it out when testing any changes to this script.
   increment_build_number(
     xcodeproj: 'Boilerplate.xcodeproj',
-    build_number: final_build.to_s
+    build_number: base_build.to_s
   )
+
+  # Uncomment this method ans use the hardcoded build numbers to test any changes to production, so it will 
+  # separate actual production build and test production builds
+  # increment_build_number(
+  #   xcodeproj: 'Boilerplate.xcodeproj',
+  #   build_number: 1
+  # )
 
   # ---------------------------------------------------------------------------
   # Release notes (App Store "What's New")
@@ -131,7 +141,11 @@ def ios_deploy_production!(options = {})
   )
   FileUtils.mkdir_p(File.dirname(release_notes_path))
   File.write(release_notes_path, app_store_release_notes)
-  UI.message("📝 Wrote App Store release notes: #{release_notes_path}")
+
+  written_content = File.read(release_notes_path)
+  UI.message("📝 Wrote App Store release notes at: #{release_notes_path}")
+  UI.message("📝 Written content for release notes: #{written_content}")
+
 
 
   # ---------------------------------------------------------------------------
@@ -226,21 +240,27 @@ def ios_deploy_production!(options = {})
   #   - This script will overwrite release_notes.txt for each release.
   #   - All other metadata (description, URLs, screenshots) is managed manually
   #     in App Store Connect.
+  # Ensure the app has at least one released version; Apple ignores “What’s New” for the very first version, 
+  # and Fastlane logs Skipping 'release_notes'... this is the first version of the app.
+
   UI.message('☁️ Uploading IPA to App Store Connect...')
   upload_to_app_store(
-    api_key: api_key,                                   # generic: comes from CI/env
-    app_identifier: app_identifier,                    # per‑project
-    ipa: ipa_path,                                     # built above
-
-    # Use only localized metadata folder; everything else can be edited in ASC UI
+    api_key: api_key,
+    app_identifier: app_identifier,
+    ipa: ipa_path,
     metadata_path: File.join(__dir__, '..', 'metadata'),
-    skip_screenshots: true,                            # screenshots managed in ASC
-    skip_metadata: false,                              # so release_notes.txt is read
-    skip_app_version_update: false,                    # create/update version entry
-    submit_for_review: false,                          # let teams decide how to submit
-    force: true,                                       # no HTML preview
-    precheck_include_in_app_purchases: false
+    skip_screenshots: true,
+    skip_metadata: false,
+    skip_app_version_update: false,
+    submit_for_review: false,
+    force: true,
+    precheck_include_in_app_purchases: false,
+    release_notes: {                         # optional override
+      'default' => app_store_release_notes,  # used for en-US if no specific key
+      'en-US'   => app_store_release_notes
+    }
   )
+
 
 
   UI.success("✅ Production upload complete! Version #{marketing_version} (#{final_build})")

@@ -115,18 +115,18 @@ def ios_deploy_production!(options = {})
     "(latest App Store build for this version: #{latest_store_build || 'none'})"
   )
 
-  # # For production, use the following increment logic, comment it out when testing any changes to this script.
-  # increment_build_number(
-  #   xcodeproj: 'Boilerplate.xcodeproj',
-  #   build_number: base_build.to_s
-  # )
-
-  # Uncomment this method ans use the hardcoded build numbers to test any changes to production, so it will 
-  # separate actual production build and test production builds
+  # For production, use the following increment logic, comment it out when testing any changes to this script.
   increment_build_number(
     xcodeproj: 'Boilerplate.xcodeproj',
-    build_number: 1
+    build_number: base_build.to_s
   )
+
+  # # Uncomment this method ans use the hardcoded build numbers to test any changes to production, so it will 
+  # # separate actual production build and test production builds
+  # increment_build_number(
+  #   xcodeproj: 'Boilerplate.xcodeproj',
+  #   build_number: 1
+  # )
 
   # ---------------------------------------------------------------------------
   # Release notes (App Store "What's New")

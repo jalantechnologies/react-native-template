@@ -2,7 +2,7 @@ name: cd
 on:
   push:
     branches:
-      - vikram/fix/ios-env-and-bundling  
+      - main  
 
 concurrency:
   group: cd

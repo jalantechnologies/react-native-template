@@ -1,5 +1,5 @@
-import { Toast } from 'native-base';
-import React from 'react';
+import React, { useState } from 'react';
+import { Snackbar } from 'react-native-paper';
 
 import { AsyncError } from '../../../types';
 import AuthLayout from '../auth-layout';
@@ -7,22 +7,32 @@ import AuthLayout from '../auth-layout';
 import PhoneAuthForm from './phone-auth-form';
 
 const PhoneAuth: React.FC = () => {
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
   const onSuccess = () => {
-    Toast.show({
-      title: 'OTP sent successfully',
-    });
+    setSnackbarMessage('OTP sent successfully');
+    setSnackbarVisible(true);
   };
 
   const onError = (err: AsyncError) => {
-    Toast.show({
-      title: err.message,
-    });
+    setSnackbarMessage(err.message);
+    setSnackbarVisible(true);
   };
 
   return (
-    <AuthLayout primaryTitle="Better." secondaryTitle="">
-      <PhoneAuthForm onSuccess={onSuccess} onError={onError} />
-    </AuthLayout>
+    <>
+      <AuthLayout primaryTitle="Better." secondaryTitle="">
+        <PhoneAuthForm onSuccess={onSuccess} onError={onError} />
+      </AuthLayout>
+
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+      >
+        {snackbarMessage}
+      </Snackbar>
+    </>
   );
 };
 

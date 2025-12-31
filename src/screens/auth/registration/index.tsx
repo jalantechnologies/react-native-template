@@ -1,5 +1,5 @@
-import { Toast } from 'native-base';
-import React from 'react';
+import React, { useState } from 'react';
+import { Snackbar } from 'react-native-paper';
 
 import { AsyncError } from '../../../types';
 import AuthLayout from '../auth-layout';
@@ -7,21 +7,32 @@ import AuthLayout from '../auth-layout';
 import RegistrationForm from './registration-form';
 
 const RegistrationScreen: React.FC = () => {
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
   const onSuccess = () => {
-    Toast.show({
-      title: 'Account Created Successfully',
-    });
+    setSnackbarMessage('Account Created Successfully');
+    setSnackbarVisible(true);
   };
 
   const onError = (err: AsyncError) => {
-    Toast.show({
-      title: err.message,
-    });
+    setSnackbarMessage(err.message);
+    setSnackbarVisible(true);
   };
+
   return (
-    <AuthLayout primaryTitle="Create" secondaryTitle="Account">
-      <RegistrationForm onError={onError} onSuccess={onSuccess} />
-    </AuthLayout>
+    <>
+      <AuthLayout primaryTitle="Create" secondaryTitle="Account">
+        <RegistrationForm onError={onError} onSuccess={onSuccess} />
+      </AuthLayout>
+
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+      >
+        {snackbarMessage}
+      </Snackbar>
+    </>
   );
 };
 

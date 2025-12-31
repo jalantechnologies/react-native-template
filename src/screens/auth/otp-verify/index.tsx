@@ -1,6 +1,7 @@
-import { Toast } from 'native-base';
 import React from 'react';
+import { useState } from 'react';
 import { Alert } from 'react-native';
+import { Snackbar } from 'react-native-paper';
 
 import { MainScreenProps } from '../../../../@types/navigation';
 import { AsyncError } from '../../../types';
@@ -16,6 +17,7 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   const { startTimer, remainingSecondsStr, isResendEnabled } = useTimer({
     delayInMilliseconds: sendOTPDelayInMilliseconds,
   });
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
 
   const onError = (error: AsyncError) => {
     Alert.alert('Error', error.message);
@@ -26,9 +28,7 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
   };
 
   const onVerifyOTPSuccess = () => {
-    Toast.show({
-      title: 'OTP verified successfully',
-    });
+    setSnackbarVisible(true);
   };
 
   return (
@@ -42,6 +42,17 @@ const OTPVerify: React.FC<MainScreenProps<'OTPVerify'>> = ({ route }) => {
         phoneNumber={phoneNumber}
         remainingSecondsStr={remainingSecondsStr}
       />
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        action={{
+          label: 'OK',
+          onPress: () => setSnackbarVisible(false),
+        }}
+      >
+        OTP verified successfully
+      </Snackbar>
     </AuthLayout>
   );
 };

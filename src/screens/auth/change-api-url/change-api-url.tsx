@@ -1,19 +1,16 @@
-import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Config from 'react-native-config';
+import { useTheme, IconButton } from 'react-native-paper';
 import GearIcon from 'react-native-template/assets/icons/gear.svg';
-import { Button } from 'react-native-template/src/components';
-import { ButtonKind } from 'react-native-template/src/types/button';
 
 import ChangeApiUrlModal from './change-api-url-modal';
 
 const useChangeApiUrlStyles = () => {
-  const theme = useTheme();
 
   return StyleSheet.create({
     buttonContainer: {
-      paddingTop: Number(theme.space['2']),
+      paddingTop: Number(2),
     },
   });
 };
@@ -34,9 +31,17 @@ const ChangeApiUrlButton = () => {
     isNonProdEnv && (
       <>
         <View style={styles.buttonContainer}>
-          <Button onClick={() => setIsChangeAPIUrlModalOpen(true)} kind={ButtonKind.LINK}>
-            <GearIcon width={24} height={24} fill={theme.colors.secondary[100]} />
-          </Button>
+          <IconButton
+            icon={() => (
+              <GearIcon
+                width={24}
+                height={24}
+                fill={theme.colors.secondaryContainer}
+              />
+            )}
+            size={24}
+            onPress={() => setIsChangeAPIUrlModalOpen(true)}
+          />
         </View>
         <ChangeApiUrlModal
           handleModalClose={() => setIsChangeAPIUrlModalOpen(false)}

@@ -15,7 +15,7 @@ export const useRegistrationStyles = () => {
             opacity: 0.7,
             marginBottom:20,
         },
-        Button: {
+        button: {
             borderRadius: 8,
         },
         text: {

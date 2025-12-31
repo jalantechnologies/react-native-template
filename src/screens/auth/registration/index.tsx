@@ -29,6 +29,7 @@ const RegistrationScreen: React.FC = () => {
       <Snackbar
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
       >
         {snackbarMessage}
       </Snackbar>

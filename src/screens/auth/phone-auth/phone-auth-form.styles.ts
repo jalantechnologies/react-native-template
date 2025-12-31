@@ -10,7 +10,7 @@ export const usePhoneAuthFormStyles = () => {
       paddingBottom: 16,
     },
 
-    Login: {
+    login: {
       flex: 1,
       marginBottom: 24,
       gap:6,
@@ -20,7 +20,7 @@ export const usePhoneAuthFormStyles = () => {
       marginBottom: 32,
     },
 
-    Checkbox: {
+    checkBox: {
       flexDirection: 'row',
       alignItems: 'flex-start',
       marginTop: 16,
@@ -47,7 +47,7 @@ export const usePhoneAuthFormStyles = () => {
       marginTop: 4,
     },
 
-    Button: {
+    button: {
       borderRadius: 8,
     },
 
@@ -60,9 +60,7 @@ export const usePhoneAuthFormStyles = () => {
     text:{
       color:theme.colors.primary,
     },
-    checkBox:{
-      flexDirection:'row',
-    },
+
     menu:{
         borderWidth: 1,
         borderColor: theme.colors.outline,

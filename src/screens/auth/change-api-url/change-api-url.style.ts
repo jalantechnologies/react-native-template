@@ -29,7 +29,7 @@ export const ChangeApiUrlStyles = () => {
             textAlign:'center',
             marginBottom:43,
         },
-        ButtonSection:{
+        buttonSection:{
             justifyContent:'center',
             gap:24,
         },

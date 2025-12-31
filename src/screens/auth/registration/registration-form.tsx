@@ -63,7 +63,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
         mode="contained"
         loading={isUpdateAccountLoading}
         onPress={() => formik.handleSubmit()}
-        style={styles.Button}
+        style={styles.button}
       >
         Create Account
       </Button>

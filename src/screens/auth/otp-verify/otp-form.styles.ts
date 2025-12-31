@@ -34,7 +34,7 @@ export const useOtpFormStyles = () => {
         resendDisabled: {
             opacity: 0.5,
         },
-         Button: {
+        button: {
             borderRadius: 8,
         },
     });

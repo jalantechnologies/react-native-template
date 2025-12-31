@@ -89,7 +89,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
 
   return (
     <View style={styles.phoneAuthScreen}>
-      <View style={styles.Login}>
+      <View style={styles.login}>
         <View style={{ paddingBottom: 24 }}>
           <Text variant="headlineMedium">Login</Text>
         </View>
@@ -122,7 +122,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
 
         </View>
 
-        <View style={styles.Checkbox}>
+        <View style={styles.checkBox}>
           <Checkbox
             isChecked={isChecked}
             onChange={setIsChecked}
@@ -155,7 +155,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
         disabled={!isChecked}
         loading={isSendOTPLoading}
         onPress={() => formik.handleSubmit()}
-        style={styles.Button}
+        style={styles.button}
       >
         Send OTP
       </Button>

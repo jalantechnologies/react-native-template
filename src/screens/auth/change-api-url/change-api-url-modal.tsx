@@ -68,7 +68,7 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
           />
 
         </Dialog.Content>
-        <Dialog.Actions style={styles.ButtonSection}>
+        <Dialog.Actions style={styles.buttonSection}>
           <Button
             mode="outlined"
             style={styles.button}
@@ -92,6 +92,7 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
       <Snackbar
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
       >
         API Base URL cannot be empty
       </Snackbar>

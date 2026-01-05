@@ -53,7 +53,8 @@ runs:
         STRIPPED_LENGTH=${#STRIPPED_CONTENT}
 
         if [ "$STRIPPED_LENGTH" -eq 0 ]; then
-          echo "::error::❌ Release notes file is empty or contains only whitespace: $NOTES_FILE"
+          echo "::error::❌ Release notes file is empty or contains only whitespace: $NOTES_FILE"\
+        fi
 
         if [ "$CONTENT_LENGTH" -gt 500 ]; then
           echo "::warning::Release notes exceed 500 characters (${CONTENT_LENGTH}), truncating."

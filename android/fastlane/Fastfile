@@ -1,4 +1,5 @@
-# This file contains the fastlane.tools configuration
+# Fastlane configuration for the Android app.
+# Supports both preview (Firebase App Distribution) and production (Google Play) deployments.
 # You can find the documentation at https://docs.fastlane.tools
 #
 # For a list of all available actions, check out

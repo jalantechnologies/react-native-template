@@ -106,14 +106,6 @@ runs:
         echo "${{ inputs.RELEASE_NOTES }}" >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
 
-    - name: Write Fastlane default changelog
-      shell: bash
-      run: |
-        CHANGELOG_PATH="android/fastlane/metadata/android/en-US/changelogs/default.txt"
-        mkdir -p "$(dirname "$CHANGELOG_PATH")"
-        printf "%s" "${{ inputs.RELEASE_NOTES }}" > "$CHANGELOG_PATH"
-        echo "📝 Updated default changelog at $CHANGELOG_PATH"
-
     - name: Build and deploy android App via fastlane
       shell: bash
       working-directory: android

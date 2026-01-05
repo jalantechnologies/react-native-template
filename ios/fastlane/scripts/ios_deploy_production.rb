@@ -93,8 +93,7 @@ def ios_deploy_production!(options = {})
   base_build = major * 1_000_000 + minor * 1_000 + patch
   final_build = [base_build, 1].max
 
-
-  UI.message("📈 Using PRODUCTION build number: #{final_build} " )
+  UI.message("📈 Using PRODUCTION build number: #{final_build}")
 
   # For production, use the following increment logic, comment it out when testing any changes to this script.
   # increment_build_number(
@@ -127,7 +126,6 @@ def ios_deploy_production!(options = {})
   UI.message("📝 Wrote App Store release notes at: #{release_notes_path}")
   UI.message("📝 Written content for release notes: #{written_content}")
 
-
   # ---------------------------------------------------------------------------
   # Bundle and Verify React Native for iOS (production env)
   # ---------------------------------------------------------------------------
@@ -153,8 +151,6 @@ def ios_deploy_production!(options = {})
   js_bundle_path = File.expand_path('../../main.jsbundle', __dir__)
   UI.message("🔍 Checking for main.jsbundle at: #{js_bundle_path}")
   UI.user_error!('❌ main.jsbundle not found') unless File.exist?(js_bundle_path)
-
-
 
   # ---------------------------------------------------------------------------
   # Build IPA for production
@@ -243,14 +239,13 @@ def ios_deploy_production!(options = {})
   # ---------------------------------------------------------------------------
   # Upload IPA to App Store Connect
   # ---------------------------------------------------------------------------
-  # EXPECTATION (per project):
+    # EXPECTATION (per project):
   #   - Default language folder exists: ios/fastlane/metadata/en-US/
   #   - This script will overwrite release_notes.txt for each release.
   #   - All other metadata (description, URLs, screenshots) is managed manually
   #     in App Store Connect.
   # Ensure the app has at least one released version; Apple ignores “What’s New” for the very first version, 
   # and Fastlane logs Skipping 'release_notes'... this is the first version of the app.
-
   UI.message('☁️ Uploading IPA to App Store Connect...')
   upload_to_app_store(
     api_key: api_key,
@@ -263,22 +258,20 @@ def ios_deploy_production!(options = {})
     submit_for_review: false,
     force: true,
     precheck_include_in_app_purchases: false,
-    release_notes: {                         # optional override
-      'default' => app_store_release_notes,  # used for en-US if no specific key
+    release_notes: {                           # optional override
+      'default' => app_store_release_notes,
       'en-US'   => app_store_release_notes
     }
   )
 
-
-
   UI.success("✅ Production upload complete! Version #{marketing_version} (#{final_build})")
-  ensure
-    if defined?(keychain_name) && keychain_name
-      UI.message('🧹 Cleaning up production keychain...')
-      begin
-        delete_keychain(name: keychain_name)
-      rescue => e
-        UI.message("⚠️ Keychain cleanup failed: #{e.message}")
+ensure
+  if defined?(keychain_name) && keychain_name
+    UI.message('🧹 Cleaning up production keychain...')
+    begin
+      delete_keychain(name: keychain_name)
+    rescue => e
+      UI.message("⚠️ Keychain cleanup failed: #{e.message}")
     end
   end
 end

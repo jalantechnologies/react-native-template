@@ -135,7 +135,6 @@ def ios_deploy_preview!(options = {})
   UI.message("🔍 Checking for main.jsbundle at: #{js_bundle_path}")
   UI.user_error!('❌ main.jsbundle not found') unless File.exist?(js_bundle_path)
 
-
   # ---------------------------------------------------------------------------
   # Build IPA (Boilerplate workspace)
   # ---------------------------------------------------------------------------
@@ -216,10 +215,10 @@ def ios_deploy_preview!(options = {})
     rm -rf temp_payload
     echo "✅ IPA ready"
   BASH
+
   # ---------------------------------------------------------------------------
   # TestFlight changelog
   # ---------------------------------------------------------------------------
-
   UI.message("🚀 RELEASE NOTES FOUND FROM ENVIRONMENT: #{release_notes}")
     
   testflight_changelog = build_testflight_changelog(
@@ -238,7 +237,7 @@ def ios_deploy_preview!(options = {})
   # ---------------------------------------------------------------------------
   # Upload to TestFlight with Changelog Support
   # ---------------------------------------------------------------------------
-  # PREREQUISITES (one‑time per app, done manually in App Store Connect):
+    # PREREQUISITES (one‑time per app, done manually in App Store Connect):
   # 1. In App Store Connect → TestFlight:
   #    - Configure "Beta App Information" (description, feedback email, URLs).
   #    - Configure "Test Information" (contact info, demo account, notes).
@@ -292,11 +291,12 @@ def ios_deploy_preview!(options = {})
     raise e
   ensure
     if defined?(keychain_name) && keychain_name
-    UI.message('🧹 Cleaning up preview keychain...')
-    begin
-      delete_keychain(name: keychain_name)
-    rescue => e
-      UI.message("⚠️ Keychain cleanup failed: #{e.message}")
+      UI.message('🧹 Cleaning up preview keychain...')
+      begin
+        delete_keychain(name: keychain_name)
+      rescue => e
+        UI.message("⚠️ Keychain cleanup failed: #{e.message}")
+      end
     end
   end
 end

@@ -62,19 +62,19 @@ platform :android do
       1
     end
 
-    # Write changelog file for Google Play (default.txt only)
-    release_notes = ENV["RELEASE_NOTES"]
-    if release_notes && !release_notes.strip.empty?
-      changelog_dir = "android/fastlane/metadata/android/en-US/changelogs"
-      FileUtils.mkdir_p(changelog_dir)
+    # # Write changelog file for Google Play (default.txt only)
+    # release_notes = ENV["RELEASE_NOTES"]
+    # if release_notes && !release_notes.strip.empty?
+    #   changelog_dir = "android/fastlane/metadata/android/en-US/changelogs"
+    #   FileUtils.mkdir_p(changelog_dir)
 
-      changelog_path = File.join(changelog_dir, "default.txt")
-      File.write(changelog_path, release_notes)
+    #   changelog_path = File.join(changelog_dir, "default.txt")
+    #   File.write(changelog_path, release_notes)
 
-      UI.message("📝 Wrote default changelog: #{changelog_path}")
-    else
-      UI.message("⚠️ No release notes provided. Skipping changelog creation.")
-    end
+    #   UI.message("📝 Wrote default changelog: #{changelog_path}")
+    # else
+    #   UI.message("⚠️ No release notes provided. Skipping changelog creation.")
+    # end
 
     # 3) Build with injected versionCode + versionName
     gradle(

@@ -12,6 +12,7 @@ def ios_deploy_production!(options = {})
   # Inputs
   # ---------------------------------------------------------------------------
   app_identifier    = options.fetch(:app_identifier)
+  xcodeproj         = options.fetch(:xcodeproj)
   workspace         = options.fetch(:workspace)
   scheme            = options.fetch(:scheme)
   api_key_id        = options.fetch(:api_key_id)
@@ -21,6 +22,7 @@ def ios_deploy_production!(options = {})
   keychain_password = options.fetch(:keychain_password)
   team_id           = options.fetch(:team_id)
   release_notes     = options.fetch(:release_notes)
+  plist_path        = options.fetch(:plist_path)
 
   # ---------------------------------------------------------------------------
   # Version from package.json
@@ -35,8 +37,8 @@ def ios_deploy_production!(options = {})
   # Ensure Xcode bundle id matches profiles
   # ---------------------------------------------------------------------------
   update_app_identifier(
-    xcodeproj: 'Boilerplate.xcodeproj',
-    plist_path: 'Boilerplate/Info.plist',
+    xcodeproj: xcodeproj,
+    plist_path: plist_path,
     app_identifier: app_identifier
   )
 
@@ -81,7 +83,7 @@ def ios_deploy_production!(options = {})
   # ---------------------------------------------------------------------------
   UI.message("🧾 Setting iOS marketing version from package.json: #{marketing_version}")
   increment_version_number(
-    xcodeproj: 'Picwipal.xcodeproj',
+    xcodeproj: xcodeproj,
     version_number: marketing_version
   )
 

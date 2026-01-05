@@ -53,7 +53,8 @@ runs:
         STRIPPED_LENGTH=${#STRIPPED_CONTENT}
 
         if [ "$STRIPPED_LENGTH" -eq 0 ]; then
-          echo "::error::❌ Release notes file is empty or contains only whitespace: $NOTES_FILE"\
+          echo "::error::❌ Release notes file is empty or contains only whitespace: $NOTES_FILE"
+          exit 1
         fi
 
         if [ "$CONTENT_LENGTH" -gt 500 ]; then
@@ -74,4 +75,5 @@ runs:
           echo "$TRIMMED_CONTENT"
           echo 'EOF'
         } >> $GITHUB_OUTPUT
+        
 

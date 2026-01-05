@@ -99,14 +99,14 @@ def ios_deploy_production!(options = {})
 
   # For production, use the following increment logic, comment it out when testing any changes to this script.
   # increment_build_number(
-  #   xcodeproj: 'Picwipal.xcodeproj',
+  #   xcodeproj: xcodeproj,
   #   build_number: final_build.to_s
   # )
 
   # Uncomment this method and use the hardcoded build numbers to test any changes to production, so it will 
   # separate actual production build and test production builds
   increment_build_number(
-    xcodeproj: 'Picwipal.xcodeproj',
+    xcodeproj: xcodeproj,
     build_number: 1
   )
 

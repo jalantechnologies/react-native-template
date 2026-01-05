@@ -2,7 +2,7 @@ name: cd
 on:
   push:
     branches:
-      - vikram/refactor/update-template-from-upstream  
+      - main  
 
 concurrency:
   group: cd

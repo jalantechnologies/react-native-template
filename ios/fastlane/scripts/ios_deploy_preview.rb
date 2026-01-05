@@ -15,6 +15,7 @@ def ios_deploy_preview!(options = {})
   app_identifier    = options.fetch(:app_identifier)
   xcodeproj         = options.fetch(:xcodeproj)
   scheme            = options.fetch(:scheme)
+  workspace         = options.fetch(:workspace)
   api_key_id        = options.fetch(:api_key_id)
   issuer_id         = options.fetch(:issuer_id)
   api_key_b64       = options.fetch(:api_key_b64)
@@ -142,7 +143,7 @@ def ios_deploy_preview!(options = {})
   build_app(
     clean: true,
     scheme: scheme,
-    workspace: './Boilerplate.xcworkspace',
+    workspace: workspace,
     export_method: 'app-store',
     verbose: true,
     xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER=\"#{profile_name}\" PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",

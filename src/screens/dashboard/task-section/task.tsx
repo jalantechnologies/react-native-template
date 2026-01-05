@@ -1,11 +1,12 @@
-import { Text, useTheme } from 'native-base';
+import { Text,} from 'native-base';
+import { Button, useTheme  } from 'react-native-paper';
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import EditIcon from 'react-native-template/assets/icons/edit.svg';
-import { Button, Card } from 'react-native-template/src/components';
+import { Card } from 'react-native-template/src/components';
 import { Task } from 'react-native-template/src/types';
-import { ButtonKind } from 'react-native-template/src/types/button';
+
 
 import TaskDeleteModal from './task-delete-modal';
 import { useTaskStyles } from './task.style';
@@ -42,19 +43,27 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
         <Card.Actions>
           <View style={styles.container}>
             <Button
-              kind={ButtonKind.LINK}
-              startEnhancer={<EditIcon width={16} height={16} fill={theme.colors.primary[500]} />}
-              onClick={() => handleEditTask(task)}
+              mode="text"
+              icon={() => (
+                <EditIcon
+                  width={16}
+                  height={16}
+                  fill={theme.colors.primary}
+                />
+              )}
+              onPress={() => handleEditTask(task)}
             >
               Edit
             </Button>
-
             <Button
-              kind={ButtonKind.LINK}
-              startEnhancer={<DeleteIcon width={16} height={16} fill={theme.colors.danger[600]} />}
-              onClick={handleDeleteTask}
+              mode="text"
+              textColor={theme.colors.error}
+              icon={() => (
+                <DeleteIcon width={16} height={16} fill={theme.colors.error} />
+              )}
+              onPress={handleDeleteTask}
             >
-              <Text color={'danger.600'}> Delete</Text>
+              Delete
             </Button>
           </View>
         </Card.Actions>

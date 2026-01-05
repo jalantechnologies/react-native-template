@@ -1,8 +1,8 @@
-import { Box, Text, useTheme } from 'native-base';
+import { Box, Text} from 'native-base';
+import {Button,useTheme} from 'react-native-paper'
 import React from 'react';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
-import { Button, Modal } from 'react-native-template/src/components';
-import { ButtonKind, ButtonColor } from 'react-native-template/src/types/button';
+import {  Modal } from 'react-native-template/src/components';
 
 interface AccountDeleteModalProps {
   handleDeleteAccountPress: () => void;
@@ -33,22 +33,30 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
       </Modal.Body>
       <Modal.Footer>
         <Box flex={1} mr={2}>
-          <Button onClick={handleModalClose} kind={ButtonKind.OUTLINED}>
-            Cancel
-          </Button>
+            <Button
+              mode="outlined"
+              onPress={handleModalClose}
+              theme={{
+                colors: {
+                  outline: theme.colors.primary,
+                },
+              }}
+            >
+              Cancel
+            </Button>
         </Box>
         <Box flex={1} ml={2}>
-          <Button
-            isLoading={isDeleteAccountLoading}
-            onClick={handleDeleteAccountPress}
-            kind={ButtonKind.CONTAINED}
-            color={ButtonColor.DANGER}
-            startEnhancer={
-              <DeleteIcon width={20} height={20} fill={theme.colors.secondary['50']} />
-            }
-          >
-            Delete
-          </Button>
+            <Button
+              mode="contained"
+              onPress={handleDeleteAccountPress}
+              loading={isDeleteAccountLoading}
+              buttonColor={theme.colors.error}
+              icon={() => (
+                <DeleteIcon width={16} height={16} fill={theme.colors.onError} />
+              )}>
+
+              Delete
+            </Button>
         </Box>
       </Modal.Footer>
     </Modal>

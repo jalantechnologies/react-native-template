@@ -1,12 +1,16 @@
 import { Toast } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import Config from 'react-native-config';
-import { FormControl, Input, Modal } from 'react-native-template/src/components';
+import { Text, useTheme, TextInput, Button} from 'react-native-paper';
+import { Modal } from 'react-native-template/src/components';
 import { ModalProps } from 'react-native-template/src/components/modal/modal';
 import { useLocalStorage } from 'react-native-template/src/utils';
+import { ChangeApiUrlStyles } from './change-api-url.styles';
 
 const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose }) => {
   const localStorage = useLocalStorage();
+  const theme = useTheme();
+  const styles = ChangeApiUrlStyles();
 
   const [apiBaseUrl, setApiBaseUrl] = useState(Config.API_BASE_URL as string);
 
@@ -39,20 +43,38 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
     <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose}>
       <Modal.Header title="Change Base API URL" onClose={handleModalClose} />
       <Modal.Body>
-        <FormControl label="New Base API URL">
-          <Input
+<Text style={styles.text}>New Base API URL</Text>
+          <TextInput
             value={apiBaseUrl}
-            onChangeText={e => {
-              setApiBaseUrl(e);
+            onChangeText={text => {
+              setApiBaseUrl(text);
             }}
+            mode="outlined"
+            autoCapitalize="none"
+            autoCorrect={false}
+            style={{ backgroundColor: theme.colors.surface }}
           />
-        </FormControl>
       </Modal.Body>
-      <Modal.Footer
-        onCancel={handleModalClose}
-        onConfirm={handleSaveChanges}
-        confirmText="Save Changes"
-      />
+      <Modal.Footer>
+        <Button
+            mode="outlined"
+            style={styles.button}
+            onPress={handleModalClose}
+            theme={{
+              colors: {
+                outline: theme.colors.primary,
+              },
+            }}>
+            Cancel
+          </Button>
+          <Button
+            mode="contained"
+            style={styles.button}
+            onPress={handleSaveChanges}>
+            Save Changes
+          </Button>
+
+      </Modal.Footer>
     </Modal>
   );
 };

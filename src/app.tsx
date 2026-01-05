@@ -3,6 +3,7 @@ import { DatadogProvider } from '@datadog/mobile-react-native';
 import { NativeBaseProvider } from 'native-base';
 import React, { useCallback } from 'react';
 import ErrorBoundary from 'react-native-error-boundary';
+import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 
 import appTheme from './app-theme';
@@ -12,13 +13,15 @@ import Logger from './logger/logger';
 import ApplicationNavigator from './navigators/application';
 import './translations';
 import DatadogConfig, { onDataDogSDKInitialized } from './services/datadog';
+import { theme } from './theme';
 
 const App = () => {
   Logger.initializeLoggers();
   const ErrorComponent = useCallback(() => <ErrorFallback />, []);
 
   return (
-    <NativeBaseProvider theme={appTheme}>
+    <PaperProvider theme={theme} >
+      <NativeBaseProvider theme={appTheme}>
       <ErrorBoundary
         onError={(e, stack) => Logger.error(`App Error: ${e} ${stack}`)}
         FallbackComponent={ErrorComponent}
@@ -36,6 +39,7 @@ const App = () => {
         </DatadogProvider>
       </ErrorBoundary>
     </NativeBaseProvider>
+    </PaperProvider>
   );
 };
 

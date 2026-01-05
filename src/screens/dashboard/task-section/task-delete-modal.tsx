@@ -1,11 +1,13 @@
 import { t } from 'i18next';
-import { Box, Text, Toast, useTheme } from 'native-base';
+import { Button, useTheme } from 'react-native-paper';
+import { Box, Text, Toast } from 'native-base';
 import React from 'react';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
-import { Button, Modal } from 'react-native-template/src/components';
+import {  Modal } from 'react-native-template/src/components';
 import { useTaskContext } from 'react-native-template/src/contexts';
 import { AsyncError, Task } from 'react-native-template/src/types';
-import { ButtonKind, ButtonColor } from 'react-native-template/src/types/button';
+
+import { useTaskModalStyles } from './task.style';
 
 interface TaskDeleteModalProps {
   handleModalClose: () => void;
@@ -19,6 +21,7 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
   isModalOpen,
 }) => {
   const theme = useTheme();
+  const styles = useTaskModalStyles();
 
   const { deleteTask, isDeleteTaskLoading } = useTaskContext();
 
@@ -57,20 +60,36 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
       </Modal.Body>
       <Modal.Footer>
         <Box flex={1} mr={2}>
-          <Button onClick={handleModalClose} kind={ButtonKind.OUTLINED}>
-            Cancel
-          </Button>
+            <Button
+              mode="outlined"
+              onPress={handleModalClose}
+              style={styles.button}
+              theme={{
+                colors: {
+                  outline: theme.colors.primary,
+                },
+              }}
+            >
+              Cancel
+            </Button>
         </Box>
         <Box flex={1} ml={2}>
-          <Button
-            isLoading={isDeleteTaskLoading}
-            onClick={handleDeleteTask}
-            kind={ButtonKind.CONTAINED}
-            color={ButtonColor.DANGER}
-            startEnhancer={<DeleteIcon width={16} height={16} fill={theme.colors.secondary[50]} />}
-          >
-            Delete
-          </Button>
+<Button
+              mode="contained"
+              onPress={handleDeleteTask}
+              loading={isDeleteTaskLoading}
+              buttonColor={theme.colors.error}
+              style={styles.button}
+              icon={() => (
+                <DeleteIcon
+                  width={16}
+                  height={16}
+                  fill={theme.colors.onPrimary}
+                />
+              )}
+            >
+              Delete
+            </Button>
         </Box>
       </Modal.Footer>
     </Modal>

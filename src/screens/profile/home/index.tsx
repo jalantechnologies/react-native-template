@@ -1,8 +1,8 @@
-import { Box, Divider, Toast, useTheme, VStack } from 'native-base';
+import { Box, Divider, Toast, VStack } from 'native-base';
 import React, { useState } from 'react';
+import { Button,useTheme } from 'react-native-paper';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import LogoutIcon from 'react-native-template/assets/icons/logout.svg';
-import { Button } from 'react-native-template/src/components';
 
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
 import { useAccountContext, useAuthContext } from '../../../contexts';
@@ -60,7 +60,7 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
         />
         <ProfileAction
           title={'Delete Account'}
-          icon={<DeleteIcon width={20} height={20} fill={theme.colors.primary['500']} />}
+          icon={<DeleteIcon width={20} height={20} fill={theme.colors.primary} />}
           onPress={() => setIsAccountDeleteModalOpen(true)}
         />
       </VStack>
@@ -74,8 +74,16 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
 
       <Box w="50%" alignSelf="center" position="absolute" bottom={4}>
         <Button
-          onClick={logout}
-          startEnhancer={<LogoutIcon width={20} height={20} fill={theme.colors.secondary['50']} />}
+          mode="contained"
+          onPress={logout}
+
+          icon={() => (
+            <LogoutIcon
+              width={20}
+              height={20}
+              fill={theme.colors.onPrimary}
+            />
+          )}
         >
           Logout
         </Button>

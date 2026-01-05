@@ -1,13 +1,19 @@
-import { KeyboardAvoidingView, Toast, VStack } from 'native-base';
 import React from 'react';
-import { Platform } from 'react-native';
-import { Button, FormControl, Input } from 'react-native-template/src/components';
-
+import { View, Platform, KeyboardAvoidingView } from 'react-native';
+import {
+  HelperText,
+  TextInput,
+  useTheme,
+  Text,
+  Button,
+} from 'react-native-paper';
+import { Toast } from 'native-base';
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
 import { AsyncError } from '../../../types';
 import ProfileLayout from '../profile-layout';
 
 import useProfileUpdateForm from './profile-update-form.hook';
+import  { useEditProfileStyles }  from './edit-profile.styles';
 
 const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigation }) => {
   const onProfileUpdateSuccess = () => {
@@ -32,38 +38,72 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
     onProfileUpdateError,
     onProfileUpdateSuccess,
   });
+  const styles = useEditProfileStyles();
+  const theme = useTheme()
 
   return (
     <ProfileLayout>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        flex={1}
+        style={{ flex: 1,justifyContent:'space-between' }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
-        justifyContent={'space-between'}
       >
-        <VStack space={4}>
-          <FormControl error={formik.errors.firstName} label={'First Name'}>
-            <Input
-              onChangeText={formik.handleChange('firstName')}
-              placeholder={'First Name'}
+        <View style={styles.layout}>
+          <View>
+            <Text style={styles.text}>First Name</Text>
+            <TextInput
+              mode="outlined"
+              placeholder="First Name"
               value={formik.values.firstName}
+              onChangeText={formik.handleChange('firstName')}
+              activeOutlineColor={theme.colors.primaryContainer}
+              style={{ backgroundColor:theme.colors.surface }}
+              error={!!formik.errors.firstName}
             />
-          </FormControl>
+            <HelperText type="error" visible={!!formik.errors.firstName}>
+              {formik.errors.firstName}
+            </HelperText>
+          </View>
 
-          <FormControl error={formik.errors.lastName} label={'Last Name'}>
-            <Input
-              onChangeText={formik.handleChange('lastName')}
-              placeholder={'Last Name'}
+          <View>
+            <Text style={styles.text}>Last Name</Text>
+            <TextInput
+              mode="outlined"
+              placeholder="Last Name"
               value={formik.values.lastName}
+              onChangeText={formik.handleChange('lastName')}
+              activeOutlineColor={theme.colors.primaryContainer}
+              style={{ backgroundColor: theme.colors.surface }}
+              error={!!formik.errors.lastName}
             />
-          </FormControl>
+            <HelperText type="error" visible={!!formik.errors.lastName}>
+              {formik.errors.lastName}
+            </HelperText>
+          </View>
 
-          <FormControl label={'Phone Number'}>
-            <Input value={formik.values.phoneNumber} editable={false} disabled={true} />
-          </FormControl>
-        </VStack>
+          <View>
+            <Text style={styles.text}>Phone Number</Text>
+            <TextInput
+              mode="outlined"
+              value={formik.values.phoneNumber}
+              editable={false}
+              disabled
+              style={{ backgroundColor: theme.colors.surfaceVariant }}
+            />
+            <HelperText
+              type="error"
+              visible={!!formik.errors.phoneNumber}
+            >
+              {formik.errors.phoneNumber}
+            </HelperText>
+          </View>
+        </View>
 
-        <Button onClick={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
+        <Button
+          mode="contained"
+          onPress={() => formik.handleSubmit()}
+          loading={isUpdateAccountLoading}
+        >
           Save Changes
         </Button>
       </KeyboardAvoidingView>

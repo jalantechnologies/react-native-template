@@ -1,4 +1,5 @@
-# This file contains the fastlane.tools configuration
+# Fastlane configuration for the Android app.
+# Supports both preview (Firebase App Distribution) and production (Google Play) deployments.
 # You can find the documentation at https://docs.fastlane.tools
 #
 # For a list of all available actions, check out
@@ -59,20 +60,6 @@ platform :android do
     else
       UI.message("ℹ️ No existing version codes found on Play Console. Starting at 1.")
       1
-    end
-
-    # Write changelog file for Google Play (default.txt only)
-    release_notes = ENV["RELEASE_NOTES"]
-    if release_notes && !release_notes.strip.empty?
-      changelog_dir = "android/fastlane/metadata/android/en-US/changelogs"
-      FileUtils.mkdir_p(changelog_dir)
-
-      changelog_path = File.join(changelog_dir, "default.txt")
-      File.write(changelog_path, release_notes)
-
-      UI.message("📝 Wrote default changelog: #{changelog_path}")
-    else
-      UI.message("⚠️ No release notes provided. Skipping changelog creation.")
     end
 
     # 3) Build with injected versionCode + versionName

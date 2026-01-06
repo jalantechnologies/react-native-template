@@ -18,7 +18,7 @@ def build_testflight_changelog(raw_notes, pr_number:, build_number:)
   notes = normalize_release_notes(raw_notes)
   return "PR ##{pr_number} (Build #{build_number}) - Automated preview" unless notes
 
-  return notes if notes.match?(/what to test/i)
+  return notes if notes.match?(/^\s*what(?:'s)?\s+new\b/i) && notes.match?(/^\s*what\s+to\s+test\b/i)
 
   <<~CHANGELOG.strip
     What's New

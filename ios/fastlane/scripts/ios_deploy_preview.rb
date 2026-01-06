@@ -15,6 +15,7 @@ def ios_deploy_preview!(options = {})
   app_identifier    = options.fetch(:app_identifier)
   xcodeproj         = options.fetch(:xcodeproj)
   scheme            = options.fetch(:scheme)
+  workspace         = options.fetch(:workspace)
   api_key_id        = options.fetch(:api_key_id)
   issuer_id         = options.fetch(:issuer_id)
   api_key_b64       = options.fetch(:api_key_b64)
@@ -135,7 +136,6 @@ def ios_deploy_preview!(options = {})
   UI.message("🔍 Checking for main.jsbundle at: #{js_bundle_path}")
   UI.user_error!('❌ main.jsbundle not found') unless File.exist?(js_bundle_path)
 
-
   # ---------------------------------------------------------------------------
   # Build IPA (Boilerplate workspace)
   # ---------------------------------------------------------------------------
@@ -143,7 +143,7 @@ def ios_deploy_preview!(options = {})
   build_app(
     clean: true,
     scheme: scheme,
-    workspace: './Boilerplate.xcworkspace',
+    workspace: workspace,
     export_method: 'app-store',
     verbose: true,
     xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER=\"#{profile_name}\" PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
@@ -216,10 +216,10 @@ def ios_deploy_preview!(options = {})
     rm -rf temp_payload
     echo "✅ IPA ready"
   BASH
+
   # ---------------------------------------------------------------------------
   # TestFlight changelog
   # ---------------------------------------------------------------------------
-
   UI.message("🚀 RELEASE NOTES FOUND FROM ENVIRONMENT: #{release_notes}")
     
   testflight_changelog = build_testflight_changelog(
@@ -238,7 +238,7 @@ def ios_deploy_preview!(options = {})
   # ---------------------------------------------------------------------------
   # Upload to TestFlight with Changelog Support
   # ---------------------------------------------------------------------------
-  # PREREQUISITES (one‑time per app, done manually in App Store Connect):
+    # PREREQUISITES (one‑time per app, done manually in App Store Connect):
   # 1. In App Store Connect → TestFlight:
   #    - Configure "Beta App Information" (description, feedback email, URLs).
   #    - Configure "Test Information" (contact info, demo account, notes).
@@ -267,9 +267,9 @@ def ios_deploy_preview!(options = {})
 
       # Distribution
       skip_waiting_for_build_processing: false,  # wait so changelog can be attached
-      distribute_external: true,                 # send to external testers
+      distribute_external: true,                 # send to external testers, project specific
       groups: ["External Testers"],    # <-- project-specific, see comment
-      notify_external_testers: true,             # send email/notification
+      notify_external_testers: true,             # send email/notification, project specific
     )
     UI.success("✅ TestFlight upload complete! Build: #{next_build}")
   rescue => e
@@ -291,11 +291,13 @@ def ios_deploy_preview!(options = {})
 
     raise e
   ensure
-    UI.message('🧹 Cleaning up keychain...')
-    begin
-      delete_keychain(name: keychain_name)
-    rescue => e
-      UI.message("⚠️ Keychain cleanup failed: #{e.message}")
+    if defined?(keychain_name) && keychain_name
+      UI.message('🧹 Cleaning up preview keychain...')
+      begin
+        delete_keychain(name: keychain_name)
+      rescue => e
+        UI.message("⚠️ Keychain cleanup failed: #{e.message}")
+      end
     end
   end
 end

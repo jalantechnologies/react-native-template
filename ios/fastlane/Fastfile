@@ -28,6 +28,7 @@ platform :ios do
       app_identifier: ENV["IOS_APP_IDENTIFIER"],
       xcodeproj: "Boilerplate.xcodeproj",
       scheme: "Boilerplate",
+      workspace: "Boilerplate.xcworkspace",
       api_key_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ID'],
       issuer_id: ENV['IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
       api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64'],
@@ -60,6 +61,8 @@ platform :ios do
 
     ios_deploy_production!(
       app_identifier: ENV["IOS_APP_IDENTIFIER"],
+      xcodeproj: "Boilerplate.xcodeproj",
+      plist_path: 'Boilerplate/Info.plist',
       workspace: "Boilerplate.xcworkspace",
       scheme: "Boilerplate",
       api_key_id: ENV["IOS_APP_STORE_CONNECT_API_KEY_ID"],

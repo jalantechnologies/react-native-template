@@ -105,7 +105,7 @@ runs:
         echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
         echo "${{ inputs.RELEASE_NOTES }}" >> $GITHUB_ENV
         echo "EOF" >> $GITHUB_ENV
-
+        
     - name: Write Fastlane default changelog
       shell: bash
       run: |

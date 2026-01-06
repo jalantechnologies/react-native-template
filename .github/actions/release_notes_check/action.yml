@@ -49,8 +49,11 @@ runs:
         CONTENT_LENGTH=$(printf "%s" "$CONTENT" | wc -c | tr -d ' ')
         echo "📏 Raw release notes length: $CONTENT_LENGTH"
 
-        if [ "$CONTENT_LENGTH" -eq 0 ]; then
-          echo "::error::❌ Release notes file is empty: $NOTES_FILE"
+        STRIPPED_CONTENT=$(printf "%s" "$CONTENT" | tr -d '[:space:]')
+        STRIPPED_LENGTH=${#STRIPPED_CONTENT}
+
+        if [ "$STRIPPED_LENGTH" -eq 0 ]; then
+          echo "::error::❌ Release notes file is empty or contains only whitespace: $NOTES_FILE"
           exit 1
         fi
 
@@ -67,14 +70,10 @@ runs:
         printf "%s" "$TRIMMED_CONTENT" > "$ANDROID_CHANGELOG_PATH"
         echo "📝 Wrote Android changelog to $ANDROID_CHANGELOG_PATH"
 
-        IOS_CHANGELOG_PATH="ios/fastlane/changelog.txt"
-        mkdir -p "$(dirname "$IOS_CHANGELOG_PATH")"
-        printf "%s" "$TRIMMED_CONTENT" > "$IOS_CHANGELOG_PATH"
-        echo "🍏 Wrote iOS changelog to $IOS_CHANGELOG_PATH"
-
         {
           echo 'release_notes<<EOF'
           echo "$TRIMMED_CONTENT"
           echo 'EOF'
         } >> $GITHUB_OUTPUT
+        
 

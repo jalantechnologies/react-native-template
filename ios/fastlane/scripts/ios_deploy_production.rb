@@ -12,6 +12,7 @@ def ios_deploy_production!(options = {})
   # Inputs
   # ---------------------------------------------------------------------------
   app_identifier    = options.fetch(:app_identifier)
+  xcodeproj         = options.fetch(:xcodeproj)
   workspace         = options.fetch(:workspace)
   scheme            = options.fetch(:scheme)
   api_key_id        = options.fetch(:api_key_id)
@@ -21,6 +22,7 @@ def ios_deploy_production!(options = {})
   keychain_password = options.fetch(:keychain_password)
   team_id           = options.fetch(:team_id)
   release_notes     = options.fetch(:release_notes)
+  plist_path        = options.fetch(:plist_path)
 
   # ---------------------------------------------------------------------------
   # Version from package.json
@@ -35,8 +37,8 @@ def ios_deploy_production!(options = {})
   # Ensure Xcode bundle id matches profiles
   # ---------------------------------------------------------------------------
   update_app_identifier(
-    xcodeproj: 'Boilerplate.xcodeproj',
-    plist_path: 'Boilerplate/Info.plist',
+    xcodeproj: xcodeproj,
+    plist_path: plist_path,
     app_identifier: app_identifier
   )
 
@@ -81,50 +83,30 @@ def ios_deploy_production!(options = {})
   # ---------------------------------------------------------------------------
   UI.message("🧾 Setting iOS marketing version from package.json: #{marketing_version}")
   increment_version_number(
-    xcodeproj: 'Boilerplate.xcodeproj',
+    xcodeproj: xcodeproj,
     version_number: marketing_version
   )
 
   # Encode marketing_version (e.g. "1.0.13" -> "1013")
-  base_build = marketing_version.split('.').map { |p| p.to_i.to_s.rjust(2, '0') }.join.to_i
-  # "1.0.13" -> "010013" -> 10013 (to avoid leading zero)
-  base_build = [base_build, 1].max
+  major, minor, patch = marketing_version.split('.').map(&:to_i)
+  minor ||= 0
+  patch ||= 0
+  # Use positional encoding to avoid collisions between different semantic versions
+  base_build = major * 1_000_000 + minor * 1_000 + patch
+  final_build = [base_build, 1].max
 
-  UI.message("🔢 Base production build from marketing version #{marketing_version}: #{base_build}")
-
-  # Ensure we don't go backwards vs App Store
-  latest_store_build = begin
-    app_store_build_number(
-      app_identifier: app_identifier,
-      version: marketing_version,
-      platform: 'ios',
-      api_key: api_key
-    )
-    
-  rescue StandardError => e
-    UI.important("⚠️ Could not fetch App Store build number for #{marketing_version}: #{e.message}")
-    nil
-  end
-
-  latest_int = latest_store_build.to_i
-  final_build = base_build <= latest_int ? latest_int + 1 : base_build
-
-  #Currently we are using base_build, to differentiate the build numbers of production and testflight app
-  UI.message(
-    "📈 Using PRODUCTION build number: #{base_build} " \
-    "(latest App Store build for this version: #{latest_store_build || 'none'})"
-  )
+  UI.message("📈 Using PRODUCTION build number: #{final_build}")
 
   # For production, use the following increment logic, comment it out when testing any changes to this script.
   increment_build_number(
-    xcodeproj: 'Boilerplate.xcodeproj',
-    build_number: base_build.to_s
+    xcodeproj: xcodeproj,
+    build_number: final_build.to_s
   )
 
-  # # Uncomment this method ans use the hardcoded build numbers to test any changes to production, so it will 
+  # # Uncomment this method and use the hardcoded build numbers to test any changes to production, so it will 
   # # separate actual production build and test production builds
   # increment_build_number(
-  #   xcodeproj: 'Boilerplate.xcodeproj',
+  #   xcodeproj: xcodeproj,
   #   build_number: 1
   # )
 
@@ -145,7 +127,6 @@ def ios_deploy_production!(options = {})
   written_content = File.read(release_notes_path)
   UI.message("📝 Wrote App Store release notes at: #{release_notes_path}")
   UI.message("📝 Written content for release notes: #{written_content}")
-
 
   # ---------------------------------------------------------------------------
   # Bundle and Verify React Native for iOS (production env)
@@ -172,8 +153,6 @@ def ios_deploy_production!(options = {})
   js_bundle_path = File.expand_path('../../main.jsbundle', __dir__)
   UI.message("🔍 Checking for main.jsbundle at: #{js_bundle_path}")
   UI.user_error!('❌ main.jsbundle not found') unless File.exist?(js_bundle_path)
-
-
 
   # ---------------------------------------------------------------------------
   # Build IPA for production
@@ -262,14 +241,13 @@ def ios_deploy_production!(options = {})
   # ---------------------------------------------------------------------------
   # Upload IPA to App Store Connect
   # ---------------------------------------------------------------------------
-  # EXPECTATION (per project):
+    # EXPECTATION (per project):
   #   - Default language folder exists: ios/fastlane/metadata/en-US/
   #   - This script will overwrite release_notes.txt for each release.
   #   - All other metadata (description, URLs, screenshots) is managed manually
   #     in App Store Connect.
   # Ensure the app has at least one released version; Apple ignores “What’s New” for the very first version, 
   # and Fastlane logs Skipping 'release_notes'... this is the first version of the app.
-
   UI.message('☁️ Uploading IPA to App Store Connect...')
   upload_to_app_store(
     api_key: api_key,
@@ -282,20 +260,20 @@ def ios_deploy_production!(options = {})
     submit_for_review: false,
     force: true,
     precheck_include_in_app_purchases: false,
-    release_notes: {                         # optional override
-      'default' => app_store_release_notes,  # used for en-US if no specific key
+    release_notes: {                           # optional override
+      'default' => app_store_release_notes,
       'en-US'   => app_store_release_notes
     }
   )
 
-
-
   UI.success("✅ Production upload complete! Version #{marketing_version} (#{final_build})")
 ensure
-  UI.message('🧹 Cleaning up production keychain...')
-  begin
-    delete_keychain(name: keychain_name)
-  rescue => e
-    UI.message("⚠️ Keychain cleanup failed: #{e.message}")
+  if defined?(keychain_name) && keychain_name
+    UI.message('🧹 Cleaning up production keychain...')
+    begin
+      delete_keychain(name: keychain_name)
+    rescue => e
+      UI.message("⚠️ Keychain cleanup failed: #{e.message}")
+    end
   end
 end

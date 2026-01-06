@@ -62,12 +62,7 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
                   <Button
             mode="outlined"
             style={styles.button}
-            onPress={handleModalClose}
-            theme={{
-              colors: {
-                outline: theme.colors.primary,
-              },
-            }}>
+            onPress={handleModalClose}>
             Cancel
           </Button>
           <Button

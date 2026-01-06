@@ -3,7 +3,7 @@ import { Box, Text, Toast } from 'native-base';
 import React from 'react';
 import { Button, useTheme } from 'react-native-paper';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
-import {  Modal } from 'react-native-template/src/components';
+import { Modal } from 'react-native-template/src/components';
 import { useTaskContext } from 'react-native-template/src/contexts';
 import { AsyncError, Task } from 'react-native-template/src/types';
 
@@ -60,36 +60,34 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
       </Modal.Body>
       <Modal.Footer>
         <Box flex={1} mr={2}>
-            <Button
-              mode="outlined"
-              onPress={handleModalClose}
-              style={styles.button}
-              theme={{
-                colors: {
-                  outline: theme.colors.primary,
-                },
-              }}
-            >
-              Cancel
-            </Button>
+          <Button
+            mode="outlined"
+            onPress={handleModalClose}
+            style={[
+              styles.button,
+              { borderColor: theme.colors.primary },
+            ]}
+          >
+            Cancel
+          </Button>
         </Box>
         <Box flex={1} ml={2}>
-<Button
-              mode="contained"
-              onPress={handleDeleteTask}
-              loading={isDeleteTaskLoading}
-              buttonColor={theme.colors.error}
-              style={styles.button}
-              icon={() => (
-                <DeleteIcon
-                  width={16}
-                  height={16}
-                  fill={theme.colors.onPrimary}
-                />
-              )}
-            >
-              Delete
-            </Button>
+          <Button
+            mode="contained"
+            onPress={handleDeleteTask}
+            loading={isDeleteTaskLoading}
+            buttonColor={theme.colors.error}
+            style={styles.button}
+            icon={() => (
+              <DeleteIcon
+                width={16}
+                height={16}
+                fill={theme.colors.onPrimary}
+              />
+            )}
+          >
+            Delete
+          </Button>
         </Box>
       </Modal.Footer>
     </Modal>

@@ -36,11 +36,7 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
             <Button
               mode="outlined"
               onPress={handleModalClose}
-              theme={{
-                colors: {
-                  outline: theme.colors.primary,
-                },
-              }}
+              style={{ borderColor: theme.colors.primary }}
             >
               Cancel
             </Button>

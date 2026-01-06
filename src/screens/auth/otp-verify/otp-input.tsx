@@ -36,7 +36,7 @@ const PaperOTPInput: React.FC<PaperOTPInputProps> = ({
         }
     };
     const styles = useOtpFormStyles();
-    const theme =useTheme()
+    const theme = useTheme();
 
     return (
     <View style={styles.containerOtp}>

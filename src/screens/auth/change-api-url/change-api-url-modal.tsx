@@ -1,10 +1,11 @@
 import { Toast } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import Config from 'react-native-config';
-import { Text, useTheme, TextInput, Button} from 'react-native-paper';
+import { Text, useTheme, TextInput, Button } from 'react-native-paper';
 import { Modal } from 'react-native-template/src/components';
 import { ModalProps } from 'react-native-template/src/components/modal/modal';
 import { useLocalStorage } from 'react-native-template/src/utils';
+
 import { ChangeApiUrlStyles } from './change-api-url.styles';
 
 const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose }) => {

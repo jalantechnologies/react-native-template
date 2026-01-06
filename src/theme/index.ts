@@ -91,7 +91,7 @@ const fontConfig = {
   headlineSmall:{
     fontSize:20,
     fontWeight:'600' as const,
-    lineHeight:32
+    lineHeight:32,
 
   },
   titleLarge: {

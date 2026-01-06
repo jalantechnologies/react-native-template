@@ -1,7 +1,7 @@
 import { t } from 'i18next';
-import { Button, useTheme } from 'react-native-paper';
 import { Box, Text, Toast } from 'native-base';
 import React from 'react';
+import { Button, useTheme } from 'react-native-paper';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import {  Modal } from 'react-native-template/src/components';
 import { useTaskContext } from 'react-native-template/src/contexts';

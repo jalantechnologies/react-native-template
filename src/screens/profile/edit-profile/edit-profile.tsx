@@ -1,3 +1,4 @@
+import { Toast } from 'native-base';
 import React from 'react';
 import { View, Platform, KeyboardAvoidingView } from 'react-native';
 import {
@@ -7,13 +8,13 @@ import {
   Text,
   Button,
 } from 'react-native-paper';
-import { Toast } from 'native-base';
+
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
 import { AsyncError } from '../../../types';
 import ProfileLayout from '../profile-layout';
 
-import useProfileUpdateForm from './profile-update-form.hook';
 import  { useEditProfileStyles }  from './edit-profile.styles';
+import useProfileUpdateForm from './profile-update-form.hook';
 
 const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigation }) => {
   const onProfileUpdateSuccess = () => {
@@ -39,7 +40,7 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
     onProfileUpdateSuccess,
   });
   const styles = useEditProfileStyles();
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <ProfileLayout>

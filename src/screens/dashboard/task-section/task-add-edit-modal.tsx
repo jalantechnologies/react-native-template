@@ -1,4 +1,6 @@
 import { VStack } from 'native-base';
+import React from 'react';
+import { View } from 'react-native';
 import {
   Text,
   useTheme,
@@ -6,9 +8,8 @@ import {
   TextInput,
   HelperText,
 } from 'react-native-paper';
-import React from 'react';
 import { Modal } from 'react-native-template/src/components';
-import { View } from 'react-native';
+
 import { TaskModal, TaskOperation } from '../../../constants';
 import { AsyncError, Nullable, Task } from '../../../types';
 
@@ -29,13 +30,13 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
   onTaskOperationComplete,
   onTaskOperationFailure,
   setModalOpen,
-  task =null,
+  task = null,
   taskOperation,
 }) => {
   const theme = useTheme();
   const styles = useTaskModalStyles();
   const [submitted, setSubmitted] = React.useState(false);
-  
+
   const handleModalClose = () => {
     setSubmitted(false);
     setModalOpen(false);

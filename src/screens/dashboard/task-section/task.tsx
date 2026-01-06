@@ -1,7 +1,7 @@
-import { Text,} from 'native-base';
-import { Button, useTheme  } from 'react-native-paper';
+import { Text } from 'native-base';
 import React, { useState } from 'react';
 import { View } from 'react-native';
+import { Button, useTheme  } from 'react-native-paper';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import EditIcon from 'react-native-template/assets/icons/edit.svg';
 import { Card } from 'react-native-template/src/components';

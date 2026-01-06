@@ -1,6 +1,6 @@
 import { Box, Heading, Text } from 'native-base';
-import { IconButton,useTheme } from 'react-native-paper';
 import React from 'react';
+import { IconButton,useTheme } from 'react-native-paper';
 import EditIcon from 'react-native-template/assets/icons/edit.svg';
 import { Avatar } from 'react-native-template/src/components';
 

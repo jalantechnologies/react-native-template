@@ -1,23 +1,25 @@
 import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
+
+import type { AppTheme } from '@/theme';
 export const useRegistrationStyles = () => {
-    const theme = useTheme();
+    const theme = useTheme<AppTheme>();
     return StyleSheet.create({
         container: {
-            gap: 16,
+            gap: theme.spacing.lg,
         },
         header: {
-            marginVertical: 10,
+            marginVertical: theme.spacing.md,
 
         },
         subtitle: {
-            marginTop: 14,
+            marginTop: theme.spacing.md,
             opacity: 0.7,
-            marginBottom:20,
+            marginBottom:theme.spacing.xl,
         },
         text: {
             color: theme.colors.primary,
-            paddingBottom: 8,
+            paddingBottom: theme.spacing.md,
             fontWeight:'600',
         },
         textBox:{

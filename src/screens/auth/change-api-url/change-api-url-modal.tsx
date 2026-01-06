@@ -1,5 +1,6 @@
 import { Toast } from 'native-base';
 import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
 import Config from 'react-native-config';
 import { Text, useTheme, TextInput, Button } from 'react-native-paper';
 import { Modal } from 'react-native-template/src/components';
@@ -44,7 +45,7 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
     <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose}>
       <Modal.Header title="Change Base API URL" onClose={handleModalClose} />
       <Modal.Body>
-<Text style={styles.text}>New Base API URL</Text>
+      <Text style={styles.text}>New Base API URL</Text>
           <TextInput
             value={apiBaseUrl}
             onChangeText={text => {
@@ -57,7 +58,8 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
           />
       </Modal.Body>
       <Modal.Footer>
-        <Button
+        <View style={styles.ButtonSpacing}>
+                  <Button
             mode="outlined"
             style={styles.button}
             onPress={handleModalClose}
@@ -74,6 +76,9 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
             onPress={handleSaveChanges}>
             Save Changes
           </Button>
+
+        </View>
+
 
       </Modal.Footer>
     </Modal>

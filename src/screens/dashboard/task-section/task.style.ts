@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
+
+import type { AppTheme } from '@/theme';
 export const useTaskStyles = () => {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
 
   return useMemo(()=>
   StyleSheet.create({
@@ -11,24 +13,24 @@ export const useTaskStyles = () => {
     },
     container: {
       flexDirection: 'row',
-      gap: 16,
-      marginTop: 36,
+      gap: theme.spacing.lg,
+      marginTop: theme.spacing['4xl'],
     },
     header: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingHorizontal: 16,
-      paddingVertical: 8,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
     },
     taskScreen:{
       flex: 1,
-      padding: 8,
+      padding: theme.spacing.sm,
       backgroundColor: theme.colors.surface,
     },
     center:{
       alignItems: 'center',
-      paddingVertical: 12,
+      paddingVertical: theme.spacing.md,
     },
 
   }),[theme]);
@@ -37,16 +39,16 @@ export const useTaskStyles = () => {
 };
 
 export const useTaskModalStyles = () => {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
 
   return useMemo(()=>
   StyleSheet.create({
     button: {
-      paddingHorizontal: 6,
+      paddingHorizontal: theme.spacing.sm,
     },
     text:{
     color:theme.colors.primary,
-    paddingBottom:8,
+    paddingBottom:theme.spacing.sm,
     },
 
   }),[theme]);

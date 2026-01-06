@@ -89,7 +89,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
   return (
     <View style={styles.phoneAuthScreen}>
       <View style={styles.Login}>
-        <View style={{ paddingBottom: 24 }}>
+        <View style={styles.titleSpacing}>
           <Text variant="headlineMedium">Login</Text>
         </View>
         <View>
@@ -133,7 +133,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
             mt={0.5}
           />
 
-          <View style={{ marginLeft:12 }}>
+          <View style={styles.checkBoxGap}>
             <Text >By continuing, you agree to our </Text>
             <Text
               style={{ color: theme.colors.primary, textDecorationLine: 'underline' }}

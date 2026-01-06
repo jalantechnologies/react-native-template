@@ -1,33 +1,34 @@
 import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
+import type { AppTheme } from '@/theme';
 export const usePhoneAuthFormStyles = () => {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
 
   return StyleSheet.create({
     phoneAuthScreen: {
       flex: 1,
-      paddingBottom: 16,
+      paddingBottom:theme.spacing.lg,
     },
 
     Login: {
       flex: 1,
-      marginBottom: 24,
-      gap:6,
+      marginBottom:theme.spacing['2xl'],
+      gap:theme.spacing.sm,
     },
 
     loginSpacing: {
-      marginBottom: 32,
+      marginBottom: theme.spacing['3xl'],
     },
 
     Checkbox: {
       flexDirection: 'row',
       alignItems: 'flex-start',
-      marginTop: 16,
+      marginTop: theme.spacing.lg,
     },
 
     checkboxTextSpacing: {
-      marginLeft: 12,
+      marginLeft: theme.spacing.md,
     },
 
     inputBox: {
@@ -37,20 +38,20 @@ export const usePhoneAuthFormStyles = () => {
 
     errorStyle: {
       borderColor: theme.colors.error,
-      borderWidth: 1,
+      borderWidth: theme.spacing.xs,
     },
 
     errorText: {
       color: theme.colors.error,
       fontSize: 14,
-      marginTop: 4,
+      marginTop: theme.spacing.xs,
     },
 
     row: {
       gap:9,
       width:'100%',
       flexDirection:'row',
-      marginTop:8,
+      marginTop:theme.spacing.md,
     },
     text:{
       color:theme.colors.primary,
@@ -61,10 +62,16 @@ export const usePhoneAuthFormStyles = () => {
     menu:{
         borderWidth: 1,
         borderColor: theme.colors.outline,
-        paddingHorizontal: 8,
+        paddingHorizontal: theme.spacing.sm,
         justifyContent: 'center',
-        borderRadius: 4,
-        minHeight: 56,
+        borderRadius: theme.spacing.xs,
+        minHeight:56,
+    },
+    checkBoxGap:{
+      marginLeft:theme.spacing.md,
+    },
+    titleSpacing:{
+      paddingBottom:theme.spacing['2xl'],
     },
   });
 };

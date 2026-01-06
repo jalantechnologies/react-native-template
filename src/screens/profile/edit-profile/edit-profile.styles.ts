@@ -1,17 +1,18 @@
 import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
+import type { AppTheme } from '@/theme';
 
 export const useEditProfileStyles = () => {
-    const theme = useTheme();
+    const theme = useTheme<AppTheme>();
 
     return StyleSheet.create({
         layout: {
-            gap: 4,
+            gap: theme.spacing.xs,
         },
         text: {
             color: theme.colors.primary,
-            marginBottom: 8,
+            marginBottom: theme.spacing.sm,
             fontWeight: '600',
         },
     });

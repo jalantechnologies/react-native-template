@@ -90,6 +90,7 @@ jobs:
           script: |
             const marker = '<!-- preview-build-links -->';
             const prNumber = context.issue.number;
+            const buildSha = context.sha;
 
             const projectId = '${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}';
             const appPackage = '${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}';
@@ -110,9 +111,12 @@ jobs:
             const existing = comments.find((c) => c.body && c.body.includes(marker));
             const existingLines = existing?.body?.split('\n') ?? [];
             const existingIosLine = existingLines.find((line) => line.includes('iOS (TestFlight)'));
+            const iosHasCurrentSha = existingIosLine?.includes(`ios-sha:${buildSha}`);
 
-            const androidLine = `- ✅ Android (Firebase): ${firebaseUrl}`;
-            const iosLine = existingIosLine ?? `- ⏳ iOS (TestFlight): ${testflightUrl}`;
+            const androidLine = `- ✅ Android (Firebase): ${firebaseUrl} <!-- android-sha:${buildSha} -->`;
+            const iosLine = iosHasCurrentSha
+              ? existingIosLine
+              : `- ⏳ iOS (TestFlight): pending upload <!-- ios-sha:${buildSha} -->`;
 
             const body = `${marker}
             ✅ Preview build links for PR #${prNumber}
@@ -180,6 +184,7 @@ jobs:
           script: |
             const marker = '<!-- preview-build-links -->';
             const prNumber = context.issue.number;
+            const buildSha = context.sha;
 
             const projectId = '${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}';
             const appPackage = '${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}';
@@ -199,9 +204,12 @@ jobs:
             const existing = comments.find((c) => c.body && c.body.includes(marker));
             const existingLines = existing?.body?.split('\n') ?? [];
             const existingAndroidLine = existingLines.find((line) => line.includes('Android (Firebase)'));
+            const androidHasCurrentSha = existingAndroidLine?.includes(`android-sha:${buildSha}`);
 
-            const androidLine = existingAndroidLine ?? `- ⏳ Android (Firebase): ${firebaseUrl}`;
-            const iosLine = `- ✅ iOS (TestFlight): ${testflightUrl}`;
+            const androidLine = androidHasCurrentSha
+              ? existingAndroidLine
+              : `- ⏳ Android (Firebase): pending upload <!-- android-sha:${buildSha} -->`;
+            const iosLine = `- ✅ iOS (TestFlight): ${testflightUrl} <!-- ios-sha:${buildSha} -->`;
 
             const body = `${marker}
             ✅ Preview build links for PR #${prNumber}

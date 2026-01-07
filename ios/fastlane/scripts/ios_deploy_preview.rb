@@ -253,7 +253,6 @@ def ios_deploy_preview!(options = {})
 
   # IMPORTANT:
   # - Assumes Beta App Info + Test Info already configured in App Store Connect.
-  # - Assumes external group "QA" exists and has testers.
   begin
     UI.message('☁️ Uploading to TestFlight...')
     upload_to_testflight(

@@ -1,7 +1,8 @@
-// import { Checkbox } from 'native-base';
+import { Checkbox } from 'native-base';
 import React, { useState } from 'react';
 import { Linking, View, Pressable, ScrollView } from 'react-native';
-import { Button, useTheme, TextInput, HelperText, Menu, Text, Checkbox } from 'react-native-paper';
+import { Button, useTheme, TextInput, HelperText, Menu, Text } from 'react-native-paper';
+import CheckIcon from 'react-native-template/assets/icons/check.svg';
 
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError, PhoneNumber } from '../../../types';
@@ -122,10 +123,13 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
 
         <View style={styles.Checkbox}>
           <Checkbox
-            status={isChecked ? 'checked' : 'unchecked'}
-            onPress={() => setIsChecked(!isChecked)}
-            color={theme.colors.primary}
-            uncheckedColor={theme.colors.outline}
+            isChecked={isChecked}
+            onChange={setIsChecked}
+            accessibilityLabel="Agree to privacy policy"
+            value="agreePrivacyPolicy"
+            icon={<CheckIcon width={12} height={12} color={theme.colors.primary} />}
+            aria-label="Privacy Policy Checkbox"
+            mt={0.5}
           />
 
           <View style={styles.checkBoxGap}>

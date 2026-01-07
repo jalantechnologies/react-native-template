@@ -267,9 +267,6 @@ def ios_deploy_preview!(options = {})
 
       # Distribution
       skip_waiting_for_build_processing: false,  # wait so changelog can be attached
-      distribute_external: true,                 # send to external testers, project specific
-      groups: ["External Testers"],    # <-- project-specific, see comment
-      notify_external_testers: true,             # send email/notification, project specific
     )
     UI.success("✅ TestFlight upload complete! Build: #{next_build}")
   rescue => e

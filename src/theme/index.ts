@@ -88,12 +88,6 @@ const fontConfig = {
     fontWeight: '600' as const,
     lineHeight: 32,
   },
-  headlineSmall:{
-    fontSize:20,
-    fontWeight:'600' as const,
-    lineHeight:32,
-
-  },
   titleLarge: {
     fontSize: 20,
     fontWeight: '600' as const ,
@@ -101,7 +95,12 @@ const fontConfig = {
   },
   titleMedium: {
     fontSize: 18,
-    fontWeight: '500' as const ,
+    fontWeight: '600' as const ,
+    lineHeight: 22,
+  },
+  titleSmall: {
+    fontSize: 16,
+    fontWeight: '600' as const ,
     lineHeight: 22,
   },
   bodyLarge: {
@@ -135,8 +134,14 @@ export const theme = {
   '5xl': 48,
   '6xl': 64,
   '7xl': 68,
-},
+  },
 
+  iconSizes: {
+  sm: 16,
+  md: 20,
+  lg: 32,
+  xl: 40,
+  },
 
   colors: {
     ...MD3LightTheme.colors,

@@ -45,13 +45,13 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
   return (
     <ProfileLayout>
       <KeyboardAvoidingView
-        style={{ flex: 1,justifyContent:'space-between' }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.profileView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
       >
         <View style={styles.layout}>
           <View>
-            <Text style={styles.text}>First Name</Text>
+            <Text style={styles.text} variant="titleSmall">First Name</Text>
             <TextInput
               mode="outlined"
               placeholder="First Name"
@@ -67,7 +67,7 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
           </View>
 
           <View>
-            <Text style={styles.text}>Last Name</Text>
+            <Text style={styles.text} variant="titleSmall">Last Name</Text>
             <TextInput
               mode="outlined"
               placeholder="Last Name"
@@ -83,7 +83,7 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
           </View>
 
           <View>
-            <Text style={styles.text}>Phone Number</Text>
+            <Text style={styles.text} variant="titleSmall">Phone Number</Text>
             <TextInput
               mode="outlined"
               value={formik.values.phoneNumber}

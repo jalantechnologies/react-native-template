@@ -11,6 +11,8 @@ import { Task } from 'react-native-template/src/types';
 import TaskDeleteModal from './task-delete-modal';
 import { useTaskStyles } from './task.style';
 
+import type { AppTheme } from '@/theme';
+
 interface TaskProps {
   task: Task;
   handleEditTask: (task: Task) => void;
@@ -19,7 +21,7 @@ interface TaskProps {
 const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
   const { description, title } = task;
 
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
 
   const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
 
@@ -46,8 +48,8 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
               mode="text"
               icon={() => (
                 <EditIcon
-                  width={16}
-                  height={16}
+                  width={theme.iconSizes.sm}
+                  height={theme.iconSizes.sm}
                   fill={theme.colors.primary}
                 />
               )}
@@ -59,7 +61,7 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
               mode="text"
               textColor={theme.colors.error}
               icon={() => (
-                <DeleteIcon width={16} height={16} fill={theme.colors.error} />
+                <DeleteIcon width={theme.iconSizes.sm} height={theme.iconSizes.sm} fill={theme.colors.error} />
               )}
               onPress={handleDeleteTask}
             >

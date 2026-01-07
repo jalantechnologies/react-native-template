@@ -30,7 +30,7 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
   onTaskOperationComplete,
   onTaskOperationFailure,
   setModalOpen,
-  task = null,
+  task,
   taskOperation,
 }) => {
   const theme = useTheme();
@@ -112,7 +112,6 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
               placeholder="Description"
               value={formik.values.description}
               onChangeText={formik.handleChange('description')}
-              multiline
               style={{ backgroundColor: theme.colors.surface }}
               error={submitted && !!formik.errors.description}
             />

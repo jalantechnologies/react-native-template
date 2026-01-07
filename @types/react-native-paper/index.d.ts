@@ -14,6 +14,12 @@ declare module 'react-native-paper' {
       '5xl': number;
       '6xl': number;
     };
+
+    iconSize: {
+      sm: number;
+      md: number;
+      lg: number;
+    };
   }
 
   interface MD3Colors {

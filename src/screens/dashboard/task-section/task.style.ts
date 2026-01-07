@@ -46,6 +46,10 @@ export const useTaskModalStyles = () => {
     button: {
       paddingHorizontal: theme.spacing.sm,
     },
+    deleteButton: {
+      paddingHorizontal: theme.spacing.sm,
+      borderColor: theme.colors.primary,
+    },
     text:{
     color:theme.colors.primary,
     paddingBottom:theme.spacing.sm,

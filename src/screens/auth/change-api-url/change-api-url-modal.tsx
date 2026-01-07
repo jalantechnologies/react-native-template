@@ -2,17 +2,16 @@ import { Toast } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import Config from 'react-native-config';
-import { Text, useTheme, TextInput, Button } from 'react-native-paper';
+import { Text, TextInput, Button } from 'react-native-paper';
 import { Modal } from 'react-native-template/src/components';
 import { ModalProps } from 'react-native-template/src/components/modal/modal';
 import { useLocalStorage } from 'react-native-template/src/utils';
 
-import { ChangeApiUrlStyles } from './change-api-url.styles';
+import { useChangeApiUrlStyles } from './change-api-url.styles';
 
 const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose }) => {
   const localStorage = useLocalStorage();
-  const theme = useTheme();
-  const styles = ChangeApiUrlStyles();
+  const styles = useChangeApiUrlStyles();
 
   const [apiBaseUrl, setApiBaseUrl] = useState(Config.API_BASE_URL as string);
 
@@ -45,7 +44,7 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
     <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose}>
       <Modal.Header title="Change Base API URL" onClose={handleModalClose} />
       <Modal.Body>
-      <Text style={styles.text}>New Base API URL</Text>
+      <Text style={styles.text} variant="titleSmall">New Base API URL</Text>
           <TextInput
             value={apiBaseUrl}
             onChangeText={text => {
@@ -54,12 +53,12 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
             mode="outlined"
             autoCapitalize="none"
             autoCorrect={false}
-            style={{ backgroundColor: theme.colors.surface }}
+            style={styles.inputTextBox}
           />
       </Modal.Body>
       <Modal.Footer>
         <View style={styles.ButtonSpacing}>
-                  <Button
+          <Button
             mode="outlined"
             style={styles.button}
             onPress={handleModalClose}>

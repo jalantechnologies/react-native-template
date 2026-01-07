@@ -13,8 +13,10 @@ import AccountDeleteModal from './account-delete-modal';
 import ProfileAction from './profile-action';
 import ProfileInfoSection from './profile-info-section';
 
+import type { AppTheme } from '@/theme';
+
 const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
 
   const [isAccountDeleteModalOpen, setIsAccountDeleteModalOpen] = useState(false);
 
@@ -60,7 +62,7 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
         />
         <ProfileAction
           title={'Delete Account'}
-          icon={<DeleteIcon width={20} height={20} fill={theme.colors.primary} />}
+          icon={<DeleteIcon width={theme.iconSizes.md} height={theme.iconSizes.md} fill={theme.colors.primary} />}
           onPress={() => setIsAccountDeleteModalOpen(true)}
         />
       </VStack>
@@ -79,8 +81,8 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
 
           icon={() => (
             <LogoutIcon
-              width={20}
-              height={20}
+              width={theme.iconSizes.md}
+              height={theme.iconSizes.md}
               fill={theme.colors.onPrimary}
             />
           )}

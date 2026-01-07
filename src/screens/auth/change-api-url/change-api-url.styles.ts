@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 import type { AppTheme } from '@/theme';
-export const ChangeApiUrlStyles = () => {
+export const useChangeApiUrlStyles = () => {
     const theme = useTheme<AppTheme>();
     return StyleSheet.create({
         button: {
@@ -12,12 +12,17 @@ export const ChangeApiUrlStyles = () => {
         },
         text: {
             color: theme.colors.primary,
-            marginBottom: 10,
-            fontWeight: '600',
+            marginBottom: theme.spacing.md,
         },
         ButtonSpacing: {
             flexDirection: 'row',
             gap: theme.spacing.md,
+        },
+        buttonContainer: {
+            paddingTop: theme.spacing.xs,
+        },
+        inputTextBox: {
+            backgroundColor: theme.colors.surface,
         },
 
     });

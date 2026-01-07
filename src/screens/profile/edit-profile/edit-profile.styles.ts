@@ -13,7 +13,11 @@ export const useEditProfileStyles = () => {
         text: {
             color: theme.colors.primary,
             marginBottom: theme.spacing.sm,
-            fontWeight: '600',
         },
+        profileView :{
+            flex: 1,
+            justifyContent:'space-between',
+        },
+
     });
 };

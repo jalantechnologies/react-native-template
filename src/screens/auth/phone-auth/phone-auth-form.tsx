@@ -1,8 +1,7 @@
-import { Checkbox } from 'native-base';
+// import { Checkbox } from 'native-base';
 import React, { useState } from 'react';
-import { Linking, View,Pressable, ScrollView } from 'react-native';
-import { Button, useTheme, TextInput, HelperText,Menu,Text } from 'react-native-paper';
-import CheckIcon from 'react-native-template/assets/icons/check.svg';
+import { Linking, View, Pressable, ScrollView } from 'react-native';
+import { Button, useTheme, TextInput, HelperText, Menu, Text, Checkbox } from 'react-native-paper';
 
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError, PhoneNumber } from '../../../types';
@@ -25,35 +24,36 @@ const renderCountrySelectMenu = (
   styles: ReturnType<typeof usePhoneAuthFormStyles>,
 ) => {
 
-return (
-<Menu
-  visible={isOpen}
-  onDismiss={onClose}
-  contentStyle={{ width: 110 }}
-  anchor={
-    <Pressable
-      onPress={onOpen}
-      style={styles.menu}
+  return (
+    <Menu
+      visible={isOpen}
+      onDismiss={onClose}
+      contentStyle={{ width: 110 }}
+      anchor={
+        <Pressable
+          onPress={onOpen}
+          style={styles.menu}
+        >
+          <Text>{`${formik.values.country} (${formik.values.countryCode})`}</Text>
+        </Pressable>
+      }
     >
-      <Text>{`${formik.values.country} (${formik.values.countryCode})`}</Text>
-    </Pressable>
-  }
->
-  <ScrollView >
-    {CountrySelectOptions.map(option => (
-      <Menu.Item
-        key={option.value}
-        title={option.label}
-        titleStyle={{ fontSize: 18 }}
-        onPress={() => {
-          handleSelectChange(option.value);
-          onClose();
-        }}
-      />
-    ))}
-  </ScrollView>
-</Menu>
-);};
+      <ScrollView >
+        {CountrySelectOptions.map(option => (
+          <Menu.Item
+            key={option.value}
+            title={option.label}
+            titleStyle={{ fontSize: 18 }}
+            onPress={() => {
+              handleSelectChange(option.value);
+              onClose();
+            }}
+          />
+        ))}
+      </ScrollView>
+    </Menu>
+  );
+};
 
 const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => {
   const theme = useTheme();
@@ -95,12 +95,9 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
         <View>
           <Text style={styles.text}>Mobile Number</Text>
           <View style={styles.row}>
-            {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange,styles)}
+            {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange, styles)}
             <View
-              style={[
-                styles.inputBox,
-                formik.touched.phoneNumber && formik.errors.phoneNumber ? styles.errorStyle : {},
-              ]}
+              style={styles.inputBox}
             >
               <TextInput
                 value={phoneNumber.getFormattedWithoutCountryCode()}
@@ -110,6 +107,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
                 activeOutlineColor={theme.colors.primaryContainer}
                 mode="outlined"
                 style={{ backgroundColor: theme.colors.surface }}
+                error={!!(formik.touched.phoneNumber && formik.errors.phoneNumber)}
               />
             </View>
           </View>
@@ -124,13 +122,10 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
 
         <View style={styles.Checkbox}>
           <Checkbox
-            isChecked={isChecked}
-            onChange={setIsChecked}
-            accessibilityLabel="Agree to privacy policy"
-            value="agreePrivacyPolicy"
-            icon={<CheckIcon width={12} height={12} fill={theme.colors.primary} />}
-            aria-label="Privacy Policy Checkbox"
-            mt={0.5}
+            status={isChecked ? 'checked' : 'unchecked'}
+            onPress={() => setIsChecked(!isChecked)}
+            color={theme.colors.primary}
+            uncheckedColor={theme.colors.outline}
           />
 
           <View style={styles.checkBoxGap}>

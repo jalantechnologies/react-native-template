@@ -9,6 +9,8 @@ import { AsyncError, Task } from 'react-native-template/src/types';
 
 import { useTaskModalStyles } from './task.style';
 
+import type { AppTheme } from '@/theme';
+
 interface TaskDeleteModalProps {
   handleModalClose: () => void;
   isModalOpen: boolean;
@@ -20,7 +22,7 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
   handleModalClose,
   isModalOpen,
 }) => {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const styles = useTaskModalStyles();
 
   const { deleteTask, isDeleteTaskLoading } = useTaskContext();
@@ -63,10 +65,7 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
           <Button
             mode="outlined"
             onPress={handleModalClose}
-            style={[
-              styles.button,
-              { borderColor: theme.colors.primary },
-            ]}
+            style={styles.deleteButton}
           >
             Cancel
           </Button>
@@ -80,14 +79,15 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
             style={styles.button}
             icon={() => (
               <DeleteIcon
-                width={16}
-                height={16}
+                width={theme.iconSizes.sm}
+                height={theme.iconSizes.sm}
                 fill={theme.colors.onPrimary}
               />
             )}
           >
             Delete
           </Button>
+
         </Box>
       </Modal.Footer>
     </Modal>

@@ -4,12 +4,15 @@ import { Text, useTheme, Button } from 'react-native-paper';
 import AddIcon from 'react-native-template/assets/icons/add.svg';
 
 import { useTaskStyles } from './task.style';
+
+import type { AppTheme } from '@/theme';
+
 interface TaskHeaderProps {
   onHeaderButtonPress: () => void;
 }
 
 const TaskHeader: React.FC<TaskHeaderProps> = ({ onHeaderButtonPress }) => {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
   const styles = useTaskStyles();
 
   return (
@@ -21,8 +24,8 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({ onHeaderButtonPress }) => {
         mode="contained"
         icon={() => (
           <AddIcon
-            width={16}
-            height={16}
+            width={theme.iconSizes.sm}
+            height={theme.iconSizes.sm}
             fill={theme.colors.onPrimary}
           />
         )}

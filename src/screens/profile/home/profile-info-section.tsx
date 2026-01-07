@@ -7,6 +7,8 @@ import { Avatar } from 'react-native-template/src/components';
 
 import { Account, Nullable } from '../../../types';
 
+import type { AppTheme } from '@/theme';
+
 interface ProfileInfoSectionProps {
   accountDetails: Nullable<Account>;
   handleEditProfilePress: () => void;
@@ -16,7 +18,7 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({
   accountDetails,
   handleEditProfilePress,
 }) => {
-  const theme = useTheme();
+  const theme = useTheme<AppTheme>();
 
   return (
     <Box alignItems="center">
@@ -33,9 +35,9 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({
         <Heading mr={2}>{accountDetails?.displayName()}</Heading>
         <IconButton
           icon={() => (
-            <EditIcon width={20} height={20} fill={theme.colors.primary} />
+            <EditIcon fill={theme.colors.primary} />
           )}
-          size={20}
+          size={theme.iconSizes.md}
           onPress={handleEditProfilePress}
         />
       </Box>

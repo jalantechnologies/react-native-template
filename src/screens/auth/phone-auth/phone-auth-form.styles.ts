@@ -35,20 +35,8 @@ export const usePhoneAuthFormStyles = () => {
       flex:3,
       justifyContent:'center',
     },
-
-    errorStyle: {
-      borderColor: theme.colors.error,
-      borderWidth: theme.spacing.xs,
-    },
-
-    errorText: {
-      color: theme.colors.error,
-      fontSize: 14,
-      marginTop: theme.spacing.xs,
-    },
-
     row: {
-      gap:9,
+      gap:theme.spacing.sm,
       width:'100%',
       flexDirection:'row',
       marginTop:theme.spacing.md,

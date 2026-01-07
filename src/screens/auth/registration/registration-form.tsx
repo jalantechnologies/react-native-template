@@ -30,7 +30,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
       </View>
 
       <View>
-        <Text style={styles.text}>First Name</Text>
+        <Text style={styles.text} variant="titleSmall">First Name</Text>
         <TextInput
           placeholder="First Name"
           mode="outlined"
@@ -45,7 +45,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
       </View>
 
       <View>
-        <Text style={styles.text}>Last Name</Text>
+        <Text style={styles.text} variant="titleSmall">Last Name</Text>
         <TextInput
           placeholder="Last Name"
           mode="outlined"

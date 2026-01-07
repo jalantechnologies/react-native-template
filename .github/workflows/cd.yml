@@ -101,44 +101,57 @@ jobs:
             const appId = '${{ secrets.IOS_APPLE_ID }}';
             const testflightUrl = `https://appstoreconnect.apple.com/teams/${issuerId}/apps/${appId}/testflight/ios`;
 
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              per_page: 100,
-            });
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+            const attempts = 3;
 
-            const existing = comments.find((c) => c.body && c.body.includes(marker));
-            const existingLines = existing?.body?.split('\n') ?? [];
-            const existingIosLine = existingLines.find((line) => line.includes('iOS (TestFlight)'));
-            const iosHasCurrentSha = existingIosLine?.includes(`ios-sha:${buildSha}`);
-
-            const androidLine = `- ✅ Android (Firebase): ${firebaseUrl} <!-- android-sha:${buildSha} -->`;
-            const iosLine = iosHasCurrentSha
-              ? existingIosLine
-              : `- ⏳ iOS (TestFlight): pending upload <!-- ios-sha:${buildSha} -->`;
-
-            const body = `${marker}
-            ✅ Preview build links for PR #${prNumber}
-
-            ${androidLine}
-            ${iosLine}
-            `;
-
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
+            for (let attempt = 0; attempt < attempts; attempt += 1) {
+              const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
-                body,
+                per_page: 100,
               });
+
+              const existing = comments.find((c) => c.body && c.body.includes(marker));
+              const existingLines = existing?.body?.split('\n') ?? [];
+              const existingIosLine = existingLines.find((line) => line.includes('iOS (TestFlight)'));
+              const iosHasCurrentSha = existingIosLine?.includes(`ios-sha:${buildSha}`);
+
+              const androidLine = `- ✅ Android (Firebase): ${firebaseUrl} <!-- android-sha:${buildSha} -->`;
+              const iosLine = iosHasCurrentSha
+                ? existingIosLine
+                : `- ⏳ iOS (TestFlight): pending upload <!-- ios-sha:${buildSha} -->`;
+
+              const body = `${marker}
+              ✅ Preview build links for PR #${prNumber}
+
+              ${androidLine}
+              ${iosLine}
+              `;
+
+              try {
+                if (existing) {
+                  await github.rest.issues.updateComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: existing.id,
+                    body,
+                  });
+                } else {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    body,
+                  });
+                }
+                break;
+              } catch (error) {
+                if (attempt === attempts - 1) {
+                  throw error;
+                }
+                await sleep(1000 * (attempt + 1));
+              }
             }
 
   deploy_ios:
@@ -194,43 +207,57 @@ jobs:
             const issuerId = '${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}';
             const appId = '${{ secrets.IOS_APPLE_ID }}';
             const testflightUrl = `https://appstoreconnect.apple.com/teams/${issuerId}/apps/${appId}/testflight/ios`;
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: prNumber,
-              per_page: 100,
-            });
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+            const attempts = 3;
 
-            const existing = comments.find((c) => c.body && c.body.includes(marker));
-            const existingLines = existing?.body?.split('\n') ?? [];
-            const existingAndroidLine = existingLines.find((line) => line.includes('Android (Firebase)'));
-            const androidHasCurrentSha = existingAndroidLine?.includes(`android-sha:${buildSha}`);
-
-            const androidLine = androidHasCurrentSha
-              ? existingAndroidLine
-              : `- ⏳ Android (Firebase): pending upload <!-- android-sha:${buildSha} -->`;
-            const iosLine = `- ✅ iOS (TestFlight): ${testflightUrl} <!-- ios-sha:${buildSha} -->`;
-
-            const body = `${marker}
-            ✅ Preview build links for PR #${prNumber}
-
-            ${androidLine}
-            ${iosLine}
-            `;
-
-            if (existing) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: existing.id,
-                body,
-              });
-            } else {
-              await github.rest.issues.createComment({
+            for (let attempt = 0; attempt < attempts; attempt += 1) {
+              const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
-                body,
+                per_page: 100,
               });
+
+              const existing = comments.find((c) => c.body && c.body.includes(marker));
+              const existingLines = existing?.body?.split('\n') ?? [];
+              const existingAndroidLine = existingLines.find((line) => line.includes('Android (Firebase)'));
+              const androidHasCurrentSha = existingAndroidLine?.includes(`android-sha:${buildSha}`);
+
+              const androidLine = androidHasCurrentSha
+                ? existingAndroidLine
+                : `- ⏳ Android (Firebase): pending upload <!-- android-sha:${buildSha} -->`;
+              const iosLine = `- ✅ iOS (TestFlight): ${testflightUrl} <!-- ios-sha:${buildSha} -->`;
+
+              const body = `${marker}
+              ✅ Preview build links for PR #${prNumber}
+
+              ${androidLine}
+              ${iosLine}
+              `;
+
+              try {
+                if (existing) {
+                  await github.rest.issues.updateComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: existing.id,
+                    body,
+                  });
+                } else {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: prNumber,
+                    body,
+                  });
+                }
+                break;
+              } catch (error) {
+                if (attempt === attempts - 1) {
+                  throw error;
+                }
+                await sleep(1000 * (attempt + 1));
+              }
             }
+
 

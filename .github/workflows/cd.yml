@@ -113,3 +113,60 @@ jobs:
           IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
           IOS_MATCH_DEPLOY_KEY: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+
+          
+  post_preview_comment:
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
+    needs: [deploy_android, deploy_ios]
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Post or update consolidated preview comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = '<!-- preview-build-links -->';
+            const prNumber = context.issue.number;
+
+            const projectId = '${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}';
+            const appPackage = '${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}';
+            const encodedAppPackage = encodeURIComponent(appPackage);
+            const firebaseUrl = `https://console.firebase.google.com/u/0/project/${projectId}/appdistribution/app/android:${encodedAppPackage}/releases`;
+
+            const issuerId = '${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}';
+            const appId = '${{ secrets.IOS_APPLE_ID }}';
+            const testflightUrl = `https://appstoreconnect.apple.com/teams/${issuerId}/apps/${appId}/testflight/ios`;
+
+            const body = `${marker}
+            ✅ Preview builds are ready for PR #${prNumber}
+
+            - 🤖 Android (Firebase): ${firebaseUrl}
+            - 🍏 iOS (TestFlight): ${testflightUrl}
+            `;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body,
+              });
+            }

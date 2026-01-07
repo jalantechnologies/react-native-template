@@ -168,24 +168,24 @@ runs:
         name: xcode-build-logs
         path: /Users/runner/Library/Logs/gym/*.log
 
-    - name: Post PR comment with TestFlight link
-      if: ${{ inputs.PR_NUMBER != '' }}
-      env:
-        GH_TOKEN: ${{ github.token }}
-        PR_NUMBER: ${{ inputs.PR_NUMBER }}
-        BUILD_HASH: ${{ github.sha }}
-        IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
-        IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}
-        IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
-      run: |
-        brew install gh
-        gh auth setup-git
-        TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$IOS_APPLE_ID/testflight/ios"
-        gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
+    # - name: Post PR comment with TestFlight link
+    #   if: ${{ inputs.PR_NUMBER != '' }}
+    #   env:
+    #     GH_TOKEN: ${{ github.token }}
+    #     PR_NUMBER: ${{ inputs.PR_NUMBER }}
+    #     BUILD_HASH: ${{ github.sha }}
+    #     IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+    #     IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}
+    #     IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
+    #   run: |
+    #     brew install gh
+    #     gh auth setup-git
+    #     TESTFLIGHT_LINK="https://appstoreconnect.apple.com/teams/$IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID/apps/$IOS_APPLE_ID/testflight/ios"
+    #     gh pr comment "$PR_NUMBER" --body "✅ TestFlight build uploaded for PR #$PR_NUMBER
 
-        - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
-        - 🆔 App ID: \`$IOS_APP_IDENTIFIER\`
-        - 🧱 Build Hash: \`$BUILD_HASH\`
+    #     - 🔗 [View in App Store Connect]($TESTFLIGHT_LINK)
+    #     - 🆔 App ID: \`$IOS_APP_IDENTIFIER\`
+    #     - 🧱 Build Hash: \`$BUILD_HASH\`
 
-        _This build was deployed by CI using Fastlane._"
-      shell: bash
+    #     _This build was deployed by CI using Fastlane._"
+    #   shell: bash

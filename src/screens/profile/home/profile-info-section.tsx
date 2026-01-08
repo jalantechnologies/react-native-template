@@ -1,13 +1,13 @@
 import { Box, Heading, Text } from 'native-base';
 import React from 'react';
-import { IconButton,useTheme } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import EditIcon from 'react-native-template/assets/icons/edit.svg';
 import { Avatar } from 'react-native-template/src/components';
 
 
 import { Account, Nullable } from '../../../types';
 
-import type { AppTheme } from '@/theme';
+import { useAppTheme } from '@/theme';
 
 interface ProfileInfoSectionProps {
   accountDetails: Nullable<Account>;
@@ -18,7 +18,7 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({
   accountDetails,
   handleEditProfilePress,
 }) => {
-  const theme = useTheme<AppTheme>();
+  const theme = useAppTheme();
 
   return (
     <Box alignItems="center">

@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper';
 
-import type { AppTheme } from '@/theme';
+import { useAppTheme } from '@/theme';
+
 export const useChangeApiUrlStyles = () => {
-    const theme = useTheme<AppTheme>();
+    const theme = useAppTheme();
     return StyleSheet.create({
         button: {
             paddingHorizontal: theme.spacing.md,

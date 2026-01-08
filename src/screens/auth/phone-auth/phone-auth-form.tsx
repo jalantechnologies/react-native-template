@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Linking, View, Pressable, ScrollView } from 'react-native';
-import { Button, useTheme, TextInput, HelperText, Menu, Text, Checkbox } from 'react-native-paper';
+import { Button, TextInput, HelperText, Menu, Text, Checkbox } from 'react-native-paper';
 
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError, PhoneNumber } from '../../../types';
@@ -8,6 +8,7 @@ import { AsyncError, PhoneNumber } from '../../../types';
 import usePhoneAuthForm from './phone-auth-form-hook';
 import { usePhoneAuthFormStyles } from './phone-auth-form.styles';
 
+import { useAppTheme } from '@/theme';
 
 interface PhoneAuthFormProps {
   onSuccess: () => void;
@@ -21,13 +22,14 @@ const renderCountrySelectMenu = (
   onClose: () => void,
   handleSelectChange: (value: string) => void,
   styles: ReturnType<typeof usePhoneAuthFormStyles>,
+  theme: any
 ) => {
 
   return (
     <Menu
       visible={isOpen}
       onDismiss={onClose}
-      contentStyle={{ width: 110 }}
+      contentStyle={{ width: theme.sizes.menuWidth  }}
       anchor={
         <Pressable
           onPress={onOpen}
@@ -42,7 +44,7 @@ const renderCountrySelectMenu = (
           <Menu.Item
             key={option.value}
             title={option.label}
-            titleStyle={{ fontSize: 18 }}
+            titleStyle={theme.fonts.bodyLarge}
             onPress={() => {
               handleSelectChange(option.value);
               onClose();
@@ -55,7 +57,7 @@ const renderCountrySelectMenu = (
 };
 
 const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => {
-  const theme = useTheme();
+  const theme = useAppTheme();
   const styles = usePhoneAuthFormStyles();
   const { formik, isSendOTPLoading } = usePhoneAuthForm({
     onSendOTPSuccess: onSuccess,
@@ -94,7 +96,7 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
         <View>
           <Text style={styles.text}>Mobile Number</Text>
           <View style={styles.row}>
-            {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange, styles)}
+            {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange, styles,theme)}
             <View
               style={styles.inputBox}
             >

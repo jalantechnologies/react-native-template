@@ -1,7 +1,7 @@
 import { Text } from 'native-base';
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { Button, useTheme  } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import EditIcon from 'react-native-template/assets/icons/edit.svg';
 import { Card } from 'react-native-template/src/components';
@@ -11,7 +11,7 @@ import { Task } from 'react-native-template/src/types';
 import TaskDeleteModal from './task-delete-modal';
 import { useTaskStyles } from './task.style';
 
-import type { AppTheme } from '@/theme';
+import { useAppTheme } from '@/theme';
 
 interface TaskProps {
   task: Task;
@@ -21,7 +21,7 @@ interface TaskProps {
 const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
   const { description, title } = task;
 
-  const theme = useTheme<AppTheme>();
+  const theme = useAppTheme();
 
   const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
 

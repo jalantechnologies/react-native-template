@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import Config from 'react-native-config';
-import { useTheme, IconButton } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import GearIcon from 'react-native-template/assets/icons/gear.svg';
 
 import ChangeApiUrlModal from './change-api-url-modal';
 import { useChangeApiUrlStyles } from './change-api-url.styles';
 
-import type { AppTheme } from '@/theme';
+import { useAppTheme } from '@/theme';
 
 
 const ChangeApiUrlButton = () => {
   const isNonProdEnv = Config.ENVIRONMENT !== 'production';
 
-  const theme = useTheme<AppTheme>();
+  const theme = useAppTheme();
   const styles = useChangeApiUrlStyles();
 
   const [isChangeAPIUrlModalOpen, setIsChangeAPIUrlModalOpen] = useState(false);

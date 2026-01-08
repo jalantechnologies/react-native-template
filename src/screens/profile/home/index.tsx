@@ -1,6 +1,6 @@
 import { Box, Divider, Toast, VStack } from 'native-base';
 import React, { useState } from 'react';
-import { Button,useTheme } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import LogoutIcon from 'react-native-template/assets/icons/logout.svg';
 
@@ -13,10 +13,10 @@ import AccountDeleteModal from './account-delete-modal';
 import ProfileAction from './profile-action';
 import ProfileInfoSection from './profile-info-section';
 
-import type { AppTheme } from '@/theme';
+import { useAppTheme } from '@/theme';
 
 const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
-  const theme = useTheme<AppTheme>();
+  const theme = useAppTheme();
 
   const [isAccountDeleteModalOpen, setIsAccountDeleteModalOpen] = useState(false);
 

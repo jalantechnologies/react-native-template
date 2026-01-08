@@ -1,8 +1,10 @@
 import React, { useRef } from 'react';
 import { View, NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native';
-import { TextInput,useTheme } from 'react-native-paper';
+import { TextInput } from 'react-native-paper';
 
 import { useOtpFormStyles } from './otp-form.styles';
+
+import { useAppTheme } from '@/theme';
 interface PaperOTPInputProps {
     length: number;
     value: string[];
@@ -36,7 +38,7 @@ const PaperOTPInput: React.FC<PaperOTPInputProps> = ({
         }
     };
     const styles = useOtpFormStyles();
-    const theme = useTheme();
+    const theme = useAppTheme();
 
     return (
     <View style={styles.containerOtp}>

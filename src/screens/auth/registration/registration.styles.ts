@@ -1,9 +1,8 @@
 import { StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper';
 
-import type { AppTheme } from '@/theme';
+import { useAppTheme } from '@/theme';
 export const useRegistrationStyles = () => {
-    const theme = useTheme<AppTheme>();
+    const theme = useAppTheme();
     return StyleSheet.create({
         container: {
             gap: theme.spacing.lg,

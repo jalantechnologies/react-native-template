@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper';
 
-import type { AppTheme } from '@/theme';
+import { useAppTheme } from '@/theme';
+
 export const useOtpFormStyles = () => {
-    const theme = useTheme<AppTheme>();
+    const theme = useAppTheme();
     return StyleSheet.create({
         containerOtp: {
             flexDirection: 'row',
@@ -11,7 +11,7 @@ export const useOtpFormStyles = () => {
             marginBottom:theme.spacing['2xl'],
         },
         input: {
-            width: theme.spacing['7xl'],
+            width: theme.sizes.otpInputWidth,
             textAlign: 'center',
             backgroundColor:theme.colors.surface,
         },

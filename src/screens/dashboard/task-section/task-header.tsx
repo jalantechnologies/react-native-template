@@ -1,18 +1,18 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Text, useTheme, Button } from 'react-native-paper';
+import { Text, Button } from 'react-native-paper';
 import AddIcon from 'react-native-template/assets/icons/add.svg';
 
 import { useTaskStyles } from './task.style';
 
-import type { AppTheme } from '@/theme';
+import { useAppTheme } from '@/theme';
 
 interface TaskHeaderProps {
   onHeaderButtonPress: () => void;
 }
 
 const TaskHeader: React.FC<TaskHeaderProps> = ({ onHeaderButtonPress }) => {
-  const theme = useTheme<AppTheme>();
+  const theme = useAppTheme();
   const styles = useTaskStyles();
 
   return (

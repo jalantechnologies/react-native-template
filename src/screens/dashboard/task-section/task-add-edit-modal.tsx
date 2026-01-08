@@ -3,7 +3,6 @@ import React from 'react';
 import { View } from 'react-native';
 import {
   Text,
-  useTheme,
   Button,
   TextInput,
   HelperText,
@@ -15,6 +14,8 @@ import { AsyncError, Nullable, Task } from '../../../types';
 
 import useTaskAddEditForm from './task-add-edit-form-hook';
 import { useTaskModalStyles } from './task.style';
+
+import { useAppTheme } from '@/theme';
 
 interface TaskAddEditModalProps {
   isModalOpen: boolean;
@@ -33,7 +34,7 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
   task,
   taskOperation,
 }) => {
-  const theme = useTheme();
+  const theme = useAppTheme();
   const styles = useTaskModalStyles();
   const [submitted, setSubmitted] = React.useState(false);
 

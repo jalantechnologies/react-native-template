@@ -1,7 +1,7 @@
 import { t } from 'i18next';
 import { Box, Text, Toast } from 'native-base';
 import React from 'react';
-import { Button, useTheme } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import { Modal } from 'react-native-template/src/components';
 import { useTaskContext } from 'react-native-template/src/contexts';
@@ -9,7 +9,7 @@ import { AsyncError, Task } from 'react-native-template/src/types';
 
 import { useTaskModalStyles } from './task.style';
 
-import type { AppTheme } from '@/theme';
+import { useAppTheme } from '@/theme';
 
 interface TaskDeleteModalProps {
   handleModalClose: () => void;
@@ -22,7 +22,7 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
   handleModalClose,
   isModalOpen,
 }) => {
-  const theme = useTheme<AppTheme>();
+  const theme = useAppTheme();
   const styles = useTaskModalStyles();
 
   const { deleteTask, isDeleteTaskLoading } = useTaskContext();

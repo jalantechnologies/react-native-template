@@ -4,7 +4,6 @@ import { View, Platform, KeyboardAvoidingView } from 'react-native';
 import {
   HelperText,
   TextInput,
-  useTheme,
   Text,
   Button,
 } from 'react-native-paper';
@@ -15,6 +14,8 @@ import ProfileLayout from '../profile-layout';
 
 import  { useEditProfileStyles }  from './edit-profile.styles';
 import useProfileUpdateForm from './profile-update-form.hook';
+
+import { useAppTheme } from '@/theme';
 
 const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigation }) => {
   const onProfileUpdateSuccess = () => {
@@ -40,7 +41,7 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
     onProfileUpdateSuccess,
   });
   const styles = useEditProfileStyles();
-  const theme = useTheme();
+  const theme = useAppTheme();
 
   return (
     <ProfileLayout>

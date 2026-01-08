@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper';
 
-import type { AppTheme } from '@/theme';
+import { useAppTheme } from '@/theme';
+
 export const useTaskStyles = () => {
-  const theme = useTheme<AppTheme>();
+  const theme = useAppTheme();
 
   return useMemo(()=>
   StyleSheet.create({
@@ -39,7 +39,7 @@ export const useTaskStyles = () => {
 };
 
 export const useTaskModalStyles = () => {
-  const theme = useTheme<AppTheme>();
+  const theme = useAppTheme();
 
   return useMemo(()=>
   StyleSheet.create({

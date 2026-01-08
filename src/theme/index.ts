@@ -135,6 +135,10 @@ export const theme = {
     '6xl': 64,
     '7xl': 68,
   },
+  sizes: {
+    menuWidth: 110,
+    otpInputWidth: 68,
+  },
 
   iconSizes: {
     sm: 16,
@@ -192,3 +196,4 @@ export const theme = {
 
 export type AppTheme = typeof theme;
 
+export { useAppTheme } from './useAppTheme';

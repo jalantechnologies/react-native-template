@@ -22,7 +22,7 @@ const renderCountrySelectMenu = (
   onClose: () => void,
   handleSelectChange: (value: string) => void,
   styles: ReturnType<typeof usePhoneAuthFormStyles>,
-  theme: any
+  theme: ReturnType<typeof useAppTheme>
 ) => {
 
   return (

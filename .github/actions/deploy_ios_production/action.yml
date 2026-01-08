@@ -60,6 +60,8 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version-file: .nvmrc
+        cache: 'yarn'
+        cache-dependency-path: 'yarn.lock'
 
     - name: Cache node modules
       uses: actions/cache@v4
@@ -79,6 +81,7 @@ runs:
       shell: bash
 
     - name: Cache CocoaPods
+      id: pods-cache
       uses: actions/cache@v4
       with:
         path: | 
@@ -93,9 +96,11 @@ runs:
       working-directory: ios
       shell: bash
       run: |
-        pod repo update
-        bundle exec pod update boost --no-repo-update
-        bundle exec pod install
+        if [ "${{ steps.pods-cache.outputs.cache-hit }}" != "true" ]; then
+          bundle exec pod install --repo-update
+        else
+          bundle exec pod install
+        fi
 
     - name: Set up SSH for Match
       uses: webfactory/ssh-agent@v0.7.0
@@ -131,9 +136,14 @@ runs:
         printf "%s" "${{ inputs.RELEASE_NOTES }}" > "$CHANGELOG_PATH"
         echo "📝 Wrote iOS changelog to $CHANGELOG_PATH"
 
-    - name: Clear Derived Data
-      run: rm -rf ~/Library/Developer/Xcode/DerivedData
-      shell: bash
+    - name: Cache Derived Data
+      # Reuse Xcode build artifacts across runs to reduce compile time.
+      uses: actions/cache@v4
+      with:
+        path: ~/Library/Developer/Xcode/DerivedData
+        key: ${{ runner.os }}-derived-data-xcode-16.2-${{ hashFiles('ios/Podfile.lock', 'yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-derived-data-xcode-16.2-
 
     - name: Deploy the iOS app to Production
       working-directory: ios

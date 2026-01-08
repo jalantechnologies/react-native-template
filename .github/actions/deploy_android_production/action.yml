@@ -35,6 +35,8 @@ runs:
       uses: actions/setup-node@v3
       with:
         node-version: 22.13.1
+        cache: 'yarn'
+        cache-dependency-path: 'yarn.lock'
 
     - name: Cache node modules
       uses: actions/cache@v4
@@ -76,12 +78,6 @@ runs:
         gem install bundler
         cd android
         bundle install
-      env:
-        CI: true
-
-    - name: Add @react-native-community manually
-      shell: bash
-      run: yarn add @react-native-community/cli-platform-android@11.3.3
       env:
         CI: true
 

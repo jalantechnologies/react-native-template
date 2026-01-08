@@ -2864,23 +2864,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli-tools@npm:11.3.3":
-  version: 11.3.3
-  resolution: "@react-native-community/cli-tools@npm:11.3.3"
-  dependencies:
-    appdirsjs: ^1.2.4
-    chalk: ^4.1.2
-    find-up: ^5.0.0
-    mime: ^2.4.1
-    node-fetch: ^2.6.0
-    open: ^6.2.0
-    ora: ^5.4.1
-    semver: ^6.3.0
-    shell-quote: ^1.7.3
-  checksum: 7e13394255e282d5f75971f753cde7b24ad632c019e8af4b64df8f0eda729202c43c2c821b45cc8a93a100e2b59614db191808c15344907f68abc24923533f64
-  languageName: node
-  linkType: hard
-
 "@react-native-community/cli-tools@npm:15.1.3":
   version: 15.1.3
   resolution: "@react-native-community/cli-tools@npm:15.1.3"

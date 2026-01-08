@@ -2811,7 +2811,7 @@ __metadata:
   checksum: 2650ff3583fa916905bb7d153e3b8841d2a3422271ba1de823995fbb695374d5df5ed203ab0a9a91fbd5f7da6a7a40b6c103fba828569796f680149a348bb0bd
   languageName: node
   linkType: hard
-  
+
 "@react-native-community/cli-platform-android@npm:15.1.3":
   version: 15.1.3
   resolution: "@react-native-community/cli-platform-android@npm:15.1.3"
@@ -2861,6 +2861,23 @@ __metadata:
     serve-static: ^1.13.1
     ws: ^6.2.3
   checksum: 2bc164d6fc33298b3df8fbe6b27745b72ea3287a4b87c1dd32a77c8a277b62882d6cec3c12915496568d04ee3989ad01de81b4088b18cd40ddd5cb0532260903
+  languageName: node
+  linkType: hard
+
+"@react-native-community/cli-tools@npm:11.3.3":
+  version: 11.3.3
+  resolution: "@react-native-community/cli-tools@npm:11.3.3"
+  dependencies:
+    appdirsjs: ^1.2.4
+    chalk: ^4.1.2
+    find-up: ^5.0.0
+    mime: ^2.4.1
+    node-fetch: ^2.6.0
+    open: ^6.2.0
+    ora: ^5.4.1
+    semver: ^6.3.0
+    shell-quote: ^1.7.3
+  checksum: 7e13394255e282d5f75971f753cde7b24ad632c019e8af4b64df8f0eda729202c43c2c821b45cc8a93a100e2b59614db191808c15344907f68abc24923533f64
   languageName: node
   linkType: hard
 

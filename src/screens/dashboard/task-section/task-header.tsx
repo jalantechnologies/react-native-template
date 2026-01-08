@@ -1,25 +1,39 @@
-import { HStack, Heading, useTheme } from 'native-base';
 import React from 'react';
+import { View } from 'react-native';
+import { Text, Button } from 'react-native-paper';
 import AddIcon from 'react-native-template/assets/icons/add.svg';
-import { Button } from 'react-native-template/src/components';
+
+import { useTaskStyles } from './task.style';
+
+import { useAppTheme } from '@/theme';
 
 interface TaskHeaderProps {
   onHeaderButtonPress: () => void;
 }
 
 const TaskHeader: React.FC<TaskHeaderProps> = ({ onHeaderButtonPress }) => {
-  const theme = useTheme();
+  const theme = useAppTheme();
+  const styles = useTaskStyles();
 
   return (
-    <HStack justifyContent="space-between" alignItems="center" px={4} py={2}>
-      <Heading size="lg">Tasks</Heading>
+    <View style={styles.header}>
+      <Text variant="headlineMedium">
+        Tasks
+      </Text>
       <Button
-        startEnhancer={<AddIcon width={16} height={16} fill={theme.colors.secondary[50]} />}
-        onClick={onHeaderButtonPress}
+        mode="contained"
+        icon={() => (
+          <AddIcon
+            width={theme.iconSizes.sm}
+            height={theme.iconSizes.sm}
+            fill={theme.colors.onPrimary}
+          />
+        )}
+        onPress={onHeaderButtonPress}
       >
         Add Task
       </Button>
-    </HStack>
+    </View>
   );
 };
 

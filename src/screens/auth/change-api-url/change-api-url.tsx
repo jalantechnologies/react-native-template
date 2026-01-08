@@ -1,27 +1,19 @@
-import { useTheme } from 'native-base';
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import Config from 'react-native-config';
+import { IconButton } from 'react-native-paper';
 import GearIcon from 'react-native-template/assets/icons/gear.svg';
-import { Button } from 'react-native-template/src/components';
-import { ButtonKind } from 'react-native-template/src/types/button';
 
 import ChangeApiUrlModal from './change-api-url-modal';
+import { useChangeApiUrlStyles } from './change-api-url.styles';
 
-const useChangeApiUrlStyles = () => {
-  const theme = useTheme();
+import { useAppTheme } from '@/theme';
 
-  return StyleSheet.create({
-    buttonContainer: {
-      paddingTop: Number(theme.space['2']),
-    },
-  });
-};
 
 const ChangeApiUrlButton = () => {
   const isNonProdEnv = Config.ENVIRONMENT !== 'production';
 
-  const theme = useTheme();
+  const theme = useAppTheme();
   const styles = useChangeApiUrlStyles();
 
   const [isChangeAPIUrlModalOpen, setIsChangeAPIUrlModalOpen] = useState(false);
@@ -34,9 +26,13 @@ const ChangeApiUrlButton = () => {
     isNonProdEnv && (
       <>
         <View style={styles.buttonContainer}>
-          <Button onClick={() => setIsChangeAPIUrlModalOpen(true)} kind={ButtonKind.LINK}>
-            <GearIcon width={24} height={24} fill={theme.colors.secondary[100]} />
-          </Button>
+          <IconButton
+            icon={GearIcon}
+            iconColor={theme.colors.secondaryContainer}
+            size={theme.iconSizes.md}
+            onPress={() => setIsChangeAPIUrlModalOpen(true)}
+          />
+
         </View>
         <ChangeApiUrlModal
           handleModalClose={() => setIsChangeAPIUrlModalOpen(false)}

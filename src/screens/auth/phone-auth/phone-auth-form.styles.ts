@@ -1,20 +1,65 @@
-import { useTheme } from 'native-base';
+import { StyleSheet } from 'react-native';
+
+import { useAppTheme } from '@/theme';
 
 export const usePhoneAuthFormStyles = () => {
-  const { colors, radii } = useTheme();
+  const theme = useAppTheme();
 
-  return {
+  return StyleSheet.create({
+    phoneAuthScreen: {
+      flex: 1,
+      paddingBottom:theme.spacing.lg,
+    },
+
+    Login: {
+      flex: 1,
+      marginBottom:theme.spacing['2xl'],
+      gap:theme.spacing.sm,
+    },
+
+    loginSpacing: {
+      marginBottom: theme.spacing['3xl'],
+    },
+
+    Checkbox: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginTop: theme.spacing.lg,
+    },
+
+    checkboxTextSpacing: {
+      marginLeft: theme.spacing.md,
+    },
+
     inputBox: {
-      borderRadius: radii.md,
+      flex:3,
+      justifyContent:'center',
     },
-    errorStyle: {
-      borderColor: colors.danger[600],
-      borderWidth: 1,
+    row: {
+      gap:theme.spacing.sm,
+      width:'100%',
+      flexDirection:'row',
+      marginTop:theme.spacing.md,
     },
-    errorText: {
-      color: colors.danger[600],
-      fontSize: 14,
-      marginTop: 4,
+    text:{
+      color:theme.colors.primary,
     },
-  };
+    checkBox:{
+      flexDirection:'row',
+    },
+    menu:{
+        borderWidth: 1,
+        borderColor: theme.colors.outline,
+        paddingHorizontal: theme.spacing.sm,
+        justifyContent: 'center',
+        borderRadius: theme.spacing.xs,
+        minHeight:56,
+    },
+    checkBoxGap:{
+      marginLeft:theme.spacing.md,
+    },
+    titleSpacing:{
+      paddingBottom:theme.spacing['2xl'],
+    },
+  });
 };

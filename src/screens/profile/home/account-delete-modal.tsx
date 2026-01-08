@@ -1,9 +1,10 @@
-import { Box, Text, useTheme } from 'native-base';
+import { Box, Text } from 'native-base';
 import React from 'react';
+import { Button } from 'react-native-paper';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
-import { Button, Modal } from 'react-native-template/src/components';
-import { ButtonKind, ButtonColor } from 'react-native-template/src/types/button';
+import {  Modal } from 'react-native-template/src/components';
 
+import { useAppTheme } from '@/theme';
 interface AccountDeleteModalProps {
   handleDeleteAccountPress: () => void;
   isDeleteAccountLoading: boolean;
@@ -17,7 +18,7 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
-  const theme = useTheme();
+  const theme = useAppTheme();
 
   const handleModalClose = () => {
     setIsModalOpen(false);
@@ -33,22 +34,26 @@ const AccountDeleteModal: React.FC<AccountDeleteModalProps> = ({
       </Modal.Body>
       <Modal.Footer>
         <Box flex={1} mr={2}>
-          <Button onClick={handleModalClose} kind={ButtonKind.OUTLINED}>
-            Cancel
-          </Button>
+            <Button
+              mode="outlined"
+              onPress={handleModalClose}
+              style={{ borderColor: theme.colors.primary }}
+            >
+              Cancel
+            </Button>
         </Box>
         <Box flex={1} ml={2}>
-          <Button
-            isLoading={isDeleteAccountLoading}
-            onClick={handleDeleteAccountPress}
-            kind={ButtonKind.CONTAINED}
-            color={ButtonColor.DANGER}
-            startEnhancer={
-              <DeleteIcon width={20} height={20} fill={theme.colors.secondary['50']} />
-            }
-          >
-            Delete
-          </Button>
+            <Button
+              mode="contained"
+              onPress={handleDeleteAccountPress}
+              loading={isDeleteAccountLoading}
+              buttonColor={theme.colors.error}
+              icon={() => (
+                <DeleteIcon width={theme.iconSizes.md} height={theme.iconSizes.md} fill={theme.colors.onError} />
+              )}>
+
+              Delete
+            </Button>
         </Box>
       </Modal.Footer>
     </Modal>

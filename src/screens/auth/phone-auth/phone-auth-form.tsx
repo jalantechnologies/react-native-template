@@ -1,28 +1,14 @@
-import {
-  VStack,
-  Container,
-  Heading,
-  HStack,
-  useDisclose,
-  Text,
-  Pressable,
-  Menu,
-  ScrollView,
-  Link,
-  Box,
-  Checkbox,
-} from 'native-base';
 import React, { useState } from 'react';
-import CheckIcon from 'react-native-template/assets/icons/check.svg';
-import { FormControl, Input, Button } from 'react-native-template/src/components';
-import { ButtonKind } from 'react-native-template/src/types/button';
-import { useThemeColor } from 'react-native-template/src/utils';
+import { Linking, View, Pressable, ScrollView } from 'react-native';
+import { Button, TextInput, HelperText, Menu, Text, Checkbox } from 'react-native-paper';
 
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError, PhoneNumber } from '../../../types';
 
 import usePhoneAuthForm from './phone-auth-form-hook';
 import { usePhoneAuthFormStyles } from './phone-auth-form.styles';
+
+import { useAppTheme } from '@/theme';
 
 interface PhoneAuthFormProps {
   onSuccess: () => void;
@@ -35,51 +21,55 @@ const renderCountrySelectMenu = (
   onOpen: () => void,
   onClose: () => void,
   handleSelectChange: (value: string) => void,
-) => (
-  <Menu
-    isOpen={isOpen}
-    onOpen={onOpen}
-    onClose={onClose}
-    trigger={triggerProps => (
-      <Pressable
-        {...triggerProps}
-        borderWidth={1}
-        justifyContent="center"
-        borderColor={'warmGray.300'}
-        rounded="sm"
-        px={2}
-      >
-        <Text>{`${formik.values.country} (${formik.values.countryCode})`}</Text>
-      </Pressable>
-    )}
-  >
-    <ScrollView maxH={'200px'}>
-      {CountrySelectOptions.map(option => (
-        <Menu.Item
-          key={option.value}
-          onPress={() => {
-            handleSelectChange(option.value);
-            onClose();
-          }}
+  styles: ReturnType<typeof usePhoneAuthFormStyles>,
+  theme: ReturnType<typeof useAppTheme>
+) => {
+
+  return (
+    <Menu
+      visible={isOpen}
+      onDismiss={onClose}
+      contentStyle={{ width: theme.sizes.menuWidth  }}
+      anchor={
+        <Pressable
+          onPress={onOpen}
+          style={styles.menu}
         >
-          {option.label}
-        </Menu.Item>
-      ))}
-    </ScrollView>
-  </Menu>
-);
+          <Text>{`${formik.values.country} (${formik.values.countryCode})`}</Text>
+        </Pressable>
+      }
+    >
+      <ScrollView >
+        {CountrySelectOptions.map(option => (
+          <Menu.Item
+            key={option.value}
+            title={option.label}
+            titleStyle={theme.fonts.bodyLarge}
+            onPress={() => {
+              handleSelectChange(option.value);
+              onClose();
+            }}
+          />
+        ))}
+      </ScrollView>
+    </Menu>
+  );
+};
 
 const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => {
-  const themeColor = useThemeColor('primary.500');
-
+  const theme = useAppTheme();
   const styles = usePhoneAuthFormStyles();
   const { formik, isSendOTPLoading } = usePhoneAuthForm({
     onSendOTPSuccess: onSuccess,
     onError: onError,
   });
 
-  const { isOpen, onOpen, onClose } = useDisclose();
   const [isChecked, setIsChecked] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const onOpen = () => setIsOpen(true);
+  const onClose = () => setIsOpen(false);
+
 
   const handleSelectChange = (value: string) => {
     const [countryCode, country] = value.split(', ');
@@ -98,67 +88,70 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
   }).getFormattedWithoutCountryCode();
 
   return (
-    <Box flex={1} pb={4}>
-      <VStack space={6} flex={1} mb={8}>
-        <Container>
-          <Heading size="lg">Login</Heading>
-        </Container>
-        <FormControl label={'Mobile Number'}>
-          <HStack space={2} width="100%">
-            {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange)}
-            <Box
-              flex={3}
-              justifyContent="center"
-              style={[
-                styles.inputBox,
-                formik.touched.phoneNumber && formik.errors.phoneNumber ? styles.errorStyle : {},
-              ]}
+    <View style={styles.phoneAuthScreen}>
+      <View style={styles.Login}>
+        <View style={styles.titleSpacing}>
+          <Text variant="headlineMedium">Login</Text>
+        </View>
+        <View>
+          <Text style={styles.text}>Mobile Number</Text>
+          <View style={styles.row}>
+            {renderCountrySelectMenu(formik, isOpen, onOpen, onClose, handleSelectChange, styles,theme)}
+            <View
+              style={styles.inputBox}
             >
-              <Input
+              <TextInput
                 value={phoneNumber.getFormattedWithoutCountryCode()}
                 onChangeText={formik.handleChange('phoneNumber')}
                 keyboardType="numeric"
                 placeholder={phoneNumberPlaceholder}
+                activeOutlineColor={theme.colors.primaryContainer}
+                mode="outlined"
+                style={{ backgroundColor: theme.colors.surface }}
+                error={!!(formik.touched.phoneNumber && formik.errors.phoneNumber)}
               />
-            </Box>
-          </HStack>
-          {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
-            <Text style={styles.errorText}>{formik.errors.phoneNumber}</Text>
-          ) : null}
-        </FormControl>
+            </View>
+          </View>
+          <HelperText
+            type="error"
+            visible={!!(formik.touched.phoneNumber && formik.errors.phoneNumber)}
+          >
+            {formik.errors.phoneNumber}
+          </HelperText>
 
-        <HStack alignItems="flex-start" space={2} mt={2}>
-          <Checkbox
-            isChecked={isChecked}
-            onChange={setIsChecked}
+        </View>
+
+        <View style={styles.Checkbox}>
+          <Checkbox.Android
+            status={isChecked ? 'checked' : 'unchecked'}
+            onPress={() => setIsChecked(!isChecked)}
             accessibilityLabel="Agree to privacy policy"
-            value="agreePrivacyPolicy"
-            icon={<CheckIcon width={12} height={12} color={themeColor} />}
-            aria-label="Privacy Policy Checkbox"
-            mt={0.5}
+            uncheckedColor={theme.colors.outline}
           />
-          <HStack flexWrap="wrap" alignItems="baseline" flex={1}>
-            <Text fontSize="sm">By continuing, you agree to our </Text>
-            <Link
-              _text={{ color: 'primary.500', underline: true, fontSize: 'sm' }}
-              href="https://jalantechnologies.github.io/react-native-template/"
-              isExternal
+          <View style={styles.checkBoxGap}>
+            <Text >By continuing, you agree to our </Text>
+            <Text
+              style={{ color: theme.colors.primary, textDecorationLine: 'underline' }}
+              onPress={() =>
+                Linking.openURL(
+                  'https://jalantechnologies.github.io/react-native-template/'
+                )
+              }
             >
               Privacy Policy
-            </Link>
-          </HStack>
-        </HStack>
-      </VStack>
-
+            </Text>
+          </View>
+        </View>
+      </View>
       <Button
+        mode="contained"
         disabled={!isChecked}
-        isLoading={isSendOTPLoading}
-        onClick={() => formik.handleSubmit()}
-        kind={ButtonKind.CONTAINED}
+        loading={isSendOTPLoading}
+        onPress={() => formik.handleSubmit()}
       >
         Send OTP
       </Button>
-    </Box>
+    </View>
   );
 };
 

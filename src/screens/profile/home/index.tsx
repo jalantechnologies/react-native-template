@@ -1,8 +1,8 @@
-import { Box, Divider, Toast, useTheme, VStack } from 'native-base';
+import { Box, Divider, Toast, VStack } from 'native-base';
 import React, { useState } from 'react';
+import { Button } from 'react-native-paper';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import LogoutIcon from 'react-native-template/assets/icons/logout.svg';
-import { Button } from 'react-native-template/src/components';
 
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
 import { useAccountContext, useAuthContext } from '../../../contexts';
@@ -13,8 +13,10 @@ import AccountDeleteModal from './account-delete-modal';
 import ProfileAction from './profile-action';
 import ProfileInfoSection from './profile-info-section';
 
+import { useAppTheme } from '@/theme';
+
 const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
-  const theme = useTheme();
+  const theme = useAppTheme();
 
   const [isAccountDeleteModalOpen, setIsAccountDeleteModalOpen] = useState(false);
 
@@ -60,7 +62,7 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
         />
         <ProfileAction
           title={'Delete Account'}
-          icon={<DeleteIcon width={20} height={20} fill={theme.colors.primary['500']} />}
+          icon={<DeleteIcon width={theme.iconSizes.md} height={theme.iconSizes.md} fill={theme.colors.primary} />}
           onPress={() => setIsAccountDeleteModalOpen(true)}
         />
       </VStack>
@@ -74,8 +76,16 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
 
       <Box w="50%" alignSelf="center" position="absolute" bottom={4}>
         <Button
-          onClick={logout}
-          startEnhancer={<LogoutIcon width={20} height={20} fill={theme.colors.secondary['50']} />}
+          mode="contained"
+          onPress={logout}
+
+          icon={() => (
+            <LogoutIcon
+              width={theme.iconSizes.md}
+              height={theme.iconSizes.md}
+              fill={theme.colors.onPrimary}
+            />
+          )}
         >
           Logout
         </Button>

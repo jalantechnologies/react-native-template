@@ -1,0 +1,105 @@
+name: Update Preview PR Comment
+description: Update the shared preview comment with platform-specific build links.
+inputs:
+  platform:
+    description: 'Platform that completed (android|ios)'
+    required: true
+  android_firebase_project_id:
+    description: 'Firebase project ID'
+    required: true
+  android_firebase_app_package:
+    description: 'Firebase app package'
+    required: true
+  ios_app_store_connect_api_key_issuer_id:
+    description: 'App Store Connect issuer ID'
+    required: true
+  ios_apple_id:
+    description: 'Apple app ID'
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Upsert preview PR comment
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const marker = '<!-- preview-build-links -->';
+          const platform = '${{ inputs.platform }}';
+          const prNumber = context.issue.number;
+          const buildSha = context.sha;
+
+          const projectId = '${{ inputs.android_firebase_project_id }}';
+          const appPackage = '${{ inputs.android_firebase_app_package }}';
+          const encodedAppPackage = encodeURIComponent(appPackage);
+          const firebaseUrl = `https://console.firebase.google.com/u/0/project/${projectId}/appdistribution/app/android:${encodedAppPackage}/releases`;
+
+          const issuerId = '${{ inputs.ios_app_store_connect_api_key_issuer_id }}';
+          const appId = '${{ inputs.ios_apple_id }}';
+          const testflightUrl = `https://appstoreconnect.apple.com/teams/${issuerId}/apps/${appId}/testflight/ios`;
+
+          const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+          const attempts = 3;
+
+          for (let attempt = 0; attempt < attempts; attempt += 1) {
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+            const existingLines = existing?.body?.split('\n') ?? [];
+            const existingAndroidLine = existingLines.find((line) => line.includes('Android (Firebase)'));
+            const existingIosLine = existingLines.find((line) => line.includes('iOS (TestFlight)'));
+
+            let androidLine = '';
+            let iosLine = '';
+
+            if (platform === 'android') {
+              const iosHasCurrentSha = existingIosLine?.includes(`ios-sha:${buildSha}`);
+              androidLine = `- ✅ Android (Firebase): ${firebaseUrl} <!-- android-sha:${buildSha} -->`;
+              iosLine = iosHasCurrentSha
+                ? existingIosLine
+                : `- ⏳ iOS (TestFlight): pending upload <!-- ios-sha:${buildSha} -->`;
+            } else if (platform === 'ios') {
+              const androidHasCurrentSha = existingAndroidLine?.includes(`android-sha:${buildSha}`);
+              androidLine = androidHasCurrentSha
+                ? existingAndroidLine
+                : `- ⏳ Android (Firebase): pending upload <!-- android-sha:${buildSha} -->`;
+              iosLine = `- ✅ iOS (TestFlight): ${testflightUrl} <!-- ios-sha:${buildSha} -->`;
+            } else {
+              throw new Error(`Unsupported platform: ${platform}`);
+            }
+
+            const body = `${marker}
+          ✅ Preview build links for PR #${prNumber}
+
+          ${androidLine}
+          ${iosLine}
+          `;
+
+            try {
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                  body,
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  body,
+                });
+              }
+              break;
+            } catch (error) {
+              if (attempt === attempts - 1) {
+                throw error;
+              }
+              await sleep(1000 * (attempt + 1));
+            }
+          }

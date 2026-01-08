@@ -83,76 +83,14 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
 
-
-      - name: Post or update preview comment (Android)
-        uses: actions/github-script@v7
+      - name: Post or update PR comment (Android)
+        uses: ./.github/actions/update_preview_comment
         with:
-          script: |
-            const marker = '<!-- preview-build-links -->';
-            const prNumber = context.issue.number;
-            const buildSha = context.sha;
-
-            const projectId = '${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}';
-            const appPackage = '${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}';
-            const encodedAppPackage = encodeURIComponent(appPackage);
-            const firebaseUrl = `https://console.firebase.google.com/u/0/project/${projectId}/appdistribution/app/android:${encodedAppPackage}/releases`;
-
-            const issuerId = '${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}';
-            const appId = '${{ secrets.IOS_APPLE_ID }}';
-            const testflightUrl = `https://appstoreconnect.apple.com/teams/${issuerId}/apps/${appId}/testflight/ios`;
-
-            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-            const attempts = 3;
-
-            for (let attempt = 0; attempt < attempts; attempt += 1) {
-              const { data: comments } = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-                per_page: 100,
-              });
-
-              const existing = comments.find((c) => c.body && c.body.includes(marker));
-              const existingLines = existing?.body?.split('\n') ?? [];
-              const existingIosLine = existingLines.find((line) => line.includes('iOS (TestFlight)'));
-              const iosHasCurrentSha = existingIosLine?.includes(`ios-sha:${buildSha}`);
-
-              const androidLine = `- ✅ Android (Firebase): ${firebaseUrl} <!-- android-sha:${buildSha} -->`;
-              const iosLine = iosHasCurrentSha
-                ? existingIosLine
-                : `- ⏳ iOS (TestFlight): pending upload <!-- ios-sha:${buildSha} -->`;
-
-              const body = `${marker}
-              ✅ Preview build links for PR #${prNumber}
-
-              ${androidLine}
-              ${iosLine}
-              `;
-
-              try {
-                if (existing) {
-                  await github.rest.issues.updateComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    comment_id: existing.id,
-                    body,
-                  });
-                } else {
-                  await github.rest.issues.createComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: prNumber,
-                    body,
-                  });
-                }
-                break;
-              } catch (error) {
-                if (attempt === attempts - 1) {
-                  throw error;
-                }
-                await sleep(1000 * (attempt + 1));
-              }
-            }
+          platform: android
+          android_firebase_project_id: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
+          android_firebase_app_package: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
+          ios_app_store_connect_api_key_issuer_id: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+          ios_apple_id: ${{ secrets.IOS_APPLE_ID }}
 
   deploy_ios:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
@@ -190,74 +128,12 @@ jobs:
           IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
           IOS_MATCH_DEPLOY_KEY: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-
-      - name: Post or update preview comment (iOS)
-        uses: actions/github-script@v7
+      
+      - name: Post or update PR comment (IOS)
+        uses: ./.github/actions/update_preview_comment
         with:
-          script: |
-            const marker = '<!-- preview-build-links -->';
-            const prNumber = context.issue.number;
-            const buildSha = context.sha;
-
-            const projectId = '${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}';
-            const appPackage = '${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}';
-            const encodedAppPackage = encodeURIComponent(appPackage);
-            const firebaseUrl = `https://console.firebase.google.com/u/0/project/${projectId}/appdistribution/app/android:${encodedAppPackage}/releases`;
-
-            const issuerId = '${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}';
-            const appId = '${{ secrets.IOS_APPLE_ID }}';
-            const testflightUrl = `https://appstoreconnect.apple.com/teams/${issuerId}/apps/${appId}/testflight/ios`;
-            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-            const attempts = 3;
-
-            for (let attempt = 0; attempt < attempts; attempt += 1) {
-              const { data: comments } = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: prNumber,
-                per_page: 100,
-              });
-
-              const existing = comments.find((c) => c.body && c.body.includes(marker));
-              const existingLines = existing?.body?.split('\n') ?? [];
-              const existingAndroidLine = existingLines.find((line) => line.includes('Android (Firebase)'));
-              const androidHasCurrentSha = existingAndroidLine?.includes(`android-sha:${buildSha}`);
-
-              const androidLine = androidHasCurrentSha
-                ? existingAndroidLine
-                : `- ⏳ Android (Firebase): pending upload <!-- android-sha:${buildSha} -->`;
-              const iosLine = `- ✅ iOS (TestFlight): ${testflightUrl} <!-- ios-sha:${buildSha} -->`;
-
-              const body = `${marker}
-              ✅ Preview build links for PR #${prNumber}
-
-              ${androidLine}
-              ${iosLine}
-              `;
-
-              try {
-                if (existing) {
-                  await github.rest.issues.updateComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    comment_id: existing.id,
-                    body,
-                  });
-                } else {
-                  await github.rest.issues.createComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: prNumber,
-                    body,
-                  });
-                }
-                break;
-              } catch (error) {
-                if (attempt === attempts - 1) {
-                  throw error;
-                }
-                await sleep(1000 * (attempt + 1));
-              }
-            }
-
-
+          platform: ios
+          android_firebase_project_id: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
+          android_firebase_app_package: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
+          ios_app_store_connect_api_key_issuer_id: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+          ios_apple_id: ${{ secrets.IOS_APPLE_ID }}

@@ -40,6 +40,24 @@ platform :ios do
       release_notes: ENV["RELEASE_NOTES"]
     )
   end
+
+  desc "Build Preview app for GitHub Release"
+  lane :preview_build do |options|
+    require_relative "scripts/ios_build_preview"
+    ios_build_preview!(
+      app_identifier: ENV["IOS_APP_IDENTIFIER"],
+      xcodeproj: "Boilerplate.xcodeproj",
+      scheme: "Boilerplate",
+      workspace: "Boilerplate.xcworkspace",
+      team_id: ENV["IOS_APP_STORE_TEAM_ID"],
+      keychain_name: "ios.keychain",
+      keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
+      output_directory: options.fetch(:output_directory),
+      output_name: options.fetch(:output_name),
+      build_number: options.fetch(:build_number)
+    )
+  end
+
   # Removes any Preview builds uploaded via pr_deploy for this PR.
   # Should be called when PRs are closed or merged to keep TestFlight clean.
   desc "Cleanup Preview app build for PR"

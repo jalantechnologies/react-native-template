@@ -96,8 +96,12 @@ runs:
       shell: bash
       run: |
         if [ -f "Pods/Manifest.lock" ] && cmp -s "Pods/Manifest.lock" "Podfile.lock"; then
-          echo "Pods are up to date; skipping pod install."
-          exit 0
+          if [ -d "build/generated/ios" ]; then
+            echo "Pods are up to date and codegen outputs exist; skipping pod install."
+            exit 0
+          else
+            echo "Pods are up to date but codegen outputs are missing; running pod install."
+          fi
         fi
 
         if [ "${{ steps.pods-cache.outputs.cache-hit }}" != "true" ]; then

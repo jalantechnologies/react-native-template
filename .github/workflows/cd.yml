@@ -8,6 +8,41 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    outputs:
+      android: ${{ steps.filter.outputs.android }}
+      ios: ${{ steps.filter.outputs.ios }}
+    steps:
+      - name: Determine changed paths (skip unnecessary platform builds)
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          token: ${{ github.token }}
+          filters: |
+            android:
+              - 'android/**'
+              - '**/*.gradle*'
+              - 'gradle/**'
+              - 'gradle-wrapper.properties'
+              - 'package.json'
+              - 'yarn.lock'
+              - 'src/**'
+              - 'app.json'
+              - 'metro.config.js'
+              - 'babel.config.js'
+              - 'react-native.config.js'
+            ios:
+              - 'ios/**'
+              - 'package.json'
+              - 'yarn.lock'
+              - 'src/**'
+              - 'app.json'
+              - 'metro.config.js'
+              - 'babel.config.js'
+              - 'react-native.config.js'
+
   check_version_number:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
@@ -47,8 +82,8 @@ jobs:
           notes_ext: '.md'
 
   deploy_android:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [check_version_number, release_notes_check]
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.android == 'true'
+    needs: [check_version_number, release_notes_check, changes]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout (root for actions)
@@ -81,8 +116,8 @@ jobs:
           RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
 
   deploy_ios:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [check_version_number, release_notes_check]
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.ios == 'true'
+    needs: [check_version_number, release_notes_check, changes]
     runs-on: macos-14
     timeout-minutes: 60
     steps:

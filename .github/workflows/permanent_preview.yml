@@ -215,6 +215,7 @@ jobs:
         shell: bash
         run: |
           VERSION=$(jq -r .version package.json)
+          echo "PREVIEW_VERSION=$VERSION" >> $GITHUB_ENV
           {
             echo "## Permanent Preview"
             echo ""
@@ -230,8 +231,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          TAG="preview"
-          TITLE="Permanent Preview"
+          TAG="preview-v${PREVIEW_VERSION}"
+          TITLE="Permanent Preview v${PREVIEW_VERSION}"
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release edit "$TAG" --title "$TITLE" --notes-file preview-release-notes.md --prerelease
           else

@@ -1,15 +1,39 @@
 name: Setup Fastlane
 description: Installs Ruby dependencies and Fastlane plugins
+inputs:
+  ruby-version:
+    description: 'Ruby version to use'
+    required: false
+  ruby-version-file:
+    description: 'Path to Ruby version file (e.g., .ruby-version)'
+    required: false
+  working-directory:
+    description: 'Directory containing the Gemfile'
+    required: true
 runs:
   using: "composite"
   steps:
-    - name: Install bundler
-      run: gem install bundler
-      shell: bash
+    - name: Set up Ruby with Bundler cache (version file)
+      uses: ruby/setup-ruby@v1
+      if: ${{ inputs.ruby-version-file != '' }}
+      with:
+        ruby-version-file: ${{ inputs.ruby-version-file }}
+        bundler-cache: true
+        working-directory: ${{ inputs.working-directory }}
 
-    - name: Install gems and Fastlane plugins
-      working-directory: android
+    - name: Set up Ruby with Bundler cache (explicit version)
+      uses: ruby/setup-ruby@v1
+      if: ${{ inputs.ruby-version-file == '' }}
+      with:
+        ruby-version: ${{ inputs.ruby-version }}
+        bundler-cache: true
+        working-directory: ${{ inputs.working-directory }}
+
+    - name: Install Fastlane plugins when Pluginfile is present
       run: |
-        bundle install
-        bundle exec fastlane install_plugins
+        if [ -f "${{ inputs.working-directory }}/fastlane/Pluginfile" ]; then
+          bundle exec fastlane install_plugins
+        else
+          echo "No Pluginfile found; skipping fastlane plugin install."
+        fi
       shell: bash

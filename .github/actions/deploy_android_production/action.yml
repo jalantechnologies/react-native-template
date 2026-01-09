@@ -66,20 +66,11 @@ runs:
       env:
         CI: true
 
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
+    - name: Set up Fastlane
+      uses: ./.github/actions/setup-fastlane
       with:
-        ruby-version: "3.3"
-        bundler-cache: true
-
-    - name: Install Fastlane and dependencies
-      shell: bash
-      run: |
-        gem install bundler
-        cd android
-        bundle install
-      env:
-        CI: true
+        ruby-version-file: '.ruby-version'
+        working-directory: android
 
     - name: Decode Service Account Key JSON File
       uses: timheuer/base64-to-file@v1

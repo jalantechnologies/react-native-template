@@ -13,6 +13,14 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Validate Ruby version inputs
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.ruby-version }}" ] && [ -z "${{ inputs.ruby-version-file }}" ]; then
+          echo "Either ruby-version or ruby-version-file must be provided."
+          exit 1
+        fi
+
     - name: Set up Ruby with Bundler cache (version file)
       uses: ruby/setup-ruby@v1
       if: ${{ inputs.ruby-version-file != '' }}
@@ -28,8 +36,8 @@ runs:
         ruby-version: ${{ inputs.ruby-version }}
         bundler-cache: true
         working-directory: ${{ inputs.working-directory }}
-
     - name: Install Fastlane plugins when Pluginfile is present
+      working-directory: ${{ inputs.working-directory }}
       run: |
         if [ -f "${{ inputs.working-directory }}/fastlane/Pluginfile" ]; then
           bundle exec fastlane install_plugins

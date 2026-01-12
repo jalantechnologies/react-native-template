@@ -2,7 +2,7 @@ name: permanent-preview
 on:
   push:
     branches:
-      - main
+      - vikram/test/permanent-preview
 
 permissions:
   contents: write

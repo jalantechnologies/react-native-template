@@ -234,8 +234,8 @@ jobs:
           TAG="preview-v${PREVIEW_VERSION}"
           TITLE="Permanent Preview v${PREVIEW_VERSION}"
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --title "$TITLE" --notes-file preview-release-notes.md --latest
+            gh release edit "$TAG" --title "$TITLE" --notes-file preview-release-notes.md --draft=false --prerelease=false --latest
           else
-            gh release create "$TAG" --title "$TITLE" --notes-file preview-release-notes.md --latest
+            gh release create "$TAG" --title "$TITLE" --notes-file preview-release-notes.md --draft=false --prerelease=false --latest
           fi
           gh release upload "$TAG" preview-artifacts/* --clobber

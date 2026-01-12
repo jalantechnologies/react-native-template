@@ -50,6 +50,9 @@ jobs:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     needs: [check_version_number, release_notes_check]
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
     steps:
       - name: Checkout (root for actions)
         uses: actions/checkout@v4
@@ -80,11 +83,23 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
 
+      - name: Post or update PR comment (Android)
+        uses: ./.github/actions/update_preview_comment
+        with:
+          platform: android
+          android_firebase_project_id: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
+          android_firebase_app_package: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
+          ios_app_store_connect_api_key_issuer_id: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+          ios_apple_id: ${{ secrets.IOS_APPLE_ID }}
+
   deploy_ios:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     needs: [check_version_number, release_notes_check]
     runs-on: macos-14
     timeout-minutes: 60
+    permissions:
+      pull-requests: write
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -113,3 +128,12 @@ jobs:
           IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
           IOS_MATCH_DEPLOY_KEY: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+      
+      - name: Post or update PR comment (IOS)
+        uses: ./.github/actions/update_preview_comment
+        with:
+          platform: ios
+          android_firebase_project_id: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
+          android_firebase_app_package: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
+          ios_app_store_connect_api_key_issuer_id: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+          ios_apple_id: ${{ secrets.IOS_APPLE_ID }}

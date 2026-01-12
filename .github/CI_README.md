@@ -27,12 +27,12 @@ These jobs run **independently and in parallel**, improving feedback time.
 **When it runs**
 
 * Confirms the PR `package.json` version is newer than `main` before any deploy logic runs.
-* Validates release notes for the current version: the file must exist at `docs/release_notes/{version}.md`, be non-empty, and stay at or under **500 characters**. The validated text is emitted as workflow output and copied into `android/fastlane/metadata/android/en-US/changelogs/default.txt` and `ios/fastlane/changelog.txt` for downstream tooling (Fastlane uses the iOS file for TestFlight uploads).
-* Builds and deploys Android (Firebase App Distribution) with explicit Gradle overrides so CI never uses manifest defaults:
+* Validates release notes for the current version: the file must exist at `docs/release_notes/{version}.md`, be non-empty, and stay at or under **500 characters**. The validated text is emitted as workflow output and copied into `android/fastlane/metadata/android/en-US/changelogs/default.txt` as well as exported as ENV variable, which is used for IOS testflight upload.
+* Builds and deploys Android (Firebase App Distribution) with explicit Gradle overrides so CD never uses manifest defaults:
   * `versionNameOverride` comes from `package.json`.
   * `versionCodeOverride` is derived from the semantic version (`major*10000 + minor*100 + patch`).
-* Builds and deploys iOS (TestFlight).
-* Comments on the PR with the Firebase preview link.
+* Builds and deploys iOS (TestFlight) with build number generated with combination of PR + Timestamp.
+* Comments on the PR with the Firebase and Testflight Link
 
 **What it does**
 
@@ -42,8 +42,8 @@ These jobs run **independently and in parallel**, improving feedback time.
   - Expects a file at `docs/release_notes/{version}.md`.
   - File must be non-empty and ≤ **500 characters** (after trimming whitespace).
   - The validated snippet is exposed as workflow output and injected into:
-    - `ios/fastlane/changelog.txt` for TestFlight “What to Test”.
     - `android/fastlane/metadata/android/en-US/changelogs/preview.txt` (or similar) for Firebase notes.
+    - exported as an ENV variable and passed to ios preview fastlane script for TestFlight “What to Test”.
 - Injects environment variables from **Doppler** into `.env` files:
   - Uses environment-specific configs (Preview vs Production).
   - Overwrites runtime config for both Android and iOS builds for consistency with target environment.
@@ -61,10 +61,10 @@ These jobs run **independently and in parallel**, improving feedback time.
   - Uses Fastlane to:
     - Build the IPA with App Store signing (manual for the main app target).
     - Strip Hermes bitcode and re-sign frameworks if needed.
+    - Attaches release notes content while uploading the app to testflight.
 - Adds a **PR comment** summarizing preview artifacts:
   - Firebase App Distribution link for the Android build.
   - TestFlight build information / link for the iOS build.
-  - Optionally echoes the short release-notes snippet used for this preview.
 
 **Why it matters**
 
@@ -80,7 +80,6 @@ This workflow enforces semantic versioning and release notes at PR time, ensures
 
 **What it does**
 
-- Re-validates `package.json` version and release notes (same rules as preview).
 - Builds and signs Android and iOS release artifacts with production credentials.
 - Publishes Android to **Google Play** Internal track and iOS builds to **App Store Connect** for review.
 - Fails fast if any of the signing, versioning, or upload steps are inconsistent with the current state in Google Play or App Store Connect.
@@ -89,7 +88,6 @@ This workflow enforces semantic versioning and release notes at PR time, ensures
 Push to `main`
 
 **What it does:**
-* Confirms the PR `package.json` version is newer than `main` before any deploy logic runs.
 * Validates release notes for the current version: the file must exist at `docs/release_notes/{version}.md`, be non-empty, and stay at or under **500 characters**. The validated text is emitted as workflow output and copied into **fastlane metadata** folders of both android and ios for downstream tooling.
 * Uses Doppler Secret Injection in the workflows, to fetch and overwrite the .env of the project with the secret variables, dependent on the environment i.e. Production / Preview (Development)
 * Builds and deploys Android apk to **Google Play Console**:
@@ -97,7 +95,7 @@ Push to `main`
   * `versionCodeOverride` is derived from the semantic version (`major*10000 + minor*100 + patch`).
 * Builds and deploys iOS to the **Apple Store Connect**:
   * `version` number comes from `package.json`.
-  * `build_number` is calculated by encoding the version / marketing version (e.g. "1.0.13" -> "1013").
+  * `build_number` is calculated by encoding the version / marketing version (e.g. "1.0.13" -> "1000013").
 
 **Why it matters:**
 Guarantees only versioned, documented builds go to the stores — with release notes and version codes handled automatically.
@@ -201,14 +199,12 @@ To provide parity with Android preview builds by shipping an iOS TestFlight buil
   - Ensure signing via `match` and a dedicated preview keychain.
   - Build the IPA (App Store export) and post-process (Hermes bitcode stripping and re-signing).
   - Read release notes from:
-    - `docs/release_notes/{version}.md` → injected into `ios/fastlane/changelog.txt`.
-    - as well as set as an ENV and used in fastlane ruby script using ios/fastlane/scripts/release_notes_helper script
+    - `docs/release_notes/{version}.md` → exported as an ENV variable to be used in IOS fastlane scripts and pass it directly.
   - Upload the IPA to **TestFlight** with:
-    - “What to Test” populated from `changelog.txt`.
+    - “What to Test” populated from `changelog` parameter of `upload_to_testflight` method of fastlane.
     - Internal-only distribution (preview groups).
   - Comment on the PR with:
     - The TestFlight build number / link.
-    - The short release-notes snippet.
 
 ***
 
@@ -258,7 +254,7 @@ To automate iOS App Store submissions with consistent versioning, build numbers,
 - Triggered together with the Android production deployment on push to `main`.
 - Uses an iOS Fastlane lane (e.g., `ios_deploy_production!`) to:
   - Read `version` from `package.json` and set the marketing version in `Boilerplate.xcodeproj`.
-  - Compute the next `build_number` by encoding the marketing version ("1.0.13" → 10013, "1.2.5" → 10205) and update the Xcode project.
+  - Compute the next `build_number` by encoding the marketing version ("1.0.13" → 1000013) and update the Xcode project.
   - Use `match` (readonly) and a production keychain for signing.
   - Script reads release notes from release_notes argument and writes content in fastlane/metadata/en-US/release_notes.txt file using release notes helper script, so that it will be passed with the build.
   - Build a release IPA with App Store export options.

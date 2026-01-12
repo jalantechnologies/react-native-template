@@ -103,20 +103,3 @@ runs:
       if: always()
       shell: bash
       run: rm -f /tmp/gcp_key.json
-
-    - name: Comment on PR with Firebase link
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const prNumber = context.issue.number;
-          const projectId = "${{ inputs.ANDROID_FIREBASE_PROJECT_ID }}";
-          const appPackage = "${{ inputs.ANDROID_FIREBASE_APP_PACKAGE }}";
-          const encodedAppPackage = encodeURIComponent(appPackage);
-          const releaseUrl = `https://console.firebase.google.com/u/0/project/${projectId}/appdistribution/app/android:${encodedAppPackage}/releases`;
-
-          github.rest.issues.createComment({
-            issue_number: prNumber,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: `🚀 Deployed PR #${prNumber} to Firebase App Distribution.\n\n🔗 [View Release in Firebase Console](${releaseUrl})`
-          });

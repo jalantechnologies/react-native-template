@@ -2,7 +2,7 @@ name: permanent-preview
 on:
   push:
     branches:
-      - vikram/test/permanent-preview
+      - main
 
 permissions:
   contents: write
@@ -234,8 +234,8 @@ jobs:
           TAG="preview-v${PREVIEW_VERSION}"
           TITLE="Permanent Preview v${PREVIEW_VERSION}"
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --title "$TITLE" --notes-file preview-release-notes.md --prerelease
+            gh release edit "$TAG" --title "$TITLE" --notes-file preview-release-notes.md --latest
           else
-            gh release create "$TAG" --title "$TITLE" --notes-file preview-release-notes.md --prerelease
+            gh release create "$TAG" --title "$TITLE" --notes-file preview-release-notes.md --latest
           fi
           gh release upload "$TAG" preview-artifacts/* --clobber

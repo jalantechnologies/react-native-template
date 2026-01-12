@@ -87,7 +87,7 @@ def ios_deploy_production!(options = {})
     version_number: marketing_version
   )
 
-  # Encode marketing_version (e.g. "1.0.13" -> "1013")
+  # Encode marketing_version (e.g. "1.0.13" -> "1000013")
   major, minor, patch = marketing_version.split('.').map(&:to_i)
   minor ||= 0
   patch ||= 0

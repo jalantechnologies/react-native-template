@@ -44,6 +44,27 @@ platform :ios do
   desc "Build Preview app for GitHub Release"
   lane :preview_build do |options|
     require_relative "scripts/ios_build_preview"
+
+    create_keychain(
+      name: "ios.keychain",
+      password: ENV["IOS_KEYCHAIN_PASSWORD"],
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: false
+    )
+
+    profile_name = "match AppStore #{ENV["IOS_APP_IDENTIFIER"]}"
+    match(
+      type: "appstore",
+      app_identifier: ENV["IOS_APP_IDENTIFIER"],
+      readonly: true,
+      verbose: true,
+      keychain_name: "ios.keychain",
+      keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
+      team_id: ENV["IOS_APP_STORE_TEAM_ID"]
+    )
+
     ios_build_preview!(
       app_identifier: ENV["IOS_APP_IDENTIFIER"],
       xcodeproj: "Boilerplate.xcodeproj",
@@ -54,9 +75,11 @@ platform :ios do
       keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
       output_directory: options.fetch(:output_directory),
       output_name: options.fetch(:output_name),
-      build_number: options.fetch(:build_number)
+      build_number: options.fetch(:build_number),
+      profile_name: profile_name
     )
   end
+
 
   # Removes any Preview builds uploaded via pr_deploy for this PR.
   # Should be called when PRs are closed or merged to keep TestFlight clean.

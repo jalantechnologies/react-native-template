@@ -1,0 +1,114 @@
+name: Build iOS Permanent Preview
+description: Build a release IPA for the permanent preview flow
+inputs:
+  build_number:
+    required: true
+    description: Build number to use for the preview build
+  ios_match_password:
+    required: true
+    description: Match password
+  ios_match_repository_url:
+    required: true
+    description: Match repository URL
+  ios_app_identifier:
+    required: true
+    description: App bundle identifier
+  ios_keychain_password:
+    required: true
+    description: Keychain password
+  ios_app_store_team_id:
+    required: true
+    description: App Store team ID
+  ios_match_deploy_key:
+    required: true
+    description: SSH private key for Match repo
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '.ruby-version'
+        bundler-cache: true
+        working-directory: ios
+
+    - name: Select Xcode 16.2
+      shell: bash
+      run: |
+        sudo xcode-select -s /Applications/Xcode_16.2.app
+        export DEVELOPER_DIR="/Applications/Xcode_16.2.app/Contents/Developer"
+        xcode-select -p
+        xcodebuild -version
+
+    - name: Set Node Version
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .nvmrc
+
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
+    - name: Install dependencies
+      shell: bash
+      run: yarn install --immutable
+
+    - name: Cache CocoaPods
+      uses: actions/cache@v4
+      with:
+        path: |
+          ios/Pods
+          ~/Library/Caches/CocoaPods
+          ~/.cocoapods
+        key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pods-
+
+    - name: Install CocoaPods dependencies
+      working-directory: ios
+      shell: bash
+      run: |
+        pod repo update
+        bundle exec pod update boost --no-repo-update
+        bundle exec pod install
+
+    - name: Set up SSH for Match
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ inputs.ios_match_deploy_key }}
+
+    - name: Add GitHub to known hosts
+      shell: bash
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    - name: Export Match password
+      shell: bash
+      run: echo "MATCH_PASSWORD=${{ inputs.ios_match_password }}" >> $GITHUB_ENV
+
+    - name: Clean Match cache
+      shell: bash
+      run: rm -rf ~/.match
+
+    - name: Build iOS preview IPA
+      working-directory: ios
+      shell: bash
+      env:
+        IOS_APP_IDENTIFIER: ${{ inputs.ios_app_identifier }}
+        IOS_APP_STORE_TEAM_ID: ${{ inputs.ios_app_store_team_id }}
+        IOS_KEYCHAIN_PASSWORD: ${{ inputs.ios_keychain_password }}
+        IOS_MATCH_REPOSITORY_URL: ${{ inputs.ios_match_repository_url }}
+        MATCH_PASSWORD: ${{ inputs.ios_match_password }}
+      run: |
+        bundle exec fastlane ios preview_build \
+          build_number:"${{ inputs.build_number }}" \
+          output_directory:"build/preview" \
+          output_name:"react-native-template-preview.ipa"
+
+    - name: Upload iOS artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-preview-release
+        path: ios/build/preview/react-native-template-preview.ipa
+        if-no-files-found: error

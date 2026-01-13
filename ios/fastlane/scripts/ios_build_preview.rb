@@ -16,6 +16,7 @@ def ios_build_preview!(options = {})
   output_directory  = options.fetch(:output_directory)
   output_name       = options.fetch(:output_name)
   build_number      = options.fetch(:build_number)
+  profile_name      = options.fetch(:profile_name)
 
   package_json_path = File.expand_path('../../../package.json', __dir__)
   package_json = JSON.parse(File.read(package_json_path))
@@ -52,18 +53,6 @@ def ios_build_preview!(options = {})
 
   js_bundle_path = File.expand_path('../../main.jsbundle', __dir__)
   UI.user_error!('❌ main.jsbundle not found') unless File.exist?(js_bundle_path)
-
-  UI.message('🔐 Fetching signing certificates and profiles...')
-  profile_name = "match AppStore #{app_identifier}"
-  match(
-    type: "appstore",
-    app_identifier: app_identifier,
-    readonly: true,
-    verbose: true,
-    keychain_name: keychain_name,
-    keychain_password: keychain_password,
-    team_id: team_id
-  )
 
   FileUtils.mkdir_p(output_directory)
 

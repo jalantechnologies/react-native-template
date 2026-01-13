@@ -102,6 +102,26 @@ Guarantees only versioned, documented builds go to the stores — with release n
 
 ---
 
+### Permanent Preview (`permanent_preview.yml`)
+
+**When it runs**
+
+- On `push` events to the `main` branch (typically after PR merge).
+- After the release notes check completes successfully.
+
+**What it does**
+
+- Injects **Preview** Doppler secrets to generate preview-credential builds from `main`.
+- Builds production-grade Android and iOS artifacts using the existing Fastlane lanes.
+- Publishes a **versioned GitHub Release** (tag: `preview-v{version}`) and marks it as the **Latest** release.
+- Uploads the preview APK/IPA artifacts to the release for easy access.
+
+**Why it matters**
+
+Provides a stable, always-up-to-date preview build from `main` that mirrors production behavior while using preview/test credentials.
+
+---
+
 ## 📋 Release Notes Structure
 
 Release notes for previews and production:
@@ -208,7 +228,21 @@ To provide parity with Android preview builds by shipping an iOS TestFlight buil
 
 ***
 
-### 3. 🧹 Preview Cleanup on PR Close
+### 3. 🧭 Permanent Preview Release (main)
+
+**Why?**  
+To provide a stable, always-up-to-date preview build from `main` that mirrors production behavior while using preview/test credentials.
+
+**How?**
+
+- Triggered on `push` to `main` via `permanent_preview.yml`.
+- Uses Preview Doppler secrets to build production-grade artifacts.
+- Builds Android and iOS artifacts through Fastlane lanes and uploads them to a **versioned GitHub Release** (`preview-v{version}`), marked as **Latest**.
+
+***
+
+### 4. 🧹 Preview Cleanup on PR Close
+
 
 **Why?**  
 To keep preview environments clean and avoid accumulating obsolete builds.
@@ -226,7 +260,7 @@ This keeps both Firebase and TestFlight uncluttered and ensures that only active
 
 ***
 
-### 4. 📦 Production Build & Deploy to Google Play Console (Android)
+### 5. 📦 Production Build & Deploy to Google Play Console (Android)
 
 **Why?**  
 To automate promotion of tested changes to **Google Play Console (Internal track or higher)** with consistent versioning and release notes.
@@ -244,7 +278,7 @@ To automate promotion of tested changes to **Google Play Console (Internal track
 
 ***
 
-### 5. 🍏 Production Build & Deploy to App Store Connect (iOS)
+### 6. 🍏 Production Build & Deploy to App Store Connect (iOS)
 
 **Why?**  
 To automate iOS App Store submissions with consistent versioning, build numbers, and release notes derived from the same source as Android.

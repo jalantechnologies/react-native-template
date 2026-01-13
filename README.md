@@ -134,6 +134,11 @@ Set `LOGGER=datadog` or `LOGGER=console,datadog` to enable Datadog logging.
 
 ## CI/CD Pipelines
 
+### Environments
+- **Preview**: PR builds using preview/test credentials for fast QA validation.
+- **Permanent Preview**: On `main`, builds production-grade artifacts with preview/test credentials and publishes a versioned GitHub Release for the latest preview build.
+- **Production**: On `main`, builds and deploys production artifacts to app stores with production credentials.
+
 ### Pull Requests
 - **Lint Check**: ESLint validation
 - **SonarQube**: Code quality analysis
@@ -143,6 +148,9 @@ Set `LOGGER=datadog` or `LOGGER=console,datadog` to enable Datadog logging.
 ### Preview Deployment (on PR)
 - Android: Firebase App Distribution
 - iOS: TestFlight
+
+### Permanent Preview (on merge to main)
+- Android + iOS: Versioned GitHub Release with latest preview artifacts
 
 ### Production Deployment (on merge to main)
 - Android: Google Play Store

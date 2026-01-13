@@ -88,7 +88,6 @@ platform :android do
   end
 
 
-
   desc "Deploy APK to Firebase App Distribution (PR Preview)"
   lane :pr_deploy do |options|
     # Load the deploy script
@@ -102,6 +101,26 @@ platform :android do
       release_notes: ENV["RELEASE_NOTES"] 
     )
 
+  end
+
+  desc "Build release APK for permanent preview"
+  lane :permanent_preview_build do
+    package_json_path = File.expand_path("../../package.json", __dir__)
+    package_json = JSON.parse(File.read(package_json_path))
+    version_name = package_json["version"]
+    UI.user_error!("❌ Version not found in package.json") unless version_name
+
+    version_code = ENV["ANDROID_PREVIEW_VERSION_CODE"]
+    UI.user_error!("❌ ANDROID_PREVIEW_VERSION_CODE missing") unless version_code
+
+    gradle(
+      task: "assemble",
+      build_type: "release",
+      properties: {
+        "versionCode" => version_code.to_s,
+        "versionName" => version_name
+      }
+    )
   end
 
   desc "Clean up Firebase App Distribution releases for closed PR"

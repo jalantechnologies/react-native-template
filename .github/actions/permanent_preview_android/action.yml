@@ -1,0 +1,48 @@
+name: Build Android Permanent Preview
+description: Build a release APK for the permanent preview flow
+inputs:
+  build_number:
+    required: true
+    description: Version code to use for the preview build
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
+    - name: Install dependencies
+      shell: bash
+      run: yarn install --immutable
+
+    - name: Set up Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.1'
+
+    - name: Set up Fastlane
+      uses: ./.github/actions/setup-fastlane
+
+    - name: Build Android preview APK
+      shell: bash
+      working-directory: android
+      env:
+        ANDROID_PREVIEW_VERSION_CODE: ${{ inputs.build_number }}
+      run: bundle exec fastlane android permanent_preview_build
+
+    - name: Stage Android artifact
+      shell: bash
+      run: |
+        mkdir -p preview-artifacts
+        cp android/app/build/outputs/apk/release/app-release.apk preview-artifacts/react-native-template-preview.apk

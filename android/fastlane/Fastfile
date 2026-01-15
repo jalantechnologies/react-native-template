@@ -18,6 +18,7 @@ default_platform(:android)
 
 platform :android do
   def android_flavor_task_name(flavor)
+    # Convert a flavor string (e.g., "qa" or "production") into Gradle task casing.
     flavor.split(/[^a-zA-Z0-9]/).map(&:capitalize).join
   end
 

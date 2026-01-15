@@ -17,6 +17,9 @@
 default_platform(:android)
 
 platform :android do
+  def android_flavor_task_name(flavor)
+    flavor.split(/[^a-zA-Z0-9]/).map(&:capitalize).join
+  end
 
   desc "Fetches the latest version code from the Play Console and increments it by 1"
   lane :fetch_and_increment_build_number do
@@ -43,6 +46,14 @@ platform :android do
     version_name = package_json["version"]
     UI.user_error!("❌ Version not found in package.json") unless version_name
 
+    # Production builds should use the base applicationId (no suffix).
+    # Keep this overrideable for forks that rename flavors without touching Fastlane.
+    # ANDROID_PRODUCTION_FLAVOR is optional and can be passed from github secrets to workflows.
+    # If ANDROID_PRODUCTION_FLAVOR is available as ENV we will use it, otherwise default is production
+    # More about build variants and flavours : https://developer.android.com/build/build-variants
+    production_flavor = ENV.fetch("ANDROID_PRODUCTION_FLAVOR", "production")
+    gradle_task_flavor = android_flavor_task_name(production_flavor)
+
     app_identifier = CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier) ||
                      CredentialsManager::AppfileConfig.try_fetch_value(:package_name)
     UI.user_error!("❌ App identifier not configured") unless app_identifier
@@ -64,8 +75,7 @@ platform :android do
 
     # 3) Build with injected versionCode + versionName
     gradle(
-      task: "bundle",
-      build_type: "release",
+      task: "bundle#{gradle_task_flavor}Release",
       properties: {
         "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
         "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],

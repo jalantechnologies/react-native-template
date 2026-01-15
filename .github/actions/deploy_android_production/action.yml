@@ -2,6 +2,9 @@ name: 'Deploy Android App to Production'
 description: 'Build and deploy the Android app to Production using Fastlane'
 
 inputs:
+  ANDROID_APP_IDENTIFIER:
+    required: false
+    description: 'Android applicationId/package name (overrides fastlane Appfile)'
   GPLAY_SERVICE_ACCOUNT_KEY_JSON:
     required: true
     description: 'Service Account Key JSON file for Google Play Store'
@@ -119,6 +122,7 @@ runs:
       working-directory: android
       run: bundle exec fastlane deploy_android_production
       env:
+        ANDROID_APP_IDENTIFIER: ${{ inputs.ANDROID_APP_IDENTIFIER }}
         ANDROID_KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
         ANDROID_KEYSTORE_PASSWORD: ${{ inputs.ANDROID_KEYSTORE_PASSWORD }}
         ANDROID_KEY_ALIAS: ${{ inputs.ANDROID_KEY_ALIAS }}

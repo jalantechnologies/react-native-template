@@ -1,1 +1,1 @@
-package_name("com.bettrsw.boilerplate.app") # e.g. com.krausefx.app
+package_name(ENV["ANDROID_APP_IDENTIFIER"] || "com.bettrsw.boilerplate.app") # e.g. com.krausefx.app

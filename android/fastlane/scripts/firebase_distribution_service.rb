@@ -58,9 +58,17 @@ class FirebaseDistributionService
 
     UI.message("🔨 Building APK with Gradle...")
 
+    # Preview builds should use the preview flavor so installs can coexist with production.
+    # Allow overrides for forks that rename flavors or use a different preview variant.
+    # ANDROID_PREVIEW_FLAVOR is optional and can be passed from github secrets to workflows.
+    # If ANDROID_PREVIEW_FLAVOR is available as ENV we will use it, otherwise default is preview
+    # More about build variants and flavours : https://developer.android.com/build/build-variants
+    preview_flavor = ENV.fetch("ANDROID_PREVIEW_FLAVOR", "preview")
+    flavor_task = android_flavor_task_name(preview_flavor)
+
     Actions::GradleAction.run(
       gradle_path: "./gradlew",
-      task: "assembleDebug",
+      task: "assemble#{flavor_task}Debug",
       project_dir: File.expand_path("../../", __dir__),
       properties: {
         "BUNDLE_IN_DEBUG" => "true",
@@ -73,11 +81,11 @@ class FirebaseDistributionService
       print_command_output: true
     )
 
-    apk = apk_path
+    apk = apk_path(preview_flavor)
     UI.user_error!("❌ APK not found at #{apk}") unless File.exist?(apk)
     UI.success("✅ APK built successfully: #{File.size(apk)} bytes")
 
-    { version: version, version_code: version_code }
+    { version: version, version_code: version_code, apk_path: apk }
   end
 
 
@@ -207,7 +215,13 @@ class FirebaseDistributionService
   private
 
   # Returns the expected debug APK path.
-  def apk_path
-    File.expand_path("../../app/build/outputs/apk/debug/app-debug.apk", __dir__)
+  def apk_path(flavor)
+    # APK output path follows the flavor name for assemble<Flavor>Debug.
+    File.expand_path("../../app/build/outputs/apk/#{flavor}/debug/app-#{flavor}-debug.apk", __dir__)
+  end
+
+  def android_flavor_task_name(flavor)
+    # Ensure Gradle task naming matches the flavor (e.g., qa -> Qa, production -> Production).
+    flavor.split(/[^a-zA-Z0-9]/).map(&:capitalize).join
   end
 end

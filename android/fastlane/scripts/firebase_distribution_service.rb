@@ -58,12 +58,12 @@ class FirebaseDistributionService
 
     UI.message("🔨 Building APK with Gradle...")
 
-    # Preview builds should use the QA flavor so installs can coexist with production.
+    # Preview builds should use the preview flavor so installs can coexist with production.
     # Allow overrides for forks that rename flavors or use a different preview variant.
     # ANDROID_PREVIEW_FLAVOR is optional and can be passed from github secrets to workflows.
-    # If ANDROID_PREVIEW_FLAVOR is available as ENV we will use it, otherwise default is qa
+    # If ANDROID_PREVIEW_FLAVOR is available as ENV we will use it, otherwise default is preview
     # More about build variants and flavours : https://developer.android.com/build/build-variants
-    preview_flavor = ENV.fetch("ANDROID_PREVIEW_FLAVOR", "qa")
+    preview_flavor = ENV.fetch("ANDROID_PREVIEW_FLAVOR", "preview")
     flavor_task = android_flavor_task_name(preview_flavor)
 
     Actions::GradleAction.run(

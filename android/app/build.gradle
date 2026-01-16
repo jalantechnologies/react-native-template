@@ -27,7 +27,7 @@ react {
     //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
     //   If you add flavors like lite, prod, etc. you'll have to list your debuggableVariants.
     // debuggableVariants = ["liteDebug", "prodDebug"]
-    debuggableVariants = shouldBundleInDebug ? [] : ["productionDebug", "qaDebug"]
+        debuggableVariants = shouldBundleInDebug ? [] : ["productionDebug", "previewDebug"]
 
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
@@ -101,9 +101,9 @@ android {
         production {
             dimension "environment"
         }
-        qa {
+        preview {
             dimension "environment"
-            applicationIdSuffix ".qa"
+            applicationIdSuffix ".preview"
         }
     }
 

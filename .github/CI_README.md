@@ -31,6 +31,7 @@ These jobs run **independently and in parallel**, improving feedback time.
 * Builds and deploys Android (Firebase App Distribution) with explicit Gradle overrides so CD never uses manifest defaults:
   * `versionNameOverride` comes from `package.json`.
   * `versionCodeOverride` is derived from the semantic version (`major*10000 + minor*100 + patch`).
+* Uses the preview flavor by default (`ANDROID_PREVIEW_FLAVOR=preview`), which appends the `applicationIdSuffix` for side-by-side installs.
 * Builds and deploys iOS (TestFlight) with build number generated with combination of PR + Timestamp.
 * Comments on the PR with the Firebase and Testflight Link
 
@@ -51,7 +52,7 @@ These jobs run **independently and in parallel**, improving feedback time.
   - `versionNameOverride` is taken from `package.json` (e.g., `1.2.3`).
   - `versionCodeOverride` is computed from semantic version as  
     `major * 10000 + minor * 100 + patch` (e.g., `1.2.3 → 10203`).
-  - Uses the QA flavor by default (`ANDROID_PREVIEW_FLAVOR=qa`) so preview installs use the `.qa` package suffix.
+  - Uses the preview flavor by default (`ANDROID_PREVIEW_FLAVOR=preview`) so preview installs use the `.preview` package suffix.
   - Uploads the `.apk` (or `.aab` for preview if configured) to a preview group.
   - Attaches the same validated release notes as Firebase release notes.
 - Builds and deploys **iOS preview** to **TestFlight**:
@@ -136,8 +137,8 @@ These environment variables are used by the GitHub Actions workflows and Fastlan
 | `ANDROID_FIREBASE_PROJECT_NUMBER` | GitHub Secret       | Firebase project number for Android app distribution.                                                                                       |
 | `ANDROID_FIREBASE_APP_ID`       | GitHub Secret         | Firebase App Distribution app ID for the Android app.                                                                                       |
 | `ANDROID_FIREBASE_PROJECT_ID`   | GitHub Secret         | Firebase project ID used for console links.                                                                                       |
-| `ANDROID_FIREBASE_APP_PACKAGE`  | GitHub Secret         | Android app package name used in Firebase (for preview builds this should match the QA package, e.g. `<base>.qa`).                                                                                       |
-| `ANDROID_PREVIEW_FLAVOR`        | Workflow/ENV optional | Android flavor used for preview builds (defaults to `qa`).                                                                        |
+| `ANDROID_FIREBASE_APP_PACKAGE`  | GitHub Secret         | Android app package name used in Firebase (for preview builds this should match the preview package, e.g. `<base>.preview`).                                                                                       |
+| `ANDROID_PREVIEW_FLAVOR`        | Workflow/ENV optional | Android flavor used for preview builds (defaults to `preview`).                                                                        |
 | `ANDROID_PRODUCTION_FLAVOR`     | Workflow/ENV optional | Android flavor used for production builds (defaults to `production`).                                                             |
 | `ANDROID_APP_IDENTIFIER`        | GitHub Secret         | Android applicationId/package name used by Fastlane for Play Store uploads (keeps Android config in secrets like iOS).            |
 | `ANDROID_FIREBASE_API_KEY`      | GitHub Secret         | Firebase API key for Android deployment.                                                                                       |

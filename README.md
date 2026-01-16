@@ -105,7 +105,7 @@ Set `LOGGER=datadog` or `LOGGER=console,datadog` to enable Datadog logging.
 2. **Android:**
    - `android/settings.gradle`: Update `rootProject.name`
    - `android/app/build.gradle`: Update `namespace` and `applicationId`
-   - Keep the default `production` flavor, as base package, and the `qa` flavor uses `applicationIdSuffix ".qa"` for side-by-side installs.
+   - Keep the default `production` flavor as the base package, and the `preview` flavor uses `applicationIdSuffix ".preview"` for side-by-side installs.
    - Rename package directories under `android/app/src/*/java/com/boilerplate/`
    - Update package declarations in Java/Kotlin files
    - `android/app/src/main/res/values/strings.xml`: Update `app_name`
@@ -122,17 +122,17 @@ Set `LOGGER=datadog` or `LOGGER=console,datadog` to enable Datadog logging.
 
 ## Android Flavoring & CI/CD Setup
 
-This template ships with two Android flavors so QA preview builds can coexist with production installs:
+This template ships with two Android flavors so preview builds can coexist with production installs:
 - **production**: base `applicationId`
-- **qa**: uses `applicationIdSuffix".qa"` so it installs as `<base>.qa`
+- **preview**: uses `applicationIdSuffix ".preview"` so it installs as `<base>.preview`
 
 ### Required GitHub Secrets (Android)
 
 | Secret | Purpose |
 |--------|---------|
 | `ANDROID_APP_IDENTIFIER` | Production package name used by Fastlane/Play uploads (e.g., `com.company.app`). |
-| `ANDROID_FIREBASE_APP_ID` | Firebase App Distribution app ID for preview (QA) builds. |
-| `ANDROID_FIREBASE_APP_PACKAGE` | QA package name for Firebase (e.g., `com.company.app.qa`). |
+| `ANDROID_FIREBASE_APP_ID` | Firebase App Distribution app ID for preview builds. |
+| `ANDROID_FIREBASE_APP_PACKAGE` | Preview package name for Firebase (e.g., `com.company.app.preview`). |
 | `ANDROID_FIREBASE_PROJECT_NUMBER` | Firebase project number for preview builds. |
 | `ANDROID_FIREBASE_PROJECT_ID` | Firebase project ID for preview builds. |
 
@@ -140,12 +140,12 @@ This template ships with two Android flavors so QA preview builds can coexist wi
 
 | Variable | Default | When to change |
 |----------|---------|----------------|
-| `ANDROID_PREVIEW_FLAVOR` | `qa` | If you rename the preview flavor. |
+| `ANDROID_PREVIEW_FLAVOR` | `preview` | If you rename the preview flavor. |
 | `ANDROID_PRODUCTION_FLAVOR` | `production` | If you rename the production flavor. |
 
 ### Firebase & Play Console Notes
 
-- **Firebase App Distribution** should point to the **QA package** (`<base>.qa`) so preview builds install separately.
+- **Firebase App Distribution** should point to the **preview package** (`<base>.preview`) so preview builds install separately.
 - **Google Play Console** should use the **production package** (`<base>`). No QA package is needed in Play Console.
 
 

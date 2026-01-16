@@ -105,7 +105,7 @@ Set `LOGGER=datadog` or `LOGGER=console,datadog` to enable Datadog logging.
 2. **Android:**
    - `android/settings.gradle`: Update `rootProject.name`
    - `android/app/build.gradle`: Update `namespace` and `applicationId`
-   - Keep the default `production` flavor, as base package, and the `qa` flavor uses `"applicationIdSuffix".qa"` for side-by-side installs.
+   - Keep the default `production` flavor, as base package, and the `qa` flavor uses `applicationIdSuffix ".qa"` for side-by-side installs.
    - Rename package directories under `android/app/src/*/java/com/boilerplate/`
    - Update package declarations in Java/Kotlin files
    - `android/app/src/main/res/values/strings.xml`: Update `app_name`

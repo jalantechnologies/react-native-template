@@ -66,7 +66,6 @@ class FirebaseDistributionService
     preview_flavor = ENV.fetch("ANDROID_PREVIEW_FLAVOR", "qa")
     flavor_task = android_flavor_task_name(preview_flavor)
 
-
     Actions::GradleAction.run(
       gradle_path: "./gradlew",
       task: "assemble#{flavor_task}Debug",

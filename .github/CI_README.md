@@ -150,6 +150,7 @@ These environment variables are used by the GitHub Actions workflows and Fastlan
 |----------------------------------------|---------------|------------------------------------------------------------------------------------------------------|
 | `IOS_APPLE_ID`                         | GitHub Secret | Apple Developer App-specific Apple ID. Used by Fastlane and App Store Connect APIs for identifying the app owner.                                    |
 | `IOS_APP_IDENTIFIER`                   | GitHub Secret | iOS app bundle identifier. Used during iOS build and upload processes.                                                                                |
+| `IOS_PREVIEW_APP_IDENTIFIER`           | GitHub Secret | Preview iOS app bundle identifier (e.g., `com.company.app.preview`). Used for TestFlight preview builds and cleanup.                                   |
 | `IOS_APP_STORE_CONNECT_API_KEY_B64`    | GitHub Secret | Base64-encoded contents of your App Store Connect API key (.p8 file). Used by Fastlane for secure authentication with Apple APIs.                   |
 | `IOS_APP_STORE_CONNECT_API_KEY_ID`     | GitHub Secret | App Store Connect API Key ID. Used by Fastlane to authenticate securely with App Store Connect.                                                      |
 | `IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID` | GitHub Secret | App Store Connect API Issuer ID. Used in conjunction with API Key ID and Base64 key to authenticate.                                              |

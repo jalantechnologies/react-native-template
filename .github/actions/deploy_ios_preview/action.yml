@@ -22,9 +22,9 @@ inputs:
   IOS_APP_STORE_CONNECT_API_KEY_B64:
     required: true
     description: 'Base64 encoded API key for App Store Connect'
-  IOS_APP_IDENTIFIER:
+  IOS_PREVIEW_APP_IDENTIFIER:
     required: true
-    description: 'Bundle ID for the app'
+    description: 'Bundle ID for the preview app'
   IOS_APP_STORE_TEAM_ID:
     required: true
     description: 'App Store Team ID'
@@ -126,7 +126,7 @@ runs:
       env:
         MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}
         IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
-        IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
+        IOS_APP_IDENTIFIER: ${{ inputs.IOS_PREVIEW_APP_IDENTIFIER }}
         IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
 
     - name: Clear Derived Data
@@ -145,7 +145,7 @@ runs:
         IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ID }}
         IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
         IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
-        IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
+        IOS_PREVIEW_APP_IDENTIFIER: ${{ inputs.IOS_PREVIEW_APP_IDENTIFIER }}
         IOS_APP_STORE_TEAM_ID: ${{ inputs.IOS_APP_STORE_TEAM_ID }}
         IOS_DEV_EMAIL: ${{ inputs.IOS_DEV_EMAIL }}
         FASTLANE_USER: ${{ inputs.IOS_DEV_EMAIL }}

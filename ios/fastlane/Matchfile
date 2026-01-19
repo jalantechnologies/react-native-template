@@ -1,3 +1,6 @@
-app_identifier(ENV["IOS_APP_IDENTIFIER"])
+app_identifier([
+  "com.bettrsw.boilerplate.app",           # Production
+  "com.bettrsw.boilerplate.app.preview"    # Preview 
+])
 git_url(ENV["IOS_MATCH_REPOSITORY_URL"])
 type("appstore")

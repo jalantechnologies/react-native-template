@@ -108,7 +108,7 @@ jobs:
 
   publish_preview_release:
     runs-on: ubuntu-latest
-    needs: [release_notes_check, build_android_preview, build_ios_preview]
+    needs: [release_notes_check, build_android_permanent_preview, build_ios_permanent_preview]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4

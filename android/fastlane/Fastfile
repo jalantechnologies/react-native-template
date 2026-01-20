@@ -126,7 +126,8 @@ platform :android do
       }
     )
 
-    output_directory = File.expand_path("../preview-artifacts", __dir__)
+    repo_root = File.expand_path("../..", __dir__)
+    output_directory = File.join(repo_root, "preview-artifacts")
     FileUtils.mkdir_p(output_directory)
     apk_path = lane_context[:GRADLE_APK_OUTPUT_PATH]
     apk_path ||= Dir[File.expand_path("app/build/outputs/apk/#{preview_flavor}/release/*.apk", Dir.pwd)].first

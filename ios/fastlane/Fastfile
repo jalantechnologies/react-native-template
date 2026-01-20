@@ -57,7 +57,7 @@ platform :ios do
 
   desc "Build Permanent Preview IPA for GitHub Release"
   lane :ios_permanent_preview do |options|
-    require_relative "scripts/ios_build_preview"
+    require_relative "scripts/ios_preview_builder"
 
     create_keychain(
       name: "ios.keychain",

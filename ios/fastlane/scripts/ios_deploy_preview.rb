@@ -7,6 +7,7 @@ def ios_deploy_preview!(options = {})
   require 'json'
   require 'fastlane'
   require_relative 'release_notes_helper'
+  require_relative 'ios_preview_builder'
 
   # ---------------------------------------------------------------------------
   # Required inputs
@@ -108,114 +109,25 @@ def ios_deploy_preview!(options = {})
   end
 
   UI.message("🔢 Using preview build number: #{next_build} (PR ##{pr_number}, ts=#{timestamp})")
-  increment_build_number(
+
+  ios_build_preview!(
+    app_identifier: app_identifier,
     xcodeproj: xcodeproj,
-    build_number: next_build
-  )
-
-  # ---------------------------------------------------------------------------
-  # Bundle and Verify React Native for iOS (preview env)
-  # ---------------------------------------------------------------------------
-  envfile_path = File.expand_path('../../../.env', __dir__)
-  ENV['ENVFILE']  = envfile_path
-  ENV['NODE_ENV'] = 'production'
-  repo_root = File.expand_path('../../..', __dir__)
-
-  UI.message('📦 Bundling React Native for iOS (preview)...')
-  sh <<~BASH
-    cd "#{repo_root}"
-    ENVFILE=.env NODE_ENV=production npx react-native bundle \\
-      --entry-file index.js \\
-      --platform ios \\
-      --dev false \\
-      --bundle-output ios/main.jsbundle \\
-      --assets-dest .
-  BASH
-
-  js_bundle_path = File.expand_path('../../main.jsbundle', __dir__)
-  UI.message("🔍 Checking for main.jsbundle at: #{js_bundle_path}")
-  UI.user_error!('❌ main.jsbundle not found') unless File.exist?(js_bundle_path)
-
-  # ---------------------------------------------------------------------------
-  # Build IPA (Boilerplate workspace)
-  # ---------------------------------------------------------------------------
-  UI.message('🏗️ Building IPA...')
-  build_app(
-    clean: true,
     scheme: scheme,
     workspace: workspace,
-    export_method: 'app-store',
-    verbose: true,
-    xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER=\"#{profile_name}\" PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
-    export_options: {
-      compileBitcode: false,
-      signingStyle: 'manual',
-      provisioningProfiles: {
-        app_identifier => profile_name
-      }
-    }
+    scheme: scheme,
+    workspace: workspace,
+    team_id: team_id,
+    keychain_name: keychain_name,
+    keychain_password: keychain_password,
+    output_directory: "build/preview",
+    output_name: "Boilerplate.ipa",
+    build_number: next_build,
+    profile_name: profile_name
   )
 
-  # ---------------------------------------------------------------------------
-  # Hermes bitcode stripping + re-sign
-  # ---------------------------------------------------------------------------
   ipa_path = lane_context[:IPA_OUTPUT_PATH]
-  UI.message("📦 Processing IPA: #{ipa_path}")
   UI.user_error!('❌ IPA path missing in lane_context') unless ipa_path && File.exist?(ipa_path)
-
-  sh("unzip -q #{ipa_path} -d temp_payload")
-  app_path = Dir['temp_payload/Payload/*.app'].first
-  UI.user_error!('❌ .app bundle not found') unless app_path
-
-  hermes_bin = File.join(app_path, 'Frameworks/hermes.framework/hermes')
-  sh <<~BASH
-    echo "🔍 Stripping Hermes bitcode..."
-    if [ -f "#{hermes_bin}" ]; then
-      echo "📦 Found Hermes: #{hermes_bin}"
-      xcrun bitcode_strip -r "#{hermes_bin}" -o "#{hermes_bin}"
-
-      echo "🔬 Verifying..."
-      if otool -l "#{hermes_bin}" | grep -i bitcode; then
-        echo "❌ Bitcode still present!"
-        exit 1
-      fi
-      echo "✅ Bitcode stripped"
-
-      echo "🔐 Re-signing..."
-      CERT_ID=$(security find-identity -v -p codesigning "#{keychain_name}" | grep "Apple Distribution" | head -n1 | awk '{print $2}')
-
-      if [ -z "$CERT_ID" ]; then
-        echo "❌ No Apple Distribution cert found!"
-        exit 1
-      fi
-
-      echo "Using cert: $CERT_ID"
-
-      for FRAMEWORK in "#{app_path}/Frameworks/"*; do
-        if [ -d "$FRAMEWORK" ]; then
-          /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none --generate-entitlement-der "$FRAMEWORK"
-        fi
-      done
-
-      /usr/bin/codesign --force --sign "$CERT_ID" \
-        --timestamp=none \
-        --preserve-metadata=entitlements \
-        --generate-entitlement-der \
-        "#{app_path}"
-
-      echo "🔬 Verifying signature..."
-      /usr/bin/codesign --verify --deep --strict --verbose=2 "#{app_path}"
-      echo "✅ Signing complete"
-    else
-      echo "⚠️ Hermes not found: #{hermes_bin}"
-    fi
-
-    echo "📦 Repacking IPA..."
-    cd temp_payload && zip -r -q ../fixed.ipa Payload >/dev/null && cd ..
-    mv fixed.ipa "#{ipa_path}"
-    rm -rf temp_payload
-    echo "✅ IPA ready"
-  BASH
 
   # ---------------------------------------------------------------------------
   # TestFlight changelog

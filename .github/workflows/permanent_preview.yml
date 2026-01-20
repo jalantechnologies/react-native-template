@@ -3,7 +3,7 @@ name: permanent-preview
 on:
   push:
     branches:
-      - main
+      - vikram/feat/add-permanent-preview
 
 permissions:
   contents: write

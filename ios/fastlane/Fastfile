@@ -42,9 +42,10 @@ platform :ios do
   end
 
   desc "Build Preview app for GitHub Release"
-  lane :preview_build do |options|
+  lane :ios_permanent_preview do |options|
     require_relative "scripts/ios_build_preview"
 
+    # Keep signing setup here so build helper stays reusable.
     create_keychain(
       name: "ios.keychain",
       password: ENV["IOS_KEYCHAIN_PASSWORD"],
@@ -79,6 +80,7 @@ platform :ios do
       profile_name: profile_name
     )
   end
+
 
 
   # Removes any Preview builds uploaded via pr_deploy for this PR.

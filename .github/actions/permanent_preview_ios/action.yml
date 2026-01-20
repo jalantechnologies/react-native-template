@@ -101,7 +101,7 @@ runs:
         IOS_MATCH_REPOSITORY_URL: ${{ inputs.ios_match_repository_url }}
         MATCH_PASSWORD: ${{ inputs.ios_match_password }}
       run: |
-        bundle exec fastlane ios preview_build \
+        bundle exec fastlane ios ios_permanent_preview \
           build_number:"${{ inputs.build_number }}" \
           output_directory:"build/preview" \
           output_name:"react-native-template-preview.ipa"

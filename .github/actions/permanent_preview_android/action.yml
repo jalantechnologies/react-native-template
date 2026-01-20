@@ -39,7 +39,7 @@ runs:
       working-directory: android
       env:
         ANDROID_PREVIEW_VERSION_CODE: ${{ inputs.build_number }}
-      run: bundle exec fastlane android permanent_preview_build
+      run: bundle exec fastlane android android_permanent_preview
 
     - name: Stage Android artifact
       shell: bash

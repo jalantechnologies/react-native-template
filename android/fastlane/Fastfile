@@ -104,12 +104,14 @@ platform :android do
   end
 
   desc "Build release APK for permanent preview"
-  lane :permanent_preview_build do
+  lane :android_permanent_preview do
+    # Use package.json for versionName to keep parity with JS release notes.
     package_json_path = File.expand_path("../../package.json", __dir__)
     package_json = JSON.parse(File.read(package_json_path))
     version_name = package_json["version"]
     UI.user_error!("❌ Version not found in package.json") unless version_name
 
+    # Version code is injected by CI to avoid collisions.
     version_code = ENV["ANDROID_PREVIEW_VERSION_CODE"]
     UI.user_error!("❌ ANDROID_PREVIEW_VERSION_CODE missing") unless version_code
 

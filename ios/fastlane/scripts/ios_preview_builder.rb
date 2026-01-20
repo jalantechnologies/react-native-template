@@ -17,6 +17,8 @@ def ios_build_preview!(options = {})
   output_name       = options.fetch(:output_name)
   build_number      = options.fetch(:build_number)
   profile_name      = options.fetch(:profile_name)
+  configuration     = options.fetch(:configuration, 'Release')
+  export_method     = options.fetch(:export_method, 'app-store')
 
   package_json_path = File.expand_path('../../../package.json', __dir__)
   package_json = JSON.parse(File.read(package_json_path))
@@ -61,7 +63,8 @@ def ios_build_preview!(options = {})
     clean: true,
     scheme: scheme,
     workspace: workspace,
-    export_method: 'app-store',
+    configuration: configuration,
+    export_method: export_method,
     output_directory: output_directory,
     output_name: output_name,
     verbose: true,

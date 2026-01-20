@@ -128,7 +128,8 @@ platform :android do
 
     output_directory = File.expand_path("../preview-artifacts", __dir__)
     FileUtils.mkdir_p(output_directory)
-    apk_path = Dir["app/build/outputs/apk/#{preview_flavor}/release/*.apk"].first
+    apk_path = lane_context[:GRADLE_APK_OUTPUT_PATH]
+    apk_path ||= Dir[File.expand_path("app/build/outputs/apk/#{preview_flavor}/release/*.apk", Dir.pwd)].first
     UI.user_error!("❌ Preview APK not found") unless apk_path
     FileUtils.cp(apk_path, File.join(output_directory, "react-native-template-preview.apk"))
     UI.message("✅ Preview APK ready at #{output_directory}")

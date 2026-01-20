@@ -31,7 +31,7 @@ def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_
   # Build the new APK with unique version code (returns version code)
   version_info = firebase.build_apk(pr_number: pr_number)
   
-  apk_path = File.expand_path("../../app/build/outputs/apk/debug/app-debug.apk", __dir__)
+  apk_path = version_info[:apk_path]
   UI.user_error!("❌ APK file not found at #{apk_path}") unless File.exist?(apk_path)
   
   # Read release notes if provided

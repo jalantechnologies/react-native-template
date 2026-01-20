@@ -116,6 +116,8 @@ runs:
       run: bundle exec fastlane ios ios_permanent_preview build_number:${{ inputs.build_number }} output_directory:../preview-artifacts output_name:react-native-template-preview.ipa
       shell: bash
       env:
+        FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: "15"
+        FASTLANE_XCODEBUILD_SETTINGS_RETRIES: "5"
         MATCH_PASSWORD: ${{ inputs.ios_match_password }}
         IOS_MATCH_REPOSITORY_URL: ${{ inputs.ios_match_repository_url }}
         IOS_KEYCHAIN_PASSWORD: ${{ inputs.ios_keychain_password }}

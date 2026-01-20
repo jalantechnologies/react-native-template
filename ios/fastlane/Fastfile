@@ -54,6 +54,46 @@ platform :ios do
       api_key_b64: ENV['IOS_APP_STORE_CONNECT_API_KEY_B64']
     )
   end
+
+  desc "Build Permanent Preview IPA for GitHub Release"
+  lane :ios_permanent_preview do |options|
+    require_relative "scripts/ios_build_preview"
+
+    create_keychain(
+      name: "ios.keychain",
+      password: ENV["IOS_KEYCHAIN_PASSWORD"],
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: false
+    )
+
+    profile_name = "match AppStore #{ENV["IOS_APP_IDENTIFIER"]}"
+    match(
+      type: "appstore",
+      app_identifier: ENV["IOS_APP_IDENTIFIER"],
+      readonly: true,
+      verbose: true,
+      keychain_name: "ios.keychain",
+      keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
+      team_id: ENV["IOS_APP_STORE_TEAM_ID"]
+    )
+
+    ios_build_preview!(
+      app_identifier: ENV["IOS_APP_IDENTIFIER"],
+      xcodeproj: "Boilerplate.xcodeproj",
+      scheme: "Boilerplate",
+      workspace: "Boilerplate.xcworkspace",
+      team_id: ENV["IOS_APP_STORE_TEAM_ID"],
+      keychain_name: "ios.keychain",
+      keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"],
+      output_directory: options.fetch(:output_directory, "../preview-artifacts"),
+      output_name: options.fetch(:output_name, "react-native-template-preview.ipa"),
+      build_number: options.fetch(:build_number),
+      profile_name: profile_name
+    )
+  end
+
   # Deploys the production app to the App Store
   desc "Build and upload Production app to App Store"
   lane :production_deploy do

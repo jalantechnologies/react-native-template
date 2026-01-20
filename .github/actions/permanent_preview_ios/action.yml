@@ -1,0 +1,131 @@
+name: 'Build iOS Permanent Preview IPA'
+description: 'Builds a release IPA for the preview environment for GitHub releases'
+inputs:
+  build_number:
+    required: true
+    description: 'Build number to apply to the preview build'
+  ios_match_password:
+    required: true
+    description: 'Match password for signing'
+  ios_match_repository_url:
+    required: true
+    description: 'Match repository URL for certs'
+  ios_app_identifier:
+    required: true
+    description: 'Bundle ID for the app'
+  ios_keychain_password:
+    required: true
+    description: 'Keychain password for Fastlane'
+  ios_app_store_team_id:
+    required: true
+    description: 'App Store Team ID'
+  ios_match_deploy_key:
+    required: true
+    description: 'SSH private key for Match repo'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version-file: '.ruby-version'
+        bundler-cache: true
+        working-directory: ios
+
+    - name: Select Xcode 16.2
+      run: |
+        sudo xcode-select -s /Applications/Xcode_16.2.app
+        export DEVELOPER_DIR="/Applications/Xcode_16.2.app/Contents/Developer"
+        xcode-select -p
+        xcodebuild -version
+      shell: bash
+
+    - name: Set Node Version
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: .nvmrc
+
+    - name: Cache node modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          **/node_modules
+        key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node-modules-
+
+    - name: Enable Corepack
+      run: corepack enable
+      shell: bash
+
+    - name: Install JS dependencies
+      run: yarn install --immutable
+      shell: bash
+
+    - name: Cache CocoaPods
+      uses: actions/cache@v4
+      with:
+        path: | 
+          ios/Pods
+          ~/Library/Caches/CocoaPods
+          ~/.cocoapods
+        key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pods-
+
+    - name: Install CocoaPods dependencies
+      working-directory: ios
+      shell: bash
+      run: |
+        pod repo update
+        bundle exec pod update boost --no-repo-update
+        bundle exec pod install
+
+    - name: Set up SSH for Match
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ inputs.ios_match_deploy_key }}
+
+    - name: Add GitHub to known hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+      shell: bash
+
+    - name: Export Match password
+      run: echo "MATCH_PASSWORD=${{ inputs.ios_match_password }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Install code signing certificates via Match
+      working-directory: ios
+      run: bundle exec fastlane ci_signing_setup
+      shell: bash
+      env:
+        MATCH_PASSWORD: ${{ inputs.ios_match_password }}
+        IOS_MATCH_REPOSITORY_URL: ${{ inputs.ios_match_repository_url }}
+        IOS_APP_IDENTIFIER: ${{ inputs.ios_app_identifier }}
+        IOS_KEYCHAIN_PASSWORD: ${{ inputs.ios_keychain_password }}
+
+    - name: Clear Derived Data
+      run: rm -rf ~/Library/Developer/Xcode/DerivedData
+      shell: bash
+
+    - name: Build the iOS Permanent Preview IPA
+      working-directory: ios
+      run: bundle exec fastlane ios ios_permanent_preview build_number:${{ inputs.build_number }} output_directory:../preview-artifacts output_name:react-native-template-preview.ipa
+      shell: bash
+      env:
+        MATCH_PASSWORD: ${{ inputs.ios_match_password }}
+        IOS_MATCH_REPOSITORY_URL: ${{ inputs.ios_match_repository_url }}
+        IOS_KEYCHAIN_PASSWORD: ${{ inputs.ios_keychain_password }}
+        IOS_APP_IDENTIFIER: ${{ inputs.ios_app_identifier }}
+        IOS_APP_STORE_TEAM_ID: ${{ inputs.ios_app_store_team_id }}
+        BUILD_NUMBER: ${{ inputs.build_number }}
+
+    - name: Upload Xcode build logs
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: xcode-build-logs
+        path: /Users/runner/Library/Logs/gym/*.log

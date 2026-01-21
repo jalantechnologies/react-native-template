@@ -109,8 +109,8 @@ platform :android do
     version_name = package_json["version"]
     UI.user_error!("❌ Version not found in package.json") unless version_name
 
-    preview_flavor = ENV.fetch("ANDROID_PREVIEW_FLAVOR", "preview")
-    gradle_task_flavor = android_flavor_task_name(preview_flavor)
+    permanent_preview_flavor = "production"
+    gradle_task_flavor = android_flavor_task_name(permanent_preview_flavor)
 
     build_number = ENV.fetch("BUILD_NUMBER")
 

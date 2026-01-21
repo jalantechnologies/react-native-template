@@ -115,8 +115,6 @@ def ios_deploy_preview!(options = {})
     xcodeproj: xcodeproj,
     scheme: scheme,
     workspace: workspace,
-    scheme: scheme,
-    workspace: workspace,
     team_id: team_id,
     keychain_name: keychain_name,
     keychain_password: keychain_password,

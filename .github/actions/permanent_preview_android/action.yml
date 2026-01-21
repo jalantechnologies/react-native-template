@@ -32,6 +32,10 @@ runs:
       with:
         node-version: 22.13.1
 
+    - name: Enable Corepack
+      run: corepack enable
+      shell: bash
+
     - name: Cache node modules
       uses: actions/cache@v4
       with:

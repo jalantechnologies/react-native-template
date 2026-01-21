@@ -1,7 +1,10 @@
 name: cd
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+  # pull_request:
+  #   types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - main
 
 concurrency:
   group: cd-preview-${{ github.event.pull_request.number }}

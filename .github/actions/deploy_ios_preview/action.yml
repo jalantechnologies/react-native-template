@@ -156,7 +156,7 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: ios-preview-pr-${{ github.event.pull_request.number }}-${{ github.sha }}
-        path: ios/Boilerplate.ipa
+        path: ios/build/preview/Boilerplate.ipa
         retention-days: 1
         if-no-files-found: error
         compression-level: 6

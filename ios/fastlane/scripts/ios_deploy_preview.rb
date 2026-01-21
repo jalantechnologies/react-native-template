@@ -124,8 +124,6 @@ def ios_deploy_preview!(options = {})
     output_name: "Boilerplate.ipa",
     build_number: next_build,
     profile_name: profile_name,
-    configuration: 'Debug',
-    export_method: 'development'
   )
 
   ipa_path = lane_context[:IPA_OUTPUT_PATH]

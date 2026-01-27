@@ -47,10 +47,10 @@ target 'Boilerplate' do
       __swift_FORCE_LOAD_$_swiftCompatibilityConcurrency
     ]
 
-    installer.aggregate_targets.each do |aggregate_target|
-      aggregate_target.user_project.native_targets.each do |target|
+    append_ldflags = lambda do |targets|
+      targets.each do |target|
         target.build_configurations.each do |config|
-          flags = Array(config.build_settings['OTHER_LDFLAGS']) + ['$(inherited)']
+          flags = Array(config.build_settings['OTHER_LDFLAGS'])
           symbols_to_ignore.each do |sym|
             flag = "-Wl,-U,#{sym}"
             flags << flag unless flags.include?(flag)
@@ -59,5 +59,12 @@ target 'Boilerplate' do
         end
       end
     end
+
+    # Apply to app/test targets (user project) and Pods aggregates so the flags
+    # end up in the generated xcconfigs used during final link.
+    installer.aggregate_targets.each do |aggregate_target|
+      append_ldflags.call(aggregate_target.user_project.native_targets)
+    end
+    append_ldflags.call(installer.pods_project.targets)
   end
 end

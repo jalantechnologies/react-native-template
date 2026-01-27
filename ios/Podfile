@@ -38,5 +38,26 @@ target 'Boilerplate' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # Xcode 26 / Swift 6 toolchains no longer ship SwiftCompatibility56 libs.
+    # Datadog static libs still force-load those symbols, so we tell the linker
+    # to ignore them to avoid "undefined symbols __swift_FORCE_LOAD_$_swiftCompatibility56".
+    symbols_to_ignore = %w[
+      __swift_FORCE_LOAD_$_swiftCompatibility56
+      __swift_FORCE_LOAD_$_swiftCompatibilityConcurrency
+    ]
+
+    installer.aggregate_targets.each do |aggregate_target|
+      aggregate_target.user_project.native_targets.each do |target|
+        target.build_configurations.each do |config|
+          flags = Array(config.build_settings['OTHER_LDFLAGS']) + ['$(inherited)']
+          symbols_to_ignore.each do |sym|
+            flag = "-Wl,-U,#{sym}"
+            flags << flag unless flags.include?(flag)
+          end
+          config.build_settings['OTHER_LDFLAGS'] = flags
+        end
+      end
+    end
   end
 end

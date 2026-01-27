@@ -28,7 +28,20 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
       return;
     }
 
+    const isValidUrl = /^https?:\/\/.+/i.test(apiBaseUrl);
+    if (!isValidUrl) {
+      Toast.show({
+        title: 'Enter a valid http(s) URL',
+      });
+      return;
+    }
+
     await localStorage.setToStorage('apiBaseUrl', apiBaseUrl);
+
+    Toast.show({
+      title: 'API Base URL saved',
+      description: apiBaseUrl,
+    });
 
     if (handleModalClose) {
       handleModalClose();

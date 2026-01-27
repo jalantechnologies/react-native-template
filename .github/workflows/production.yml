@@ -2,7 +2,7 @@ name: cd
 on:
   push:
     branches:
-      - test-otp-proof
+      - main
 
 concurrency:
   group: cd-production

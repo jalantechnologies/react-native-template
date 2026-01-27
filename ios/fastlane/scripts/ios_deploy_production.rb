@@ -98,17 +98,17 @@ def ios_deploy_production!(options = {})
   UI.message("📈 Using PRODUCTION build number: #{final_build}")
 
   # For production, use the following increment logic, comment it out when testing any changes to this script.
-  # increment_build_number(
-  #   xcodeproj: xcodeproj,
-  #   build_number: final_build.to_s
-  # )
+  increment_build_number(
+    xcodeproj: xcodeproj,
+    build_number: final_build.to_s
+  )
 
   # # Uncomment this method and use the hardcoded build numbers to test any changes to production, so it will 
   # # separate actual production build and test production builds
-  increment_build_number(
-    xcodeproj: xcodeproj,
-    build_number: 1
-  )
+  # increment_build_number(
+  #   xcodeproj: xcodeproj,
+  #   build_number: 1
+  # )
 
   # ---------------------------------------------------------------------------
   # Release notes (App Store "What's New")

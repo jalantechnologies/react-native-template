@@ -1,5 +1,5 @@
-import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
 import Config from 'react-native-config';
 
 import { APIResponse, APIError } from '../types';
@@ -11,11 +11,8 @@ export class APIService {
   constructor() {
     this.environment = Config.ENVIRONMENT;
 
-    const apiBaseUrl = Config.API_BASE_URL as string;
-
-    if (!apiBaseUrl) {
-      throw new Error('API_BASE_URL is not set. Please check your ENVFILE or .env configuration.');
-    }
+    const apiBaseUrlFromEnv = Config.API_BASE_URL as string | undefined;
+    const apiBaseUrl = apiBaseUrlFromEnv ?? '';
 
     const isPreviewHost = apiBaseUrl.includes('preview.flask-react-template.platform.bettrhq.com');
     const isProdHost =
@@ -39,9 +36,15 @@ export class APIService {
       (error): Promise<AxiosError> => Promise.reject(error),
     );
 
-    console.info(
-      `[APIService] initialized with baseURL=${apiBaseUrl} env=${this.environment ?? 'unknown'}`,
-    );
+    if (!apiBaseUrl) {
+      console.error(
+        '[APIService] API_BASE_URL is not set. Set it via ENVFILE/.env or the Change Base API URL modal before making requests.',
+      );
+    } else {
+      console.info(
+        `[APIService] initialized with baseURL=${apiBaseUrl} env=${this.environment ?? 'unknown'}`,
+      );
+    }
 
     if (this.environment === 'production' && !isProdHost) {
       console.warn(

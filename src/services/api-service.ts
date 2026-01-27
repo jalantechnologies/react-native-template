@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios, { AxiosInstance, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import Config from 'react-native-config';
 
-import { APIResponse, APIError } from '../types';
+import { APIError, APIResponse } from '../types';
 
 export class APIService {
   service: AxiosInstance;
@@ -12,7 +12,10 @@ export class APIService {
     this.environment = Config.ENVIRONMENT;
 
     const apiBaseUrlFromEnv = Config.API_BASE_URL as string | undefined;
-    const apiBaseUrl = apiBaseUrlFromEnv ?? '';
+    const defaultPreviewBaseUrl = 'https://preview.flask-react-template.platform.bettrhq.com/api';
+    const apiBaseUrl =
+      apiBaseUrlFromEnv ??
+      (this.environment?.toLowerCase().includes('preview') ? defaultPreviewBaseUrl : '');
 
     const isPreviewHost = apiBaseUrl.includes('preview.flask-react-template.platform.bettrhq.com');
     const isProdHost =
@@ -35,6 +38,12 @@ export class APIService {
       (response): AxiosResponse => response,
       (error): Promise<AxiosError> => Promise.reject(error),
     );
+
+    if (!apiBaseUrlFromEnv && apiBaseUrl === defaultPreviewBaseUrl) {
+      console.warn(
+        '[APIService] API_BASE_URL missing; falling back to permanent preview base URL for preview builds.',
+      );
+    }
 
     if (!apiBaseUrl) {
       console.error(

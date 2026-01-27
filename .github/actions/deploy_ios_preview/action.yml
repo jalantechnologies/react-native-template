@@ -89,6 +89,7 @@ runs:
       run: |
         pod repo update
         bundle exec pod update boost --no-repo-update
+        bundle exec pod update DatadogSDKReactNative DatadogSDKReactNativeSessionReplay DatadogWebViewTracking --no-repo-update
         bundle exec pod install
 
     - name: Set up SSH for Match

@@ -45,6 +45,13 @@ target 'Boilerplate' do
     symbols_to_ignore = %w[
       __swift_FORCE_LOAD_$_swiftCompatibility56
       __swift_FORCE_LOAD_$_swiftCompatibilityConcurrency
+      __swift_FORCE_LOAD_$_swiftCompatibilityPacks
+    ]
+
+    weak_frameworks = %w[
+      CoreAudioTypes
+      UIUtilities
+      SwiftUICore
     ]
 
     append_ldflags = lambda do |targets|
@@ -53,6 +60,10 @@ target 'Boilerplate' do
           flags = Array(config.build_settings['OTHER_LDFLAGS'])
           symbols_to_ignore.each do |sym|
             flag = "-Wl,-U,#{sym}"
+            flags << flag unless flags.include?(flag)
+          end
+          weak_frameworks.each do |fw|
+            flag = "-Wl,-weak_framework,#{fw}"
             flags << flag unless flags.include?(flag)
           end
           config.build_settings['OTHER_LDFLAGS'] = flags

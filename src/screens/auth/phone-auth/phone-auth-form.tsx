@@ -13,10 +13,13 @@ import {
   Checkbox,
 } from 'native-base';
 import React, { useState } from 'react';
+import axios from 'axios';
 import CheckIcon from 'react-native-template/assets/icons/check.svg';
 import { FormControl, Input, Button } from 'react-native-template/src/components';
 import { ButtonKind } from 'react-native-template/src/types/button';
 import { useThemeColor } from 'react-native-template/src/utils';
+import Config from 'react-native-config';
+import { Alert } from 'react-native';
 
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError, PhoneNumber } from '../../../types';
@@ -97,6 +100,44 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
     phone_number: '9999999999',
   }).getFormattedWithoutCountryCode();
 
+  const [isTempUserLoading, setIsTempUserLoading] = useState(false);
+
+  const handleCreateTempUser = async () => {
+    const apiBaseUrl = (Config.API_BASE_URL || '').replace(/\/+$/, '');
+
+    if (!apiBaseUrl) {
+      Alert.alert('API base URL missing', 'Set API_BASE_URL in your env to test the database.');
+      return;
+    }
+
+    setIsTempUserLoading(true);
+    try {
+      const payload = {
+        email: `preview-temp-${Date.now()}@example.com`,
+        source: 'permanent-preview-debug',
+        createdAt: new Date().toISOString(),
+      };
+
+      const response = await axios.post(`${apiBaseUrl}/temporary-users`, payload);
+
+      const userId = (response.data && (response.data.id || response.data.user_id)) || 'unknown';
+      Alert.alert(
+        'Temporary user created',
+        `Base URL: ${apiBaseUrl}\nID: ${userId}`,
+      );
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        error?.message ||
+        'Unknown error';
+
+      Alert.alert('Temporary user creation failed', `Base URL: ${apiBaseUrl}\n${message}`);
+    } finally {
+      setIsTempUserLoading(false);
+    }
+  };
+
   return (
     <Box flex={1} pb={4}>
       <VStack space={6} flex={1} mb={8}>
@@ -157,6 +198,15 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
         kind={ButtonKind.CONTAINED}
       >
         Send OTP
+      </Button>
+
+      {/* Temporary: hit API_BASE_URL to confirm environment database wiring */}
+      <Button
+        isLoading={isTempUserLoading}
+        onClick={handleCreateTempUser}
+        kind={ButtonKind.OUTLINED}
+      >
+        Create Temp User (env check)
       </Button>
     </Box>
   );

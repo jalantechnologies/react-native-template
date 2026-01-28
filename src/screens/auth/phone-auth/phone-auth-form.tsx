@@ -112,19 +112,14 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
 
     setIsTempUserLoading(true);
     try {
-      const payload = {
-        email: `preview-temp-${Date.now()}@example.com`,
-        source: 'permanent-preview-debug',
-        createdAt: new Date().toISOString(),
-      };
-
-      const response = await axios.post(`${apiBaseUrl}/temporary-users`, payload);
+      // Backend expects account creation at POST /api/accounts (username+password or phone_number)
+      const response = await axios.post(`${apiBaseUrl}/accounts`, {
+        username: `preview-temp-${Date.now()}`,
+        password: `Temp@${Date.now()}`,
+      });
 
       const userId = (response.data && (response.data.id || response.data.user_id)) || 'unknown';
-      Alert.alert(
-        'Temporary user created',
-        `Base URL: ${apiBaseUrl}\nID: ${userId}`,
-      );
+      Alert.alert('Temporary user created', `Base URL: ${apiBaseUrl}\nID: ${userId}`);
     } catch (error: any) {
       const message =
         error?.response?.data?.message ||

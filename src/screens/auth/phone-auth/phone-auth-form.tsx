@@ -113,21 +113,44 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
     setIsTempUserLoading(true);
     try {
       // Backend expects account creation at POST /api/accounts (username+password or phone_number)
-      const response = await axios.post(`${apiBaseUrl}/accounts`, {
+      const normalizedBase = apiBaseUrl.replace(/\/+$/, '');
+      const accountsUrl = normalizedBase.match(/\/api$/)
+        ? `${normalizedBase}/accounts`
+        : `${normalizedBase}/api/accounts`;
+
+      const payload = {
+        first_name: 'Preview',
+        last_name: 'TempUser',
         username: `preview-temp-${Date.now()}`,
         password: `Temp@${Date.now()}`,
-      });
+      };
+
+      console.log('[permanent-preview] creating temp user', { accountsUrl, payload });
+
+      const response = await axios.post(accountsUrl, payload);
 
       const userId = (response.data && (response.data.id || response.data.user_id)) || 'unknown';
       Alert.alert('Temporary user created', `Base URL: ${apiBaseUrl}\nID: ${userId}`);
     } catch (error: any) {
+      const status = error?.response?.status;
+      const data = error?.response?.data;
       const message =
-        error?.response?.data?.message ||
-        error?.response?.data?.error ||
+        data?.message ||
+        data?.error ||
         error?.message ||
         'Unknown error';
 
-      Alert.alert('Temporary user creation failed', `Base URL: ${apiBaseUrl}\n${message}`);
+      console.log('[permanent-preview] temp user creation failed', {
+        accountsUrl,
+        status,
+        data,
+        headers: error?.response?.headers,
+      });
+
+      Alert.alert(
+        'Temporary user creation failed',
+        `URL: ${accountsUrl}\nStatus: ${status ?? 'n/a'}\nMessage: ${message}`,
+      );
     } finally {
       setIsTempUserLoading(false);
     }

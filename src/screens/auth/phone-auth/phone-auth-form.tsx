@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
   VStack,
   Container,
@@ -13,13 +14,12 @@ import {
   Checkbox,
 } from 'native-base';
 import React, { useState } from 'react';
-import axios from 'axios';
+import { Alert } from 'react-native';
+import Config from 'react-native-config';
 import CheckIcon from 'react-native-template/assets/icons/check.svg';
 import { FormControl, Input, Button } from 'react-native-template/src/components';
 import { ButtonKind } from 'react-native-template/src/types/button';
 import { useThemeColor } from 'react-native-template/src/utils';
-import Config from 'react-native-config';
-import { Alert } from 'react-native';
 
 import { CountrySelectOptions } from '../../../constants';
 import { AsyncError, PhoneNumber } from '../../../types';

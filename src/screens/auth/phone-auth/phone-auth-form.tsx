@@ -111,13 +111,13 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
     }
 
     setIsTempUserLoading(true);
-    try {
-      // Backend expects account creation at POST /api/accounts (username+password or phone_number)
-      const normalizedBase = apiBaseUrl.replace(/\/+$/, '');
-      const accountsUrl = normalizedBase.match(/\/api$/)
-        ? `${normalizedBase}/accounts`
-        : `${normalizedBase}/api/accounts`;
+    // Backend expects account creation at POST /api/accounts (username+password or phone_number)
+    const normalizedBase = apiBaseUrl.replace(/\/+$/, '');
+    const accountsUrl = normalizedBase.match(/\/api$/)
+      ? `${normalizedBase}/accounts`
+      : `${normalizedBase}/api/accounts`;
 
+    try {
       const payload = {
         first_name: 'Preview',
         last_name: 'TempUser',

@@ -27,6 +27,8 @@ target 'Boilerplate' do
   pod 'DatadogRUM', '3.4.0'
   pod 'DatadogTrace', '3.4.0'
   pod 'DatadogWebViewTracking', '3.4.0'
+  pod 'DatadogCrashReporting', '3.4.0'
+  pod 'DatadogSessionReplay', '3.4.0'
   pod 'DatadogSDKReactNative', :path => '../node_modules/@datadog/mobile-react-native'
   pod 'DatadogSDKReactNativeSessionReplay', :path => '../node_modules/@datadog/mobile-react-native-session-replay'
 

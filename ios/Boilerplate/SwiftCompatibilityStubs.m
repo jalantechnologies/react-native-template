@@ -2,11 +2,9 @@
 // Swift 5.6 compatibility loaders, which are not shipped in Swift 6/Xcode 26.
 // Remove once Datadog distributes Swift 6-compatible binaries.
 
-// Provide global symbols that Swift 5.6 force-load pragmas expect. The Swift 6
-// toolchain on Xcode 26 no longer ships the SwiftCompatibility56 libraries, so
-// satisfying these symbols in the app target avoids linker failures when
-// Datadog static libs reference them. We pin the exact symbol names using the
-// asm("symbol") attribute to match what the linker searches for.
-__attribute__((used, visibility("default"))) static const int swiftcompat56 __asm__("__swift_FORCE_LOAD_$_swiftCompatibility56") = 0;
-__attribute__((used, visibility("default"))) static const int swiftcompatConcurrency __asm__("__swift_FORCE_LOAD_$_swiftCompatibilityConcurrency") = 0;
-__attribute__((used, visibility("default"))) static const int swiftcompatPacks __asm__("__swift_FORCE_LOAD_$_swiftCompatibilityPacks") = 0;
+// Provide linker-visible stubs for Swift 5.6 compatibility force-load symbols.
+// Use asm aliases so the exported symbol names exactly match what the linker
+// expects, and define them as functions to satisfy any function references.
+__attribute__((visibility("default"), used)) void __asm__("__swift_FORCE_LOAD_$_swiftCompatibility56") swiftcompat56(void) {}
+__attribute__((visibility("default"), used)) void __asm__("__swift_FORCE_LOAD_$_swiftCompatibilityConcurrency") swiftcompatConcurrency(void) {}
+__attribute__((visibility("default"), used)) void __asm__("__swift_FORCE_LOAD_$_swiftCompatibilityPacks") swiftcompatPacks(void) {}

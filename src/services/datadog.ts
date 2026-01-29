@@ -1,5 +1,7 @@
 import {
   DatadogProviderConfiguration,
+  LogsConfiguration,
+  RumConfiguration,
   TrackingConsent,
 } from '@datadog/mobile-react-native';
 import {
@@ -10,27 +12,29 @@ import {
 } from '@datadog/mobile-react-native-session-replay';
 import Config from 'react-native-config';
 
-const DatadogConfig = new DatadogProviderConfiguration(
-  Config.DD_CLIENT_TOKEN || '',
-  Config.DD_ENVIRONMENT_NAME || 'development',
+const rumConfig = new RumConfiguration(
   Config.DD_APPLICATION_ID || '',
   true, // track interactions
   true, // track resources
   true, // track errors
-  TrackingConsent.GRANTED, // required in v3+
+  {
+    nativeCrashReportEnabled: true,
+    sessionSampleRate: 100,
+  },
 );
 
-// Optional: Select your Datadog website (one of "US1", "EU1", "US3", "US5", "AP1" or "GOV")
-DatadogConfig.site = 'US5';
+const logsConfig = new LogsConfiguration();
 
-// Optional: Enable JavaScript long task collection
-// DatadogConfig.longTaskThresholdMs = 100
-
-// Optional: enable or disable native crash reports
-DatadogConfig.nativeCrashReportEnabled = true;
-
-// Optional: sample RUM sessions (here, 100% of session will be sent to Datadog. Default = 100%)
-// DatadogConfig.sampleRate = 100
+const DatadogConfig = new DatadogProviderConfiguration(
+  Config.DD_CLIENT_TOKEN || '',
+  Config.DD_ENVIRONMENT_NAME || 'development',
+  TrackingConsent.GRANTED,
+  {
+    site: 'US5',
+    rumConfiguration: rumConfig,
+    logsConfiguration: logsConfig,
+  },
+);
 
 export const onDataDogSDKInitialized = async () => {
   await SessionReplay.enable({

@@ -19,6 +19,17 @@ end
 target 'Boilerplate' do
   config = use_native_modules!
 
+  # Pin Datadog iOS pods to versions compatible with RN SDK 3.0.0.
+  # This avoids Podfile.lock drift on CI runners and ensures consistent resolution.
+  pod 'DatadogCore', '3.4.0'
+  pod 'DatadogInternal', '3.4.0'
+  pod 'DatadogLogs', '3.4.0'
+  pod 'DatadogRUM', '3.4.0'
+  pod 'DatadogTrace', '3.4.0'
+  pod 'DatadogWebViewTracking', '3.4.0'
+  pod 'DatadogSDKReactNative', :path => '../node_modules/@datadog/mobile-react-native'
+  pod 'DatadogSDKReactNativeSessionReplay', :path => '../node_modules/@datadog/mobile-react-native-session-replay'
+
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.

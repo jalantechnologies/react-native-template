@@ -1,0 +1,42 @@
+name: Publish Permanent Preview Release
+description: Publish preview artifacts to a versioned GitHub release
+inputs:
+  preview_version:
+    required: true
+    description: Version label for the preview release
+  release_notes:
+    required: true
+    description: Release notes text
+runs:
+  using: 'composite'
+  steps:
+    - name: Prepare release notes
+      shell: bash
+      env:
+        PREVIEW_VERSION: ${{ inputs.preview_version }}
+        RELEASE_NOTES: ${{ inputs.release_notes }}
+      run: |
+        {
+          echo "## Permanent Preview"
+          echo ""
+          echo "- Version: ${PREVIEW_VERSION}"
+          echo "- Commit: ${GITHUB_SHA}"
+          echo ""
+          echo "### Release Notes"
+          echo "${RELEASE_NOTES}"
+        } > preview-release-notes.md
+
+    - name: Create or update permanent preview release
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        PREVIEW_VERSION: ${{ inputs.preview_version }}
+      run: |
+        TAG="preview-v${PREVIEW_VERSION}"
+        TITLE="Permanent Preview v${PREVIEW_VERSION}"
+        if gh release view "$TAG" >/dev/null 2>&1; then
+          gh release edit "$TAG" --title "$TITLE" --notes-file preview-release-notes.md --draft=false --prerelease=false --latest
+        else
+          gh release create "$TAG" --title "$TITLE" --notes-file preview-release-notes.md --draft=false --prerelease=false --latest
+        fi
+        gh release upload "$TAG" preview-artifacts/* --clobber

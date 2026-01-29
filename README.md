@@ -178,12 +178,17 @@ This template ships with two Android flavors so preview builds can coexist with 
 - Android: Google Play Store
 - iOS: App Store
 
+### Permanent Preview (on merge to main)
+- Android: signed preview APK uploaded to a GitHub Release
+- iOS: signed preview IPA uploaded to a GitHub Release
+
+
 ## Release Process
 
 1. Update version in `package.json`
 2. Create `docs/release_notes/{version}.md` (max 500 chars)
 3. Open PR to `main`
-4. After merge, production deployment triggers automatically
+4. After merge, production deployment and permanent preview release trigger automatically
 
 ## Troubleshooting
 

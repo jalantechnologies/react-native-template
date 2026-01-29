@@ -12,6 +12,12 @@ export class APIService {
 
     const apiBaseUrl = Config.API_BASE_URL as string;
 
+    // Log environment + base URL at startup to verify build wiring.
+    // This prints once per app launch and helps confirm Doppler/Envfile selection.
+    console.log(
+      `[env-check] ENVIRONMENT=${this.environment ?? 'undefined'} API_BASE_URL=${apiBaseUrl ?? 'undefined'}`,
+    );
+
     this.service = axios.create({
       baseURL: apiBaseUrl,
     });

@@ -1,0 +1,104 @@
+name: 'Build Android Permanent Preview APK'
+description: 'Builds a release APK for the preview flavor for GitHub releases'
+
+inputs:
+  build_number:
+    required: true
+    description: 'Build number to apply to the preview build'
+  android_keystore_file:
+    required: true
+    description: 'Keystore file for signing the Android app (base64)'
+  android_keystore_password:
+    required: true
+    description: 'Password for the keystore file'
+  android_key_alias:
+    required: true
+    description: 'Key alias for the keystore file'
+  android_key_password:
+    required: true
+    description: 'Password for the key alias'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: zulu
+        java-version: 17
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 22.13.1
+
+    - name: Enable Corepack
+      run: corepack enable
+      shell: bash
+
+    - name: Cache node modules
+      uses: actions/cache@v4
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-node-modules-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-node-modules-
+
+    - name: Cache Gradle Wrapper
+      uses: actions/cache@v4
+      with:
+        path: ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+
+    - name: Cache Gradle Dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-caches-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-caches-
+
+    - name: Install node modules
+      run: yarn install
+      shell: bash
+      env:
+        CI: true
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.3"
+        bundler-cache: true
+
+    - name: Install Fastlane and dependencies
+      shell: bash
+      run: |
+        gem install bundler
+        cd android
+        bundle install
+      env:
+        CI: true
+
+    - name: Add @react-native-community manually
+      shell: bash
+      run: yarn add @react-native-community/cli-platform-android@11.3.3
+      env:
+        CI: true
+
+    - name: Decode Keystore File
+      uses: timheuer/base64-to-file@v1
+      id: android_keystore
+      with:
+        fileName: "android_keystore.keystore"
+        encodedString: ${{ inputs.android_keystore_file }}
+
+    - name: Build Android preview APK via fastlane
+      shell: bash
+      working-directory: android
+      run: bundle exec fastlane android android_permanent_preview
+      env:
+        ANDROID_KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
+        ANDROID_KEYSTORE_PASSWORD: ${{ inputs.android_keystore_password }}
+        ANDROID_KEY_ALIAS: ${{ inputs.android_key_alias }}
+        ANDROID_KEY_PASSWORD: ${{ inputs.android_key_password }}
+        BUILD_NUMBER: ${{ inputs.build_number }}

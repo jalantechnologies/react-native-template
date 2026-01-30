@@ -19,18 +19,6 @@ end
 target 'Boilerplate' do
   config = use_native_modules!
 
-  # Datadog RN 3.0.1 expects native pods 3.4.0; pin to keep JS/native in sync.
-  pod 'DatadogCore', '3.4.0'
-  pod 'DatadogInternal', '3.4.0'
-  pod 'DatadogLogs', '3.4.0'
-  pod 'DatadogRUM', '3.4.0'
-  pod 'DatadogTrace', '3.4.0'
-  pod 'DatadogWebViewTracking', '3.4.0'
-  pod 'DatadogCrashReporting', '3.4.0'
-  pod 'DatadogSessionReplay', '3.4.0'
-  pod 'DatadogSDKReactNative', :path => '../node_modules/@datadog/mobile-react-native'
-  pod 'DatadogSDKReactNativeSessionReplay', :path => '../node_modules/@datadog/mobile-react-native-session-replay'
-
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
@@ -50,42 +38,5 @@ target 'Boilerplate' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
-
-    # Xcode 26 / Swift 6 toolchains remove SwiftCompatibility56 libs.
-    # Datadog 3.4.0 still force-loads them; add ignore flags and weak-link
-    # missing system frameworks to prevent linker failures.
-    symbols_to_ignore = %w[
-      __swift_FORCE_LOAD_$_swiftCompatibility56
-      __swift_FORCE_LOAD_$_swiftCompatibilityConcurrency
-      __swift_FORCE_LOAD_$_swiftCompatibilityPacks
-    ]
-
-    weak_frameworks = %w[
-      CoreAudioTypes
-      UIUtilities
-      SwiftUICore
-    ]
-
-    append_ldflags = lambda do |targets|
-      targets.each do |target|
-        target.build_configurations.each do |config|
-          flags = Array(config.build_settings['OTHER_LDFLAGS'])
-          symbols_to_ignore.each do |sym|
-            flag = "-Wl,-U,#{sym}"
-            flags << flag unless flags.include?(flag)
-          end
-          weak_frameworks.each do |fw|
-            flag = "-Wl,-weak_framework,#{fw}"
-            flags << flag unless flags.include?(flag)
-          end
-          config.build_settings['OTHER_LDFLAGS'] = flags
-        end
-      end
-    end
-
-    installer.aggregate_targets.each do |aggregate_target|
-      append_ldflags.call(aggregate_target.user_project.native_targets)
-    end
-    append_ldflags.call(installer.pods_project.targets)
   end
 end

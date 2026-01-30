@@ -1522,38 +1522,38 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@datadog/mobile-react-native-session-replay@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "@datadog/mobile-react-native-session-replay@npm:3.0.1"
+"@datadog/mobile-react-native-session-replay@npm:^2.8.0":
+  version: 2.14.0
+  resolution: "@datadog/mobile-react-native-session-replay@npm:2.14.0"
   dependencies:
     chokidar: ^4.0.3
   peerDependencies:
     react: ">=16.13.1"
     react-native: ">=0.63.4 <1.0"
-  checksum: 38cca622bedbcf4dc49d1e0f3951ec9fc2047d88a766c93aaeb0aef0139b219ec0c19c6e289852a6c3485393601f704be9d954912563f743bb3ad5c0e795cf2f
+  checksum: 0f9e64a2c8af166192353ce4d4c28d15b90578b0608006e1dddd8fdf78c9df1209440e48259290c98cdf1585a3f2fe87d9a1cfa2efa73fb799745bb2eae71e93
   languageName: node
   linkType: hard
 
-"@datadog/mobile-react-native@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "@datadog/mobile-react-native@npm:3.0.1"
+"@datadog/mobile-react-native@npm:^2.8.0":
+  version: 2.14.0
+  resolution: "@datadog/mobile-react-native@npm:2.14.0"
   dependencies:
     big-integer: ^1.6.52
   peerDependencies:
     react: ">=16.13.1"
     react-native: ">=0.63.4 <1.0"
-  checksum: 8ec9b803b2e7c7fcfd213ef97ae7940183d4511c91e5a3d2bc92b8218d9d7b7360f0141dec4f7780b731b8f8ef1b98b05f425d22677756e526d5805fe94bb185
+  checksum: 639f872ab58ea01fbd5fa26d1d96c8f90fb26c19259b97a476bd4f761e3353112b5aba5b750f15d1fe1d3670a8fb547a5202c75546d6e82a478c85d43708ff17
   languageName: node
   linkType: hard
 
-"@datadog/mobile-react-navigation@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "@datadog/mobile-react-navigation@npm:3.0.1"
+"@datadog/mobile-react-navigation@npm:^2.8.0":
+  version: 2.14.0
+  resolution: "@datadog/mobile-react-navigation@npm:2.14.0"
   peerDependencies:
-    "@datadog/mobile-react-native": ^3.0.0
+    "@datadog/mobile-react-native": ^2.0.1
     react: ">=16.13.1"
     react-native: ">=0.63.4 <1.0"
-  checksum: 882043d7c52e24a760cc6d85130fa174b10fb7fd3385e3e86b709c40f40509b3d0fa6eae48883688e240f5f7b8c868f1be35b5d0f64e698c7aa70c38049c57a1
+  checksum: a10c3c2d36c1582ebbaf25573ddff3f7ac04d4033ea01b622ff59ec64e6052932ad1175f6c4914d26aae4a35749f5da67eccd6e8cc7a42a8af459e06a45a4198
   languageName: node
   linkType: hard
 
@@ -10764,9 +10764,9 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
-    "@datadog/mobile-react-native": ^3.0.1
-    "@datadog/mobile-react-native-session-replay": ^3.0.1
-    "@datadog/mobile-react-navigation": ^3.0.1
+    "@datadog/mobile-react-native": ^2.8.0
+    "@datadog/mobile-react-native-session-replay": ^2.8.0
+    "@datadog/mobile-react-navigation": ^2.8.0
     "@react-native-async-storage/async-storage": ^2.2.0
     "@react-native-community/cli": 15.1.3
     "@react-native-masked-view/masked-view": ^0.2.9

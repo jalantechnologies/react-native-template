@@ -94,9 +94,7 @@ runs:
       shell: bash
       run: |
         pod repo update
-        bundle exec pod update boost --no-repo-update
-        bundle exec pod update DatadogSDKReactNative DatadogSDKReactNativeSessionReplay DatadogWebViewTracking --no-repo-update
-        bundle exec pod install
+        bundle exec pod install --repo-update
 
     - name: Set up SSH for Match
       uses: webfactory/ssh-agent@v0.7.0

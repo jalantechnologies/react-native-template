@@ -93,9 +93,8 @@ runs:
       working-directory: ios
       shell: bash
       run: |
-        rm -rf Pods Podfile.lock
         pod repo update
-        pod update --repo-update
+        bundle exec pod install --repo-update
 
     - name: Set up SSH for Match
       uses: webfactory/ssh-agent@v0.7.0

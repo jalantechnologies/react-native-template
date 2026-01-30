@@ -1,9 +1,4 @@
-import {
-  DatadogProviderConfiguration,
-  LogsConfiguration,
-  RumConfiguration,
-  TrackingConsent,
-} from '@datadog/mobile-react-native';
+import { DatadogProviderConfiguration } from '@datadog/mobile-react-native';
 import {
   ImagePrivacyLevel,
   SessionReplay,
@@ -12,29 +7,26 @@ import {
 } from '@datadog/mobile-react-native-session-replay';
 import Config from 'react-native-config';
 
-const rumConfig = new RumConfiguration(
-  Config.DD_APPLICATION_ID || '',
-  true, // track interactions
-  true, // track resources
-  true, // track errors
-  {
-    nativeCrashReportEnabled: true,
-    sessionSampleRate: 100,
-  },
-);
-
-const logsConfig = new LogsConfiguration();
-
 const DatadogConfig = new DatadogProviderConfiguration(
   Config.DD_CLIENT_TOKEN || '',
   Config.DD_ENVIRONMENT_NAME || 'development',
-  TrackingConsent.GRANTED,
-  {
-    site: 'US5',
-    rumConfiguration: rumConfig,
-    logsConfiguration: logsConfig,
-  },
+  Config.DD_APPLICATION_ID || '',
+  true, // track User interactions (e.g.: Tap on buttons. You can use 'accessibilityLabel' element property to give tap action the name, otherwise element type will be reported)
+  true, // track XHR Resources
+  true, // track Errors
 );
+
+// Optional: Select your Datadog website (one of "US1", "EU1", "US3", "US5", "AP1" or "GOV")
+DatadogConfig.site = 'US5';
+
+// Optional: Enable JavaScript long task collection
+// DatadogConfig.longTaskThresholdMs = 100
+
+// Optional: enable or disable native crash reports
+DatadogConfig.nativeCrashReportEnabled = true;
+
+// Optional: sample RUM sessions (here, 100% of session will be sent to Datadog. Default = 100%)
+// DatadogConfig.sampleRate = 100
 
 export const onDataDogSDKInitialized = async () => {
   await SessionReplay.enable({

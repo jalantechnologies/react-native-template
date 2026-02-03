@@ -51,11 +51,6 @@ runs:
         bundler-cache: true
         working-directory: ios
 
-    - name: Clean DerivedData and build artifacts
-      run: |
-        rm -rf ios/build ~/Library/Developer/Xcode/DerivedData
-      shell: bash
-
     - name: Select Xcode 26.2
       run: |
         sudo xcode-select -s /Applications/Xcode_26.2.app

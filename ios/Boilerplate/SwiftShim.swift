@@ -7,10 +7,7 @@
 // sources, Xcode may skip linking Swift standard libraries and omit related
 // search paths, causing "library not found" or "undefined symbol" errors and
 // missing Swift runtime in archives.
+// We have created issue for this:https://github.com/jalantechnologies/react-native-template/issues/318
 //
 // HOW: Having at least one Swift source activates the Swift toolchain so the
 // runtime and search paths are included even if app code is Objective-C/ObjC++.
-//
-// Reference: Apple dev forum thread on needing a Swift file to trigger Swift
-// runtime linkage in mixed-language projects:
-// https://developer.apple.com/forums/thread/128165

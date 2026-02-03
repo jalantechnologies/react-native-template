@@ -14,6 +14,10 @@ inputs:
     description: 'Release notes file extension (default: .md)'
     required: false
     default: '.md'
+  notes_file:
+    description: 'Optional explicit release notes file path. When set, version/dir/ext are ignored.'
+    required: false
+    default: ''
 
 outputs:
   release_notes:
@@ -35,8 +39,13 @@ runs:
       id: check_notes
       shell: bash
       run: |
-        NOTES_FILE="${{ inputs.notes_dir }}/${{ steps.get_version.outputs.version }}${{ inputs.notes_ext }}"
-        echo "Checking release notes file: $NOTES_FILE"
+        if [ -n "${{ inputs.notes_file }}" ]; then
+          NOTES_FILE="${{ inputs.notes_file }}"
+          echo "Using explicit release notes file: $NOTES_FILE"
+        else
+          NOTES_FILE="${{ inputs.notes_dir }}/${{ steps.get_version.outputs.version }}${{ inputs.notes_ext }}"
+          echo "Checking release notes file derived from version: $NOTES_FILE"
+        fi
 
         if [ ! -f "$NOTES_FILE" ]; then
           echo "::error::❌ Release notes file not found: $NOTES_FILE"
@@ -76,4 +85,3 @@ runs:
           echo 'EOF'
         } >> $GITHUB_OUTPUT
         
-

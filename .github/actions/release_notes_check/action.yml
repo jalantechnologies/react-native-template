@@ -14,6 +14,10 @@ inputs:
     description: 'Release notes file extension (default: .md)'
     required: false
     default: '.md'
+  notes_file:
+    description: 'Optional explicit release notes file path. When set, version/dir/ext are ignored.'
+    required: false
+    default: ''
 
 outputs:
   release_notes:
@@ -92,4 +96,3 @@ runs:
           echo 'EOF'
         } >> $GITHUB_OUTPUT
         
-

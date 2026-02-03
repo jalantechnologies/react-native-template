@@ -25,11 +25,13 @@ jobs:
           script: |
             const labels = context.payload.pull_request.labels.map(label => label.name);
             const allowed = ['semver: major', 'semver: minor', 'semver: patch'];
-            const present = allowed.find(label => labels.includes(label));
-            if (!present) {
-              core.setFailed('PR must include one semver label: semver: major | semver: minor | semver: patch');
+            const present = allowed.filter(label => labels.includes(label));
+            if (present.length === 0) {
+              core.setFailed('PR must include exactly one semver label: semver: major | semver: minor | semver: patch');
+            } else if (present.length > 1) {
+              core.setFailed(`Only one semver label allowed, found: ${present.join(', ')}`);
             } else {
-              core.info(`Found semver label: ${present}`);
+              core.info(`Found semver label: ${present[0]}`);
             }
 
   release_notes_check:

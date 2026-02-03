@@ -50,12 +50,6 @@ jobs:
               core.info('No semver label found, skipping version bump');
             }
 
-      - name: Show current version
-        run: |
-          echo "Current package.json version:"
-          jq -r .version package.json
-          git status --short
-
       - name: Bump version
         if: steps.bump.outputs.should_bump == 'true'
         id: bump_version
@@ -92,7 +86,7 @@ jobs:
 
           git add package.json "$VERSIONED_NOTES" "$NOTES_FILE"
           git commit -m "chore: bump version to v${NEW_VERSION}"
-          git push origin HEAD:${{ github.event.pull_request.base.ref }}
+          git push
 
       - name: Summary
         if: steps.bump.outputs.should_bump == 'true'

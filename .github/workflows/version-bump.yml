@@ -4,26 +4,10 @@ on:
   pull_request:
     types: [closed]
     branches: [main]
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'PR number to inspect (optional for manual testing)'
-        required: false
-      bump_type:
-        description: 'Bump to apply when running manually (auto uses PR labels if available)'
-        required: false
-        default: 'auto'
-        type: choice
-        options: [auto, major, minor, patch]
-      dry_run:
-        description: 'Skip git commit/push when true (recommended for manual tests)'
-        required: false
-        default: 'true'
-        type: boolean
 
 jobs:
   bump:
-    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -44,41 +28,15 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const eventName = context.eventName;
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-
-            const dryRunInput = core.getInput('dry_run') || 'true';
-            core.setOutput('dry_run', dryRunInput === 'true' ? 'true' : 'false');
+            const labels = context.payload.pull_request.labels.map(l => l.name);
 
             let bump = null;
-            let prNumber = null;
-
-            if (eventName === 'pull_request') {
-              const labels = context.payload.pull_request.labels.map(l => l.name);
-              prNumber = context.payload.pull_request.number;
-              core.info(`Detected PR #${prNumber} labels: ${labels.join(', ') || '(none)'}`);
-
-              if (labels.includes('semver: major')) bump = 'major';
-              else if (labels.includes('semver: minor')) bump = 'minor';
-              else if (labels.includes('semver: patch')) bump = 'patch';
-            } else if (eventName === 'workflow_dispatch') {
-              const bumpInput = core.getInput('bump_type');
-              const prInput = core.getInput('pr_number');
-              if (prInput) prNumber = Number(prInput);
-
-              if (bumpInput && bumpInput !== 'auto') {
-                bump = bumpInput;
-                core.info(`Manual bump input: ${bump}`);
-              } else if (prNumber) {
-                core.info(`Fetching PR #${prNumber} to infer bump from labels...`);
-                const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: prNumber });
-                const labels = pr.labels.map(l => l.name);
-                core.info(`PR #${prNumber} labels: ${labels.join(', ') || '(none)'}`);
-                if (labels.includes('semver: major')) bump = 'major';
-                else if (labels.includes('semver: minor')) bump = 'minor';
-                else if (labels.includes('semver: patch')) bump = 'patch';
-              }
+            if (labels.includes('semver: major')) {
+              bump = 'major';
+            } else if (labels.includes('semver: minor')) {
+              bump = 'minor';
+            } else if (labels.includes('semver: patch')) {
+              bump = 'patch';
             }
 
             if (bump) {
@@ -120,20 +78,13 @@ jobs:
             exit 1
           fi
 
-          if [ "${{ steps.bump.outputs.dry_run }}" = "true" ]; then
-            echo "Dry run enabled: validating rotation only (no commit/push)."
-            mv "$NOTES_FILE" "$VERSIONED_NOTES"
-            : > "$NOTES_FILE"
-            ls -l "$VERSIONED_NOTES" "$NOTES_FILE"
-          else
-            mv "$NOTES_FILE" "$VERSIONED_NOTES"
-            # Prepare fresh notes file for the next release
-            : > "$NOTES_FILE"
+          mv "$NOTES_FILE" "$VERSIONED_NOTES"
+          # Prepare fresh notes file for the next release
+          : > "$NOTES_FILE"
 
-            git add package.json "$VERSIONED_NOTES" "$NOTES_FILE"
-            git commit -m "chore: bump version to v${NEW_VERSION}"
-            git push
-          fi
+          git add package.json "$VERSIONED_NOTES" "$NOTES_FILE"
+          git commit -m "chore: bump version to v${NEW_VERSION}"
+          git push
 
       - name: Summary
         if: steps.bump.outputs.should_bump == 'true'

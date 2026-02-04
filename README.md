@@ -184,7 +184,7 @@ This template ships with two Android flavors so preview builds can coexist with 
 2. Edit `docs/release_notes/release_notes.md` with the changes for this release (max 500 chars; required by CI)
 3. Open PR to `main`
 4. On merge, the `version-bump` workflow automatically bumps `package.json`, renames `release_notes.md` to `docs/release_notes/{new_version}.md`, creates a fresh empty `release_notes.md`, and pushes the commit to `main`
-5. Production deployment still triggers on pushes to `main`
+5. Production deployment runs on the post-merge version-bump commit (pushes to `main` that change `package.json` or `docs/release_notes/**`)
 
 ## Troubleshooting
 

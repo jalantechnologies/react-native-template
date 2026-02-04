@@ -5,6 +5,10 @@ on:
     types: [closed]
     branches: [main]
 
+concurrency:
+  group: version-bump-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   bump:
     if: github.event.pull_request.merged == true
@@ -46,8 +50,7 @@ jobs:
               core.setOutput('should_bump', 'true');
               core.info(`Version bump: ${bump}`);
             } else {
-              core.setOutput('should_bump', 'false');
-              core.info('No semver label found, skipping version bump');
+              core.setFailed('No semver label found. Add one of: semver: major | semver: minor | semver: patch');
             }
 
       - name: Bump version

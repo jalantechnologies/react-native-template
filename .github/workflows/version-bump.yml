@@ -3,7 +3,8 @@ name: Version Bump
 on:
   pull_request:
     types: [closed]
-    branches: [main]
+    branches:
+      - vikram/feat/implement-auto-version-bumping
 
 jobs:
   bump:

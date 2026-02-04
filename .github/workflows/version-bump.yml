@@ -49,6 +49,12 @@ jobs:
               core.info('No semver label found, skipping version bump');
             }
 
+      - name: Show current version
+        run: |
+          echo "Current package.json version:"
+          jq -r .version package.json
+          git status --short
+
       - name: Bump version
         if: steps.bump.outputs.should_bump == 'true' && (github.event.pull_request.merged == true || github.event.pull_request.head.ref == 'vikram/feat/implement-auto-version-bumping')
         id: bump_version
@@ -108,4 +114,3 @@ jobs:
         run: |
           echo "## Version bump skipped" >> $GITHUB_STEP_SUMMARY
           echo "Reason: No semver label found on PR. Add one of: semver: major | semver: minor | semver: patch." >> $GITHUB_STEP_SUMMARY
-          fi

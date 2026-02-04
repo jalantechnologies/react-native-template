@@ -108,6 +108,7 @@ jobs:
             echo "## Dry run (PR not merged)" >> $GITHUB_STEP_SUMMARY
             echo "Detected bump type: ${{ steps.bump.outputs.type || 'none' }}" >> $GITHUB_STEP_SUMMARY
             echo "No commit/push performed; will run for real after merge." >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Summary (no semver label)
         if: steps.bump.outputs.should_bump != 'true'

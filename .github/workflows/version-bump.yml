@@ -2,7 +2,7 @@ name: Version Bump
 
 on:
   pull_request:
-    types: [closed]
+    types: [opened, synchronize, reopened, ready_for_review]
     branches:
       - vikram/feat/implement-auto-version-bumping
 

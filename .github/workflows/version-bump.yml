@@ -2,13 +2,11 @@ name: Version Bump
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, labeled, closed]
-    branches:
-      - vikram/feat/implement-auto-version-bumping
+    types: [opened, synchronize, reopened, ready_for_review, closed]
 
 jobs:
   bump:
-    if: github.event.pull_request.state != 'closed' || github.event.pull_request.merged == true
+    if: (github.event.pull_request.state == 'open' && github.event.pull_request.draft == false) || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write

@@ -1,10 +1,10 @@
 name: cd
+# Temporarily paused for testing; trigger manually via workflow_dispatch.
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
 
 concurrency:
-  group: cd-preview-${{ github.event.pull_request.number }}
+  group: cd-preview-${{ github.event.pull_request.number || 'manual' }}
   cancel-in-progress: true
 
 jobs:

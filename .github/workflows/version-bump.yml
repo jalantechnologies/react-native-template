@@ -97,4 +97,10 @@ jobs:
             echo "## Dry run (PR not merged)" >> $GITHUB_STEP_SUMMARY
             echo "Detected bump type: ${{ steps.bump.outputs.type || 'none' }}" >> $GITHUB_STEP_SUMMARY
             echo "No commit/push performed; will run for real after merge." >> $GITHUB_STEP_SUMMARY
+
+      - name: Summary (no semver label)
+        if: steps.bump.outputs.should_bump != 'true'
+        run: |
+          echo "## Version bump skipped" >> $GITHUB_STEP_SUMMARY
+          echo "Reason: No semver label found on PR. Add one of: semver: major | semver: minor | semver: patch." >> $GITHUB_STEP_SUMMARY
           fi

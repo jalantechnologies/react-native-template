@@ -2,11 +2,12 @@ name: Version Bump
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review, closed]
+    types: [closed]
+    branches: [main]
 
 jobs:
   bump:
-    if: (github.event.pull_request.state == 'open' && github.event.pull_request.draft == false) || github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -15,8 +16,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.base.ref }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node
@@ -56,7 +57,7 @@ jobs:
           git status --short
 
       - name: Bump version
-        if: steps.bump.outputs.should_bump == 'true' && (github.event.pull_request.merged == true || github.event.pull_request.head.ref == 'vikram/feat/implement-auto-version-bumping')
+        if: steps.bump.outputs.should_bump == 'true'
         id: bump_version
         env:
           npm_config_package_lock: "false"
@@ -69,7 +70,7 @@ jobs:
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Rotate release notes
-        if: steps.bump.outputs.should_bump == 'true' && (github.event.pull_request.merged == true || github.event.pull_request.head.ref == 'vikram/feat/implement-auto-version-bumping')
+        if: steps.bump.outputs.should_bump == 'true'
         run: |
           NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
           NOTES_FILE="docs/release_notes/release_notes.md"
@@ -91,23 +92,15 @@ jobs:
 
           git add package.json "$VERSIONED_NOTES" "$NOTES_FILE"
           git commit -m "chore: bump version to v${NEW_VERSION}"
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+          git push origin HEAD:${{ github.event.pull_request.base.ref }}
 
       - name: Summary
         if: steps.bump.outputs.should_bump == 'true'
         run: |
-          if [ "${{ github.event.pull_request.merged }}" = "true" ] || [ "${{ github.event.pull_request.head.ref }}" = "vikram/feat/implement-auto-version-bumping" ]; then
-            NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
-            echo "## Version Bumped" >> $GITHUB_STEP_SUMMARY
-            echo "New version: **v${NEW_VERSION}**" >> $GITHUB_STEP_SUMMARY
-            echo "Bump type: ${{ steps.bump.outputs.type }}" >> $GITHUB_STEP_SUMMARY
-            if [ "${{ github.event.pull_request.merged }}" != "true" ]; then
-              echo "_Note: ran on feature branch for testing; commit pushed to the PR branch._" >> $GITHUB_STEP_SUMMARY
-            fi
-          else
-            echo "## Dry run (PR not merged)" >> $GITHUB_STEP_SUMMARY
-            echo "Detected bump type: ${{ steps.bump.outputs.type || 'none' }}" >> $GITHUB_STEP_SUMMARY
-            echo "No commit/push performed; will run for real after merge." >> $GITHUB_STEP_SUMMARY
+          NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
+          echo "## Version Bumped" >> $GITHUB_STEP_SUMMARY
+          echo "New version: **v${NEW_VERSION}**" >> $GITHUB_STEP_SUMMARY
+          echo "Bump type: ${{ steps.bump.outputs.type }}" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Summary (no semver label)

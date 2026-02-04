@@ -2,13 +2,13 @@ name: Version Bump
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review, labeled, closed]
     branches:
       - vikram/feat/implement-auto-version-bumping
 
 jobs:
   bump:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.state != 'closed' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -50,7 +50,7 @@ jobs:
             }
 
       - name: Bump version
-        if: steps.bump.outputs.should_bump == 'true'
+        if: steps.bump.outputs.should_bump == 'true' && github.event.pull_request.merged == true
         id: bump_version
         env:
           npm_config_package_lock: "false"
@@ -63,7 +63,7 @@ jobs:
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Rotate release notes
-        if: steps.bump.outputs.should_bump == 'true'
+        if: steps.bump.outputs.should_bump == 'true' && github.event.pull_request.merged == true
         run: |
           NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
           NOTES_FILE="docs/release_notes/release_notes.md"
@@ -90,7 +90,13 @@ jobs:
       - name: Summary
         if: steps.bump.outputs.should_bump == 'true'
         run: |
-          NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
-          echo "## Version Bumped" >> $GITHUB_STEP_SUMMARY
-          echo "New version: **v${NEW_VERSION}**" >> $GITHUB_STEP_SUMMARY
-          echo "Bump type: ${{ steps.bump.outputs.type }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+            NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
+            echo "## Version Bumped" >> $GITHUB_STEP_SUMMARY
+            echo "New version: **v${NEW_VERSION}**" >> $GITHUB_STEP_SUMMARY
+            echo "Bump type: ${{ steps.bump.outputs.type }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## Dry run (PR not merged)" >> $GITHUB_STEP_SUMMARY
+            echo "Detected bump type: ${{ steps.bump.outputs.type || 'none' }}" >> $GITHUB_STEP_SUMMARY
+            echo "No commit/push performed; will run for real after merge." >> $GITHUB_STEP_SUMMARY
+          fi

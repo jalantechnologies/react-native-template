@@ -1,0 +1,86 @@
+name: 'Mobile Security Scan'
+description: 'Run Trivy (code/deps) and Ostorlab (APK/IPA) before mobile deploys'
+
+inputs:
+  android-apk-path:
+    description: 'Glob or path to Android APK to scan (optional)'
+    required: false
+    default: ''
+  ios-ipa-path:
+    description: 'Path to iOS IPA to scan (optional)'
+    required: false
+    default: ''
+  ostorlab-api-key:
+    description: 'API key for Ostorlab scans'
+    required: false
+    default: ''
+
+outputs:
+  has-issues:
+    description: 'true when any scan reports HIGH/CRITICAL findings'
+    value: ${{ steps.set-output.outputs.has-issues }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Trivy filesystem scan (HIGH/CRITICAL)
+      id: trivy
+      uses: aquasecurity/trivy-action@v0.33.1
+      continue-on-error: true
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        scanners: 'vuln,secret'
+        severity: 'HIGH,CRITICAL'
+        format: 'table'
+        ignore-unfixed: true
+        timeout: '10m'
+        exit-code: '1'
+
+    - name: Ostorlab scan - Android APK
+      id: ostorlab-android
+      if: inputs.android-apk-path != ''
+      uses: ostorlab/github-action@v1.1.1
+      continue-on-error: true
+      with:
+        asset_type: 'android-apk'
+        target: ${{ inputs.android-apk-path }}
+        api-key: ${{ inputs.ostorlab-api-key }}
+
+    - name: Ostorlab scan - iOS IPA
+      id: ostorlab-ios
+      if: inputs.ios-ipa-path != ''
+      uses: ostorlab/github-action@v1.1.1
+      continue-on-error: true
+      with:
+        asset_type: 'ios-ipa'
+        target: ${{ inputs.ios-ipa-path }}
+        api-key: ${{ inputs.ostorlab-api-key }}
+
+    - name: Set scan output / fail on issues
+      id: set-output
+      shell: bash
+      run: |
+        issues=false
+
+        if [ "${{ steps.trivy.outcome }}" = "failure" ]; then
+          echo "Trivy reported HIGH/CRITICAL findings."
+          issues=true
+        fi
+
+        if [ "${{ steps.ostorlab-android.outcome }}" = "failure" ]; then
+          echo "Ostorlab (Android) reported findings."
+          issues=true
+        fi
+
+        if [ "${{ steps.ostorlab-ios.outcome }}" = "failure" ]; then
+          echo "Ostorlab (iOS) reported findings."
+          issues=true
+        fi
+
+        echo "has-issues=$issues" >> "$GITHUB_OUTPUT"
+
+        if [ "$issues" = "true" ]; then
+          echo "Blocking deployment because HIGH/CRITICAL issues were detected."
+          exit 1
+        fi

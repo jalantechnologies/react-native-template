@@ -17,6 +17,9 @@ inputs:
   ANDROID_FIREBASE_API_KEY:
     description: 'Firebase API key'
     required: true
+  OSTORLAB_API_KEY:
+    description: 'API key for Ostorlab vulnerability scans'
+    required: true
   ANDROID_GCP_JSON_BASE64:
     description: 'GCP JSON key (base64 encoded)'
     required: true
@@ -84,13 +87,39 @@ runs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
-    - name: Build & Deploy to Firebase App Distribution
+    - name: Build preview APK (no upload)
+      id: build_apk
       working-directory: android
       env:
         FIREBASE_API_KEY: "${{ inputs.ANDROID_FIREBASE_API_KEY }}"
         ANDROID_FIREBASE_PROJECT_NUMBER: "${{ inputs.ANDROID_FIREBASE_PROJECT_NUMBER }}"
         ANDROID_FIREBASE_APP_ID: "${{ inputs.ANDROID_FIREBASE_APP_ID }}"
         ANDROID_JSON_KEY_FILE: "/tmp/gcp_key.json"
+        FIREBASE_SKIP_UPLOAD: "1"
+        APK_PATH_FILE: "/tmp/firebase_apk_path.txt"
+      shell: bash
+      run: |
+        bundle exec fastlane android pr_deploy \
+          pr_number:"${{ inputs.PR_NUMBER }}" \
+          pr_title:"${{ inputs.PR_TITLE }}" \
+          project_number:"${{ inputs.ANDROID_FIREBASE_PROJECT_NUMBER }}" \
+          app_id:"${{ inputs.ANDROID_FIREBASE_APP_ID }}"
+        echo "apk_path=$(cat /tmp/firebase_apk_path.txt)" >> "$GITHUB_OUTPUT"
+
+    - name: Mobile security scan (Trivy + Ostorlab)
+      uses: ./.github/actions/mobile-scan
+      with:
+        android-apk-path: ${{ steps.build_apk.outputs.apk_path }}
+        ostorlab-api-key: ${{ inputs.OSTORLAB_API_KEY }}
+
+    - name: Upload preview APK to Firebase App Distribution
+      working-directory: android
+      env:
+        FIREBASE_API_KEY: "${{ inputs.ANDROID_FIREBASE_API_KEY }}"
+        ANDROID_FIREBASE_PROJECT_NUMBER: "${{ inputs.ANDROID_FIREBASE_PROJECT_NUMBER }}"
+        ANDROID_FIREBASE_APP_ID: "${{ inputs.ANDROID_FIREBASE_APP_ID }}"
+        ANDROID_JSON_KEY_FILE: "/tmp/gcp_key.json"
+        APK_PATH: "${{ steps.build_apk.outputs.apk_path }}"
       shell: bash
       run: |
         bundle exec fastlane android pr_deploy \

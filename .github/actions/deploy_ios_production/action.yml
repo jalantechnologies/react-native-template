@@ -34,6 +34,9 @@ inputs:
   IOS_MATCH_DEPLOY_KEY:
     required: true
     description: 'SSH private key for Match repo'
+  OSTORLAB_API_KEY:
+    required: true
+    description: 'API key for Ostorlab vulnerability scans'
   RELEASE_NOTES:
     required: true
     description: 'Release notes text to upload to App Store Connect'
@@ -135,7 +138,35 @@ runs:
       run: rm -rf ~/Library/Developer/Xcode/DerivedData
       shell: bash
 
-    - name: Deploy the iOS app to Production
+    - name: Build iOS production (no upload)
+      id: build_ios_prod
+      working-directory: ios
+      run: |
+        bundle exec fastlane ios production_deploy
+        echo "ipa_path=$(cat /tmp/ios_production_ipa.txt)" >> "$GITHUB_OUTPUT"
+      shell: bash
+      env:
+          MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}
+          IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
+          IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}
+          IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
+          IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+          IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
+          IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
+          IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
+          IOS_APP_STORE_TEAM_ID: ${{ inputs.IOS_APP_STORE_TEAM_ID }}
+          IOS_DEV_EMAIL: ${{ inputs.IOS_DEV_EMAIL }}
+          RELEASE_NOTES: ${{ inputs.RELEASE_NOTES }}
+          IOS_SKIP_UPLOAD: "1"
+          IPA_PATH_FILE: "/tmp/ios_production_ipa.txt"
+
+    - name: Mobile security scan (Trivy + Ostorlab)
+      uses: ./.github/actions/mobile-scan
+      with:
+        ios-ipa-path: ${{ steps.build_ios_prod.outputs.ipa_path }}
+        ostorlab-api-key: ${{ inputs.OSTORLAB_API_KEY }}
+
+    - name: Upload iOS production (using scanned IPA)
       working-directory: ios
       run: bundle exec fastlane ios production_deploy
       shell: bash
@@ -151,6 +182,8 @@ runs:
           IOS_APP_STORE_TEAM_ID: ${{ inputs.IOS_APP_STORE_TEAM_ID }}
           IOS_DEV_EMAIL: ${{ inputs.IOS_DEV_EMAIL }}
           RELEASE_NOTES: ${{ inputs.RELEASE_NOTES }}
+          IOS_SKIP_BUILD: "1"
+          IOS_IPA_PATH: ${{ steps.build_ios_prod.outputs.ipa_path }}
 
     - name: Upload Xcode build logs
       if: failure()

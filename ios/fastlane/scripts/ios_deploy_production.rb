@@ -24,6 +24,11 @@ def ios_deploy_production!(options = {})
   release_notes     = options.fetch(:release_notes)
   plist_path        = options.fetch(:plist_path)
 
+  skip_build  = ENV['IOS_SKIP_BUILD'] == '1'
+  skip_upload = ENV['IOS_SKIP_UPLOAD'] == '1'
+  export_ipa  = ENV['IPA_PATH_FILE']
+  provided_ipa = ENV['IOS_IPA_PATH']
+
   # ---------------------------------------------------------------------------
   # Version from package.json
   # ---------------------------------------------------------------------------
@@ -45,28 +50,30 @@ def ios_deploy_production!(options = {})
   # ---------------------------------------------------------------------------
   # Signing assets (keychain + match)
   # ---------------------------------------------------------------------------
-  UI.message('🔐 Setting up keychain & match for production...')
-  create_keychain(
-    name: keychain_name,
-    password: keychain_password,
-    default_keychain: true,
-    unlock: true,
-    timeout: 3600,
-    lock_when_sleeps: false
-  )
+  unless skip_build && provided_ipa
+    UI.message('🔐 Setting up keychain & match for production...')
+    create_keychain(
+      name: keychain_name,
+      password: keychain_password,
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: false
+    )
 
-  match(
-    type: 'appstore',
-    app_identifier: app_identifier,
-    readonly: true,
-    verbose: true,
-    keychain_name: keychain_name,
-    keychain_password: keychain_password,
-    team_id: team_id
-  )
+    match(
+      type: 'appstore',
+      app_identifier: app_identifier,
+      readonly: true,
+      verbose: true,
+      keychain_name: keychain_name,
+      keychain_password: keychain_password,
+      team_id: team_id
+    )
 
-  profile_name = "match AppStore #{app_identifier}"
-  UI.message("✅ Using provisioning profile: #{profile_name}")
+    profile_name = "match AppStore #{app_identifier}"
+    UI.message("✅ Using provisioning profile: #{profile_name}")
+  end
 
   # ---------------------------------------------------------------------------
   # App Store Connect API key
@@ -81,27 +88,28 @@ def ios_deploy_production!(options = {})
   # ---------------------------------------------------------------------------
   # Set marketing version + compute production build number from it
   # ---------------------------------------------------------------------------
-  UI.message("🧾 Setting iOS marketing version from package.json: #{marketing_version}")
-  increment_version_number(
-    xcodeproj: xcodeproj,
-    version_number: marketing_version
-  )
-
   # Encode marketing_version (e.g. "1.0.13" -> "1013")
   major, minor, patch = marketing_version.split('.').map(&:to_i)
   minor ||= 0
   patch ||= 0
-  # Use positional encoding to avoid collisions between different semantic versions
   base_build = major * 1_000_000 + minor * 1_000 + patch
   final_build = [base_build, 1].max
 
-  UI.message("📈 Using PRODUCTION build number: #{final_build}")
+  unless skip_build
+    UI.message("🧾 Setting iOS marketing version from package.json: #{marketing_version}")
+    increment_version_number(
+      xcodeproj: xcodeproj,
+      version_number: marketing_version
+    )
 
-  # For production, use the following increment logic, comment it out when testing any changes to this script.
-  increment_build_number(
-    xcodeproj: xcodeproj,
-    build_number: final_build.to_s
-  )
+    UI.message("📈 Using PRODUCTION build number: #{final_build}")
+
+    # For production, use the following increment logic, comment it out when testing any changes to this script.
+    increment_build_number(
+      xcodeproj: xcodeproj,
+      build_number: final_build.to_s
+    )
+  end
 
   # # Uncomment this method and use the hardcoded build numbers to test any changes to production, so it will 
   # # separate actual production build and test production builds
@@ -136,107 +144,127 @@ def ios_deploy_production!(options = {})
   ENV['NODE_ENV'] = 'production'
   repo_root = File.expand_path('../../..', __dir__)
 
-  UI.message('📦 Bundling React Native for iOS (production)...')
+  ipa_path = nil
 
-  sh <<~BASH
-    cd "#{repo_root}"    
-    ENVFILE=.env NODE_ENV=production npx react-native bundle \\
-      --entry-file index.js \\
-      --platform ios \\
-      --dev false \\
-      --bundle-output ios/main.jsbundle \\
-      --assets-dest .
-    
-    echo "✅ Bundle complete"
-  BASH
+  unless skip_build && provided_ipa
+    UI.message('📦 Bundling React Native for iOS (production)...')
 
-  js_bundle_path = File.expand_path('../../main.jsbundle', __dir__)
-  UI.message("🔍 Checking for main.jsbundle at: #{js_bundle_path}")
-  UI.user_error!('❌ main.jsbundle not found') unless File.exist?(js_bundle_path)
+    sh <<~BASH
+      cd "#{repo_root}"    
+      ENVFILE=.env NODE_ENV=production npx react-native bundle \\
+        --entry-file index.js \\
+        --platform ios \\
+        --dev false \\
+        --bundle-output ios/main.jsbundle \\
+        --assets-dest .
+      
+      echo "✅ Bundle complete"
+    BASH
 
-  # ---------------------------------------------------------------------------
-  # Build IPA for production
-  # ---------------------------------------------------------------------------
-  UI.message('🏗️ Building production IPA...')
-  build_app(
-    workspace: workspace,
-    scheme: scheme,
-    clean: true,
-    configuration: 'Release',
-    export_method: 'app-store',
-    xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" " \
-            "DEVELOPMENT_TEAM=#{team_id} " \
-            "PROVISIONING_PROFILE_SPECIFIER=\"#{profile_name}\" " \
-            "PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
-    export_options: {
-      compileBitcode: false,
-      signingStyle: 'manual',
-      provisioningProfiles: {
-        app_identifier => profile_name
+    js_bundle_path = File.expand_path('../../main.jsbundle', __dir__)
+    UI.message("🔍 Checking for main.jsbundle at: #{js_bundle_path}")
+    UI.user_error!('❌ main.jsbundle not found') unless File.exist?(js_bundle_path)
+
+    # ---------------------------------------------------------------------------
+    # Build IPA for production
+    # ---------------------------------------------------------------------------
+    UI.message('🏗️ Building production IPA...')
+    build_app(
+      workspace: workspace,
+      scheme: scheme,
+      clean: true,
+      configuration: 'Release',
+      export_method: 'app-store',
+      xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" " \
+              "DEVELOPMENT_TEAM=#{team_id} " \
+              "PROVISIONING_PROFILE_SPECIFIER=\"#{profile_name}\" " \
+              "PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
+      export_options: {
+        compileBitcode: false,
+        signingStyle: 'manual',
+        provisioningProfiles: {
+          app_identifier => profile_name
+        }
       }
-    }
-  )
+    )
 
-  # ---------------------------------------------------------------------------
-  # Hermes bitcode stripping + re-sign
-  # ---------------------------------------------------------------------------
-  ipa_path = lane_context[:IPA_OUTPUT_PATH]
-  UI.message("📦 Processing IPA: #{ipa_path}")
-  UI.user_error!('❌ IPA path missing in lane_context') unless ipa_path && File.exist?(ipa_path)
+    ipa_path = lane_context[:IPA_OUTPUT_PATH]
+    UI.message("📦 Processing IPA: #{ipa_path}")
+    UI.user_error!('❌ IPA path missing in lane_context') unless ipa_path && File.exist?(ipa_path)
+  else
+    ipa_path = File.expand_path(provided_ipa)
+    UI.user_error!('❌ Provided IPA not found') unless File.exist?(ipa_path)
+    UI.message("ℹ️ Re-using prebuilt IPA at #{ipa_path}")
+  end
 
-  sh('unzip -q ' + ipa_path + ' -d temp_payload')
-  app_path = Dir['temp_payload/Payload/*.app'].first
-  UI.user_error!('❌ .app bundle not found') unless app_path
+  unless skip_build && provided_ipa
+    # ---------------------------------------------------------------------------
+    # Hermes bitcode stripping + re-sign
+    # ---------------------------------------------------------------------------
+    sh('unzip -q ' + ipa_path + ' -d temp_payload')
+    app_path = Dir['temp_payload/Payload/*.app'].first
+    UI.user_error!('❌ .app bundle not found') unless app_path
 
-  hermes_bin = File.join(app_path, 'Frameworks/hermes.framework/hermes')
-  sh <<~BASH
-    echo "🔍 Stripping Hermes bitcode..."
-    if [ -f "#{hermes_bin}" ]; then
-      echo "📦 Found Hermes: #{hermes_bin}"
-      xcrun bitcode_strip -r "#{hermes_bin}" -o "#{hermes_bin}"
+    hermes_bin = File.join(app_path, 'Frameworks/hermes.framework/hermes')
+    sh <<~BASH
+      echo "🔍 Stripping Hermes bitcode..."
+      if [ -f "#{hermes_bin}" ]; then
+        echo "📦 Found Hermes: #{hermes_bin}"
+        xcrun bitcode_strip -r "#{hermes_bin}" -o "#{hermes_bin}"
 
-      echo "🔬 Verifying..."
-      if otool -l "#{hermes_bin}" | grep -i bitcode; then
-        echo "❌ Bitcode still present!"
-        exit 1
-      fi
-      echo "✅ Bitcode stripped"
-
-      echo "🔐 Re-signing..."
-      CERT_ID=$(security find-identity -v -p codesigning "#{keychain_name}" | grep "Apple Distribution" | head -n1 | awk '{print $2}')
-
-      if [ -z "$CERT_ID" ]; then
-        echo "❌ No Apple Distribution cert found!"
-        exit 1
-      fi
-
-      echo "Using cert: $CERT_ID"
-
-      for FRAMEWORK in "#{app_path}/Frameworks/"*; do
-        if [ -d "$FRAMEWORK" ]; then
-          /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none --generate-entitlement-der "$FRAMEWORK"
+        echo "🔬 Verifying..."
+        if otool -l "#{hermes_bin}" | grep -i bitcode; then
+          echo "❌ Bitcode still present!"
+          exit 1
         fi
-      done
+        echo "✅ Bitcode stripped"
 
-      /usr/bin/codesign --force --sign "$CERT_ID" \
-        --timestamp=none \
-        --preserve-metadata=entitlements \
-        --generate-entitlement-der \
-        "#{app_path}"
+        echo "🔐 Re-signing..."
+        CERT_ID=$(security find-identity -v -p codesigning "#{keychain_name}" | grep "Apple Distribution" | head -n1 | awk '{print $2}')
 
-      echo "🔬 Verifying signature..."
-      /usr/bin/codesign --verify --deep --strict --verbose=2 "#{app_path}"
-      echo "✅ Signing complete"
-    else
-      echo "⚠️ Hermes not found: #{hermes_bin}"
-    fi
+        if [ -z "$CERT_ID" ]; then
+          echo "❌ No Apple Distribution cert found!"
+          exit 1
+        fi
 
-    echo "📦 Repacking IPA..."
-    cd temp_payload && zip -r -q ../fixed.ipa Payload >/dev/null && cd ..
-    mv fixed.ipa "#{ipa_path}"
-    rm -rf temp_payload
-    echo "✅ IPA ready"
-  BASH
+        echo "Using cert: $CERT_ID"
+
+        for FRAMEWORK in "#{app_path}/Frameworks/"*; do
+          if [ -d "$FRAMEWORK" ]; then
+            /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none --generate-entitlement-der "$FRAMEWORK"
+          fi
+        done
+
+        /usr/bin/codesign --force --sign "$CERT_ID" \
+          --timestamp=none \
+          --preserve-metadata=entitlements \
+          --generate-entitlement-der \
+          "#{app_path}"
+
+        echo "🔬 Verifying signature..."
+        /usr/bin/codesign --verify --deep --strict --verbose=2 "#{app_path}"
+        echo "✅ Signing complete"
+      else
+        echo "⚠️ Hermes not found: #{hermes_bin}"
+      fi
+
+      echo "📦 Repacking IPA..."
+      cd temp_payload && zip -r -q ../fixed.ipa Payload >/dev/null && cd ..
+      mv fixed.ipa "#{ipa_path}"
+      rm -rf temp_payload
+      echo "✅ IPA ready"
+    BASH
+  end
+
+  if export_ipa && !export_ipa.strip.empty?
+    File.write(export_ipa, ipa_path)
+    UI.message("📝 Wrote IPA path to #{export_ipa}")
+  end
+
+  if skip_upload
+    UI.message("⏭️ IOS_SKIP_UPLOAD set; skipping upload. IPA ready at #{ipa_path}")
+    return
+  end
 
   # ---------------------------------------------------------------------------
   # Upload IPA to App Store Connect

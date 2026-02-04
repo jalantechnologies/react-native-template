@@ -79,6 +79,7 @@ jobs:
           ANDROID_FIREBASE_PROJECT_ID: ${{ secrets.ANDROID_FIREBASE_PROJECT_ID }}
           ANDROID_FIREBASE_APP_PACKAGE: ${{ secrets.ANDROID_FIREBASE_APP_PACKAGE }}
           ANDROID_FIREBASE_API_KEY: ${{ secrets.ANDROID_FIREBASE_API_KEY }}
+          OSTORLAB_API_KEY: ${{ secrets.OSTORLAB_API_KEY }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
@@ -128,6 +129,7 @@ jobs:
           IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
           IOS_MATCH_DEPLOY_KEY: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          OSTORLAB_API_KEY: ${{ secrets.OSTORLAB_API_KEY }}
       
       - name: Post or update PR comment (IOS)
         uses: ./.github/actions/update_preview_comment

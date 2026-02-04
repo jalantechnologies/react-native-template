@@ -26,6 +26,11 @@ def ios_deploy_preview!(options = {})
   team_id           = options.fetch(:team_id)
   release_notes     = options.fetch(:release_notes)
 
+  skip_build  = ENV['IOS_SKIP_BUILD'] == '1'
+  skip_upload = ENV['IOS_SKIP_UPLOAD'] == '1'
+  export_ipa  = ENV['IPA_PATH_FILE']
+  provided_ipa = ENV['IOS_IPA_PATH']
+
   # ---------------------------------------------------------------------------
   # Version (from package.json)
   # ---------------------------------------------------------------------------
@@ -38,15 +43,19 @@ def ios_deploy_preview!(options = {})
   # ---------------------------------------------------------------------------
   # Cleanup old preview builds for this PR
   # ---------------------------------------------------------------------------
-  UI.message("🧹 Cleaning old builds for PR ##{pr_number}...")
-  require_relative 'ios_cleanup_preview'
-  ios_cleanup_preview!(
-    pr_number: pr_number,
-    app_identifier: app_identifier,
-    api_key_id: api_key_id,
-    issuer_id: issuer_id,
-    api_key_b64: api_key_b64
-  )
+  if provided_ipa.to_s.strip.empty?
+    UI.message("🧹 Cleaning old builds for PR ##{pr_number}...")
+    require_relative 'ios_cleanup_preview'
+    ios_cleanup_preview!(
+      pr_number: pr_number,
+      app_identifier: app_identifier,
+      api_key_id: api_key_id,
+      issuer_id: issuer_id,
+      api_key_b64: api_key_b64
+    )
+  else
+    UI.message("ℹ️ Skipping cleanup because a prebuilt IPA was provided.")
+  end
 
   # ---------------------------------------------------------------------------
   # Keychain + match (signing)
@@ -87,14 +96,7 @@ def ios_deploy_preview!(options = {})
   # ---------------------------------------------------------------------------
   # Marketing version + PR‑based build number
   # ---------------------------------------------------------------------------
-  UI.message("📱 Setting marketing version: #{marketing_version}")
-  increment_version_number(
-    xcodeproj: xcodeproj,
-    version_number: marketing_version
-  )
-
   # Build number pattern: <PR_NUMBER><YYMMDDHHMM>
-  # Example: PR 42 on 2025-12-17 10:58 UTC → 422512171058
   pr_digits = pr_number.to_s.gsub(/[^0-9]/, '')
   UI.user_error!("❌ Invalid PR number '#{pr_number}'") if pr_digits.empty?
 
@@ -107,11 +109,19 @@ def ios_deploy_preview!(options = {})
     UI.important("⚠️ Preview build number truncated to 18 chars: #{next_build}")
   end
 
-  UI.message("🔢 Using preview build number: #{next_build} (PR ##{pr_number}, ts=#{timestamp})")
-  increment_build_number(
-    xcodeproj: xcodeproj,
-    build_number: next_build
-  )
+  unless skip_build
+    UI.message("📱 Setting marketing version: #{marketing_version}")
+    increment_version_number(
+      xcodeproj: xcodeproj,
+      version_number: marketing_version
+    )
+
+    UI.message("🔢 Using preview build number: #{next_build} (PR ##{pr_number}, ts=#{timestamp})")
+    increment_build_number(
+      xcodeproj: xcodeproj,
+      build_number: next_build
+    )
+  end
 
   # ---------------------------------------------------------------------------
   # Bundle and Verify React Native for iOS (preview env)
@@ -121,101 +131,121 @@ def ios_deploy_preview!(options = {})
   ENV['NODE_ENV'] = 'production'
   repo_root = File.expand_path('../../..', __dir__)
 
-  UI.message('📦 Bundling React Native for iOS (preview)...')
-  sh <<~BASH
-    cd "#{repo_root}"
-    ENVFILE=.env NODE_ENV=production npx react-native bundle \\
-      --entry-file index.js \\
-      --platform ios \\
-      --dev false \\
-      --bundle-output ios/main.jsbundle \\
-      --assets-dest .
-  BASH
+  ipa_path = nil
 
-  js_bundle_path = File.expand_path('../../main.jsbundle', __dir__)
-  UI.message("🔍 Checking for main.jsbundle at: #{js_bundle_path}")
-  UI.user_error!('❌ main.jsbundle not found') unless File.exist?(js_bundle_path)
+  unless skip_build && provided_ipa
+    UI.message('📦 Bundling React Native for iOS (preview)...')
+    sh <<~BASH
+      cd "#{repo_root}"
+      ENVFILE=.env NODE_ENV=production npx react-native bundle \\
+        --entry-file index.js \\
+        --platform ios \\
+        --dev false \\
+        --bundle-output ios/main.jsbundle \\
+        --assets-dest .
+    BASH
 
-  # ---------------------------------------------------------------------------
-  # Build IPA (Boilerplate workspace)
-  # ---------------------------------------------------------------------------
-  UI.message('🏗️ Building IPA...')
-  build_app(
-    clean: true,
-    scheme: scheme,
-    workspace: workspace,
-    export_method: 'app-store',
-    verbose: true,
-    xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER=\"#{profile_name}\" PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
-    export_options: {
-      compileBitcode: false,
-      signingStyle: 'manual',
-      provisioningProfiles: {
-        app_identifier => profile_name
+    js_bundle_path = File.expand_path('../../main.jsbundle', __dir__)
+    UI.message("🔍 Checking for main.jsbundle at: #{js_bundle_path}")
+    UI.user_error!('❌ main.jsbundle not found') unless File.exist?(js_bundle_path)
+
+    # ---------------------------------------------------------------------------
+    # Build IPA (Boilerplate workspace)
+    # ---------------------------------------------------------------------------
+    UI.message('🏗️ Building IPA...')
+    build_app(
+      clean: true,
+      scheme: scheme,
+      workspace: workspace,
+      export_method: 'app-store',
+      verbose: true,
+      xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER=\"#{profile_name}\" PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
+      export_options: {
+        compileBitcode: false,
+        signingStyle: 'manual',
+        provisioningProfiles: {
+          app_identifier => profile_name
+        }
       }
-    }
-  )
+    )
 
-  # ---------------------------------------------------------------------------
-  # Hermes bitcode stripping + re-sign
-  # ---------------------------------------------------------------------------
-  ipa_path = lane_context[:IPA_OUTPUT_PATH]
-  UI.message("📦 Processing IPA: #{ipa_path}")
-  UI.user_error!('❌ IPA path missing in lane_context') unless ipa_path && File.exist?(ipa_path)
+    ipa_path = lane_context[:IPA_OUTPUT_PATH]
+    UI.message("📦 Processing IPA: #{ipa_path}")
+    UI.user_error!('❌ IPA path missing in lane_context') unless ipa_path && File.exist?(ipa_path)
+  else
+    ipa_path = File.expand_path(provided_ipa)
+    UI.user_error!("❌ Provided IPA not found at #{ipa_path}") unless File.exist?(ipa_path)
+    UI.message("ℹ️ Re-using prebuilt IPA at #{ipa_path}")
+  end
 
-  sh("unzip -q #{ipa_path} -d temp_payload")
-  app_path = Dir['temp_payload/Payload/*.app'].first
-  UI.user_error!('❌ .app bundle not found') unless app_path
+  unless skip_build && provided_ipa
+    # ---------------------------------------------------------------------------
+    # Hermes bitcode stripping + re-sign
+    # ---------------------------------------------------------------------------
+    sh("unzip -q #{ipa_path} -d temp_payload")
+    app_path = Dir['temp_payload/Payload/*.app'].first
+    UI.user_error!('❌ .app bundle not found') unless app_path
 
-  hermes_bin = File.join(app_path, 'Frameworks/hermes.framework/hermes')
-  sh <<~BASH
-    echo "🔍 Stripping Hermes bitcode..."
-    if [ -f "#{hermes_bin}" ]; then
-      echo "📦 Found Hermes: #{hermes_bin}"
-      xcrun bitcode_strip -r "#{hermes_bin}" -o "#{hermes_bin}"
+    hermes_bin = File.join(app_path, 'Frameworks/hermes.framework/hermes')
+    sh <<~BASH
+      echo "🔍 Stripping Hermes bitcode..."
+      if [ -f "#{hermes_bin}" ]; then
+        echo "📦 Found Hermes: #{hermes_bin}"
+        xcrun bitcode_strip -r "#{hermes_bin}" -o "#{hermes_bin}"
 
-      echo "🔬 Verifying..."
-      if otool -l "#{hermes_bin}" | grep -i bitcode; then
-        echo "❌ Bitcode still present!"
-        exit 1
-      fi
-      echo "✅ Bitcode stripped"
-
-      echo "🔐 Re-signing..."
-      CERT_ID=$(security find-identity -v -p codesigning "#{keychain_name}" | grep "Apple Distribution" | head -n1 | awk '{print $2}')
-
-      if [ -z "$CERT_ID" ]; then
-        echo "❌ No Apple Distribution cert found!"
-        exit 1
-      fi
-
-      echo "Using cert: $CERT_ID"
-
-      for FRAMEWORK in "#{app_path}/Frameworks/"*; do
-        if [ -d "$FRAMEWORK" ]; then
-          /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none --generate-entitlement-der "$FRAMEWORK"
+        echo "🔬 Verifying..."
+        if otool -l "#{hermes_bin}" | grep -i bitcode; then
+          echo "❌ Bitcode still present!"
+          exit 1
         fi
-      done
+        echo "✅ Bitcode stripped"
 
-      /usr/bin/codesign --force --sign "$CERT_ID" \
-        --timestamp=none \
-        --preserve-metadata=entitlements \
-        --generate-entitlement-der \
-        "#{app_path}"
+        echo "🔐 Re-signing..."
+        CERT_ID=$(security find-identity -v -p codesigning "#{keychain_name}" | grep "Apple Distribution" | head -n1 | awk '{print $2}')
 
-      echo "🔬 Verifying signature..."
-      /usr/bin/codesign --verify --deep --strict --verbose=2 "#{app_path}"
-      echo "✅ Signing complete"
-    else
-      echo "⚠️ Hermes not found: #{hermes_bin}"
-    fi
+        if [ -z "$CERT_ID" ]; then
+          echo "❌ No Apple Distribution cert found!"
+          exit 1
+        fi
 
-    echo "📦 Repacking IPA..."
-    cd temp_payload && zip -r -q ../fixed.ipa Payload >/dev/null && cd ..
-    mv fixed.ipa "#{ipa_path}"
-    rm -rf temp_payload
-    echo "✅ IPA ready"
-  BASH
+        echo "Using cert: $CERT_ID"
+
+        for FRAMEWORK in "#{app_path}/Frameworks/"*; do
+          if [ -d "$FRAMEWORK" ]; then
+            /usr/bin/codesign --force --sign "$CERT_ID" --timestamp=none --generate-entitlement-der "$FRAMEWORK"
+          fi
+        done
+
+        /usr/bin/codesign --force --sign "$CERT_ID" \
+          --timestamp=none \
+          --preserve-metadata=entitlements \
+          --generate-entitlement-der \
+          "#{app_path}"
+
+        echo "🔬 Verifying signature..."
+        /usr/bin/codesign --verify --deep --strict --verbose=2 "#{app_path}"
+        echo "✅ Signing complete"
+      else
+        echo "⚠️ Hermes not found: #{hermes_bin}"
+      fi
+
+      echo "📦 Repacking IPA..."
+      cd temp_payload && zip -r -q ../fixed.ipa Payload >/dev/null && cd ..
+      mv fixed.ipa "#{ipa_path}"
+      rm -rf temp_payload
+      echo "✅ IPA ready"
+    BASH
+  end
+
+  if export_ipa && !export_ipa.strip.empty?
+    File.write(export_ipa, ipa_path)
+    UI.message("📝 Wrote IPA path to #{export_ipa}")
+  end
+
+  if skip_upload
+    UI.message("⏭️ IOS_SKIP_UPLOAD set; skipping upload. IPA ready at #{ipa_path}")
+    return
+  end
 
   # ---------------------------------------------------------------------------
   # TestFlight changelog

@@ -48,7 +48,7 @@ jobs:
             }
 
       - name: Bump version
-        if: steps.bump.outputs.should_bump == 'true' && github.event.pull_request.merged == true
+        if: steps.bump.outputs.should_bump == 'true' && (github.event.pull_request.merged == true || github.event.pull_request.head.ref == 'vikram/feat/implement-auto-version-bumping')
         id: bump_version
         env:
           npm_config_package_lock: "false"
@@ -61,7 +61,7 @@ jobs:
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Rotate release notes
-        if: steps.bump.outputs.should_bump == 'true' && github.event.pull_request.merged == true
+        if: steps.bump.outputs.should_bump == 'true' && (github.event.pull_request.merged == true || github.event.pull_request.head.ref == 'vikram/feat/implement-auto-version-bumping')
         run: |
           NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
           NOTES_FILE="docs/release_notes/release_notes.md"
@@ -88,11 +88,14 @@ jobs:
       - name: Summary
         if: steps.bump.outputs.should_bump == 'true'
         run: |
-          if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+          if [ "${{ github.event.pull_request.merged }}" = "true" ] || [ "${{ github.event.pull_request.head.ref }}" = "vikram/feat/implement-auto-version-bumping" ]; then
             NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
             echo "## Version Bumped" >> $GITHUB_STEP_SUMMARY
             echo "New version: **v${NEW_VERSION}**" >> $GITHUB_STEP_SUMMARY
             echo "Bump type: ${{ steps.bump.outputs.type }}" >> $GITHUB_STEP_SUMMARY
+            if [ "${{ github.event.pull_request.merged }}" != "true" ]; then
+              echo "_Note: ran on feature branch for testing; commit pushed to the PR branch._" >> $GITHUB_STEP_SUMMARY
+            fi
           else
             echo "## Dry run (PR not merged)" >> $GITHUB_STEP_SUMMARY
             echo "Detected bump type: ${{ steps.bump.outputs.type || 'none' }}" >> $GITHUB_STEP_SUMMARY

@@ -48,7 +48,7 @@ jobs:
 
 
   ios_cleanup:
-    runs-on: macos-14
+    runs-on: macos-15
     env:
       PR_NUMBER: ${{ github.event.pull_request.number }}
       IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ secrets.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
@@ -74,4 +74,4 @@ jobs:
       - name: Run Fastlane cleanup
         working-directory: ios
         run: bundle exec fastlane pr_cleanup
- 
+

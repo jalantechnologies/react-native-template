@@ -89,7 +89,7 @@ jobs:
 
           git add package.json "$VERSIONED_NOTES" "$NOTES_FILE"
           git commit -m "chore: bump version to v${NEW_VERSION}"
-          git push
+          git push origin HEAD:${{ github.event.pull_request.base.ref }}
 
       - name: Summary
         if: steps.bump.outputs.should_bump == 'true'
@@ -98,7 +98,6 @@ jobs:
           echo "## Version Bumped" >> $GITHUB_STEP_SUMMARY
           echo "New version: **v${NEW_VERSION}**" >> $GITHUB_STEP_SUMMARY
           echo "Bump type: ${{ steps.bump.outputs.type }}" >> $GITHUB_STEP_SUMMARY
-          fi
 
       - name: Summary (no semver label)
         if: steps.bump.outputs.should_bump != 'true'

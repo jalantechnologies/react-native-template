@@ -3,10 +3,10 @@
 This repository uses **GitHub Actions** combined with **Fastlane** to automate the build, testing, and deployment process for the Android and iOS apps. The primary goals of this CI/CD setup are:
 
 - 🚀 **Fast feedback** on pull requests by distributing builds via **Firebase App Distribution** for **Android** and **TestFlight** for **iOS**.
-- 📋 **Mandatory release notes** and **semver labels** before any deployment.
+- 📋 **Mandatory release notes** and **version** validation before any deployment.
 - 🧹 **Automatic cleanup** of test builds when a PR is closed.
 - 🔒 **Secure handling** of credentials using **GitHub Actions Secrets** and **Doppler Secrets** Injection.
-- 📦 **Automated version synchronization** from `package.json` to Android and iOS, bumped automatically on merge.
+- 📦 **Automated version synchronization** from `package.json` to Android and iOS.
 
 This ensures contributors and QA can quickly test PR builds without manually compiling the app, and stale builds are cleaned up automatically.
 
@@ -26,8 +26,8 @@ These jobs run **independently and in parallel**, improving feedback time.
 
 **When it runs**
 
-* Requires a semver PR label: `semver: major`, `semver: minor`, or `semver: patch`.
-* Validates in-progress release notes: `docs/release_notes/release_notes.md` must exist, be non-empty, and stay at or under **500 characters**. The validated text is emitted as workflow output and copied into `android/fastlane/metadata/android/en-US/changelogs/default.txt` as well as exported as ENV variable, which is used for IOS testflight upload.
+* Confirms the PR `package.json` version is newer than `main` before any deploy logic runs.
+* Validates release notes for the current version: the file must exist at `docs/release_notes/{version}.md`, be non-empty, and stay at or under **500 characters**. The validated text is emitted as workflow output and copied into `android/fastlane/metadata/android/en-US/changelogs/default.txt` as well as exported as ENV variable, which is used for IOS testflight upload.
 * Builds and deploys Android (Firebase App Distribution) with explicit Gradle overrides so CD never uses manifest defaults:
   * `versionNameOverride` comes from `package.json`.
   * `versionCodeOverride` is derived from the semantic version (`major*10000 + minor*100 + patch`).
@@ -37,9 +37,10 @@ These jobs run **independently and in parallel**, improving feedback time.
 
 **What it does**
 
-- Validates **semver intent** via PR labels (`semver: major|minor|patch`).
-- Validates **release notes** for the current release-in-progress:
-  - Expects `docs/release_notes/release_notes.md`.
+- Validates that the PR’s `package.json` **version** is strictly greater than the version on `main`.  
+  If the version is not bumped, the workflow fails and no deployment occurs.
+- Validates **release notes** for the current version:
+  - Expects a file at `docs/release_notes/{version}.md`.
   - File must be non-empty and ≤ **500 characters** (after trimming whitespace).
   - The validated snippet is exposed as workflow output and injected into:
     - `android/fastlane/metadata/android/en-US/changelogs/preview.txt` (or similar) for Firebase notes.
@@ -70,25 +71,6 @@ These jobs run **independently and in parallel**, improving feedback time.
 **Why it matters**
 
 This workflow enforces semantic versioning and release notes at PR time, ensures environment-correct configuration via Doppler, and produces installable preview builds on both Android and iOS so QA and stakeholders can test every change before merge.
-
-***
-
-### Version Bump (`version-bump.yml`)
-
-**When it runs**
-
-- On `pull_request` **closed** events targeting `main` where the PR was merged.
-
-**What it does**
-
-- Reads the semver label (`semver: major|minor|patch`) from the merged PR.
-- Bumps `package.json` accordingly (no git tag).
-- Renames `docs/release_notes/release_notes.md` to `docs/release_notes/{new_version}.md` and creates a fresh empty `release_notes.md` for the next cycle.
-- Commits and pushes the changes back to `main`, keeping production deploys in sync with the bumped version and captured notes.
-
-**Why it matters**
-
-Ensures versioning and release notes stay consistent without manual edits, while keeping production workflows aligned to the same source of truth.
 
 ***
 
@@ -125,20 +107,20 @@ Guarantees only versioned, documented builds go to the stores — with release n
 
 ## 📋 Release Notes Structure
 
-Release notes now use a rolling file during PR development and are versioned automatically on merge:
+Release notes for previews and production:
+Must be created in `docs/release_notes/{version}.md` before deployment:
 
 ```
 docs/
 └── release_notes/
-    ├── release_notes.md   # edited in PRs, must be non-empty
-    ├── 1.0.20.md          # past release, generated on merge
-    └── 1.0.19.md
-```
+    ├── 1.0.0.md
+    ├── 1.0.1.md
+    └── 1.1.0.md
+``````
 
-Additional rules enforced by `release_notes_check`:
+Additional rules enforced by `release_notes_check` in both CD workflows:
 
-- On PRs: `release_notes.md` **must exist**, cannot be empty, and must be **≤ 500 characters**.
-- On `main` (production): the version-specific file matching `package.json` must exist and meet the same length rule (created automatically by the merge bump workflow).
+- The release note file for the current version **must exist**, cannot be empty, and must be **≤ 500 characters**. The version is read from `package.json`.
 - The validated content is emitted as a workflow output and written to `android/fastlane/metadata/android/en-US/changelogs/default.txt` for downstream Fastlane steps.
 - As well as the content of the release notes is given as an output and then set as an ENV variable, so that workflows and fastlane scripts can use them to pass along with the builds.
 - Production runs also write `{versionCode}.txt` beside the default file using the Play Console version code that is fetched and incremented during the run.

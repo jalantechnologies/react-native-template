@@ -8,31 +8,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  semver_label_check:
+  check_version_number:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
-      - name: Debug labels
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const labels = context.payload.pull_request.labels.map(label => label.name);
-            core.info(`PR labels: ${labels.join(', ') || '(none)'}`);
-
-      - name: Ensure semver label is present
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const labels = context.payload.pull_request.labels.map(label => label.name);
-            const allowed = ['semver: major', 'semver: minor', 'semver: patch'];
-            const present = allowed.filter(label => labels.includes(label));
-            if (present.length === 0) {
-              core.setFailed('PR must include exactly one semver label: semver: major | semver: minor | semver: patch');
-            } else if (present.length > 1) {
-              core.setFailed(`Only one semver label allowed, found: ${present.join(', ')}`);
-            } else {
-              core.info(`Found semver label: ${present[0]}`);
-            }
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        
+      - name: Compare package.json versions
+        run: |
+          # Fetch the main branch package.json
+          git fetch origin main
+          MAIN_VERSION=$(jq -r .version <(git show origin/main:package.json))
+          PR_VERSION=$(jq -r .version < package.json)
+          echo "Main branch version: $MAIN_VERSION"
+          echo "PR branch version: $PR_VERSION"
+          # Compare versions
+          if [ "$(printf '%s\n%s' "$MAIN_VERSION" "$PR_VERSION" | sort -V | head -n1)" != "$MAIN_VERSION" ] || [ "$MAIN_VERSION" == "$PR_VERSION" ]; then
+            echo "Error: PR version ($PR_VERSION) must be strictly greater than main version ($MAIN_VERSION)."
+            exit 1
+          fi
 
   release_notes_check:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
@@ -47,11 +42,13 @@ jobs:
         id: check
         uses: ./.github/actions/release_notes_check
         with:
-          notes_file: 'docs/release_notes/release_notes.md'
+          version_file: 'package.json'
+          notes_dir: 'docs/release_notes'
+          notes_ext: '.md'
 
   deploy_android:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [semver_label_check, release_notes_check]
+    needs: [check_version_number, release_notes_check]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -97,7 +94,7 @@ jobs:
 
   deploy_ios:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [semver_label_check, release_notes_check]
+    needs: [check_version_number, release_notes_check]
     runs-on: macos-15
     timeout-minutes: 60
     permissions:

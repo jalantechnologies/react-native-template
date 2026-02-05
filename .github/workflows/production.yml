@@ -1,10 +1,8 @@
 name: cd
 on:
-  workflow_run:
-    workflows: ["Version Bump"]
-    branches: [main]
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 concurrency:
   group: cd-production
@@ -12,20 +10,12 @@ concurrency:
 
 jobs:
   release_notes_check:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     outputs:
       release_notes: ${{ steps.check.outputs.release_notes }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Echo version for deploy
-        run: |
-          VERSION=$(jq -r .version package.json)
-          echo "Deploying version: $VERSION"
-          echo "version=$VERSION" >> $GITHUB_ENV
-          echo "## Deploying version $VERSION" >> $GITHUB_STEP_SUMMARY
 
       - name: Check release notes
         id: check

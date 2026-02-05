@@ -1,0 +1,2 @@
+- Production deploy now waits for the Version Bump workflow to finish before building with the bumped version.
+- Version bump workflow pushes the new version and rotates release notes automatically, seeding a fresh template for the next cycle.

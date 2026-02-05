@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Determine version bump
         id: bump
@@ -86,8 +86,8 @@ jobs:
           mv "$NOTES_FILE" "$VERSIONED_NOTES"
           # Prepare fresh notes file for the next release
           cat <<'EOF' > "$NOTES_FILE"
-<enter release notes for the next version here (max 500 chars)>
-EOF
+          <enter release notes for the next version here (max 500 chars)>
+          EOF
 
           git add package.json "$VERSIONED_NOTES" "$NOTES_FILE"
           git commit -m "chore: bump version to v${NEW_VERSION}"

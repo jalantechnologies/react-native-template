@@ -1,10 +1,10 @@
 name: cd
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'package.json'
+  workflow_run:
+    workflows: ["Version Bump"]
+    branches: [main]
+    types:
+      - completed
 
 concurrency:
   group: cd-production
@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   release_notes_check:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     outputs:
       release_notes: ${{ steps.check.outputs.release_notes }}

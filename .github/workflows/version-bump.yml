@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   bump:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.state == 'open'
     runs-on: ubuntu-latest
     permissions:
       contents: write

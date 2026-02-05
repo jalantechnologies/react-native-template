@@ -85,7 +85,9 @@ jobs:
 
           mv "$NOTES_FILE" "$VERSIONED_NOTES"
           # Prepare fresh notes file for the next release
-          : > "$NOTES_FILE"
+          cat <<'EOF' > "$NOTES_FILE"
+<enter release notes for the next version here (max 500 chars)>
+EOF
 
           git add package.json "$VERSIONED_NOTES" "$NOTES_FILE"
           git commit -m "chore: bump version to v${NEW_VERSION}"

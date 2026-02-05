@@ -15,6 +15,7 @@ jobs:
     permissions:
       contents: write
       actions: write
+      workflow: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -104,16 +105,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TARGET_REF: ${{ github.event.pull_request.head.ref }}
         run: |
+          WORKFLOW_FILE="production.yml"
           curl -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/dispatches \
+            https://api.github.com/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_FILE}/dispatches \
             -d @- <<'PAYLOAD'
           {
-            "event_type": "run-production",
-            "client_payload": {
-              "ref": "${{ github.event.pull_request.head.ref }}"
-            }
+            "ref": "${{ github.event.pull_request.head.ref }}"
           }
           PAYLOAD
 

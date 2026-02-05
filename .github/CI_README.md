@@ -84,7 +84,7 @@ This workflow enforces semantic versioning and release notes at PR time, ensures
 - Reads the semver label (`semver: major|minor|patch`) from the merged PR.
 - Bumps `package.json` accordingly (no git tag).
 - Renames `docs/release_notes/release_notes.md` to `docs/release_notes/{new_version}.md` and creates a fresh empty `release_notes.md` for the next cycle.
-- Commits and pushes the changes back to `main`, keeping production deploys in sync with the bumped version and captured notes.
+- Rebases and pushes the changes back to `main`, keeping production deploys in sync with the bumped version and captured notes.
 
 **Why it matters**
 
@@ -96,11 +96,11 @@ Ensures versioning and release notes stay consistent without manual edits, while
 
 **When it runs**
 
-- On `push` events to the `main` branch (typically after PR merge).
+- On successful completion of the **Version Bump** workflow (`workflow_run` on `main`).
 
 **What it does**
 
-- Builds and signs Android and iOS release artifacts with production credentials.
+- Builds and signs Android and iOS release artifacts with production credentials, using the version produced by the prior bump run.
 - Publishes Android to **Google Play** Internal track and iOS builds to **App Store Connect** for review.
 - Fails fast if any of the signing, versioning, or upload steps are inconsistent with the current state in Google Play or App Store Connect.
 

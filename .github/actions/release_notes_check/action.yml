@@ -14,10 +14,6 @@ inputs:
     description: 'Release notes file extension (default: .md)'
     required: false
     default: '.md'
-  notes_file:
-    description: 'Optional explicit release notes file path. When set, version/dir/ext are ignored and version_file is not required.'
-    required: false
-    default: ''
 
 outputs:
   release_notes:
@@ -31,14 +27,9 @@ runs:
       id: get_version
       shell: bash
       run: |
-        if [ -n "${{ inputs.notes_file }}" ]; then
-          echo "notes_file provided; skipping version extraction."
-          echo "version=" >> $GITHUB_OUTPUT
-        else
-          VERSION=$(jq -r .version < "${{ inputs.version_file }}")
-          echo "Extracted version: $VERSION"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-        fi
+        VERSION=$(jq -r .version < "${{ inputs.version_file }}")
+        echo "Extracted version: $VERSION"
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
 
     - name: Check for release notes file
       id: check_notes
@@ -101,3 +92,4 @@ runs:
           echo 'EOF'
         } >> $GITHUB_OUTPUT
         
+

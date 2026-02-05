@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  semver_label_check:
+  check_version_number:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
@@ -40,11 +40,13 @@ jobs:
         id: check
         uses: ./.github/actions/release_notes_check
         with:
-          notes_file: 'docs/release_notes/release_notes.md'
+          version_file: 'package.json'
+          notes_dir: 'docs/release_notes'
+          notes_ext: '.md'
 
   deploy_android:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [semver_label_check, release_notes_check]
+    needs: [check_version_number, release_notes_check]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -90,7 +92,7 @@ jobs:
 
   deploy_ios:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [semver_label_check, release_notes_check]
+    needs: [check_version_number, release_notes_check]
     runs-on: macos-15
     timeout-minutes: 60
     permissions:

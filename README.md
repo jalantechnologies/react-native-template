@@ -169,12 +169,14 @@ This template ships with two Android flavors so preview builds can coexist with 
 - **SonarQube**: Code quality analysis
 - **Semver Label**: PR must include `semver: major|minor|patch`
 - **Release Notes**: Validates `docs/release_notes/release_notes.md` is present and non-empty
+- **Branch rules**: PRs must carry exactly one semver label; release notes are required. Version bumps happen only via the post-merge automation.
 
 ### Preview Deployment (on PR)
 - Android: Firebase App Distribution
 - iOS: TestFlight
 
-### Production Deployment (on merge to main)
+### Production Deployment (post-merge automation)
+- Triggered after the `version-bump` workflow succeeds on `main`
 - Android: Google Play Store
 - iOS: App Store
 
@@ -184,7 +186,7 @@ This template ships with two Android flavors so preview builds can coexist with 
 2. Edit `docs/release_notes/release_notes.md` with the changes for this release (max 500 chars; required by CI)
 3. Open PR to `main`
 4. On merge, the `version-bump` workflow automatically bumps `package.json`, renames `release_notes.md` to `docs/release_notes/{new_version}.md`, creates a fresh empty `release_notes.md`, and pushes the commit to `main`
-5. Production deployment runs on the post-merge version-bump commit (pushes to `main` that change `package.json` or `docs/release_notes/**`)
+5. Production deployment runs only after the `version-bump` workflow completes on `main` (triggered via workflow_run)
 
 ## Troubleshooting
 

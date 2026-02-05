@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'package.json'
+      - 'docs/release_notes/**'
 
 concurrency:
   group: cd-production
@@ -16,6 +19,13 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Echo version for deploy
+        run: |
+          VERSION=$(jq -r .version package.json)
+          echo "Deploying version: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "## Deploying version $VERSION" >> $GITHUB_STEP_SUMMARY
 
       - name: Check release notes
         id: check

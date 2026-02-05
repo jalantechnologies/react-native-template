@@ -167,8 +167,8 @@ This template ships with two Android flavors so preview builds can coexist with 
 ### Pull Requests
 - **Lint Check**: ESLint validation
 - **SonarQube**: Code quality analysis
-- **Version Check**: Ensures PR version > main version
-- **Release Notes**: Validates `docs/release_notes/{version}.md` exists
+- **Semver Label**: PR must include `semver: major|minor|patch`
+- **Release Notes**: Validates `docs/release_notes/release_notes.md` is present and non-empty
 
 ### Preview Deployment (on PR)
 - Android: Firebase App Distribution
@@ -180,10 +180,11 @@ This template ships with two Android flavors so preview builds can coexist with 
 
 ## Release Process
 
-1. Update version in `package.json`
-2. Create `docs/release_notes/{version}.md` (max 500 chars)
+1. Add a semver label to the PR: `semver: major`, `semver: minor`, or `semver: patch`
+2. Edit `docs/release_notes/release_notes.md` with the changes for this release (max 500 chars; required by CI)
 3. Open PR to `main`
-4. After merge, production deployment triggers automatically
+4. On merge, the `version-bump` workflow automatically bumps `package.json`, renames `release_notes.md` to `docs/release_notes/{new_version}.md`, creates a fresh empty `release_notes.md`, and pushes the commit to `main`
+5. Production deployment runs on the post-merge version-bump commit (pushes to `main` that change `package.json` or `docs/release_notes/**`)
 
 ## Troubleshooting
 

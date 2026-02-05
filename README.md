@@ -169,7 +169,6 @@ This template ships with two Android flavors so preview builds can coexist with 
 - **SonarQube**: Code quality analysis
 - **Semver Label**: PR must include `semver: major|minor|patch`
 - **Release Notes**: Validates `docs/release_notes/release_notes.md` is present and non-empty
-- **Branch rules**: PRs must carry exactly one semver label; release notes are required. Version bumps happen only via the post-merge automation.
 
 ### Preview Deployment (on PR)
 - Android: Firebase App Distribution

@@ -84,7 +84,7 @@ This workflow enforces semantic versioning and release notes at PR time, ensures
 - Reads the semver label (`semver: major|minor|patch`) from the merged PR.
 - Bumps `package.json` accordingly (no git tag).
 - Renames `docs/release_notes/release_notes.md` to `docs/release_notes/{new_version}.md` and creates a fresh empty `release_notes.md` for the next cycle.
-- Rebases and pushes the changes back to `main`, keeping production deploys in sync with the bumped version and captured notes.
+- Commits and pushes the changes back to `main`, keeping production deploys in sync with the bumped version and captured notes.
 
 **Why it matters**
 

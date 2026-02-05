@@ -89,6 +89,11 @@ jobs:
 
           git add package.json "$VERSIONED_NOTES" "$NOTES_FILE"
           git commit -m "chore: bump version to v${NEW_VERSION}"
+
+      - name: Push changes
+        if: steps.bump.outputs.should_bump == 'true'
+        run: |
+          git pull --rebase origin ${{ github.event.pull_request.base.ref }}
           git push origin HEAD:${{ github.event.pull_request.base.ref }}
 
       - name: Summary

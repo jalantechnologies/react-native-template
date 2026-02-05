@@ -5,7 +5,6 @@ on:
       - main
     paths:
       - 'package.json'
-      - 'docs/release_notes/**'
 
 concurrency:
   group: cd-production

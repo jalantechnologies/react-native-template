@@ -1,7 +1,15 @@
 name: cd (Test)
 on:
-  repository_dispatch:
-    types: [version-bumped-test]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to test'
+        required: true
+        type: string
+      version:
+        description: 'Version number'
+        required: true
+        type: string
 
 jobs:
   test_deploy:
@@ -10,13 +18,40 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.client_payload.branch }}
+          ref: ${{ inputs.branch }}
+          
+      - name: Get version from package.json
+        id: version
+        run: |
+          VERSION=$(jq -r .version package.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Package.json version: $VERSION"
+          echo "Input version: ${{ inputs.version }}"
           
       - name: Test summary
         run: |
           echo "## 🧪 Production Workflow Test" >> $GITHUB_STEP_SUMMARY
-          echo "This would deploy version: ${{ github.event.client_payload.version }}" >> $GITHUB_STEP_SUMMARY
-          echo "From branch: ${{ github.event.client_payload.branch }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Workflow triggered successfully!" >> $GITHUB_STEP_SUMMARY
-          echo "In production, this would deploy to Play Store & App Store" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version (input):** ${{ inputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version (package.json):** ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Workflow triggered successfully!**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📱 In production, this would:" >> $GITHUB_STEP_SUMMARY
+          echo "- Deploy Android app to Play Store" >> $GITHUB_STEP_SUMMARY
+          echo "- Deploy iOS app to App Store" >> $GITHUB_STEP_SUMMARY
+          
+      - name: Simulate release notes check
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          NOTES_FILE="docs/release_notes/${VERSION}.md"
+          
+          if [ -f "$NOTES_FILE" ]; then
+            echo "✅ Release notes file exists: $NOTES_FILE"
+            echo "Content preview:"
+            head -n 5 "$NOTES_FILE"
+          else
+            echo "⚠️ Release notes file not found: $NOTES_FILE"
+          fi

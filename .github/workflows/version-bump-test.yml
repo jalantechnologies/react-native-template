@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: read
+      actions: write  # ← Add this permission for triggering workflows
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -69,6 +70,7 @@ jobs:
           npm version ${{ steps.bump.outputs.type }} --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION"
           
       - name: Rotate release notes
         if: steps.bump.outputs.should_bump == 'true'
@@ -102,24 +104,64 @@ jobs:
           BRANCH="${{ github.head_ref }}"
           git push origin HEAD:$BRANCH
           
-      - name: Trigger production workflow (simulated)
+      - name: Wait for push to complete
+        if: steps.bump.outputs.should_bump == 'true'
+        run: sleep 5
+          
+      - name: Trigger production workflow
         if: steps.bump.outputs.should_bump == 'true'
         uses: actions/github-script@v7
         with:
           script: |
-            await github.rest.repos.createDispatchEvent({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              event_type: 'version-bumped-test',
-              client_payload: {
-                branch: '${{ github.head_ref }}',
-                version: '${{ steps.bump_version.outputs.new_version }}'
-              }
-            });
-            console.log('✅ Test production workflow triggered');
+            const branch = '${{ github.head_ref }}';
+            const version = '${{ steps.bump_version.outputs.new_version }}';
+            
+            console.log(`Triggering production test workflow...`);
+            console.log(`Branch: ${branch}`);
+            console.log(`Version: ${version}`);
+            
+            try {
+              const response = await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'production-test.yml',
+                ref: branch,
+                inputs: {
+                  branch: branch,
+                  version: version
+                }
+              });
+              
+              console.log('✅ Production test workflow triggered successfully');
+              console.log('Response status:', response.status);
+            } catch (error) {
+              console.error('❌ Failed to trigger workflow:', error.message);
+              core.setFailed(`Failed to trigger production workflow: ${error.message}`);
+            }
           
       - name: Summary
+        if: steps.bump.outputs.should_bump == 'true'
         run: |
+          NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
+          BRANCH="${{ github.head_ref }}"
           echo "## ✅ Version Bump Test Successful" >> $GITHUB_STEP_SUMMARY
-          echo "This is a TEST run on PR branch" >> $GITHUB_STEP_SUMMARY
-          echo "New version: ${{ steps.bump_version.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **New version:** v${NEW_VERSION}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Bump type:** ${{ steps.bump.outputs.type }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${BRANCH}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔄 **Production test workflow should start in a few seconds**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the Actions tab to see 'cd (Test)' workflow" >> $GITHUB_STEP_SUMMARY
+          
+      - name: Summary (no bump)
+        if: steps.bump.outputs.should_bump != 'true'
+        run: |
+          echo "## ⚠️ Version Bump Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Reason:** No semver label on PR" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Add one of these labels:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`semver: patch\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`semver: minor\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`semver: major\`" >> $GITHUB_STEP_SUMMARY

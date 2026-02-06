@@ -109,28 +109,23 @@ jobs:
         if: steps.bump.outputs.should_bump == 'true'
         run: sleep 5
           
-      - name: Trigger production-test workflow (workflow_dispatch)
+      - name: Trigger production workflow (workflow_dispatch)
         if: steps.bump.outputs.should_bump == 'true'
         env:
           GH_TOKEN: ${{ secrets.PAT_TRIGGER_WORKFLOWS }}
           TARGET_REF: ${{ github.head_ref }}
-          TARGET_VERSION: ${{ steps.bump_version.outputs.new_version }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
-            echo "::error::PAT_TRIGGER_WORKFLOWS secret is required to dispatch production-test workflow."
+            echo "::error::PAT_TRIGGER_WORKFLOWS secret is required to dispatch production workflow."
             exit 1
           fi
           curl -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/production-test.yml/dispatches \
+            https://api.github.com/repos/${{ github.repository }}/actions/workflows/production.yml/dispatches \
             -d @- <<'PAYLOAD'
           {
-            "ref": "${{ env.TARGET_REF }}",
-            "inputs": {
-              "branch": "${{ env.TARGET_REF }}",
-              "version": "${{ env.TARGET_VERSION }}"
-            }
+            "ref": "${{ env.TARGET_REF }}"
           }
           PAYLOAD
           

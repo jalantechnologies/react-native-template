@@ -5,8 +5,8 @@ on:
     branches: ['*']
 
 concurrency:
-  group: version-bump-pr-${{ github.event.pull_request.number }}
-  cancel-in-progress: false
+  group: version-bump-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   bump:
@@ -113,10 +113,10 @@ jobs:
           fi
 
       - name: Trigger production workflow (workflow_dispatch)
-        if: steps.bump.outputs.should_bump == 'true' && github.event.pull_request.base.ref == 'main' && github.event.pull_request.merged == true
+        if: steps.bump.outputs.should_bump == 'true'
         env:
           GH_TOKEN: ${{ secrets.PAT_TRIGGER_WORKFLOWS }}
-          TARGET_REF: ${{ github.event.pull_request.base.ref }}
+          TARGET_REF: ${{ github.event.pull_request.head.ref }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
             echo "::error::PAT_TRIGGER_WORKFLOWS secret is required to dispatch production workflow."

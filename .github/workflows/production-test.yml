@@ -1,0 +1,22 @@
+name: cd (Test)
+on:
+  repository_dispatch:
+    types: [version-bumped-test]
+
+jobs:
+  test_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.client_payload.branch }}
+          
+      - name: Test summary
+        run: |
+          echo "## 🧪 Production Workflow Test" >> $GITHUB_STEP_SUMMARY
+          echo "This would deploy version: ${{ github.event.client_payload.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "From branch: ${{ github.event.client_payload.branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Workflow triggered successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "In production, this would deploy to Play Store & App Store" >> $GITHUB_STEP_SUMMARY

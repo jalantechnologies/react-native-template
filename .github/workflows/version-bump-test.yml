@@ -1,30 +1,26 @@
-name: Version Bump
+name: Version Bump (Test)
 on:
   pull_request:
-    types: [closed]
+    types: [opened, synchronize, reopened, ready_for_review]
     branches: 
-      - main
+      - vikram/feat/implement-auto-version-bumping
 
 concurrency:
-  group: version-bump-${{ github.ref }}
+  group: version-bump-test-${{ github.head_ref }}
   cancel-in-progress: false
 
 jobs:
   bump:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: read
-    outputs:
-      version_bumped: ${{ steps.bump.outputs.should_bump }}
-      new_version: ${{ steps.bump_version.outputs.new_version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.base.ref }}
+          ref: ${{ github.head_ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Setup Node
@@ -37,7 +33,13 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const labels = context.payload.pull_request.labels.map(l => l.name);
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+            
+            const labels = pullRequest.labels.map(l => l.name);
             console.log('PR Labels:', labels);
             
             let bump = null;
@@ -54,7 +56,8 @@ jobs:
               core.setOutput('should_bump', 'true');
               core.info(`Version bump: ${bump}`);
             } else {
-              core.setFailed('No semver label found. Add one of: semver: major | semver: minor | semver: patch');
+              core.warning('No semver label found');
+              core.setOutput('should_bump', 'false');
             }
             
       - name: Bump version
@@ -68,7 +71,6 @@ jobs:
           npm version ${{ steps.bump.outputs.type }} --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "New version: $NEW_VERSION"
           
       - name: Rotate release notes
         if: steps.bump.outputs.should_bump == 'true'
@@ -78,12 +80,12 @@ jobs:
           VERSIONED_NOTES="docs/release_notes/${NEW_VERSION}.md"
           
           if [ ! -f "$NOTES_FILE" ]; then
-            echo "::error::Release notes file not found at $NOTES_FILE"
+            echo "::error::Release notes file not found"
             exit 1
           fi
           
           if [ ! -s "$NOTES_FILE" ]; then
-            echo "::error::Release notes file is empty. Please ensure PRs add content to $NOTES_FILE"
+            echo "::error::Release notes file is empty"
             exit 1
           fi
           
@@ -94,33 +96,32 @@ jobs:
           EOF
           
           git add package.json "$VERSIONED_NOTES" "$NOTES_FILE"
-          git commit -m "chore: bump version to v${NEW_VERSION}"
+          git commit -m "chore: bump version to v${NEW_VERSION} [TEST]"
           
       - name: Push changes
         if: steps.bump.outputs.should_bump == 'true'
         run: |
-          git pull --rebase origin ${{ github.event.pull_request.base.ref }}
-          git push origin HEAD:${{ github.event.pull_request.base.ref }}
+          BRANCH="${{ github.head_ref }}"
+          git push origin HEAD:$BRANCH
+          
+      - name: Trigger production workflow (simulated)
+        if: steps.bump.outputs.should_bump == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.createDispatchEvent({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              event_type: 'version-bumped-test',
+              client_payload: {
+                branch: '${{ github.head_ref }}',
+                version: '${{ steps.bump_version.outputs.new_version }}'
+              }
+            });
+            console.log('✅ Test production workflow triggered');
           
       - name: Summary
-        if: steps.bump.outputs.should_bump == 'true'
         run: |
-          NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
-          echo "## ✅ Version Bumped Successfully" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **New version:** v${NEW_VERSION}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Bump type:** ${{ steps.bump.outputs.type }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Branch:** main" >> $GITHUB_STEP_SUMMARY
-          echo "- **Next step:** Production workflow will trigger automatically" >> $GITHUB_STEP_SUMMARY
-          
-      - name: Summary (no semver label)
-        if: steps.bump.outputs.should_bump != 'true'
-        run: |
-          echo "## ⚠️ Version Bump Skipped" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Reason:** No semver label found on merged PR." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Please add one of the following labels to PRs:" >> $GITHUB_STEP_SUMMARY
-          echo "- \`semver: patch\` - for bug fixes (0.0.x)" >> $GITHUB_STEP_SUMMARY
-          echo "- \`semver: minor\` - for new features (0.x.0)" >> $GITHUB_STEP_SUMMARY
-          echo "- \`semver: major\` - for breaking changes (x.0.0)" >> $GITHUB_STEP_SUMMARY
+          echo "## ✅ Version Bump Test Successful" >> $GITHUB_STEP_SUMMARY
+          echo "This is a TEST run on PR branch" >> $GITHUB_STEP_SUMMARY
+          echo "New version: ${{ steps.bump_version.outputs.new_version }}" >> $GITHUB_STEP_SUMMARY

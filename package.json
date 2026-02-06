@@ -1,6 +1,6 @@
 {
   "name": "react-native-template",
-  "version": "1.2.0",
+  "version": "1.0.21",
   "private": true,
   "description": "Boilerplate project for React Native apps.",
   "engines": {

@@ -1,26 +1,25 @@
 name: Version Bump
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [closed]
+    branches: [main]
 
 concurrency:
-  group: version-bump-${{ github.head_ref || github.ref }}
+  group: version-bump-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   bump:
-    if: github.event.pull_request.state == 'open'
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: read
-      actions: write
     steps:
-      - name: Checkout PR branch
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.event.pull_request.base.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Setup Node
@@ -33,12 +32,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { data: pullRequest } = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number
-            });
-            const labels = pullRequest.labels.map(l => l.name);
+            const labels = context.payload.pull_request.labels.map(l => l.name);
             console.log('PR Labels:', labels);
             
             let bump = null;
@@ -96,18 +90,14 @@ jobs:
       - name: Push changes
         if: steps.bump.outputs.should_bump == 'true'
         run: |
-          BRANCH="${{ github.head_ref }}"
-          git push origin HEAD:$BRANCH
-          
-      - name: Wait for push to complete
-        if: steps.bump.outputs.should_bump == 'true'
-        run: sleep 5
-          
+          git pull --rebase origin ${{ github.event.pull_request.base.ref }}
+          git push origin HEAD:${{ github.event.pull_request.base.ref }}
+
       - name: Trigger production workflow (workflow_dispatch)
         if: steps.bump.outputs.should_bump == 'true'
         env:
           GH_TOKEN: ${{ secrets.PAT_TRIGGER_WORKFLOWS }}
-          TARGET_REF: ${{ github.head_ref }}
+          TARGET_REF: ${{ github.event.pull_request.base.ref }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
             echo "::error::PAT_TRIGGER_WORKFLOWS secret is required to dispatch production workflow."
@@ -130,19 +120,19 @@ jobs:
         if: steps.bump.outputs.should_bump == 'true'
         run: |
           NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
-          BRANCH="${{ github.head_ref }}"
+          BRANCH="${{ github.event.pull_request.base.ref }}"
           echo "## ✅ Version Bumped Successfully" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **New version:** v${NEW_VERSION}" >> $GITHUB_STEP_SUMMARY
           echo "- **Bump type:** ${{ steps.bump.outputs.type }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch:** ${BRANCH}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Next step:** Production workflow dispatched on ${BRANCH}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Next step:** Production workflow will trigger on main" >> $GITHUB_STEP_SUMMARY
           
       - name: Summary (no semver label)
         if: steps.bump.outputs.should_bump != 'true'
         run: |
           echo "## ⚠️ Version Bump Skipped" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Reason:** No semver label found on PR." >> $GITHUB_STEP_SUMMARY
+          echo "**Reason:** No semver label found on merged PR." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Please add one of: semver: patch | semver: minor | semver: major" >> $GITHUB_STEP_SUMMARY

@@ -6,11 +6,6 @@ on:
         description: "Branch or ref to deploy"
         required: false
         default: "main"
-  workflow_run:
-    workflows: ["Version Bump"]
-    branches: [main]
-    types:
-      - completed
 
 concurrency:
   group: cd-production
@@ -18,7 +13,7 @@ concurrency:
 
 jobs:
   release_notes_check:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     outputs:
       release_notes: ${{ steps.check.outputs.release_notes }}

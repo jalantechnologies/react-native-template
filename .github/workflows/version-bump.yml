@@ -1,16 +1,16 @@
 name: Version Bump
 on:
   pull_request:
-    types: [closed]
-    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: ['*']
 
 concurrency:
-  group: version-bump-${{ github.ref }}
+  group: version-bump-pr-${{ github.event.pull_request.number }}
   cancel-in-progress: false
 
 jobs:
   bump:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -19,8 +19,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.base.ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.PAT_TRIGGER_WORKFLOWS }}
           
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -89,12 +89,31 @@ jobs:
           
       - name: Push changes
         if: steps.bump.outputs.should_bump == 'true'
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TRIGGER_WORKFLOWS }}
         run: |
-          git pull --rebase origin ${{ github.event.pull_request.base.ref }}
-          git push origin HEAD:${{ github.event.pull_request.base.ref }}
+          if [ -z "$PAT_TOKEN" ]; then
+            echo "::error::PAT_TRIGGER_WORKFLOWS is required to push to protected branches."
+            exit 1
+          fi
+
+          git remote set-url origin "https://x-access-token:${PAT_TOKEN}@github.com/${{ github.repository }}"
+
+          for attempt in 1 2 3; do
+            git pull --rebase origin ${{ github.event.pull_request.head.ref }} && \
+            git push origin HEAD:${{ github.event.pull_request.head.ref }} && break
+
+            echo "Push attempt $attempt failed, retrying in 5s..."
+            sleep 5
+          done
+
+          if [ $attempt -eq 3 ]; then
+            echo "::error::Failed to push after 3 attempts."
+            exit 1
+          fi
 
       - name: Trigger production workflow (workflow_dispatch)
-        if: steps.bump.outputs.should_bump == 'true'
+        if: steps.bump.outputs.should_bump == 'true' && github.event.pull_request.base.ref == 'main' && github.event.pull_request.merged == true
         env:
           GH_TOKEN: ${{ secrets.PAT_TRIGGER_WORKFLOWS }}
           TARGET_REF: ${{ github.event.pull_request.base.ref }}
@@ -106,6 +125,7 @@ jobs:
           curl -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
+            --fail-with-body \
             https://api.github.com/repos/${{ github.repository }}/actions/workflows/production.yml/dispatches \
             -d @- <<'PAYLOAD'
           {
@@ -120,7 +140,7 @@ jobs:
         if: steps.bump.outputs.should_bump == 'true'
         run: |
           NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
-          BRANCH="${{ github.event.pull_request.base.ref }}"
+          BRANCH="${{ github.event.pull_request.head.ref }}"
           echo "## ✅ Version Bumped Successfully" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **New version:** v${NEW_VERSION}" >> $GITHUB_STEP_SUMMARY
@@ -129,7 +149,7 @@ jobs:
           echo "- **Next step:** Production workflow will trigger on main" >> $GITHUB_STEP_SUMMARY
           
       - name: Summary (no semver label)
-        if: steps.bump.outputs.should_bump != 'true'
+        if: always() && steps.bump.outputs.should_bump != 'true'
         run: |
           echo "## ⚠️ Version Bump Skipped" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY

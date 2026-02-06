@@ -43,12 +43,17 @@ runs:
     - name: Check for release notes file
       id: check_notes
       shell: bash
+      env:
+        NOTES_FILE_INPUT: ${{ inputs.notes_file }}
+        NOTES_DIR_INPUT: ${{ inputs.notes_dir }}
+        NOTES_EXT_INPUT: ${{ inputs.notes_ext }}
+        VERSION_INPUT: ${{ steps.get_version.outputs.version }}
       run: |
-        if [ -n "${{ inputs.notes_file }}" ]; then
-          NOTES_FILE="${{ inputs.notes_file }}"
+        if [ -n "$NOTES_FILE_INPUT" ]; then
+          NOTES_FILE="$NOTES_FILE_INPUT"
           echo "Using explicit release notes file: $NOTES_FILE"
         else
-          NOTES_FILE="${{ inputs.notes_dir }}/${{ steps.get_version.outputs.version }}${{ inputs.notes_ext }}"
+          NOTES_FILE="${NOTES_DIR_INPUT}/${VERSION_INPUT}${NOTES_EXT_INPUT}"
           echo "Checking release notes file derived from version: $NOTES_FILE"
         fi
 

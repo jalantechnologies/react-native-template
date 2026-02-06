@@ -1,16 +1,16 @@
 name: Version Bump
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
-    branches: ['*']
+    types: [closed]
+    branches: [main]
 
 concurrency:
-  group: version-bump-${{ github.head_ref || github.ref }}
-  cancel-in-progress: true
+  group: version-bump-main
+  cancel-in-progress: false
 
 jobs:
   bump:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: ${{ github.event.pull_request.base.ref }}
           token: ${{ secrets.PAT_TRIGGER_WORKFLOWS }}
           
       - name: Setup Node
@@ -100,8 +100,8 @@ jobs:
           git remote set-url origin "https://x-access-token:${PAT_TOKEN}@github.com/${{ github.repository }}"
 
           for attempt in 1 2 3; do
-            git pull --rebase origin ${{ github.event.pull_request.head.ref }} && \
-            git push origin HEAD:${{ github.event.pull_request.head.ref }} && break
+            git pull --rebase origin ${{ github.event.pull_request.base.ref }} && \
+            git push origin HEAD:${{ github.event.pull_request.base.ref }} && break
 
             echo "Push attempt $attempt failed, retrying in 5s..."
             sleep 5
@@ -116,7 +116,7 @@ jobs:
         if: steps.bump.outputs.should_bump == 'true'
         env:
           GH_TOKEN: ${{ secrets.PAT_TRIGGER_WORKFLOWS }}
-          TARGET_REF: ${{ github.event.pull_request.head.ref }}
+          TARGET_REF: ${{ github.event.pull_request.base.ref }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
             echo "::error::PAT_TRIGGER_WORKFLOWS secret is required to dispatch production workflow."
@@ -140,7 +140,7 @@ jobs:
         if: steps.bump.outputs.should_bump == 'true'
         run: |
           NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
-          BRANCH="${{ github.event.pull_request.head.ref }}"
+          BRANCH="${{ github.event.pull_request.base.ref }}"
           echo "## ✅ Version Bumped Successfully" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **New version:** v${NEW_VERSION}" >> $GITHUB_STEP_SUMMARY

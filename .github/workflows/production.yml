@@ -3,31 +3,72 @@ on:
   workflow_dispatch:
   workflow_run:
     workflows: ["Version Bump"]
-    branches: [main]
     types:
       - completed
 
 concurrency:
-  group: cd-production
+  group: cd-production-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: true
 
 jobs:
+  check_trigger:
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.check.outputs.should_deploy }}
+      branch_name: ${{ steps.check.outputs.branch_name }}
+    steps:
+      - name: Check workflow run status
+        id: check
+        run: |
+          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
+          echo "Branch: ${{ github.event.workflow_run.head_branch }}"
+          echo "Event: ${{ github.event.workflow_run.event }}"
+          
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+          CONCLUSION="${{ github.event.workflow_run.conclusion }}"
+          
+          # Only deploy if Version Bump was successful
+          if [ "$CONCLUSION" == "success" ]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+            echo "✅ Version Bump succeeded, proceeding with deployment"
+          else
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
+            echo "❌ Version Bump failed or was skipped, deployment cancelled"
+          fi
+          
+          echo "branch_name=$BRANCH" >> $GITHUB_OUTPUT
+          
   release_notes_check:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: [check_trigger]
+    if: needs.check_trigger.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
     outputs:
       release_notes: ${{ steps.check.outputs.release_notes }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Echo version for deploy
+        with:
+          ref: ${{ needs.check_trigger.outputs.branch_name }}
+          fetch-depth: 0
+          
+      - name: Get version
+        id: version
         run: |
           VERSION=$(jq -r .version package.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Deploying version: $VERSION"
-          echo "version=$VERSION" >> $GITHUB_ENV
-          echo "## Deploying version $VERSION" >> $GITHUB_STEP_SUMMARY
-
+          
+      - name: Echo version for deploy
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          BRANCH="${{ needs.check_trigger.outputs.branch_name }}"
+          echo "## 🚀 Deployment Started" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** $VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** $BRANCH" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger:** Version Bump workflow completed successfully" >> $GITHUB_STEP_SUMMARY
+          
       - name: Check release notes
         id: check
         uses: ./.github/actions/release_notes_check
@@ -35,14 +76,17 @@ jobs:
           version_file: 'package.json'
           notes_dir: 'docs/release_notes'
           notes_ext: '.md'
-
+          
   deploy_android:
     runs-on: ubuntu-latest
-    needs: [release_notes_check]
+    needs: [check_trigger, release_notes_check]
+    if: needs.check_trigger.outputs.should_deploy == 'true'
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v4
-
+        with:
+          ref: ${{ needs.check_trigger.outputs.branch_name }}
+          
       - name: Inject Doppler Production Secrets
         uses: ./.github/actions/inject_doppler_secrets
         with:
@@ -50,7 +94,7 @@ jobs:
           doppler_project: react-native-template
           doppler_environment: production
           working_directory: .
-
+          
       - name: Deploy Android app to Play Store
         id: deploy_android_production
         uses: ./.github/actions/deploy_android_production
@@ -62,15 +106,24 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
-
+          
+      - name: Android deployment summary
+        if: success()
+        run: |
+          echo "## ✅ Android Deployment Successful" >> $GITHUB_STEP_SUMMARY
+          echo "Version ${{ needs.release_notes_check.outputs.version }} deployed to Play Store" >> $GITHUB_STEP_SUMMARY
+          
   deploy_ios:
     runs-on: macos-15
-    needs: [release_notes_check]
+    needs: [check_trigger, release_notes_check]
+    if: needs.check_trigger.outputs.should_deploy == 'true'
     timeout-minutes: 30
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v4
-        
+        with:
+          ref: ${{ needs.check_trigger.outputs.branch_name }}
+          
       - name: Inject Doppler Production Secrets
         uses: ./.github/actions/inject_doppler_secrets
         with:
@@ -94,3 +147,9 @@ jobs:
           IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
           IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
           IOS_MATCH_DEPLOY_KEY: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
+          
+      - name: iOS deployment summary
+        if: success()
+        run: |
+          echo "## ✅ iOS Deployment Successful" >> $GITHUB_STEP_SUMMARY
+          echo "Version ${{ needs.release_notes_check.outputs.version }} deployed to App Store" >> $GITHUB_STEP_SUMMARY

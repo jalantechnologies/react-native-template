@@ -30,6 +30,9 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             REF="${{ github.event.inputs.ref }}"
+            if [ -z "$REF" ] || [ "$REF" = "main" ]; then
+              REF="${{ github.ref_name }}"
+            fi
           else
             REF="${{ github.event.workflow_run.head_branch || 'main' }}"
           fi
@@ -54,7 +57,7 @@ jobs:
           echo "## 🚀 Deployment Started" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Version:** $VERSION" >> $GITHUB_STEP_SUMMARY
-          echo "- **Branch:** main" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ steps.target.outputs.ref }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
           
       - name: Check release notes

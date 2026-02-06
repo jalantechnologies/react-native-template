@@ -119,7 +119,10 @@ jobs:
             https://api.github.com/repos/${{ github.repository }}/actions/workflows/production.yml/dispatches \
             -d @- <<'PAYLOAD'
           {
-            "ref": "${{ env.TARGET_REF }}"
+            "ref": "${{ env.TARGET_REF }}",
+            "inputs": {
+              "ref": "${{ env.TARGET_REF }}"
+            }
           }
           PAYLOAD
           

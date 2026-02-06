@@ -1,1 +1,1 @@
-- Implement auto version bumping
+<enter release notes for the next version here (max 500 chars)>

@@ -15,11 +15,11 @@ This project uses [asdf](https://asdf-vm.com/) for version management. The `.too
 | Ruby | 3.2.3 | Via [asdf](https://asdf-vm.com/): `asdf plugin add ruby && asdf install ruby` |
 
 ### iOS Only
-- Xcode 16.x (stable release, not beta):
+- Xcode 26.x (stable release, not beta):
   ```sh
   brew install xcodesorg/made/xcodes
-  xcodes install 16.2
-  xcodes select 16.2
+  xcodes install 26.2
+  xcodes select 26.2
   ```
 - CocoaPods: `gem install cocoapods`
 
@@ -217,8 +217,8 @@ cd ios && rm -rf Pods Podfile.lock && bundle exec pod install
 React Native may not work with Xcode beta versions. If builds fail, install a stable release:
 ```sh
 brew install xcodesorg/made/xcodes
-xcodes install 16.2
-xcodes select 16.2
+xcodes install 26.2
+xcodes select 26.2
 ```
 
 ## License

@@ -25,7 +25,7 @@ runs:
   steps:
     - name: Trivy filesystem scan (HIGH/CRITICAL)
       id: trivy
-      uses: aquasecurity/trivy-action@v0.33.1
+      uses: aquasecurity/trivy-action@0.33.1
       continue-on-error: true
       with:
         scan-type: 'fs'
@@ -40,22 +40,22 @@ runs:
     - name: Ostorlab scan - Android APK
       id: ostorlab-android
       if: inputs.android-apk-path != ''
-      uses: ostorlab/github-action@v1.1.1
+      uses: Ostorlab/ostorlab_actions@v1.1.1
       continue-on-error: true
       with:
         asset_type: 'android-apk'
         target: ${{ inputs.android-apk-path }}
-        api-key: ${{ inputs.ostorlab-api-key }}
+        ostorlab_api_key: ${{ inputs.ostorlab-api-key }}
 
     - name: Ostorlab scan - iOS IPA
       id: ostorlab-ios
       if: inputs.ios-ipa-path != ''
-      uses: ostorlab/github-action@v1.1.1
+      uses: Ostorlab/ostorlab_actions@v1.1.1
       continue-on-error: true
       with:
         asset_type: 'ios-ipa'
         target: ${{ inputs.ios-ipa-path }}
-        api-key: ${{ inputs.ostorlab-api-key }}
+        ostorlab_api_key: ${{ inputs.ostorlab-api-key }}
 
     - name: Set scan output / fail on issues
       id: set-output

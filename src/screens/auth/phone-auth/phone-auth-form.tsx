@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
   VStack,
   Container,
@@ -13,6 +14,8 @@ import {
   Checkbox,
 } from 'native-base';
 import React, { useState } from 'react';
+import { Alert } from 'react-native';
+import Config from 'react-native-config';
 import CheckIcon from 'react-native-template/assets/icons/check.svg';
 import { FormControl, Input, Button } from 'react-native-template/src/components';
 import { ButtonKind } from 'react-native-template/src/types/button';
@@ -97,6 +100,62 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
     phone_number: '9999999999',
   }).getFormattedWithoutCountryCode();
 
+  const [isTempUserLoading, setIsTempUserLoading] = useState(false);
+
+  const handleCreateTempUser = async () => {
+    const apiBaseUrl = (Config.API_BASE_URL || '').replace(/\/+$/, '');
+
+    if (!apiBaseUrl) {
+      Alert.alert('API base URL missing', 'Set API_BASE_URL in your env to test the database.');
+      return;
+    }
+
+    setIsTempUserLoading(true);
+    // Backend expects account creation at POST /api/accounts (username+password or phone_number)
+    const normalizedBase = apiBaseUrl.replace(/\/+$/, '');
+    const accountsUrl = normalizedBase.match(/\/api$/)
+      ? `${normalizedBase}/accounts`
+      : `${normalizedBase}/api/accounts`;
+
+    try {
+      const payload = {
+        first_name: 'Preview',
+        last_name: 'TempUser',
+        username: `preview-temp-${Date.now()}`,
+        password: `Temp@${Date.now()}`,
+      };
+
+      console.log('[permanent-preview] creating temp user', { accountsUrl, payload });
+
+      const response = await axios.post(accountsUrl, payload);
+
+      const userId = (response.data && (response.data.id || response.data.user_id)) || 'unknown';
+      Alert.alert('Temporary user created', `Base URL: ${apiBaseUrl}\nID: ${userId}`);
+    } catch (error: any) {
+      const status = error?.response?.status;
+      const data = error?.response?.data;
+      const message =
+        data?.message ||
+        data?.error ||
+        error?.message ||
+        'Unknown error';
+
+      console.log('[permanent-preview] temp user creation failed', {
+        accountsUrl,
+        status,
+        data,
+        headers: error?.response?.headers,
+      });
+
+      Alert.alert(
+        'Temporary user creation failed',
+        `URL: ${accountsUrl}\nStatus: ${status ?? 'n/a'}\nMessage: ${message}`,
+      );
+    } finally {
+      setIsTempUserLoading(false);
+    }
+  };
+
   return (
     <Box flex={1} pb={4}>
       <VStack space={6} flex={1} mb={8}>
@@ -157,6 +216,15 @@ const PhoneAuthForm: React.FC<PhoneAuthFormProps> = ({ onSuccess, onError }) => 
         kind={ButtonKind.CONTAINED}
       >
         Send OTP
+      </Button>
+
+      {/* Temporary: hit API_BASE_URL to confirm environment database wiring */}
+      <Button
+        isLoading={isTempUserLoading}
+        onClick={handleCreateTempUser}
+        kind={ButtonKind.OUTLINED}
+      >
+        Create Temp User (env check)
       </Button>
     </Box>
   );

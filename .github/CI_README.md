@@ -105,6 +105,25 @@ Guarantees only versioned, documented builds go to the stores — with release n
 
 ---
 
+### Permanent Preview Release (`permanent_preview.yml`)
+
+**When it runs**
+
+- On `push` events to the `main` branch (parallel to production deployments).
+
+**What it does**
+
+- Validates release notes for the current version and exposes them as workflow output.
+- Builds **Android preview** (release-signed) using the preview flavor and a timestamp build number.
+- Builds **iOS preview** (release-signed) using Match/App Store signing and a timestamp build number.
+- Uploads both artifacts to GitHub Actions artifacts and publishes them to a **GitHub Release** tagged as `preview-v<version>`.
+
+**Why it matters**
+Provides a permanent preview of the latest `main` build using preview credentials, giving developers a stable, always-up-to-date artifact outside of production store uploads.
+
+---
+
+
 ## 📋 Release Notes Structure
 
 Release notes for previews and production:
@@ -142,13 +161,14 @@ These environment variables are used by the GitHub Actions workflows and Fastlan
 | `ANDROID_PRODUCTION_FLAVOR`     | Workflow/ENV optional | Android flavor used for production builds (defaults to `production`).                                                             |
 | `ANDROID_APP_IDENTIFIER`        | GitHub Secret         | Android applicationId/package name used by Fastlane for Play Store uploads (keeps Android config in secrets like iOS).            |
 | `ANDROID_FIREBASE_API_KEY`      | GitHub Secret         | Firebase API key for Android deployment.                                                                                       |
-| `KEYSTORE_FILE`         | GitHub Secret         | Base64-encoded Android keystore file. Decoded and used to sign Android builds during Play Store deployments.                                       |
-| `KEYSTORE_PASSWORD`     | GitHub Secret         | Password for the Android keystore file used in signing builds.                                                                               |
-| `KEY_ALIAS`             | GitHub Secret         | Alias used inside the keystore to refer to the signing key.                                                                               |
-| `KEY_PASSWORD`          | GitHub Secret         | Password for the key alias used in Android app signing.                                                                               |
+| `ANDROID_KEYSTORE_FILE`         | GitHub Secret         | Base64-encoded Android keystore file. Decoded and used to sign Android builds during Play Store and permanent preview deployments.                                       |
+| `ANDROID_KEYSTORE_PASSWORD`     | GitHub Secret         | Password for the Android keystore file used in signing builds.                                                                               |
+| `ANDROID_KEY_ALIAS`             | GitHub Secret         | Alias used inside the keystore to refer to the signing key.                                                                               |
+| `ANDROID_KEY_PASSWORD`          | GitHub Secret         | Password for the key alias used in Android app signing.                                                                               |
 | `GPLAY_SERVICE_ACCOUNT_KEY_JSON`| GitHub Secret         | Google Play service account key for uploading Android production builds via Fastlane and GitHub Action.                                            |
 | `SONAR_TOKEN`                   | GitHub Secret         | Authentication token for SonarQube analysis API access.                                                                                       |
 | `SONAR_HOST_URL`                | GitHub Secret         | URL of your SonarQube server used in PR and branch scan jobs.                                                                                      |
+| `DOPPLER_PREVIEW_TOKEN`         | GitHub Secret         | Doppler token for injecting preview environment variables.                                                                                      |
 
 ### iOS Variables (TestFlight & App Store Deploy)
 

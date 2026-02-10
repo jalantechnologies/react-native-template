@@ -1,0 +1,132 @@
+name: permanent-preview
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: permanent-preview
+  cancel-in-progress: true
+
+jobs:
+  release_notes_check:
+    runs-on: ubuntu-latest
+    outputs:
+      release_notes: ${{ steps.check.outputs.release_notes }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check release notes
+        id: check
+        uses: ./.github/actions/release_notes_check
+        with:
+          version_file: 'package.json'
+          notes_dir: 'docs/release_notes'
+          notes_ext: '.md'
+
+  build_android_permanent_preview:
+    runs-on: ubuntu-latest
+    needs: [release_notes_check]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Inject Doppler Preview Secrets
+        uses: ./.github/actions/inject_doppler_secrets
+        with:
+          doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
+          doppler_project: react-native-template
+          doppler_environment: preview
+          working_directory: .
+
+      - name: Generate build number
+        id: android_build
+        shell: bash
+        run: |
+          echo "build_number=$(date -u +%s)" >> "$GITHUB_OUTPUT"
+
+      - name: Build Android preview APK
+        uses: ./.github/actions/permanent_preview_android
+        with:
+          build_number: ${{ steps.android_build.outputs.build_number }}
+          android_keystore_file: ${{ secrets.ANDROID_KEYSTORE_FILE }}
+          android_keystore_password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          android_key_alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          android_key_password: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-preview-release
+          path: preview-artifacts/react-native-template-preview.apk
+          if-no-files-found: error
+
+  build_ios_permanent_preview:
+    runs-on: macos-14
+    timeout-minutes: 60
+    needs: [release_notes_check]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Inject Doppler Preview Secrets
+        uses: ./.github/actions/inject_doppler_secrets
+        with:
+          doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
+          doppler_project: react-native-template
+          doppler_environment: preview
+          working_directory: .
+
+      - name: Generate build number
+        id: ios_build
+        shell: bash
+        run: |
+          echo "build_number=$(date -u +%s)" >> "$GITHUB_OUTPUT"
+
+      - name: Build iOS preview IPA
+        uses: ./.github/actions/permanent_preview_ios
+        with:
+          build_number: ${{ steps.ios_build.outputs.build_number }}
+          ios_match_password: ${{ secrets.IOS_MATCH_PASSWORD }}
+          ios_match_repository_url: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
+          ios_app_identifier: ${{ secrets.IOS_APP_IDENTIFIER }}
+          ios_keychain_password: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
+          ios_app_store_team_id: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
+          ios_match_deploy_key: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
+
+      - name: Upload iOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-preview-release
+          path: preview-artifacts/react-native-template-preview.ipa
+          if-no-files-found: error
+
+  publish_preview_release:
+    runs-on: ubuntu-latest
+    needs: [release_notes_check, build_android_permanent_preview, build_ios_permanent_preview]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: preview-artifacts
+          merge-multiple: true
+
+      - name: Read preview version
+        id: preview_version
+        shell: bash
+        run: |
+          echo "version=$(jq -r .version package.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Publish permanent preview release
+        uses: ./.github/actions/permanent_preview_release
+        with:
+          preview_version: ${{ steps.preview_version.outputs.version }}
+          release_notes: ${{ needs.release_notes_check.outputs.release_notes }}

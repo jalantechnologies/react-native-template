@@ -84,3 +84,17 @@ runs:
           echo "Blocking deployment because HIGH/CRITICAL issues were detected."
           exit 1
         fi
+
+    - name: Comment PR on scan failure
+      if: ${{ github.event_name == 'pull_request' && steps.set-output.outputs.has-issues == 'true' }}
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        GITHUB_TOKEN: ${{ github.token }}
+        header: "Mobile Security Scan"
+        message: |
+          ❌ Mobile security scan failed.
+          - Trivy: ${{ steps.trivy.outcome }}
+          - Ostorlab (Android): ${{ steps.ostorlab-android.outcome || 'skipped' }}
+          - Ostorlab (iOS): ${{ steps.ostorlab-ios.outcome || 'skipped' }}
+
+          See the workflow run logs for details.

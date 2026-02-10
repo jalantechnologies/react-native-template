@@ -10,6 +10,16 @@ This project uses GitHub Actions, Doppler, and Fastlane to build, test, and ship
 - `.github/workflows/permanent_preview.yml` — Builds signed preview APK/IPA on every `main` push and publishes them to a GitHub Release.
 - `.github/workflows/clean.yml` — Cleans preview artifacts when a PR is closed.
 
+## Local GitHub Actions (reusable)
+
+- `.github/actions/inject_doppler_secrets` — Pulls env-specific secrets from Doppler and writes `.env`.
+- `.github/actions/release_notes_check` — Validates `docs/release_notes/{version}.md` (exists, non-empty, ≤ 500 chars) and outputs the text.
+- `.github/actions/deploy_android_preview` / `deploy_ios_preview` — Build + ship PR previews to Firebase App Distribution / TestFlight and surface links.
+- `.github/actions/update_preview_comment` — Posts/updates PR comment with preview links.
+- `.github/actions/deploy_android_production` / `deploy_ios_production` — Store uploads for `main`.
+- `.github/actions/permanent_preview_android` / `permanent_preview_ios` / `permanent_preview_release` — Build signed artifacts and publish GitHub Release.
+- `.github/actions/setup-fastlane` — Installs Fastlane dependencies for cleanup workflow.
+
 ## Doppler Secret Injection
 
 - Local action: `.github/actions/inject_doppler_secrets`

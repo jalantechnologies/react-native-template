@@ -4,7 +4,7 @@ This guide covers the tools you need and the commands to get the app running loc
 
 ## Prerequisites
 
-This project uses [asdf](https://asdf-vm.com/) to pin toolchain versions defined in `.tool-versions`.
+This project uses [asdf](https://asdf-vm.com/) to pin toolchain versions defined in `.tool-versions` (CI also reads `.nvmrc` for Node).
 
 | Tool | Version | Installation |
 |------|---------|--------------|
@@ -62,4 +62,3 @@ yarn android  # Android emulator
 | `yarn test` | Run Jest tests |
 | `yarn test:report` | Run tests with coverage |
 | `yarn pod-install` | Install iOS CocoaPods |
-

@@ -167,6 +167,31 @@ These environment variables are used by the GitHub Actions workflows and Fastlan
 | `IOS_MATCH_REPOSITORY_URL`             | GitHub Secret | The Git URL of the private repository used by Fastlane Match to store signing certificates and provisioning profiles.                                |
 
 These variables are decoded and written to disk during the CI process so tools like Fastlane or deployment APIs can use them.
+
+---
+## 🔒 Mobile Security Scan Gate (Trivy + Ostorlab)
+
+**Where it runs**
+- Preview (`cd.yml`) and Production (`production.yml`) deployments for both Android and iOS.
+- Implemented via composite action `.github/actions/mobile-scan`.
+
+**What happens**
+1) Build step runs first (Fastlane) and writes artifact paths to `/tmp/...txt`, with upload skipped.
+2) `mobile-scan` executes:
+   - Trivy filesystem scan on the repo (`HIGH,CRITICAL`, `ignore-unfixed=true`).
+   - Ostorlab scan on the built APK or IPA when a path is provided.
+3) If any scan reports HIGH/CRITICAL issues, `has-issues=true` and the job fails; upload does not run.
+4) Upload step reuses the already-scanned artifact.
+
+**Secrets**
+- `OSTORLAB_API_KEY` (required in both preview and production workflows).
+- Existing platform secrets (Firebase/Play/App Store/Doppler) remain unchanged.
+
+**Files involved**
+- `.github/actions/mobile-scan/action.yml`
+- `.github/actions/deploy_android_preview|deploy_android_production`
+- `.github/actions/deploy_ios_preview|deploy_ios_production`
+- Workflows `cd.yml`, `production.yml`
 ---
 ## 🚀 CD Workflow Summary
 

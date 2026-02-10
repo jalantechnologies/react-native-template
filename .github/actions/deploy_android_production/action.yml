@@ -20,6 +20,9 @@ inputs:
   ANDROID_KEY_PASSWORD:
     required: true
     description: 'Password for the key alias'
+  OSTORLAB_API_KEY:
+    required: true
+    description: 'API key for Ostorlab vulnerability scans'
   RELEASE_NOTES:
     required: true
     description: 'Release notes for the build'
@@ -117,10 +120,10 @@ runs:
         printf "%s" "${{ inputs.RELEASE_NOTES }}" > "$CHANGELOG_PATH"
         echo "📝 Updated default changelog at $CHANGELOG_PATH"
 
-    - name: Build and deploy android App via fastlane
+    - name: Build Play artifacts (no upload)
+      id: build_android
       shell: bash
       working-directory: android
-      run: bundle exec fastlane deploy_android_production
       env:
         ANDROID_APP_IDENTIFIER: ${{ inputs.ANDROID_APP_IDENTIFIER }}
         ANDROID_KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
@@ -128,3 +131,30 @@ runs:
         ANDROID_KEY_ALIAS: ${{ inputs.ANDROID_KEY_ALIAS }}
         ANDROID_KEY_PASSWORD: ${{ inputs.ANDROID_KEY_PASSWORD }}
         ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}
+        SKIP_PLAY_UPLOAD: "1"
+        AAB_PATH_FILE: "/tmp/play_aab_path.txt"
+        APK_PATH_FILE: "/tmp/play_apk_path.txt"
+      run: |
+        bundle exec fastlane deploy_android_production
+        echo "aab_path=$(cat /tmp/play_aab_path.txt)" >> "$GITHUB_OUTPUT"
+        echo "apk_path=$(cat /tmp/play_apk_path.txt)" >> "$GITHUB_OUTPUT"
+
+    - name: Mobile security scan (Trivy + Ostorlab)
+      uses: ./.github/actions/mobile-scan
+      with:
+        android-apk-path: ${{ steps.build_android.outputs.apk_path }}
+        ostorlab-api-key: ${{ inputs.OSTORLAB_API_KEY }}
+
+    - name: Upload to Play Store (using scanned artifact)
+      shell: bash
+      working-directory: android
+      env:
+        ANDROID_APP_IDENTIFIER: ${{ inputs.ANDROID_APP_IDENTIFIER }}
+        ANDROID_KEYSTORE_FILE: ${{ steps.android_keystore.outputs.filePath }}
+        ANDROID_KEYSTORE_PASSWORD: ${{ inputs.ANDROID_KEYSTORE_PASSWORD }}
+        ANDROID_KEY_ALIAS: ${{ inputs.ANDROID_KEY_ALIAS }}
+        ANDROID_KEY_PASSWORD: ${{ inputs.ANDROID_KEY_PASSWORD }}
+        ANDROID_JSON_KEY_FILE: ${{ steps.service_account_json_file.outputs.filePath }}
+        AAB_PATH: ${{ steps.build_android.outputs.aab_path }}
+        APK_PATH: ${{ steps.build_android.outputs.apk_path }}
+      run: bundle exec fastlane deploy_android_production

@@ -59,6 +59,12 @@ platform :android do
                      CredentialsManager::AppfileConfig.try_fetch_value(:package_name)
     UI.user_error!("❌ App identifier not configured") unless app_identifier
 
+    skip_upload = ENV["SKIP_PLAY_UPLOAD"] == "1" || ENV["PLAY_SKIP_UPLOAD"] == "1"
+    export_aab_path = ENV["AAB_PATH_FILE"]
+    export_apk_path = ENV["APK_PATH_FILE"]
+    provided_aab = ENV["AAB_PATH"]
+    provided_apk = ENV["APK_PATH"]
+
     version_codes = google_play_track_version_codes(
       package_name: app_identifier,
       track: "internal",
@@ -75,20 +81,71 @@ platform :android do
     end
 
     # 3) Build with injected versionCode + versionName
-    gradle(
-      task: "bundle#{gradle_task_flavor}Release",
-      properties: {
-        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
-        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
-        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
-        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
-        "versionCode" => version_code.to_s,
-        "versionName" => version_name
-      }
-    )
+    aab_path = nil
+    apk_path = nil
+
+    if provided_aab && !provided_aab.empty?
+      aab_path = File.expand_path(provided_aab)
+      UI.user_error!("❌ Provided AAB not found at #{aab_path}") unless File.exist?(aab_path)
+      UI.message("ℹ️ Re-using prebuilt AAB at #{aab_path}")
+    else
+      gradle(
+        task: "bundle#{gradle_task_flavor}Release",
+        properties: {
+          "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
+          "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
+          "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+          "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
+          "versionCode" => version_code.to_s,
+          "versionName" => version_name
+        }
+      )
+      aab_path = File.expand_path("../../app/build/outputs/bundle/#{production_flavor}/release/app-#{production_flavor}-release.aab", __dir__)
+      UI.user_error!("❌ AAB not found at #{aab_path}") unless File.exist?(aab_path)
+    end
+
+    if provided_apk && !provided_apk.empty?
+      apk_path = File.expand_path(provided_apk)
+      UI.user_error!("❌ Provided APK not found at #{apk_path}") unless File.exist?(apk_path)
+      UI.message("ℹ️ Re-using prebuilt APK at #{apk_path}")
+    else
+      Actions::GradleAction.run(
+        gradle_path: "./gradlew",
+        task: "assemble#{gradle_task_flavor}Release",
+        project_dir: File.expand_path("../../", __dir__),
+        properties: {
+          "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
+          "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASSWORD"],
+          "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+          "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASSWORD"],
+          "versionCode" => version_code.to_s,
+          "versionName" => version_name
+        },
+        print_command: true,
+        print_command_output: true
+      )
+      apk_path = File.expand_path("../../app/build/outputs/apk/#{production_flavor}/release/app-#{production_flavor}-release.apk", __dir__)
+      UI.user_error!("❌ APK not found at #{apk_path}") unless File.exist?(apk_path)
+    end
+
+    if export_aab_path && !export_aab_path.empty?
+      File.write(export_aab_path, aab_path)
+      UI.message("📝 Wrote AAB path to #{export_aab_path}")
+    end
+
+    if export_apk_path && !export_apk_path.empty?
+      File.write(export_apk_path, apk_path)
+      UI.message("📝 Wrote APK path to #{export_apk_path}")
+    end
+
+    if skip_upload
+      UI.message("⏭️ SKIP_PLAY_UPLOAD set; skipping upload. AAB at #{aab_path}")
+      return
+    end
 
     # 4) Upload (supply automatically picks changelog)
     upload_to_play_store(
+      aab: aab_path,
       track: "internal",
       release_status: "draft",
       json_key: ENV["ANDROID_JSON_KEY_FILE"],

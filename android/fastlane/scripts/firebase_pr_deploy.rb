@@ -20,19 +20,49 @@ def firebase_pr_deploy(pr_number:, pr_title:, project_number:, app_id:, service_
     app_id: app_id,
     service_account_path: service_account_path
   )
+
+  skip_upload = ENV["FIREBASE_SKIP_UPLOAD"] == "1"
+  export_apk_path = ENV["APK_PATH_FILE"]
+  provided_apk = ENV["APK_PATH"]
   
   # Cleanup old builds for specific PR before creating a new one
-  old_releases = firebase.fetch_releases_by_pr_number(pr_number)
-  unless old_releases.empty?
-    UI.message("🧹 Cleaning up old releases for PR ##{pr_number} before uploading a new one...")
-    firebase.delete_releases(old_releases)
+  if provided_apk.to_s.strip.empty?
+    old_releases = firebase.fetch_releases_by_pr_number(pr_number)
+    unless old_releases.empty?
+      UI.message("🧹 Cleaning up old releases for PR ##{pr_number} before uploading a new one...")
+      firebase.delete_releases(old_releases)
+    end
   end
-  
-  # Build the new APK with unique version code (returns version code)
-  version_info = firebase.build_apk(pr_number: pr_number)
-  
-  apk_path = version_info[:apk_path]
-  UI.user_error!("❌ APK file not found at #{apk_path}") unless File.exist?(apk_path)
+
+  package_json_path = File.expand_path("../../../package.json", __dir__)
+  UI.user_error!("❌ package.json not found at #{package_json_path}") unless File.exist?(package_json_path)
+  package_json = JSON.parse(File.read(package_json_path))
+  version = package_json["version"]
+  UI.user_error!("❌ Version not found in package.json") unless version
+  major, minor, patch = version.split('.').map(&:to_i)
+  version_code = (major * 10_000) + (minor * 100) + patch
+
+  if provided_apk && !provided_apk.strip.empty?
+    apk_path = File.expand_path(provided_apk)
+    UI.user_error!("❌ Provided APK file not found at #{apk_path}") unless File.exist?(apk_path)
+    version_info = { version: version, version_code: version_code, apk_path: apk_path }
+    UI.message("ℹ️ Re-using prebuilt APK at #{apk_path}")
+  else
+    # Build the new APK with unique version code (returns version code)
+    version_info = firebase.build_apk(pr_number: pr_number)
+    apk_path = version_info[:apk_path]
+    UI.user_error!("❌ APK file not found at #{apk_path}") unless File.exist?(apk_path)
+  end
+
+  if export_apk_path && !export_apk_path.strip.empty?
+    File.write(export_apk_path, apk_path)
+    UI.message("📝 Wrote APK path to #{export_apk_path}")
+  end
+
+  if skip_upload
+    UI.message("⏭️ FIREBASE_SKIP_UPLOAD is set; skipping upload. APK ready at #{apk_path}")
+    return version_info
+  end
   
   # Read release notes if provided
   if release_notes && !release_notes.strip.empty?

@@ -50,6 +50,7 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          OSTORLAB_API_KEY: ${{ secrets.OSTORLAB_API_KEY }}
           RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
 
   deploy_ios:
@@ -83,3 +84,4 @@ jobs:
           IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
           IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
           IOS_MATCH_DEPLOY_KEY: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
+          OSTORLAB_API_KEY: ${{ secrets.OSTORLAB_API_KEY }}

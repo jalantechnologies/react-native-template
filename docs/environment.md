@@ -1,6 +1,6 @@
 # Environment & Configuration
 
-Use a [`.env`](../.env) file at the project root for runtime configuration (copy from `.env.example` if present). Values are loaded by the app via [`src/config.ts`](../src/config.ts).
+Use a [`.env`](../.env) file at the project root for runtime configuration (copy from `.env.example` if present). Values are loaded by the app via [`src/config.ts`](../src/config.ts). The Quick Start in [`docs/setup.md`](./setup.md) shows a minimal template you can paste.
 
 ```env
 ENVIRONMENT=development

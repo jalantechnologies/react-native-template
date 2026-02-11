@@ -2,14 +2,14 @@
 
 This guide is written for a brand-new machine so a new engineer can get the app running in minutes.
 
-## 0) Clone the repo
+## 1) Clone the repo
 
 ```sh
 git clone git@github.com:jalantechnologies/react-native-template.git
 cd react-native-template
 ```
 
-## 1) Install tooling (in this order)
+## 2) Install tooling (in this order)
 
 This project uses [asdf](https://asdf-vm.com/) to pin toolchain versions defined in [`.tool-versions`](../.tool-versions) (CI also reads [`.nvmrc`](../.nvmrc) for Node).
 
@@ -27,14 +27,14 @@ This project uses [asdf](https://asdf-vm.com/) to pin toolchain versions defined
    export JAVA_HOME=$(/usr/libexec/java_home -v 17)
    ```
 
-## 2) Install project dependencies
+## 3) Install project dependencies
 
 ```sh
 yarn install
 bundle install         # installs Ruby gems; requires Bundler
 ```
 
-## 3) Configure environment
+## 4) Configure environment
 
 Create `.env` at repo root (see [`docs/environment.md`](./environment.md) for all keys):
 
@@ -49,13 +49,13 @@ LOGGER=console
 EOF
 ```
 
-## 4) iOS setup
+## 5) iOS setup
 
 ```sh
 yarn pod-install
 ```
 
-## 5) Run and verify
+## 6) Run and verify
 
 Start Metro (new terminal):
 ```sh

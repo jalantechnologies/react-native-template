@@ -87,5 +87,5 @@ Navigation is defined in `navigators/`; screens consume contexts/hooks and call 
 
 - Version bump + `docs/release_notes/{version}.md` required (CI gate).
 - Keep PRs scoped; include tests where feasible.
-- Verify both platforms when touching shared logic; note platform-specific impacts in the PR description.
+- Verify both platforms when touching shared logic; note platform-specific impacts in the PR description, follow the PR template given at [`.github/pull_request_template.md`](../.github/pull_request_template.md)
 - Link related issues/tickets and call out follow-ups.

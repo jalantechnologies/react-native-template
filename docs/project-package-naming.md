@@ -1,10 +1,14 @@
-# Android Flavoring & Distribution
+# Project Package Naming & Flavoring
 
-We ship two Android product flavors (package name / bundle name) so preview builds can coexist with production installs in the same device:
+This doc covers how package names and flavors are set. Android flavoring is configured; iOS flavoring / variable package naming is not yet documented — track progress here: [Issue #312](https://github.com/jalantechnologies/react-native-template/issues/312).
+
+## Android Flavoring & Distribution
+
+We ship two Android product flavors so preview builds can coexist with production installs on the same device:
 - **production**: base `applicationId`
 - **preview**: adds `applicationIdSuffix ".preview"`
 
-Ex. production -> com.company.app ; preview -> com.company.app.preview
+Defined in [`android/app/build.gradle`](../android/app/build.gradle) with source under [`android/app/src`](../android/app/src/). Example: production -> `com.company.app`; preview -> `com.company.app.preview`.
 
 ## Required GitHub Secrets (Android)
 
@@ -20,4 +24,3 @@ Ex. production -> com.company.app ; preview -> com.company.app.preview
 
 - Firebase App Distribution should point to the preview package (`<base>.preview`) so preview builds install separately.
 - Google Play Console uses the production package (`<base>`); no extra QA package is needed.
-

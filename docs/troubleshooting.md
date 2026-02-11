@@ -20,6 +20,7 @@ yarn start --reset-cache
 ```sh
 cd ios && rm -rf Pods Podfile.lock && bundle exec pod install
 ```
+Paths: [`ios/Podfile`](../ios/Podfile), generated `Pods/`, and `Podfile.lock` inside [`ios/`](../ios/).
 
 ## Xcode Beta Compatibility
 React Native often lags behind Xcode beta releases. If builds fail, install the latest stable Xcode instead:
@@ -28,4 +29,3 @@ brew install xcodesorg/made/xcodes
 xcodes install 26.2
 xcodes select 26.2
 ```
-

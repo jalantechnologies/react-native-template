@@ -6,7 +6,7 @@ GitHub Actions runs fast, parallel checks on every pull request to keep the code
 
 ## Workflows & Jobs
 
-`ci.yml` contains two independent jobs that run in parallel:
+[`ci.yml`](../.github/workflows/ci.yml) contains two independent jobs that run in parallel:
 - **ci/lint** — ESLint validation on the source.
 - **ci/sonarqube** — SonarQube code-quality analysis for PRs.
 
@@ -27,7 +27,6 @@ yarn test          # or yarn test:report for coverage
 - ESLint or TypeScript errors; reproduce locally with the commands above.
 - SonarQube quality gate failures; open the GitHub check details for rule-level feedback.
 - Occasional macOS runner flakiness; use “Re-run jobs” if the failure is infrastructure-related.
-- ESLint or type-check issues; run the commands above locally to reproduce.
 
 
 **Issues related CI**

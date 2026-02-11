@@ -4,12 +4,12 @@ This guide covers the tools you need and the commands to get the app running loc
 
 ## Prerequisites
 
-This project uses [asdf](https://asdf-vm.com/) to pin toolchain versions defined in `.tool-versions` (CI also reads `.nvmrc` for Node).
+This project uses [asdf](https://asdf-vm.com/) to pin toolchain versions defined in [`.tool-versions`](../.tool-versions) (CI also reads [`.nvmrc`](../.nvmrc) for Node).
 
 | Tool | Version | Installation |
 |------|---------|--------------|
 | Node.js | 22.13.1 | `asdf plugin add nodejs && asdf install nodejs` |
-| Yarn | 3.6.4 | `corepack enable && yarn -v` (reads version from `package.json`) |
+| Yarn | 3.6.4 | `corepack enable && yarn -v` (reads version from [`package.json`](../package.json)) |
 | Watchman | Latest | `brew install watchman` |
 | JDK | 17 | `brew install openjdk@17` |
 | Ruby | 3.2.3 | `asdf plugin add ruby && asdf install ruby` |

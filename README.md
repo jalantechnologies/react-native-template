@@ -18,7 +18,7 @@ yarn ios | yarn android
 - [Environment](docs/environment.md) — env vars, Android SDK paths, Doppler injection
 - [Architecture](docs/architecture.md) — project layout and core libraries
 - [Customization](docs/customization.md) — rebrand/rename steps for Android & iOS
-- [Android Flavoring](docs/android-flavoring.md) — flavors, required secrets
+- [Project Package Naming & Flavoring](docs/project-package-naming.md) — Android flavors and package naming (iOS coming soon)
 - [Release Process](docs/release-process.md) — release steps and artifacts
 - [Troubleshooting](docs/troubleshooting.md) — common local build fixes
 - [CI](docs/ci.md) — GitHub Actions checks

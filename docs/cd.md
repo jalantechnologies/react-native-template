@@ -5,26 +5,26 @@ GitHub Actions + Fastlane handle preview, production, and permanent-preview depl
 - **Triggers:** PR events (preview deploys), and pushes to `main` (production + permanent preview).
 - **Issue routing:** file CD issues in GitHub with the `Devops` label so deployment owners are notified.
 
-## Preview Deployments (`cd.yml`)
+## Preview Deployments ([`cd.yml`](../.github/workflows/cd.yml))
 
 **What runs**
-- Version check: PR `package.json` version must be strictly greater than `main`; otherwise the workflow fails and skips deploys.
-- Release notes validation: requires `docs/release_notes/{version}.md`, non-empty, ≤ 500 characters. The validated text is emitted as workflow output and injected into:
-  - `android/fastlane/metadata/android/en-US/changelogs/default.txt`
+- Version check: PR [`package.json`](../package.json) version must be strictly greater than `main`; otherwise the workflow fails and skips deploys.
+- Release notes validation: requires [`docs/release_notes/{version}.md`](./release_notes/), non-empty, ≤ 500 characters. The validated text is emitted as workflow output and injected into:
+  - [`android/fastlane/metadata/android/en-US/changelogs/default.txt`](../android/fastlane/metadata/android/en-US/changelogs/default.txt)
   - ENV variable for iOS Fastlane upload (“What to Test”)
 - Environment injection: Doppler secrets write environment-specific `.env` values for preview builds.
 - Android preview build (Firebase App Distribution):
-  - Takes `versionNameOverride` from `package.json`
+  - Takes `versionNameOverride` from [`package.json`](../package.json)
   - Calculates `versionCodeOverride = major*10000 + minor*100 + patch`
   - Uses `ANDROID_PREVIEW_FLAVOR` (default `preview`) so the `.preview` package installs alongside production.
   - Uploads APK/AAB to Firebase with validated release notes and comments on the PR with the download link.
 - iOS preview build (TestFlight):
-  - Takes marketing `version` from `package.json`
+  - Takes marketing `version` from [`package.json`](../package.json)
   - `build_number` = `<PR_NUMBER><YYMMDDHHMM>` for uniqueness per PR
   - Uses Fastlane with preview signing, attaches release notes, and comments on the PR with build details.
 - PR comment summarizes Firebase + TestFlight artifacts.
 
-## Production Deployment (`production.yml`)
+## Production Deployment ([`production.yml`](../.github/workflows/production.yml))
 
 **Trigger:** push to `main` (post-merge).
 
@@ -32,14 +32,14 @@ GitHub Actions + Fastlane handle preview, production, and permanent-preview depl
 - Release notes validation identical to preview (file must exist, non-empty, ≤ 500 chars); writes to Fastlane metadata of both ios and android.
 - Doppler secret injection for production env values.
 - Android production build → Google Play Internal track:
-  - Takes `versionNameOverride` from `package.json`
+  - Takes `versionNameOverride` from [`package.json`](../package.json)
   - Calculates `versionCodeOverride = major*10000 + minor*100 + patch`
   - Uses `ANDROID_PRODUCTION_FLAVOR` (default `production`).
 - iOS production build → App Store Connect:
-  - `version` from `package.json`
+  - `version` from [`package.json`](../package.json)
   - `build_number` derived from marketing version (e.g., `1.0.13` → `1000013`).
 
-## Permanent Preview (`permanent_preview.yml`)
+## Permanent Preview ([`permanent_preview.yml`](../.github/workflows/permanent_preview.yml))
 
 **Trigger:** push to `main` (runs alongside production).
 
@@ -50,7 +50,7 @@ GitHub Actions + Fastlane handle preview, production, and permanent-preview depl
 
 ## Release Notes Structure & Gates
 
-Release notes must live at `docs/release_notes/{version}.md` and are enforced in all CD workflows:
+Release notes must live at [`docs/release_notes/{version}.md`](./release_notes/) and are enforced in all CD workflows:
 - File must exist, be non-empty, and be ≤ 500 characters.
 - Content is emitted as workflow output and written to Fastlane metadata for Android/iOS.
 - Production runs also write `{versionCode}.txt` beside the default Play Console changelog.

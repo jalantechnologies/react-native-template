@@ -18,8 +18,8 @@ This project uses [asdf](https://asdf-vm.com/) to pin toolchain versions defined
    - Linux (Debian/Ubuntu): `git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0 && echo '. "$HOME/.asdf/asdf.sh"' >> ~/.bashrc && source ~/.bashrc`  
    - Windows: install via [asdf-win](https://github.com/asdf-vm/asdf-windows) or skip asdf and install Node/Ruby directly.
 2. **Node.js** 22.13.1: `asdf plugin add nodejs && asdf install nodejs` (reads version from [`.tool-versions`](../.tool-versions))
-3. **Yarn** 3.6.4: `corepack enable && yarn -v` (uses version from [`package.json`](../package.json))
-4. **Ruby** 3.2.3: `asdf plugin add ruby && asdf install ruby && gem install bundler`
+3. **Yarn** 3.6.4 (installs `yarn` command): `corepack enable && corepack prepare yarn@3.6.4 --activate && yarn -v` (uses version from [`package.json`](../package.json))
+4. **Ruby** 3.2.3 + Bundler (installs `bundle` command): `asdf plugin add ruby && asdf install ruby && gem install bundler && bundle -v`
 5. **Watchman** (file watcher)  
    - macOS: `brew install watchman`  
    - Linux: optional; Metro runs without it but you can build from source or skip.  

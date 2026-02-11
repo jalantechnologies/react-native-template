@@ -7,6 +7,8 @@ Production-ready React Native boilerplate with TypeScript, navigation, state man
 ```sh
 git clone git@github.com:jalantechnologies/react-native-template.git
 cd react-native-template
+corepack enable && corepack prepare yarn@3.6.4 --activate  # install yarn command
+gem install bundler    # install bundle command (Ruby required)
 yarn install          # install JS deps
 bundle install        # iOS: Ruby gems
 yarn pod-install      # iOS: install pods

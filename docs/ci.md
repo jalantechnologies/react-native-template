@@ -10,6 +10,20 @@ GitHub Actions runs fast, parallel checks on every pull request to keep the code
 - **ci/lint** — ESLint validation on the source.
 - **ci/sonarqube** — SonarQube code-quality analysis for PRs.
 
+## Workflow Flow Diagram
+
+```mermaid
+flowchart LR
+  PR[Pull Request opened or updated] --> CI[ci.yml]
+  CI --> LINT[ci/lint]
+  CI --> SONAR[ci/sonarqube]
+  LINT --> RESULT{All checks pass?}
+  SONAR --> RESULT
+  RESULT -->|Yes| READY[PR ready for review or merge]
+  RESULT -->|No| FIX[Fix issues and re-run]
+  FIX --> PR
+```
+
 ## Runners
 
 Lint and quality jobs execute on macOS so iOS dependencies are available while keeping runtime low.

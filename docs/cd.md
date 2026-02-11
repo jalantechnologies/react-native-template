@@ -5,6 +5,26 @@ GitHub Actions + Fastlane handle preview, production, and permanent-preview depl
 - **Triggers:** PR events (preview deploys), and pushes to `main` (production + permanent preview).
 - **Issue routing:** file CD issues in GitHub with the `Devops` label so deployment owners are notified.
 
+## Workflow Flow Diagram
+
+```mermaid
+flowchart TB
+  PR[Pull Request opened or updated] --> PRWF[cd.yml]
+  PRWF --> PRGATES[Version check + Release notes check]
+  PRGATES --> PRPASS{Checks pass?}
+  PRPASS -->|Yes| PRDEPLOY[Build and Deploy Android + iOS preview<br/>and update PR comment links]
+  PRPASS -->|No| PRSTOP[Stop deployment]
+
+  MAIN[Push to main] --> PRODWF[production.yml]
+  MAIN --> PPWF[permanent_preview.yml]
+  PRODWF --> PRODRN[Release notes validation]
+  PRODRN --> PRODBUILD[Build Android and IOS production apps]
+  PRODBUILD --> PRODDEPLOY[Deploy Android apk to Play + iOS .ipa to App Store]
+  PPWF --> PPRN[Release notes validation]
+  PPRN --> PPBUILD[Build signed Android/iOS preview artifacts]
+  PPBUILD --> PPPUBLISH[Publish preview GitHub Release]
+```
+
 ## Preview Deployments ([`cd.yml`](../.github/workflows/cd.yml))
 
 **What runs**

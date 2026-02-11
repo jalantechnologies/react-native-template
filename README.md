@@ -18,13 +18,14 @@ yarn ios | yarn android
 - [Environment](docs/environment.md) — env vars, Android SDK paths, Doppler injection
 - [Architecture](docs/architecture.md) — project layout and core libraries
 - [Customization](docs/customization.md) — rebrand/rename steps for Android & iOS
-- [Project Package Naming & Flavoring](docs/project-package-naming.md) — Android flavors and package naming (iOS coming soon)
-- [Release Process](docs/release-process.md) — release steps and artifacts
-- [Troubleshooting](docs/troubleshooting.md) — common local build fixes
-- [CI](docs/ci.md) — GitHub Actions checks
-- [CD](docs/cd.md) — preview/production/permanent-preview deployment pipelines
-- [Automation & Tooling](docs/automation.md) — workflow files, Doppler, Fastlane lanes
+- [Project Package Naming & Flavoring](docs/project-package-naming.md) — project package naming and flavouring
+- [Release Process](docs/release-process.md) — production release steps
 - [Release Notes](docs/release_notes/) — required per-version notes for pipelines
+- [Automation & Tooling](docs/automation.md) — workflow files, Doppler secret injection, Fastlane lanes
+- [CI](docs/ci.md) — gitHub actions checks
+- [CD](docs/cd.md) — preview/production/permanent-preview deployment pipelines
+- [Troubleshooting](docs/troubleshooting.md) — common local build fixes
+
 
 ## License
 

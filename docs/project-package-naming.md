@@ -1,6 +1,6 @@
 # Project Package Naming & Flavoring
 
-This doc covers how package names and flavors are set. Android flavoring is configured; iOS flavoring / variable package naming is not yet documented — track progress here: [Issue #312](https://github.com/jalantechnologies/react-native-template/issues/312).
+This doc covers how package names and flavors are set. Android flavoring is configured; iOS flavoring / variable package naming is not yet implemented and documented — track progress here: [Issue #312](https://github.com/jalantechnologies/react-native-template/issues/312).
 
 ## Android Flavoring & Distribution
 

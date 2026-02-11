@@ -4,6 +4,8 @@ This project uses GitHub Actions, Doppler, and Fastlane to build, test, and ship
 
 ## GitHub Workflows
 
+Read more detailed working of CI/CD in [CI](docs/ci.md) and [CD](docs/cd.md).
+
 - [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) — Pull-request checks (lint, type-check, SonarQube).
 - [`.github/workflows/cd.yml`](../.github/workflows/cd.yml) — PR preview deployments (Android → Firebase App Distribution, iOS → TestFlight) with version and release-notes gates.
 - [`.github/workflows/production.yml`](../.github/workflows/production.yml) — Deploys `main` to Google Play (internal track) and App Store Connect.
@@ -48,4 +50,4 @@ This project uses GitHub Actions, Doppler, and Fastlane to build, test, and ship
 
 ## Where to File Issues
 
-Use the `CI/CD` label on GitHub issues for pipeline or deploy problems.
+Use the `Devops` label on GitHub issues for pipeline or deploy problems.

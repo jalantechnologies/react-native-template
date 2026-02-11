@@ -21,8 +21,8 @@ GitHub Actions + Fastlane handle preview, production, and permanent-preview depl
 - iOS preview build (TestFlight):
   - Takes marketing `version` from [`package.json`](../package.json)
   - `build_number` = `<PR_NUMBER><YYMMDDHHMM>` for uniqueness per PR
-  - Uses Fastlane with preview signing, attaches release notes, and comments on the PR with build details.
-- PR comment summarizes Firebase + TestFlight artifacts.
+  - Uses Fastlane with preview signing, attaches release notes, and comments on the PR with build link.
+- PR comment summarizes Firebase + TestFlight artifacts with links.
 
 ## Production Deployment ([`production.yml`](../.github/workflows/production.yml))
 

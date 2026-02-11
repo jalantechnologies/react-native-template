@@ -28,6 +28,12 @@ yarn test          # or yarn test:report for coverage
 - SonarQube quality gate failures; open the GitHub check details for rule-level feedback.
 - Occasional macOS runner flakiness; use “Re-run jobs” if the failure is infrastructure-related.
 
+## SonarQube Notes
 
-**Issues related CI**
-- For any issue related to whole CI/CD, create a github issue with proper description with the `Devops` label, and any other labels that may apply.
+- Quality gate fails when new bugs/vulnerabilities are reported or when coverage on new code drops below the project gate configured in SonarQube.
+- From a failed PR check, click the SonarQube link to see rule-level findings; fix or justify (with suppression only when appropriate) and re-run the job.
+- Add or update tests to raise coverage on changed files; snapshots alone rarely fix coverage gates.
+
+## CI-related issues
+
+Open a GitHub issue with the `Devops` label (and any relevant labels) and include the failing workflow run link.

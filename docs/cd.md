@@ -93,26 +93,6 @@ Release notes must live at [`docs/release_notes/{version}.md`](./release_notes/)
 | `IOS_MATCH_PASSWORD` | Match repo decryption password. |
 | `IOS_MATCH_REPOSITORY_URL` | Git URL for Match certificates/profiles. |
 
-## Workflow Summaries
+## CD-related issues
 
-**Android PR Preview → Firebase App Distribution**
-- Trigger: PR open/update/ready-for-review.
-- Sets version name from `package.json`; computes version code from semantic version; builds preview flavor; uploads with release notes; comments on PR with download link.
-
-**iOS PR Preview → TestFlight**
-- Trigger: PR open/update/ready-for-review.
-- Sets marketing version from `package.json`; build number `<PR_NUMBER><YYMMDDHHMM>`; uses Match signing; uploads to TestFlight with release notes; comments on PR.
-
-**Preview Cleanup on PR Close**
-- Cleans preview artifacts to prevent stale installs.
-
-**Production Release**
-- Trigger: push to `main`.
-- Ships Android to Play Internal and iOS to App Store Connect after release-notes validation.
-
-**Permanent Preview**
-- Trigger: push to `main`.
-- Publishes signed preview artifacts to GitHub Release `preview-v<version>`.
-
-**Issues related CD**
-- For any issue related to whole CI/CD, create a github issue with proper description with the `Devops` label, and any other labels that may apply.
+Open a GitHub issue with the `Devops` label (and any relevant labels) and include the failing workflow run link.

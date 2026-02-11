@@ -17,15 +17,15 @@ yarn ios | yarn android
 
 ## Documentation Directory
 
-- [Setup](docs/setup.md) — prerequisites, install steps, common scripts
+- [Setup](docs/setup.md) — clone, toolchain install order, first run verification
 - [Environment](docs/environment.md) — env vars, Android SDK paths, Doppler injection
-- [Architecture](docs/architecture.md) — project layout and core libraries
+- [Architecture](docs/architecture.md) — data flow, navigation/state patterns, feature how-to
 - [Customization](docs/customization.md) — rebrand/rename steps for Android & iOS
-- [Project Package Naming & Flavoring](docs/project-package-naming.md) — project package naming and flavouring
-- [Release Process](docs/release-process.md) — production release steps
+- [Project Package Naming & Flavoring](docs/project-package-naming.md) — Android package/flavor strategy; iOS pending (see issue)
+- [Release Process](docs/release-process.md) — versioning, release notes, verification, rollback
 - [Release Notes](docs/release_notes/) — required per-version notes for pipelines
-- [Automation & Tooling](docs/automation.md) — workflow files, Doppler secret injection, Fastlane lanes
-- [CI](docs/ci.md) — gitHub actions checks
+- [Automation & Tooling](docs/automation.md) — workflow map, reusable actions, Fastlane lanes
+- [CI](docs/ci.md) — GitHub Actions checks and SonarQube gate expectations
 - [CD](docs/cd.md) — preview/production/permanent-preview deployment pipelines
 - [Troubleshooting](docs/troubleshooting.md) — common local build fixes
 

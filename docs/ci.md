@@ -7,6 +7,7 @@ GitHub Actions runs fast, parallel checks on every pull request to keep the code
 ## Workflows & Jobs
 
 [`ci.yml`](../.github/workflows/ci.yml) contains two independent jobs that run in parallel:
+
 - **ci/lint** — ESLint validation on the source.
 - **ci/sonarqube** — SonarQube code-quality analysis for PRs.
 

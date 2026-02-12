@@ -37,12 +37,14 @@ Read more detailed working of CI/CD in [CI](./ci.md) and [CD](./cd.md).
 ## Fastlane Entrypoints
 
 ### Android (`android/fastlane/Fastfile`)
+
 - `pr_deploy` — Build and upload PR preview to Firebase App Distribution.
 - `deploy_android_production` — Build signed bundle and upload to Google Play (internal track).
 - `android_permanent_preview` — Build signed preview APK for GitHub Release.
 - `pr_cleanup` — Remove preview builds from Firebase when PRs close.
 
 ### iOS (`ios/fastlane/Fastfile`)
+
 - `pr_deploy` — Build and upload PR preview to TestFlight with per-PR build number.
 - `production_deploy` — Build and upload to App Store Connect.
 - `ios_permanent_preview` — Build signed preview IPA for GitHub Release.

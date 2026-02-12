@@ -31,7 +31,6 @@ yarn ios | yarn android
 - [CD](docs/cd.md) — preview/production/permanent-preview deployment pipelines
 - [Troubleshooting](docs/troubleshooting.md) — common local build fixes
 
-
 ## License
 
 Private - Jalan Technologies

@@ -5,6 +5,7 @@ This doc covers how package names and flavors are set. Android flavoring is conf
 ## Android Flavoring & Distribution
 
 We ship two Android product flavors so preview builds can coexist with production installs on the same device:
+
 - **production**: base `applicationId`
 - **preview**: adds `applicationIdSuffix ".preview"`
 
@@ -12,13 +13,13 @@ Defined in [`android/app/build.gradle`](../android/app/build.gradle) with source
 
 ## Required GitHub Secrets (Android)
 
-| Secret | Purpose |
-|--------|---------|
-| `ANDROID_APP_IDENTIFIER` | Production package name used by Fastlane/Play uploads (e.g., `com.company.app`). |
-| `ANDROID_FIREBASE_APP_ID` | Firebase App Distribution app ID for preview builds. |
-| `ANDROID_FIREBASE_APP_PACKAGE` | Preview package name for Firebase (e.g., `com.company.app.preview`). |
-| `ANDROID_FIREBASE_PROJECT_NUMBER` | Firebase project number for preview builds. |
-| `ANDROID_FIREBASE_PROJECT_ID` | Firebase project ID for preview builds. |
+| Secret                            | Purpose                                                                          |
+| --------------------------------- | -------------------------------------------------------------------------------- |
+| `ANDROID_APP_IDENTIFIER`          | Production package name used by Fastlane/Play uploads (e.g., `com.company.app`). |
+| `ANDROID_FIREBASE_APP_ID`         | Firebase App Distribution app ID for preview builds.                             |
+| `ANDROID_FIREBASE_APP_PACKAGE`    | Preview package name for Firebase (e.g., `com.company.app.preview`).             |
+| `ANDROID_FIREBASE_PROJECT_NUMBER` | Firebase project number for preview builds.                                      |
+| `ANDROID_FIREBASE_PROJECT_ID`     | Firebase project ID for preview builds.                                          |
 
 ## Firebase & Play Console Notes
 

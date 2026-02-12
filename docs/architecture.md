@@ -56,9 +56,9 @@ Navigation is defined in `navigators/`; screens consume contexts/hooks and call 
 
 - HTTP is wrapped under [`src/services/`](../src/services/); Axios instance is configured there.
 - Adding an API:
-  1) Define request/response types in [`src/types/`](../src/types/).
-  2) Implement the call in a service file in `services/` (or create a new one).
-  3) Consume from contexts or screens; keep side effects in services/contexts, not components.
+  1. Define request/response types in [`src/types/`](../src/types/).
+  2. Implement the call in a service file in `services/` (or create a new one).
+  3. Consume from contexts or screens; keep side effects in services/contexts, not components.
 
 ## Adding a Feature (happy path checklist)
 

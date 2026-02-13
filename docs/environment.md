@@ -26,7 +26,7 @@ export JAVA_HOME=$(/usr/libexec/java_home -v 17)
 
 ## Doppler-Managed Secrets
 
-CD writes environment-specific `.env` files via the local action `.github/actions/inject_doppler_secrets` and it requries:
+CD writes environment-specific `.env` files via the local action `.github/actions/inject_doppler_secrets` and it requires:
 
 - Preview token from doppler: `DOPPLER_PREVIEW_TOKEN`
 - Production token from doppler: `DOPPLER_PRODUCTION_TOKEN`

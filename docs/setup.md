@@ -12,6 +12,7 @@ cd react-native-template
 ## 2) Install tooling (in this order)
 
 This project uses [asdf](https://asdf-vm.com/) to pin toolchain versions defined in [`.tool-versions`](../.tool-versions) (CI also reads [`.nvmrc`](../.nvmrc) for Node).
+Version numbers in this guide are based on the current `main` branch of this repository and may change as `main` evolves.
 
 1. Install **asdf**
    - macOS: `brew install asdf && echo '\n. /opt/homebrew/opt/asdf/libexec/asdf.sh' >> ~/.zshrc && source ~/.zshrc`

@@ -14,7 +14,7 @@ bundle install        # iOS: Ruby gems
 yarn pod-install      # iOS: install pods
 yarn start            # start Metro (separate tab)
 # create .env (see docs/environment.md for required keys)
-yarn ios | yarn android
+yarn android              # or: yarn ios
 ```
 
 ## Documentation Directory

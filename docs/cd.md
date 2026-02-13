@@ -41,7 +41,7 @@ flowchart TB
   - Uploads APK/AAB to Firebase with validated release notes and comments on the PR with the download link.
 - iOS preview build (TestFlight):
   - Takes marketing `version` from [`package.json`](../package.json)
-  - `build_number` = `<PR_NUMBER><YYMMDDHHMM>` for uniqueness per PR
+  - `build_number` = `<PR_NUMBER><YYMMDDHHMM>` for uniqueness per PR (example: PR `123` at `2502141030` -> `1232502141030`)
   - Uses Fastlane with preview signing, attaches release notes, and comments on the PR with build link.
 - PR comment summarizes Firebase + TestFlight artifacts with links.
 

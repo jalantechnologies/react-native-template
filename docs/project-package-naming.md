@@ -24,4 +24,4 @@ Defined in [`android/app/build.gradle`](../android/app/build.gradle) with source
 ## Firebase & Play Console Notes
 
 - Firebase App Distribution should point to the preview package (`<base>.preview`) so preview builds install separately.
-- Google Play Console uses the production package (`<base>`); no extra QA package is needed.
+- Google Play Console uses the production package (`<base>`, e.g., `com.company.app`); no extra QA package is needed.

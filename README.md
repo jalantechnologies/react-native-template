@@ -1,225 +1,35 @@
 # React Native Template
 
-A production-ready React Native boilerplate with TypeScript, navigation, state management, monitoring, and CI/CD pipelines.
+Production-ready React Native boilerplate with TypeScript, navigation, state management, monitoring, and CI/CD pipelines.
 
-## Prerequisites
-
-This project uses [asdf](https://asdf-vm.com/) for version management. The `.tool-versions` file specifies the required Node.js and Ruby versions.
-
-| Tool | Version | Installation |
-|------|---------|--------------|
-| Node.js | 22.13.1 | Via [asdf](https://asdf-vm.com/): `asdf plugin add nodejs && asdf install nodejs` |
-| Yarn | 3.6.4 | `corepack enable && yarn -v` (uses version from `package.json`) |
-| Watchman | Latest | `brew install watchman` (required, not managed by asdf) |
-| JDK | 17 | `brew install openjdk@17` |
-| Ruby | 3.2.3 | Via [asdf](https://asdf-vm.com/): `asdf plugin add ruby && asdf install ruby` |
-
-### iOS Only
-- Xcode 26.x (stable release, not beta):
-  ```sh
-  brew install xcodesorg/made/xcodes
-  xcodes install 26.2
-  xcodes select 26.2
-  ```
-- CocoaPods: `gem install cocoapods`
-
-### Android Only
-- [Android Studio](https://developer.android.com/studio) with SDK & Emulator
-- Environment variables in `~/.zshrc`:
-  ```sh
-  export ANDROID_HOME=$HOME/Library/Android/sdk
-  export PATH=$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools
-  export JAVA_HOME=$(/usr/libexec/java_home -v 17)
-  ```
-
-## Quick Start
+## Quickstart
 
 ```sh
-# Install dependencies
-yarn install
-
-# iOS: Install Ruby gems and pods
-bundle install
-yarn pod-install
-
-# Start Metro bundler (in a separate terminal)
-yarn start
-
-# Run on device/simulator
-yarn ios      # iOS
-yarn android  # Android
+git clone git@github.com:jalantechnologies/react-native-template.git
+cd react-native-template
+corepack enable && corepack prepare yarn@3.6.4 --activate  # install yarn command
+gem install bundler    # install bundle command (Ruby required)
+yarn install          # install JS deps
+bundle install        # iOS: Ruby gems
+yarn pod-install      # iOS: install pods
+yarn start            # start Metro (separate tab)
+# create .env (see docs/environment.md for required keys)
+yarn android              # or: yarn ios
 ```
 
-## Project Structure
+## Documentation Directory
 
-```
-src/
-├── components/     # Reusable UI components
-├── screens/        # App screens (auth, dashboard, profile)
-├── navigators/     # React Navigation setup
-├── services/       # API client, auth, Datadog
-├── contexts/       # React Context providers (auth, account, task)
-├── types/          # TypeScript definitions
-├── constants/      # App constants
-├── utils/          # Hooks and utilities
-├── translations/   # i18n resources
-├── logger/         # Logging (console, Datadog)
-├── config.ts       # Environment config wrapper
-└── app.tsx         # App entry point
-```
-
-## Available Scripts
-
-| Command | Description |
-|---------|-------------|
-| `yarn start` | Start Metro bundler |
-| `yarn ios` | Run on iOS simulator |
-| `yarn android` | Run on Android emulator |
-| `yarn lint` | Run ESLint |
-| `yarn type-check` | Run TypeScript compiler |
-| `yarn test` | Run Jest tests |
-| `yarn test:report` | Run tests with coverage |
-| `yarn pod-install` | Install iOS CocoaPods |
-
-## Environment Configuration
-
-Create a `.env` file in the project root:
-
-```env
-ENVIRONMENT=development
-API_BASE_URL=https://your-api.com/api
-DD_APPLICATION_ID=your-datadog-app-id
-DD_CLIENT_TOKEN=your-datadog-client-token
-DD_SITE=US5
-LOGGER=console
-```
-
-Set `LOGGER=datadog` or `LOGGER=console,datadog` to enable Datadog logging.
-
-## Customizing for Your Project
-
-1. **Update app name:**
-   - `app.json`: Change `name` and `displayName`
-   - `package.json`: Change `name`
-
-2. **Android:**
-   - `android/settings.gradle`: Update `rootProject.name`
-   - `android/app/build.gradle`: Update `namespace` and `applicationId`
-   - Keep the default `production` flavor as the base package, and the `preview` flavor uses `applicationIdSuffix ".preview"` for side-by-side installs.
-   - Rename package directories under `android/app/src/*/java/com/boilerplate/`
-   - Update package declarations in Java/Kotlin files
-   - `android/app/src/main/res/values/strings.xml`: Update `app_name`
-
-3. **iOS:**
-   - Rename `ios/Boilerplate` folder to your app name
-   - Update `ios/Podfile` targets
-   - Update `CFBundleDisplayName` in `ios/Boilerplate/Info.plist`
-   - Run `yarn pod-install`
-
-4. **CI/CD:**
-   - `.github/workflows/*.yml`: Update project references
-   - `sonar-project.properties`: Update `sonar.projectKey`
-
-## Android Flavoring & CI/CD Setup
-
-This template ships with two Android flavors so preview builds can coexist with production installs:
-- **production**: base `applicationId`
-- **preview**: uses `applicationIdSuffix ".preview"` so it installs as `<base>.preview`
-
-### Required GitHub Secrets (Android)
-
-| Secret | Purpose |
-|--------|---------|
-| `ANDROID_APP_IDENTIFIER` | Production package name used by Fastlane/Play uploads (e.g., `com.company.app`). |
-| `ANDROID_FIREBASE_APP_ID` | Firebase App Distribution app ID for preview builds. |
-| `ANDROID_FIREBASE_APP_PACKAGE` | Preview package name for Firebase (e.g., `com.company.app.preview`). |
-| `ANDROID_FIREBASE_PROJECT_NUMBER` | Firebase project number for preview builds. |
-| `ANDROID_FIREBASE_PROJECT_ID` | Firebase project ID for preview builds. |
-
-### Optional Environment Overrides
-
-| Variable | Default | When to change |
-|----------|---------|----------------|
-| `ANDROID_PREVIEW_FLAVOR` | `preview` | If you rename the preview flavor. |
-| `ANDROID_PRODUCTION_FLAVOR` | `production` | If you rename the production flavor. |
-
-### Firebase & Play Console Notes
-
-- **Firebase App Distribution** should point to the **preview package** (`<base>.preview`) so preview builds install separately.
-- **Google Play Console** should use the **production package** (`<base>`). No QA package is needed in Play Console.
-
-
-## Key Libraries
-
-| Library | Purpose |
-|---------|---------|
-| React Navigation | Screen navigation |
-| NativeBase | UI components |
-| Formik + Yup | Form handling & validation |
-| Axios | HTTP client |
-| AsyncStorage | Local storage |
-| Datadog RUM | Monitoring & analytics |
-| i18next | Internationalization |
-| React Native Reanimated | Animations |
-
-## CI/CD Pipelines
-
-### Pull Requests
-- **Lint Check**: ESLint validation
-- **SonarQube**: Code quality analysis
-- **Version Check**: Ensures PR version > main version
-- **Release Notes**: Validates `docs/release_notes/{version}.md` exists
-
-### Preview Deployment (on PR)
-- Android: Firebase App Distribution
-- iOS: TestFlight
-
-### Production Deployment (on merge to main)
-- Android: Google Play Store
-- iOS: App Store
-
-### Permanent Preview (on merge to main)
-- Android: signed preview APK uploaded to a GitHub Release
-- iOS: signed preview IPA uploaded to a GitHub Release
-
-
-## Release Process
-
-1. Update version in `package.json`
-2. Create `docs/release_notes/{version}.md` (max 500 chars)
-3. Open PR to `main`
-4. After merge, production deployment and permanent preview release trigger automatically
-
-## Troubleshooting
-
-### Android Emulator Warning on macOS
-If you see "can't be opened because it is from an unidentified developer":
-1. Go to System Settings > Privacy & Security
-2. Click "Open Anyway" next to the Android Emulator warning
-
-### Localhost Backend on Android
-```sh
-adb reverse tcp:3000 tcp:3000
-```
-Then use `http://localhost:3000` as your API URL.
-
-### Metro Bundler Issues
-```sh
-yarn start --reset-cache
-```
-
-### iOS Build Failures
-```sh
-cd ios && rm -rf Pods Podfile.lock && bundle exec pod install
-```
-
-### Xcode Beta Compatibility
-React Native may not work with Xcode beta versions. If builds fail, install a stable release:
-```sh
-brew install xcodesorg/made/xcodes
-xcodes install 26.2
-xcodes select 26.2
-```
+- [Setup](docs/setup.md) — clone, toolchain install order, first run verification
+- [Environment](docs/environment.md) — env vars, Android SDK paths, Doppler injection
+- [Architecture](docs/architecture.md) — data flow, navigation/state patterns, feature how-to
+- [Customization](docs/customization.md) — rebrand/rename steps for Android & iOS
+- [Project Package Naming & Flavoring](docs/project-package-naming.md) — Android package/flavor strategy; iOS pending (see issue)
+- [Release Process](docs/release-process.md) — versioning, release notes, verification, rollback
+- [Release Notes](docs/release_notes/) — required per-version notes for pipelines
+- [Automation & Tooling](docs/automation.md) — workflow map, reusable actions, Fastlane lanes
+- [CI](docs/ci.md) — GitHub Actions checks and SonarQube gate expectations
+- [CD](docs/cd.md) — preview/production/permanent-preview deployment pipelines
+- [Troubleshooting](docs/troubleshooting.md) — common local build fixes
 
 ## License
 

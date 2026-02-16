@@ -13,14 +13,14 @@ GitHub Actions runs fast, parallel checks on every pull request to keep the code
 
 ## PR Titles & Auto-Labeling
 
-- PR titles must use Conventional Commit format: `<type>(<scope>): <subject>` (scope optional, imperative, no period).
-- Breaking changes add `!` before the colon: `feat!: ...` or `feat(api)!: ...`.
-- `.github/workflows/pr-labeler.yml` applies labels based on the prefix:
-  - `feat:` → `type: feat` + `semver: minor`
-  - `fix:` → `type: fix` + `semver: patch`
-  - `perf:` → `type: perf` + `semver: patch`
-  - `docs|style|refactor|test|chore|ci:` → corresponding `type:` label (no semver)
-  - `feat!:` / `fix!:` (with or without scope) → `semver: major`
+Use Conventional Commit titles so the `pr-labeler` workflow can tag PRs automatically and signal the expected semver impact.
+
+- **Format:** `<type>(<scope>): <subject>` — scope optional, ≤50 chars, imperative, no period.
+- **Breaking changes:** add `!` before the colon: `feat!: ...` or `feat(api)!: ...`.
+- **Enforcement:** the workflow fails if the prefix is missing/invalid, so titles must be fixed before merge.
+- **Labels created + colored:** the workflow creates/updates the `type:` and `semver:` labels with preset colors and descriptions, then applies them to the PR.
+- **Mappings:** `feat:` → `type: feat` + `semver: minor`; `fix:` → `type: fix` + `semver: patch`; `perf:` → `type: perf` + `semver: patch`; `docs|style|refactor|test|chore|ci:` → matching `type:` label (no semver); `feat!:` / `fix!:` (with or without scope) → `semver: major`.
+- **Why:** reviewers see the change type at a glance, release automation can infer bump size, and changelog triage stays consistent with commit semantics.
 
 ## Workflow Flow Diagram
 

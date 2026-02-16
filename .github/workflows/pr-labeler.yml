@@ -34,6 +34,68 @@ jobs:
               { pattern: /^ci(\(.+?\))?:/i, typeLabel: 'type: ci', semverLabel: null },
             ];
 
+            // Label metadata (color + description) for auto-created labels
+            const labelDetails = {
+              'type: feat': { color: '2E8B57', description: 'User-facing feature or enhancement' },
+              'type: fix': { color: 'D73A4A', description: 'User-visible bug fix' },
+              'type: perf': { color: 'BFDADC', description: 'Performance improvements' },
+              'type: docs': { color: '0366D6', description: 'Documentation-only change' },
+              'type: style': { color: 'F9D0C4', description: 'Formatting or stylistic tweaks (no logic change)' },
+              'type: refactor': { color: '8A63D2', description: 'Code restructuring without behavior change' },
+              'type: test': { color: '0E8A16', description: 'Add or update tests' },
+              'type: chore': { color: 'BFD4F2', description: 'Maintenance or tooling upkeep' },
+              'type: ci': { color: 'F9BC2F', description: 'CI/CD configuration or pipeline updates' },
+              'semver: major': { color: 'B60205', description: 'Breaking change; requires major bump' },
+              'semver: minor': { color: '5319E7', description: 'Backward-compatible feature' },
+              'semver: patch': { color: '1D76DB', description: 'Backward-compatible bug or perf fix' },
+            };
+
+            const ensureLabel = async (name) => {
+              const meta = labelDetails[name];
+              if (!meta) return;
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name,
+                  color: meta.color.replace('#', ''),
+                  description: meta.description,
+                });
+                console.log(`Created label: ${name}`);
+              } catch (error) {
+                if (error.status === 422) {
+                  await github.rest.issues.updateLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    name,
+                    new_name: name,
+                    color: meta.color.replace('#', ''),
+                    description: meta.description,
+                  });
+                  console.log(`Updated label: ${name}`);
+                } else {
+                  throw error;
+                }
+              }
+            };
+
+            // Ensure type + semver labels exist with colors/descriptions
+            const labelsToEnsure = [
+              'type: feat',
+              'type: fix',
+              'type: perf',
+              'type: docs',
+              'type: style',
+              'type: refactor',
+              'type: test',
+              'type: chore',
+              'type: ci',
+              'semver: major',
+              'semver: minor',
+              'semver: patch',
+            ];
+            await Promise.all(labelsToEnsure.map(ensureLabel));
+
             // Find matching prefix
             const match = labelMappings.find(mapping => mapping.pattern.test(title));
 

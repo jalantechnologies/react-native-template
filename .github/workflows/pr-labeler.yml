@@ -21,8 +21,8 @@ jobs:
 
             // Define label mappings based on PR title prefix (with optional scope)
             const labelMappings = [
-              { pattern: /^feat!(\(.+?\))?:/i, typeLabel: 'type: feat', semverLabel: 'semver: major' },
-              { pattern: /^fix!(\(.+?\))?:/i, typeLabel: 'type: fix', semverLabel: 'semver: major' },
+              { pattern: /^feat(\(.+?\))?!:/i, typeLabel: 'type: feat', semverLabel: 'semver: major' },
+              { pattern: /^fix(\(.+?\))?!:/i, typeLabel: 'type: fix', semverLabel: 'semver: major' },
               { pattern: /^feat(\(.+?\))?:/i, typeLabel: 'type: feat', semverLabel: 'semver: minor' },
               { pattern: /^fix(\(.+?\))?:/i, typeLabel: 'type: fix', semverLabel: 'semver: patch' },
               { pattern: /^perf(\(.+?\))?:/i, typeLabel: 'type: perf', semverLabel: 'semver: patch' },

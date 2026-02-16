@@ -11,6 +11,17 @@ GitHub Actions runs fast, parallel checks on every pull request to keep the code
 - **ci/lint** — ESLint validation on the source.
 - **ci/sonarqube** — SonarQube code-quality analysis for PRs.
 
+## PR Titles & Auto-Labeling
+
+- PR titles must use Conventional Commit format: `<type>(<scope>): <subject>` (scope optional, imperative, no period).
+- Breaking changes add `!` before the colon: `feat!: ...` or `feat(api)!: ...`.
+- `.github/workflows/pr-labeler.yml` applies labels based on the prefix:
+  - `feat:` → `type: feat` + `semver: minor`
+  - `fix:` → `type: fix` + `semver: patch`
+  - `perf:` → `type: perf` + `semver: patch`
+  - `docs|style|refactor|test|chore|ci:` → corresponding `type:` label (no semver)
+  - `feat!:` / `fix!:` (with or without scope) → `semver: major`
+
 ## Workflow Flow Diagram
 
 ```mermaid

@@ -134,34 +134,6 @@ jobs:
             exit 1
           fi
 
-      - name: Trigger downstream workflows (workflow_dispatch)
-        if: steps.bump.outputs.should_bump == 'true'
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          TARGET_REF: ${{ github.ref_name }}
-        run: |
-          if [ -z "$GH_TOKEN" ]; then
-            echo "::error::Failed to create GitHub App token."
-            exit 1
-          fi
-
-          for workflow in production.yml permanent_preview.yml; do
-            echo "Dispatching ${workflow} on ref ${TARGET_REF}"
-            curl -X POST \
-              -H "Authorization: Bearer $GH_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              --fail-with-body \
-              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/${workflow}/dispatches" \
-              -d @- <<PAYLOAD
-          {
-            "ref": "${TARGET_REF}",
-            "inputs": {
-              "ref": "${TARGET_REF}"
-            }
-          }
-          PAYLOAD
-          done
-          
       - name: Summary
         if: steps.bump.outputs.should_bump == 'true'
         run: |
@@ -172,7 +144,7 @@ jobs:
           echo "- **New version:** v${NEW_VERSION}" >> $GITHUB_STEP_SUMMARY
           echo "- **Bump type:** ${{ steps.bump.outputs.type }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch:** ${BRANCH}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Next step:** Production and permanent preview workflows are dispatched on ${BRANCH}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Next step:** Production and permanent preview workflows run from the pushed bump commit on ${BRANCH}" >> $GITHUB_STEP_SUMMARY
           
       - name: Summary (no semver label)
         if: always() && steps.bump.outputs.should_bump != 'true'

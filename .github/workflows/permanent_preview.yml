@@ -1,12 +1,12 @@
 name: permanent-preview
 
 on:
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: "Branch or ref for preview build"
-        required: false
-        default: "main"
+  push:
+    branches:
+      - main
+      - vikram/feat/add-auto-version-bumping
+    paths:
+      - docs/release_notes/**
 
 permissions:
   contents: write
@@ -17,24 +17,13 @@ concurrency:
 
 jobs:
   release_notes_check:
+    if: "${{ startsWith(github.event.head_commit.message || '', 'chore: bump version to v') }}"
     runs-on: ubuntu-latest
     outputs:
       release_notes: ${{ steps.check.outputs.release_notes }}
-      target_ref: ${{ steps.target.outputs.ref }}
     steps:
-      - name: Resolve target ref
-        id: target
-        run: |
-          REF="${{ github.event.inputs.ref }}"
-          if [ -z "$REF" ]; then
-            REF="main"
-          fi
-          echo "ref=$REF" >> "$GITHUB_OUTPUT"
-
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ steps.target.outputs.ref }}
 
       - name: Check release notes
         id: check
@@ -50,8 +39,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.release_notes_check.outputs.target_ref }}
 
       - name: Inject Doppler Preview Secrets
         uses: ./.github/actions/inject_doppler_secrets
@@ -90,8 +77,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.release_notes_check.outputs.target_ref }}
 
       - name: Inject Doppler Preview Secrets
         uses: ./.github/actions/inject_doppler_secrets
@@ -131,8 +116,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.release_notes_check.outputs.target_ref }}
 
       - name: Download artifacts
         uses: actions/download-artifact@v4

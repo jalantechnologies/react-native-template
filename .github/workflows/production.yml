@@ -1,11 +1,11 @@
 name: cd
 on:
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: "Branch or ref to deploy"
-        required: false
-        default: "main"
+  push:
+    branches:
+      - main
+      - vikram/feat/add-auto-version-bumping
+    paths:
+      - docs/release_notes/**
 
 concurrency:
   group: cd-production
@@ -13,30 +13,15 @@ concurrency:
 
 jobs:
   release_notes_check:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: "${{ startsWith(github.event.head_commit.message || '', 'chore: bump version to v') }}"
     runs-on: ubuntu-latest
     outputs:
       release_notes: ${{ steps.check.outputs.release_notes }}
       version: ${{ steps.version.outputs.version }}
-      target_ref: ${{ steps.target.outputs.ref }}
     steps:
-      - name: Resolve target ref
-        id: target
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            REF="${{ github.event.inputs.ref }}"
-            if [ -z "$REF" ] || [ "$REF" = "main" ]; then
-              REF="${{ github.ref_name }}"
-            fi
-          else
-            REF="${{ github.event.workflow_run.head_branch || 'main' }}"
-          fi
-          echo "ref=$REF" >> $GITHUB_OUTPUT
-
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.target.outputs.ref }}
           fetch-depth: 0
           
       - name: Get version
@@ -52,7 +37,7 @@ jobs:
           echo "## 🚀 Deployment Started" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Version:** $VERSION" >> $GITHUB_STEP_SUMMARY
-          echo "- **Branch:** ${{ steps.target.outputs.ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
           
       - name: Check release notes
@@ -69,8 +54,6 @@ jobs:
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.release_notes_check.outputs.target_ref }}
           
       - name: Inject Doppler Production Secrets
         uses: ./.github/actions/inject_doppler_secrets
@@ -105,8 +88,6 @@ jobs:
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.release_notes_check.outputs.target_ref }}
           
       - name: Inject Doppler Production Secrets
         uses: ./.github/actions/inject_doppler_secrets

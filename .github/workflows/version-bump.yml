@@ -1,6 +1,6 @@
 name: Version Bump
 on:
-  pull_request:
+  pull_request_target:
     types: [closed]
     branches: [main]
 
@@ -15,12 +15,19 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.VERSION_BUMP_APP_ID }}
+          private-key: ${{ secrets.VERSION_BUMP_PRIVATE_KEY }}
+
       - name: Checkout main
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.base.ref }}
-          token: ${{ secrets.PAT_TRIGGER_WORKFLOWS }}
+          token: ${{ steps.app-token.outputs.token }}
           
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -90,18 +97,19 @@ jobs:
       - name: Push changes
         if: steps.bump.outputs.should_bump == 'true'
         env:
-          PAT_TOKEN: ${{ secrets.PAT_TRIGGER_WORKFLOWS }}
+          GH_APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
-          if [ -z "$PAT_TOKEN" ]; then
-            echo "::error::PAT_TRIGGER_WORKFLOWS is required to push to protected branches."
+          if [ -z "$GH_APP_TOKEN" ]; then
+            echo "::error::Failed to create GitHub App token."
             exit 1
           fi
 
-          git remote set-url origin "https://x-access-token:${PAT_TOKEN}@github.com/${{ github.repository }}"
+          git remote set-url origin "https://x-access-token:${GH_APP_TOKEN}@github.com/${{ github.repository }}"
 
           for attempt in 1 2 3; do
-            git pull --rebase origin ${{ github.event.pull_request.base.ref }} && \
-            git push origin HEAD:${{ github.event.pull_request.base.ref }} && break
+            git pull --rebase origin "${TARGET_BRANCH}" && \
+            git push origin "HEAD:${TARGET_BRANCH}" && break
 
             echo "Push attempt $attempt failed, retrying in 5s..."
             sleep 5
@@ -112,29 +120,33 @@ jobs:
             exit 1
           fi
 
-      - name: Trigger production workflow (workflow_dispatch)
+      - name: Trigger downstream workflows (workflow_dispatch)
         if: steps.bump.outputs.should_bump == 'true'
         env:
-          GH_TOKEN: ${{ secrets.PAT_TRIGGER_WORKFLOWS }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           TARGET_REF: ${{ github.event.pull_request.base.ref }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
-            echo "::error::PAT_TRIGGER_WORKFLOWS secret is required to dispatch production workflow."
+            echo "::error::Failed to create GitHub App token."
             exit 1
           fi
-          curl -X POST \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            --fail-with-body \
-            https://api.github.com/repos/${{ github.repository }}/actions/workflows/production.yml/dispatches \
-            -d @- <<'PAYLOAD'
+
+          for workflow in production.yml permanent_preview.yml; do
+            echo "Dispatching ${workflow} on ref ${TARGET_REF}"
+            curl -X POST \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              --fail-with-body \
+              "https://api.github.com/repos/${{ github.repository }}/actions/workflows/${workflow}/dispatches" \
+              -d @- <<PAYLOAD
           {
-            "ref": "${{ env.TARGET_REF }}",
+            "ref": "${TARGET_REF}",
             "inputs": {
-              "ref": "${{ env.TARGET_REF }}"
+              "ref": "${TARGET_REF}"
             }
           }
           PAYLOAD
+          done
           
       - name: Summary
         if: steps.bump.outputs.should_bump == 'true'
@@ -146,7 +158,7 @@ jobs:
           echo "- **New version:** v${NEW_VERSION}" >> $GITHUB_STEP_SUMMARY
           echo "- **Bump type:** ${{ steps.bump.outputs.type }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch:** ${BRANCH}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Next step:** Production workflow will trigger on main" >> $GITHUB_STEP_SUMMARY
+          echo "- **Next step:** Production and permanent preview workflows are dispatched on main" >> $GITHUB_STEP_SUMMARY
           
       - name: Summary (no semver label)
         if: always() && steps.bump.outputs.should_bump != 'true'

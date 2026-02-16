@@ -52,7 +52,8 @@ jobs:
               core.setOutput('should_bump', 'true');
               core.info(`Version bump: ${bump}`);
             } else {
-              core.setFailed('No semver label found. Add one of: semver: major | semver: minor | semver: patch');
+              core.setOutput('should_bump', 'false');
+              core.info('No semver label found, skipping version bump and downstream workflow dispatch.');
             }
             
       - name: Bump version

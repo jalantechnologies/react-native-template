@@ -1,1 +1,2 @@
-<enter release notes for the next version here (max 500 chars)>
+- Automated semantic version bumping on merge using PR semver labels.
+- Shared `release_notes.md` now captures notes during review and is rotated to versioned files automatically.

@@ -1,16 +1,16 @@
 name: Version Bump
 on:
-  push:
-    branches:
-      - vikram/feat/add-auto-version-bumping
+  pull_request_target:
+    types: [closed]
+    branches: [main]
 
 concurrency:
-  group: version-bump-${{ github.ref_name }}
+  group: version-bump-main
   cancel-in-progress: false
 
 jobs:
   bump:
-    if: "${{ github.actor != 'github-actions[bot]' && !startsWith(github.event.head_commit.message || '', 'chore: bump version to v') }}"
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -22,11 +22,11 @@ jobs:
           app-id: ${{ secrets.VERSION_BUMP_APP_ID }}
           private-key: ${{ secrets.VERSION_BUMP_PRIVATE_KEY }}
 
-      - name: Checkout target branch
+      - name: Checkout main
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.event.pull_request.base.ref }}
           token: ${{ steps.app-token.outputs.token }}
           
       - name: Setup Node
@@ -39,20 +39,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const branch = context.ref.replace('refs/heads/', '');
-            const { owner, repo } = context.repo;
-            const head = `${owner}:${branch}`;
-
-            const { data: prs } = await github.rest.pulls.list({
-              owner,
-              repo,
-              state: 'open',
-              head,
-              per_page: 1,
-            });
-
-            const labels = prs.length ? prs[0].labels.map(l => l.name) : [];
-            console.log('Branch:', branch);
+            const labels = context.payload.pull_request.labels.map(l => l.name);
             console.log('PR Labels:', labels);
             
             let bump = null;
@@ -112,7 +99,7 @@ jobs:
         if: steps.bump.outputs.should_bump == 'true'
         env:
           GH_APP_TOKEN: ${{ steps.app-token.outputs.token }}
-          TARGET_BRANCH: ${{ github.ref_name }}
+          TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
           if [ -z "$GH_APP_TOKEN" ]; then
             echo "::error::Failed to create GitHub App token."
@@ -138,7 +125,7 @@ jobs:
         if: steps.bump.outputs.should_bump == 'true'
         run: |
           NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
-          BRANCH="${{ github.ref_name }}"
+          BRANCH="${{ github.event.pull_request.base.ref }}"
           echo "## ✅ Version Bumped Successfully" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **New version:** v${NEW_VERSION}" >> $GITHUB_STEP_SUMMARY
@@ -151,6 +138,6 @@ jobs:
         run: |
           echo "## ⚠️ Version Bump Skipped" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Reason:** No semver label found on open PR for this branch." >> $GITHUB_STEP_SUMMARY
+          echo "**Reason:** No semver label found on merged PR." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Please add one of: semver: patch | semver: minor | semver: major" >> $GITHUB_STEP_SUMMARY

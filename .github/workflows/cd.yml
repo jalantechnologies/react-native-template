@@ -140,7 +140,7 @@ jobs:
   deploy_ios:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false' && needs.changes.outputs.ios == 'true'
     needs: [changes, check_version_number, release_notes_check]
-    runs-on: macos-15
+    runs-on: macos-15-xlarge
     timeout-minutes: 60
     permissions:
       pull-requests: write

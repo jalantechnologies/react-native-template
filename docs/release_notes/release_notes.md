@@ -1,2 +1,6 @@
-- Automated semantic version bumping on merge using PR semver labels.
-- Shared `release_notes.md` now captures notes during review and is rotated to versioned files automatically.
+### CI/CD automation update
+- Added post-merge auto version bump on `main` using semver labels from merged PRs.
+- `release_notes.md` is now rotated to `docs/release_notes/<version>.md` during bump, then reset with a fresh template.
+- Production and permanent preview run only from the bump commit push.
+- Version bump uses `Better Software-version-bump-bot` with branch-rule bypass.
+- Updated CD/automation docs with fork setup and required app permissions.

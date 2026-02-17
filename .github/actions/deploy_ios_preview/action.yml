@@ -86,6 +86,17 @@ runs:
         restore-keys: |
           ${{ runner.os }}-pods-
 
+    - name: Cache SwiftPM
+      id: spm-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/Library/Caches/org.swift.swiftpm
+          ~/Library/Developer/Xcode/DerivedData/SourcePackages
+        key: ${{ runner.os }}-spm-${{ hashFiles('ios/Package.resolved', 'ios/Package.swift', 'ios/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
     - name: Cache Xcode DerivedData
       uses: actions/cache@v4
       with:
@@ -148,6 +159,7 @@ runs:
       run: bundle exec fastlane ios pr_deploy
       shell: bash
       env:
+        DERIVED_DATA_PATH: ~/Library/Developer/Xcode/DerivedData
         MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}
         IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
         IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}

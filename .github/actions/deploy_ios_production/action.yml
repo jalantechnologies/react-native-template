@@ -90,6 +90,17 @@ runs:
         restore-keys: |
           ${{ runner.os }}-pods-
 
+    - name: Cache SwiftPM
+      id: spm-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/Library/Caches/org.swift.swiftpm
+          ~/Library/Developer/Xcode/DerivedData/SourcePackages
+        key: ${{ runner.os }}-spm-${{ hashFiles('ios/Package.resolved', 'ios/Package.swift', 'ios/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
     - name: Install CocoaPods dependencies
       working-directory: ios
       shell: bash
@@ -143,11 +154,12 @@ runs:
       run: bundle exec fastlane ios production_deploy
       shell: bash
       env:
-          MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}
-          IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
-          IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}
-          IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
-          IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ID }}
+        DERIVED_DATA_PATH: ~/Library/Developer/Xcode/DerivedData
+        MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}
+        IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
+        IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}
+        IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
+        IOS_APP_STORE_CONNECT_API_KEY_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ID }}
           IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_ISSUER_ID }}
           IOS_APP_STORE_CONNECT_API_KEY_B64: ${{ inputs.IOS_APP_STORE_CONNECT_API_KEY_B64 }}
           IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}

@@ -53,7 +53,7 @@ jobs:
               core.info(`Version bump: ${bump}`);
             } else {
               core.setOutput('should_bump', 'false');
-              core.info('No semver label found, skipping version bump and downstream workflow dispatch.');
+              core.info('No semver label found, skipping version bump and downstream workflows.');
             }
             
       - name: Bump version
@@ -106,15 +106,18 @@ jobs:
 
           git remote set-url origin "https://x-access-token:${GH_APP_TOKEN}@github.com/${{ github.repository }}"
 
+          pushed=false
           for attempt in 1 2 3; do
-            git pull --rebase origin "${TARGET_BRANCH}" && \
-            git push origin "HEAD:${TARGET_BRANCH}" && break
+            if git pull --rebase origin "${TARGET_BRANCH}" && git push origin "HEAD:${TARGET_BRANCH}"; then
+              pushed=true
+              break
+            fi
 
             echo "Push attempt $attempt failed, retrying in 5s..."
             sleep 5
           done
 
-          if [ $attempt -eq 3 ]; then
+          if [ "$pushed" != "true" ]; then
             echo "::error::Failed to push after 3 attempts."
             exit 1
           fi

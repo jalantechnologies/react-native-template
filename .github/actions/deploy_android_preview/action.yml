@@ -60,7 +60,6 @@ runs:
       with:
         build-root-directory: android
         cache-read-only: ${{ github.base_ref != 'main' }}
-        gradle-home-cache-cleanup: true
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1

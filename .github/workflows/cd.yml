@@ -106,7 +106,6 @@ jobs:
         with:
           build-root-directory: android
           cache-read-only: ${{ github.base_ref != 'main' }}
-          gradle-home-cache-cleanup: true
 
       - name: Inject Doppler Preview Secrets
         uses: ./.github/actions/inject_doppler_secrets
@@ -114,7 +113,7 @@ jobs:
           doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
           doppler_project: react-native-template
           doppler_environment: preview
-          working_directory: app
+          working_directory: .
 
       - name: Deploy android app to Firebase App Distribution
         uses: ./.github/actions/deploy_android_preview

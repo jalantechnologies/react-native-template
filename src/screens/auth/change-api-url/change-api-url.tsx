@@ -1,28 +1,14 @@
-import { useTheme } from 'native-base';
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Config from 'react-native-config';
+import { IconButton, useTheme } from 'react-native-paper';
 import GearIcon from 'react-native-template/assets/icons/gear.svg';
-import { Button } from 'react-native-template/src/components';
-import { ButtonKind } from 'react-native-template/src/types/button';
 
 import ChangeApiUrlModal from './change-api-url-modal';
 
-const useChangeApiUrlStyles = () => {
-  const theme = useTheme();
-
-  return StyleSheet.create({
-    buttonContainer: {
-      paddingTop: Number(theme.space['2']),
-    },
-  });
-};
-
 const ChangeApiUrlButton = () => {
   const isNonProdEnv = Config.ENVIRONMENT !== 'production';
-
-  const theme = useTheme();
-  const styles = useChangeApiUrlStyles();
+  const theme = useTheme() as any;
 
   const [isChangeAPIUrlModalOpen, setIsChangeAPIUrlModalOpen] = useState(false);
 
@@ -31,20 +17,25 @@ const ChangeApiUrlButton = () => {
   }
 
   return (
-    isNonProdEnv && (
-      <>
-        <View style={styles.buttonContainer}>
-          <Button onClick={() => setIsChangeAPIUrlModalOpen(true)} kind={ButtonKind.LINK}>
-            <GearIcon width={24} height={24} fill={theme.colors.secondary[100]} />
-          </Button>
-        </View>
-        <ChangeApiUrlModal
-          handleModalClose={() => setIsChangeAPIUrlModalOpen(false)}
-          isModalOpen={isChangeAPIUrlModalOpen}
+    <>
+      <View style={styles.buttonContainer}>
+        <IconButton
+          icon={({ size, color }) => <GearIcon width={size} height={size} fill={theme.customColors.secondary[100]} />}
+          onPress={() => setIsChangeAPIUrlModalOpen(true)}
         />
-      </>
-    )
+      </View>
+      <ChangeApiUrlModal
+        handleModalClose={() => setIsChangeAPIUrlModalOpen(false)}
+        isModalOpen={isChangeAPIUrlModalOpen}
+      />
+    </>
   );
 };
+
+const styles = StyleSheet.create({
+  buttonContainer: {
+    paddingTop: 8,
+  },
+});
 
 export default ChangeApiUrlButton;

@@ -1,2 +1,1 @@
-export { default } from './checkbox';
-export { CheckboxSize, CheckboxShape } from '../../types/checkbox';
+export { default as AppCheckbox } from './checkbox';

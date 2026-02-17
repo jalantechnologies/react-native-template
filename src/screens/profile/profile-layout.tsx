@@ -1,12 +1,20 @@
-import { Box } from 'native-base';
 import React, { PropsWithChildren } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 const ProfileLayout = ({ children }: PropsWithChildren) => {
   return (
-    <Box flex={1} bg={'white'} p={4}>
+    <View style={styles.container}>
       {children}
-    </Box>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 16,
+  },
+});
 
 export default ProfileLayout;

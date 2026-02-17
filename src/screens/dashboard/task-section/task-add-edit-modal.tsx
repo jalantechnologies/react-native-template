@@ -1,10 +1,10 @@
-import { VStack } from 'native-base';
 import React from 'react';
-import { Button, FormControl, Input, Modal } from 'react-native-template/src/components';
+import { StyleSheet, View } from 'react-native';
+import { Button, Dialog, Portal } from 'react-native-paper';
 
+import { AppTextInput } from '../../../components';
 import { TaskModal, TaskOperation } from '../../../constants';
 import { AsyncError, Nullable, Task } from '../../../types';
-
 import useTaskAddEditForm from './task-add-edit-form-hook';
 
 interface TaskAddEditModalProps {
@@ -73,40 +73,49 @@ const TaskAddEditModal: React.FC<TaskAddEditModalProps> = ({
   };
 
   return (
-    <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose} key={taskOperation}>
-      <Modal.Header title={modalHeading()} onClose={handleModalClose} />
-      <Modal.Body>
-        <VStack space={4} p={4}>
-          <FormControl label="Title" error={formik.touched.title ? formik.errors.title : ''}>
-            <Input
+    <Portal>
+      <Dialog visible={isModalOpen} onDismiss={handleModalClose}>
+        <Dialog.Title>{modalHeading()}</Dialog.Title>
+        <Dialog.Content>
+          <View style={styles.form}>
+            <AppTextInput
+              label="Title"
               onChangeText={formik.handleChange('title')}
               value={formik.values.title}
               placeholder="Title"
+              errorText={formik.touched.title ? formik.errors.title : undefined}
             />
-          </FormControl>
-          <FormControl
-            label="Description"
-            error={formik.touched.description ? formik.errors.description : ''}
-          >
-            <Input
+
+            <AppTextInput
+              label="Description"
               onChangeText={formik.handleChange('description')}
               value={formik.values.description}
               placeholder="Description"
+              multiline
+              numberOfLines={3}
+              errorText={formik.touched.description ? formik.errors.description : undefined}
             />
-          </FormControl>
-        </VStack>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button isLoading={isLoading()} onClick={() => formik.handleSubmit()}>
-          {buttonText()}
-        </Button>
-      </Modal.Footer>
-    </Modal>
+          </View>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onPress={handleModalClose}>Cancel</Button>
+          <Button
+            mode="contained"
+            loading={isLoading()}
+            onPress={() => formik.handleSubmit()}
+          >
+            {buttonText()}
+          </Button>
+        </Dialog.Actions>
+      </Dialog>
+    </Portal>
   );
 };
 
-TaskAddEditModal.defaultProps = {
-  task: null,
-};
+const styles = StyleSheet.create({
+  form: {
+    gap: 8,
+  },
+});
 
 export default TaskAddEditModal;

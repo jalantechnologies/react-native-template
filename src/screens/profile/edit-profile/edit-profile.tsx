@@ -1,20 +1,18 @@
-import { KeyboardAvoidingView, Toast, VStack } from 'native-base';
 import React from 'react';
-import { Platform } from 'react-native';
-import { Button, FormControl, Input } from 'react-native-template/src/components';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
+import { AppButton, AppTextInput } from '../../../components';
+import { useToast } from '../../../contexts';
 import { AsyncError } from '../../../types';
 import ProfileLayout from '../profile-layout';
-
 import useProfileUpdateForm from './profile-update-form.hook';
 
 const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigation }) => {
+  const toast = useToast();
+
   const onProfileUpdateSuccess = () => {
-    Toast.show({
-      title: 'Profile Updated',
-      description: 'Your profile has been updated successfully',
-    });
+    toast.show('Your profile has been updated successfully');
     navigation.reset({
       index: 0,
       routes: [{ name: 'Home' }],
@@ -22,10 +20,7 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
   };
 
   const onProfileUpdateError = (err: AsyncError) => {
-    Toast.show({
-      title: 'Profile Update Failed',
-      description: err.message,
-    });
+    toast.show(err.message);
   };
 
   const { formik, isUpdateAccountLoading } = useProfileUpdateForm({
@@ -37,38 +32,57 @@ const EditProfile: React.FC<ProfileStackScreenProps<'EditProfile'>> = ({ navigat
     <ProfileLayout>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        flex={1}
+        style={styles.container}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
-        justifyContent={'space-between'}
       >
-        <VStack space={4}>
-          <FormControl error={formik.errors.firstName} label={'First Name'}>
-            <Input
-              onChangeText={formik.handleChange('firstName')}
-              placeholder={'First Name'}
-              value={formik.values.firstName}
-            />
-          </FormControl>
+        <View style={styles.form}>
+          <AppTextInput
+            label="First Name"
+            onChangeText={formik.handleChange('firstName')}
+            placeholder="First Name"
+            value={formik.values.firstName}
+            errorText={formik.errors.firstName}
+          />
 
-          <FormControl error={formik.errors.lastName} label={'Last Name'}>
-            <Input
-              onChangeText={formik.handleChange('lastName')}
-              placeholder={'Last Name'}
-              value={formik.values.lastName}
-            />
-          </FormControl>
+          <AppTextInput
+            label="Last Name"
+            onChangeText={formik.handleChange('lastName')}
+            placeholder="Last Name"
+            value={formik.values.lastName}
+            errorText={formik.errors.lastName}
+          />
 
-          <FormControl label={'Phone Number'}>
-            <Input value={formik.values.phoneNumber} editable={false} disabled={true} />
-          </FormControl>
-        </VStack>
+          <AppTextInput
+            label="Phone Number"
+            value={formik.values.phoneNumber}
+            editable={false}
+            disabled={true}
+          />
+        </View>
 
-        <Button onClick={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
+        <AppButton
+          onPress={() => formik.handleSubmit()}
+          loading={isUpdateAccountLoading}
+          style={styles.button}
+        >
           Save Changes
-        </Button>
+        </AppButton>
       </KeyboardAvoidingView>
     </ProfileLayout>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  form: {
+    gap: 16,
+  },
+  button: {
+    marginBottom: 16,
+  },
+});
 
 export default EditProfile;

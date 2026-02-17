@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { View } from 'react-native';
-
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { ApplicationScreenProps } from '../../../@types/navigation';
 import { Brand } from '../../components';
 
@@ -23,10 +22,23 @@ const Startup: React.FC<ApplicationScreenProps> = ({ navigation }: ApplicationSc
   }, []);
 
   return (
-    <View>
+    <View style={styles.container}>
       <Brand />
+      <ActivityIndicator size="large" style={styles.loader} />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  loader: {
+    marginTop: 20,
+  },
+});
 
 export default Startup;

@@ -1,26 +1,42 @@
-import { HStack, Heading, useTheme } from 'native-base';
 import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import AddIcon from 'react-native-template/assets/icons/add.svg';
-import { Button } from 'react-native-template/src/components';
+import { AppButton } from '../../../components';
 
 interface TaskHeaderProps {
   onHeaderButtonPress: () => void;
 }
 
 const TaskHeader: React.FC<TaskHeaderProps> = ({ onHeaderButtonPress }) => {
-  const theme = useTheme();
+  const theme = useTheme() as any;
 
   return (
-    <HStack justifyContent="space-between" alignItems="center" px={4} py={2}>
-      <Heading size="lg">Tasks</Heading>
-      <Button
-        startEnhancer={<AddIcon width={16} height={16} fill={theme.colors.secondary[50]} />}
-        onClick={onHeaderButtonPress}
+    <View style={styles.container}>
+      <Text style={[styles.title, { color: theme.colors.primary }]}>Tasks</Text>
+      <AppButton
+        mode="contained"
+        icon={({ size, color }) => <AddIcon width={size} height={size} fill="white" />}
+        onPress={onHeaderButtonPress}
       >
         Add Task
-      </Button>
-    </HStack>
+      </AppButton>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+});
 
 export default TaskHeader;

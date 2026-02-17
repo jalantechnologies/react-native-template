@@ -1,9 +1,9 @@
 import { DdRumReactNavigationTracking } from '@datadog/mobile-react-navigation';
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Box } from 'native-base';
 import React from 'react';
 import { StatusBar } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ApplicationStackParamList } from '../../@types/navigation';
 import { Startup } from '../screens';
@@ -21,7 +21,7 @@ const ApplicationNavigator = () => {
   };
 
   return (
-    <Box safeAreaTop flex={1}>
+    <SafeAreaView style={{ flex: 1 }}>
       <NavigationContainer ref={navigationRef} onReady={onNavigationReady}>
         <StatusBar />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -29,7 +29,7 @@ const ApplicationNavigator = () => {
           <Stack.Screen name="Main" component={MainNavigator} />
         </Stack.Navigator>
       </NavigationContainer>
-    </Box>
+    </SafeAreaView>
   );
 };
 

@@ -1,2 +1,1 @@
-export { default } from './button';
-export { ButtonKind, ButtonSize, ButtonColor, ButtonShape } from '../../types';
+export { default as AppButton } from './button';

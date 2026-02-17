@@ -1,9 +1,9 @@
-import { Box, Heading, Text, useTheme } from 'native-base';
 import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { IconButton, useTheme } from 'react-native-paper';
 import EditIcon from 'react-native-template/assets/icons/edit.svg';
-import { Avatar, Button } from 'react-native-template/src/components';
-import { ButtonKind, ButtonSize } from 'react-native-template/src/types/button';
 
+import { AppAvatar } from '../../../components';
 import { Account, Nullable } from '../../../types';
 
 interface ProfileInfoSectionProps {
@@ -15,28 +15,47 @@ const ProfileInfoSection: React.FC<ProfileInfoSectionProps> = ({
   accountDetails,
   handleEditProfilePress,
 }) => {
-  const theme = useTheme();
+  const theme = useTheme() as any;
 
   return (
-    <Box alignItems="center">
-      <Box>
-        <Avatar initials={accountDetails?.initials()} />
-      </Box>
-      <Box
-        borderRadius="full"
-        p={1}
-        flexDirection="row"
-        alignItems="center"
-        justifyContent={'center'}
-      >
-        <Heading mr={2}>{accountDetails?.displayName()}</Heading>
-        <Button onClick={handleEditProfilePress} kind={ButtonKind.LINK} size={ButtonSize.COMPACT}>
-          <EditIcon width={20} height={20} fill={theme.colors.primary['500']} />
-        </Button>
-      </Box>
-      <Text>{accountDetails?.phoneNumber.getFormattedPhoneNumber()}</Text>
-    </Box>
+    <View style={styles.container}>
+      <AppAvatar
+        size={80}
+        label={accountDetails?.initials() || '??'}
+        style={styles.avatar}
+      />
+      <View style={styles.nameRow}>
+        <Text style={[styles.name, { fontSize: 24, fontWeight: 'bold' }]}>
+          {accountDetails?.displayName()}
+        </Text>
+        <IconButton
+          icon={({ size, color }) => <EditIcon width={size} height={size} fill={theme.colors.primary} />}
+          onPress={handleEditProfilePress}
+        />
+      </View>
+      <Text style={{ fontSize: 16 }}>
+        {accountDetails?.phoneNumber.getFormattedPhoneNumber()}
+      </Text>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  avatar: {
+    marginBottom: 16,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  name: {
+    marginRight: 8,
+  },
+});
 
 export default ProfileInfoSection;

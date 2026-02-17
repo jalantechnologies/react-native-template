@@ -76,8 +76,8 @@ runs:
           exit 1
         fi
 
-        PLACEHOLDER_PATTERN="<enter release notes for the next version here"
-        if printf "%s" "$CONTENT" | grep -qi "$PLACEHOLDER_PATTERN"; then
+        PLACEHOLDER_PATTERN='^[[:space:]]*<enter release notes for the next version here([[:space:]]*\(max 500 chars\))?[[:space:]]*>?[[:space:]]*$'
+        if printf "%s" "$CONTENT" | grep -qiE "$PLACEHOLDER_PATTERN"; then
           echo "::error::❌ Release notes still contain placeholder text. Please replace the template with actual notes."
           exit 1
         fi

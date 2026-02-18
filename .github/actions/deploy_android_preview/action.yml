@@ -59,7 +59,6 @@ runs:
       uses: gradle/actions/setup-gradle@v4
       with:
         cache-read-only: ${{ github.base_ref != 'main' }}
-      working-directory: android
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1

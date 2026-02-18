@@ -105,7 +105,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: ${{ github.base_ref != 'main' }}
-        working-directory: android
 
       - name: Inject Doppler Preview Secrets
         uses: ./.github/actions/inject_doppler_secrets

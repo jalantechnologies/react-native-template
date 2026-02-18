@@ -1,10 +1,10 @@
-import { Box, Text, Toast, Center, ScrollView } from 'native-base';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { RefreshControl } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 import { TaskOperation } from '../../../constants';
-import { useTaskContext } from '../../../contexts';
+import { useTaskContext, useToast } from '../../../contexts';
 import { AsyncError, Nullable, Task } from '../../../types';
 
 import TaskCard from './task';
@@ -14,6 +14,8 @@ import TaskHeader from './task-header';
 const TaskSection = () => {
   const { tasks, getTasks } = useTaskContext();
   const { t } = useTranslation();
+  const theme = useTheme();
+  const toast = useToast();
 
   const [taskOperation, setTaskOperation] = useState<Nullable<TaskOperation>>(null);
   const [isAddEditTaskModalOpen, setIsAddEditTaskModalOpen] = useState(false);
@@ -30,18 +32,12 @@ const TaskSection = () => {
   }, []);
 
   const onTaskOperationComplete = (description: string) => {
-    Toast.show({
-      title: 'Success',
-      description,
-    });
+    toast.show(description);
     setTaskOperation(null);
   };
 
   const onTaskOperationFailure = (err: AsyncError) => {
-    Toast.show({
-      title: 'Error',
-      description: err.message,
-    });
+    toast.show(err.message);
     setTaskOperation(null);
   };
 
@@ -52,30 +48,31 @@ const TaskSection = () => {
   };
 
   return (
-    <Box bg={'white'} flex={1} p={2}>
+    <View style={styles.container}>
       <TaskHeader
         onHeaderButtonPress={() => {
           setTaskOperation(TaskOperation.ADD);
           setIsAddEditTaskModalOpen(true);
         }}
       />
-      <Box mt={2} flexShrink={1}>
+      <View style={styles.listContainer}>
         {tasks.length > 0 ? (
           <ScrollView
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            contentContainerStyle={styles.scrollContent}
           >
             {tasks.map(task => (
-              <Box my={2} key={task.id}>
+              <View key={task.id} style={styles.cardWrapper}>
                 <TaskCard task={task} handleEditTask={handleEditTask} />
-              </Box>
+              </View>
             ))}
           </ScrollView>
         ) : (
-          <Center py={2}>
-            <Text>{t('task:noTaskFound')}</Text>
-          </Center>
+          <View style={styles.emptyContainer}>
+            <Text style={{ fontSize: 16 }}>{t('task:noTaskFound')}</Text>
+          </View>
         )}
-      </Box>
+      </View>
 
       <TaskAddEditModal
         isModalOpen={isAddEditTaskModalOpen}
@@ -85,8 +82,32 @@ const TaskSection = () => {
         task={taskToEdit}
         taskOperation={taskOperation}
       />
-    </Box>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 8,
+  },
+  listContainer: {
+    marginTop: 8,
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 24,
+  },
+  cardWrapper: {
+    marginVertical: 8,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+});
 
 export default TaskSection;

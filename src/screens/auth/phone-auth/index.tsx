@@ -1,22 +1,19 @@
-import { Toast } from 'native-base';
 import React from 'react';
 
+import { useToast } from '../../../contexts';
 import { AsyncError } from '../../../types';
 import AuthLayout from '../auth-layout';
-
 import PhoneAuthForm from './phone-auth-form';
 
 const PhoneAuth: React.FC = () => {
+  const toast = useToast();
+
   const onSuccess = () => {
-    Toast.show({
-      title: 'OTP sent successfully',
-    });
+    toast.show('OTP sent successfully');
   };
 
   const onError = (err: AsyncError) => {
-    Toast.show({
-      title: err.message,
-    });
+    toast.show(err.message);
   };
 
   return (

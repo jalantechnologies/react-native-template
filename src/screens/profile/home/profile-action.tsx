@@ -1,25 +1,31 @@
-import { Pressable, HStack, Heading, IPressableProps, useTheme } from 'native-base';
 import React from 'react';
+import { List, useTheme } from 'react-native-paper';
 import ChevronRightIcon from 'react-native-template/assets/icons/chevron-right.svg';
 
-interface ProfileActionProps extends IPressableProps {
+interface ProfileActionProps {
   title: string;
-  icon: Element;
+  icon: React.ReactNode;
+  onPress?: () => void;
 }
 
-const ProfileAction: React.FC<ProfileActionProps> = ({ title, icon, ...props }) => {
-  const theme = useTheme();
+const ProfileAction: React.FC<ProfileActionProps> = ({ title, icon, onPress }) => {
+  const theme = useTheme() as any;
 
   return (
-    <Pressable _pressed={{ bg: 'coolGray.200' }} py={2} {...props}>
-      <HStack justifyContent={'space-between'} alignItems={'center'}>
-        <HStack space={2}>
-          {icon}
-          <Heading size={'sm'}>{title}</Heading>
-        </HStack>
-        <ChevronRightIcon width={20} height={20} fill={theme.colors.primary['500']} />
-      </HStack>
-    </Pressable>
+    <List.Item
+      title={title}
+      left={() => icon}
+      right={props => (
+        <ChevronRightIcon
+          {...props}
+          width={20}
+          height={20}
+          fill={theme.colors.primary}
+        />
+      )}
+      onPress={onPress}
+      titleStyle={{ fontSize: 16, fontWeight: '500' }}
+    />
   );
 };
 

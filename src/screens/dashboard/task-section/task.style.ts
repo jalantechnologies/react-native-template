@@ -1,5 +1,5 @@
-import { useTheme } from 'native-base';
 import { StyleSheet } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 export const useTaskStyles = () => {
   const theme = useTheme();
@@ -7,8 +7,8 @@ export const useTaskStyles = () => {
   return StyleSheet.create({
     container: {
       flexDirection: 'row',
-      gap: theme.space[4],
-      marginTop: theme.space[8],
+      gap: 16,
+      marginTop: 8,
     },
   });
 };

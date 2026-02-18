@@ -1,23 +1,21 @@
-import { Toast } from 'native-base';
 import React from 'react';
 
+import { useToast } from '../../../contexts';
 import { AsyncError } from '../../../types';
 import AuthLayout from '../auth-layout';
-
 import RegistrationForm from './registration-form';
 
 const RegistrationScreen: React.FC = () => {
+  const toast = useToast();
+
   const onSuccess = () => {
-    Toast.show({
-      title: 'Account Created Successfully',
-    });
+    toast.show('Account Created Successfully');
   };
 
   const onError = (err: AsyncError) => {
-    Toast.show({
-      title: err.message,
-    });
+    toast.show(err.message);
   };
+
   return (
     <AuthLayout primaryTitle="Create" secondaryTitle="Account">
       <RegistrationForm onError={onError} onSuccess={onSuccess} />

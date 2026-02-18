@@ -1,12 +1,19 @@
-import { Toast } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import Config from 'react-native-config';
-import { FormControl, Input, Modal } from 'react-native-template/src/components';
-import { ModalProps } from 'react-native-template/src/components/modal/modal';
-import { useLocalStorage } from 'react-native-template/src/utils';
+import { Button, Dialog, Portal } from 'react-native-paper';
 
-const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose }) => {
+import { AppTextInput } from '../../../components';
+import { useToast } from '../../../contexts';
+import { useLocalStorage } from '../../../utils';
+
+interface ChangeApiUrlModalProps {
+  isModalOpen: boolean;
+  handleModalClose: () => void;
+}
+
+const ChangeApiUrlModal: React.FC<ChangeApiUrlModalProps> = ({ isModalOpen, handleModalClose }) => {
   const localStorage = useLocalStorage();
+  const toast = useToast();
 
   const [apiBaseUrl, setApiBaseUrl] = useState(Config.API_BASE_URL as string);
 
@@ -18,42 +25,37 @@ const ChangeApiUrlModal: React.FC<ModalProps> = ({ isModalOpen, handleModalClose
       }
     };
     loadApiBaseUrl();
-  }, [localStorage]);
+  }, []);
 
   const handleSaveChanges = async () => {
     if (!apiBaseUrl) {
-      Toast.show({
-        title: 'API Base URL can not be empty',
-      });
+      toast.show('API Base URL can not be empty');
       return;
     }
 
     await localStorage.setToStorage('apiBaseUrl', apiBaseUrl);
-
-    if (handleModalClose) {
-      handleModalClose();
-    }
+    toast.show('API URL updated successfully');
+    handleModalClose();
   };
 
   return (
-    <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose}>
-      <Modal.Header title="Change Base API URL" onClose={handleModalClose} />
-      <Modal.Body>
-        <FormControl label="New Base API URL">
-          <Input
+    <Portal>
+      <Dialog visible={isModalOpen} onDismiss={handleModalClose}>
+        <Dialog.Title>Change Base API URL</Dialog.Title>
+        <Dialog.Content>
+          <AppTextInput
+            label="New Base API URL"
             value={apiBaseUrl}
-            onChangeText={e => {
-              setApiBaseUrl(e);
-            }}
+            onChangeText={setApiBaseUrl}
+            containerStyle={{ marginBottom: 0 }}
           />
-        </FormControl>
-      </Modal.Body>
-      <Modal.Footer
-        onCancel={handleModalClose}
-        onConfirm={handleSaveChanges}
-        confirmText="Save Changes"
-      />
-    </Modal>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onPress={handleModalClose}>Cancel</Button>
+          <Button mode="contained" onPress={handleSaveChanges}>Save Changes</Button>
+        </Dialog.Actions>
+      </Dialog>
+    </Portal>
   );
 };
 

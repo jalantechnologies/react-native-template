@@ -1,9 +1,8 @@
-import { Container, Heading, VStack } from 'native-base';
 import React from 'react';
-import { Button, FormControl, Input } from 'react-native-template/src/components';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { AppButton, AppTextInput } from '../../../components';
 import { AsyncError } from '../../../types';
-
 import useRegistrationForm from './registration-form-hook';
 
 interface RegistrationFormProps {
@@ -18,32 +17,53 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSuccess, onError 
   });
 
   return (
-    <VStack space={4}>
-      <Container>
-        <Heading size="lg">New User Registration</Heading>
-        <Heading mt={2} size="xs">
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={{ fontSize: 32, fontWeight: 'bold' }}>New User Registration</Text>
+        <Text style={[styles.subHeading, { fontSize: 14 }]}>
           Please fill the form to create an account
-        </Heading>
-      </Container>
-      <FormControl label={'First Name'} error={formik.errors.firstName}>
-        <Input
-          onChangeText={formik.handleChange('firstName')}
-          value={formik.values.firstName}
-          placeholder="First Name"
-        />
-      </FormControl>
-      <FormControl label={'Last Name'} error={formik.errors.lastName}>
-        <Input
-          onChangeText={formik.handleChange('lastName')}
-          value={formik.values.lastName}
-          placeholder="Last Name"
-        />
-      </FormControl>
-      <Button onClick={() => formik.handleSubmit()} isLoading={isUpdateAccountLoading}>
+        </Text>
+      </View>
+
+      <AppTextInput
+        label="First Name"
+        onChangeText={formik.handleChange('firstName')}
+        value={formik.values.firstName}
+        errorText={formik.errors.firstName}
+      />
+
+      <AppTextInput
+        label="Last Name"
+        onChangeText={formik.handleChange('lastName')}
+        value={formik.values.lastName}
+        errorText={formik.errors.lastName}
+      />
+
+      <AppButton
+        onPress={() => formik.handleSubmit()}
+        loading={isUpdateAccountLoading}
+        style={styles.button}
+      >
         Create Account
-      </Button>
-    </VStack>
+      </AppButton>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    gap: 16,
+  },
+  header: {
+    marginBottom: 8,
+  },
+  subHeading: {
+    marginTop: 8,
+    opacity: 0.7,
+  },
+  button: {
+    marginTop: 16,
+  },
+});
 
 export default RegistrationForm;

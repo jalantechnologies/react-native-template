@@ -1,2 +1,1 @@
-export { default } from './badge';
-export * from '../../types';
+export { default as AppBadge } from './badge';

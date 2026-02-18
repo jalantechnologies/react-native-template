@@ -1,11 +1,11 @@
-import { Box, Divider, Toast, useTheme, VStack } from 'native-base';
 import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Button, Divider, useTheme } from 'react-native-paper';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import LogoutIcon from 'react-native-template/assets/icons/logout.svg';
-import { Button } from 'react-native-template/src/components';
 
 import { ProfileStackScreenProps } from '../../../../@types/navigation';
-import { useAccountContext, useAuthContext } from '../../../contexts';
+import { useAccountContext, useAuthContext, useToast } from '../../../contexts';
 import { AsyncError } from '../../../types';
 import ProfileLayout from '../profile-layout';
 
@@ -14,7 +14,8 @@ import ProfileAction from './profile-action';
 import ProfileInfoSection from './profile-info-section';
 
 const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
-  const theme = useTheme();
+  const theme = useTheme() as any;
+  const toast = useToast();
 
   const [isAccountDeleteModalOpen, setIsAccountDeleteModalOpen] = useState(false);
 
@@ -23,17 +24,11 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
 
   const handleAccountDeleteSuccess = () => {
     logout();
-    Toast.show({
-      title: 'Account Deleted',
-      description: 'Your account has been deleted successfully',
-    });
+    toast.show('Your account has been deleted successfully');
   };
 
   const handleAccountDeleteError = (err: AsyncError) => {
-    Toast.show({
-      title: 'Account Deletion Failed',
-      description: err.message,
-    });
+    toast.show(err.message);
   };
 
   const handleDeleteAccount = async () => {
@@ -53,17 +48,19 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
 
   return (
     <ProfileLayout>
-      <VStack w={'100%'} space={4} divider={<Divider />}>
+      <View style={styles.container}>
         <ProfileInfoSection
           accountDetails={accountDetails}
           handleEditProfilePress={handleEditProfilePress}
         />
+        <Divider />
         <ProfileAction
           title={'Delete Account'}
-          icon={<DeleteIcon width={20} height={20} fill={theme.colors.primary['500']} />}
+          icon={<DeleteIcon width={20} height={20} fill={theme.colors.primary} />}
           onPress={() => setIsAccountDeleteModalOpen(true)}
         />
-      </VStack>
+        <Divider />
+      </View>
 
       <AccountDeleteModal
         handleDeleteAccountPress={handleDeleteAccount}
@@ -72,16 +69,35 @@ const Profile: React.FC<ProfileStackScreenProps<'Home'>> = ({ navigation }) => {
         setIsModalOpen={setIsAccountDeleteModalOpen}
       />
 
-      <Box w="50%" alignSelf="center" position="absolute" bottom={4}>
+      <View style={styles.logoutContainer}>
         <Button
-          onClick={logout}
-          startEnhancer={<LogoutIcon width={20} height={20} fill={theme.colors.secondary['50']} />}
+          mode="contained"
+          onPress={logout}
+          icon={({ size, color }) => <LogoutIcon width={size} height={size} fill="white" />}
+          style={styles.logoutButton}
         >
           Logout
         </Button>
-      </Box>
+      </View>
     </ProfileLayout>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
+  logoutContainer: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 24,
+    left: 16,
+    right: 16,
+    alignItems: 'center',
+  },
+  logoutButton: {
+    width: '80%',
+  },
+});
 
 export default Profile;

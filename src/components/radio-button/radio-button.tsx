@@ -1,94 +1,34 @@
-import { useTheme } from 'native-base';
-import React, { useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { RadioButton, Text, TouchableRipple } from 'react-native-paper';
 
-import { RadioButtonProps, RadioButtonKind, RadioButtonSize } from '../../types/radio-button';
+interface AppRadioButtonProps {
+  value: string;
+  label: string;
+  status: 'checked' | 'unchecked';
+  onPress: () => void;
+  disabled?: boolean;
+}
 
-import { useRadioKindStyles, useRadioStyles, useSizeStyles } from './radio-button.styles';
+const AppRadioButton: React.FC<AppRadioButtonProps> = ({ value, label, status, onPress, disabled }) => (
+  <TouchableRipple onPress={onPress} disabled={disabled}>
+    <View style={styles.container}>
+      <RadioButton.Android value={value} status={status} disabled={disabled} />
+      <Text style={styles.label}>{label}</Text>
+    </View>
+  </TouchableRipple>
+);
 
-const RadioButton: React.FC<RadioButtonProps> = ({
-  disabled = false,
-  kind = RadioButtonKind.PRIMARY,
-  label,
-  onPress,
-  selected,
-  size = RadioButtonSize.LARGE,
-  value,
-}) => {
-  const theme = useTheme();
-  const kindStyles = useRadioKindStyles();
-  const btnKindStyle = kindStyles[kind];
-  const styles = useRadioStyles();
-  const sizeStyles = useSizeStyles();
-  const sizeStyle = sizeStyles[size];
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  label: {
+    marginLeft: 8,
+  },
+});
 
-  const [isFocused, setIsFocused] = useState(false);
-
-  const handlePress = () => {
-    if (!disabled) {
-      onPress(value);
-    }
-  };
-
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-  };
-
-  const outerCircleStyle = {
-    borderColor:
-      selected && !disabled
-        ? btnKindStyle.borderColor
-        : disabled
-        ? theme.colors.secondary[200]
-        : theme.colors.secondary[400],
-    backgroundColor:
-      selected && !disabled
-        ? btnKindStyle.innerColor
-        : selected && disabled
-        ? theme.colors.secondary[200]
-        : theme.colors.white,
-  };
-
-  const innerCircleStyle = {
-    backgroundColor: disabled ? theme.colors.secondary[400] : theme.colors.white,
-  };
-
-  const labelColorStyle = {
-    color: disabled ? theme.colors.secondary[400] : theme.colors.secondary[900],
-  };
-
-  const focusedStyle = {
-    ...theme.shadows[2],
-    shadowColor: selected ? btnKindStyle.innerColor : theme.colors.secondary[400],
-  };
-
-  return (
-    <Pressable
-      onPress={handlePress}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      style={styles.wrapper}
-      accessibilityRole="radio"
-      accessibilityState={{ selected, disabled }}
-      accessibilityLabel={label || value}
-    >
-      <View
-        style={[
-          styles.outerCircle,
-          sizeStyle.outerCircle,
-          outerCircleStyle,
-          isFocused && focusedStyle,
-        ]}
-      >
-        {selected && <View style={[styles.innerCircle, sizeStyle.innerCircle, innerCircleStyle]} />}
-      </View>
-      {label && <Text style={[sizeStyle.label, labelColorStyle]}>{label}</Text>}
-    </Pressable>
-  );
-};
-
-export default RadioButton;
+export default AppRadioButton;

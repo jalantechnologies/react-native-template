@@ -1,11 +1,10 @@
-import { Text, useTheme } from 'native-base';
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
+import { Card, useTheme } from 'react-native-paper';
 import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
 import EditIcon from 'react-native-template/assets/icons/edit.svg';
-import { Button, Card } from 'react-native-template/src/components';
 import { Task } from 'react-native-template/src/types';
-import { ButtonKind } from 'react-native-template/src/types/button';
+import { AppButton } from '../../../components';
 
 import TaskDeleteModal from './task-delete-modal';
 import { useTaskStyles } from './task.style';
@@ -17,11 +16,9 @@ interface TaskProps {
 
 const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
   const { description, title } = task;
-
-  const theme = useTheme();
+  const theme = useTheme() as any;
 
   const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
-
   const styles = useTaskStyles();
 
   const handleDeleteTask = () => {
@@ -34,28 +31,32 @@ const TaskCard: React.FC<TaskProps> = ({ task, handleEditTask }) => {
 
   return (
     <>
-      <Card>
-        <Card.Header title={title} />
+      <Card mode="elevated" style={{ backgroundColor: 'white' }}>
+        <Card.Title 
+          title={title}
+          titleStyle={{ fontSize: 20, fontWeight: 'bold' }}
+        />
         <Card.Content>
-          <Text>{description}</Text>
+          <Text style={{ fontSize: 16 }}>{description}</Text>
         </Card.Content>
         <Card.Actions>
           <View style={styles.container}>
-            <Button
-              kind={ButtonKind.LINK}
-              startEnhancer={<EditIcon width={16} height={16} fill={theme.colors.primary[500]} />}
-              onClick={() => handleEditTask(task)}
+            <AppButton
+              mode="text"
+              icon={({ size, color }) => <EditIcon width={size} height={size} fill={theme.colors.primary} />}
+              onPress={() => handleEditTask(task)}
             >
               Edit
-            </Button>
+            </AppButton>
 
-            <Button
-              kind={ButtonKind.LINK}
-              startEnhancer={<DeleteIcon width={16} height={16} fill={theme.colors.danger[600]} />}
-              onClick={handleDeleteTask}
+            <AppButton
+              mode="text"
+              icon={({ size, color }) => <DeleteIcon width={size} height={size} fill={theme.colors.error} />}
+              onPress={handleDeleteTask}
+              textColor={theme.colors.error}
             >
-              <Text color={'danger.600'}> Delete</Text>
-            </Button>
+              Delete
+            </AppButton>
           </View>
         </Card.Actions>
       </Card>

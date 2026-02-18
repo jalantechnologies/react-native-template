@@ -1,13 +1,14 @@
 import { DdSdkReactNative } from '@datadog/mobile-react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { useTheme } from 'native-base';
 import React, { useEffect } from 'react';
+import { View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 import HomeIcon from 'react-native-template/assets/icons/home.svg';
 import PersonIcon from 'react-native-template/assets/icons/person.svg';
 
 import { AuthenticatedStackParamsList, AuthenticatedTabParamsList } from '../../@types/navigation';
-import { FullScreenSpinner } from '../components';
+import { AppSpinner } from '../components';
 import { useAccountContext, useAuthContext } from '../contexts';
 import { Dashboard, RegistrationScreen } from '../screens';
 import { useThemeColor } from '../utils';
@@ -42,7 +43,7 @@ const getTabBarIcon = (routeName: string) => {
 const AuthenticatedStack = () => {
   const { isNewUser, isAccountLoading, getAccountDetails, accountDetails } = useAccountContext();
   const { logout } = useAuthContext();
-  const { colors } = useTheme();
+  const theme = useTheme() as any;
 
   useEffect(() => {
     getAccountDetails().catch(() => {
@@ -60,7 +61,11 @@ const AuthenticatedStack = () => {
   }, [isAccountLoading, accountDetails]);
 
   if (isAccountLoading) {
-    return <FullScreenSpinner />;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <AppSpinner size="large" />
+      </View>
+    );
   }
 
   return isNewUser ? (
@@ -72,8 +77,8 @@ const AuthenticatedStack = () => {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: getTabBarIcon(route.name),
-        tabBarActiveTintColor: colors.primary[500],
-        tabBarInactiveTintColor: colors.muted[400],
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.customColors.secondary['400'],
       })}
     >
       <Tab.Screen name="Home" component={Dashboard} />

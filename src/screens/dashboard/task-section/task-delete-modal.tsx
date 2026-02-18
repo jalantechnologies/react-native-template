@@ -1,11 +1,9 @@
-import { t } from 'i18next';
-import { Box, Text, Toast, useTheme } from 'native-base';
 import React from 'react';
-import DeleteIcon from 'react-native-template/assets/icons/delete.svg';
-import { Button, Modal } from 'react-native-template/src/components';
-import { useTaskContext } from 'react-native-template/src/contexts';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from 'react-native-paper';
+import { useTaskContext, useToast } from 'react-native-template/src/contexts';
 import { AsyncError, Task } from 'react-native-template/src/types';
-import { ButtonKind, ButtonColor } from 'react-native-template/src/types/button';
+import { AppDialog } from '../../../components';
 
 interface TaskDeleteModalProps {
   handleModalClose: () => void;
@@ -18,22 +16,17 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
   handleModalClose,
   isModalOpen,
 }) => {
-  const theme = useTheme();
-
+  const { t } = useTranslation();
+  const theme = useTheme() as any;
+  const toast = useToast();
   const { deleteTask, isDeleteTaskLoading } = useTaskContext();
 
   const onTaskOperationComplete = (desc: string) => {
-    Toast.show({
-      title: 'Success',
-      description: desc,
-    });
+    toast.show(desc);
   };
 
   const onTaskOperationFailure = (err: AsyncError) => {
-    Toast.show({
-      title: 'Error',
-      description: err.message,
-    });
+    toast.show(err.message);
   };
 
   const handleDeleteTask = () => {
@@ -48,32 +41,16 @@ const TaskDeleteModal: React.FC<TaskDeleteModalProps> = ({
   };
 
   return (
-    <Modal isModalOpen={isModalOpen} handleModalClose={handleModalClose}>
-      <Modal.Header title="Delete Task" onClose={handleModalClose} />
-      <Modal.Body>
-        <Box alignItems="center">
-          <Text textAlign={'center'}>Are you sure you want to delete this task?</Text>
-        </Box>
-      </Modal.Body>
-      <Modal.Footer>
-        <Box flex={1} mr={2}>
-          <Button onClick={handleModalClose} kind={ButtonKind.OUTLINED}>
-            Cancel
-          </Button>
-        </Box>
-        <Box flex={1} ml={2}>
-          <Button
-            isLoading={isDeleteTaskLoading}
-            onClick={handleDeleteTask}
-            kind={ButtonKind.CONTAINED}
-            color={ButtonColor.DANGER}
-            startEnhancer={<DeleteIcon width={16} height={16} fill={theme.colors.secondary[50]} />}
-          >
-            Delete
-          </Button>
-        </Box>
-      </Modal.Footer>
-    </Modal>
+    <AppDialog
+      visible={isModalOpen}
+      onDismiss={handleModalClose}
+      title="Delete Task"
+      content="Are you sure you want to delete this task?"
+      onConfirm={handleDeleteTask}
+      confirmLabel="Delete"
+      confirmButtonColor={theme.colors.error}
+      loading={isDeleteTaskLoading}
+    />
   );
 };
 

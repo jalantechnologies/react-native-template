@@ -4,16 +4,57 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
+# Skip expensive jobs when a PR only touches docs/markdown
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+
 concurrency:
   group: ci-preview-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Detect changed files
+    runs-on: ubuntu-latest
+    outputs:
+      doc_only: ${{ steps.doc_only.outputs.value }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            code:
+              - 'src/**'
+              - 'android/**'
+              - 'ios/**'
+              - 'package.json'
+              - 'yarn.lock'
+              - 'app.json'
+              - 'babel.config.js'
+              - 'metro.config.js'
+              - 'tsconfig.json'
+              - 'index.js'
+            docs:
+              - 'docs/**'
+              - '**/*.md'
+
+      - id: doc_only
+        run: |
+          if [[ "${{ steps.filter.outputs.docs }}" == "true" && "${{ steps.filter.outputs.code }}" != "true" ]]; then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
   sonarqube:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
+    needs: changes
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
@@ -32,30 +73,28 @@ jobs:
             -Dsonar.qualitygate.timeout=1000
 
   lint:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
+    needs: changes
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (app)
-        uses: actions/checkout@v3
-        with:
-          path: app
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: 'app/.nvmrc'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+          cache-dependency-path: 'yarn.lock'
 
       - name: Enable Corepack
         run: corepack enable
 
       - name: Install dependencies
-        working-directory: app
         run: yarn install --immutable
 
       - name: Run lint
-        working-directory: app
         run: yarn lint
 
       - name: Run type-check
-        working-directory: app
         run: yarn type-check

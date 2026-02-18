@@ -72,8 +72,10 @@ class FirebaseDistributionService
       project_dir: File.expand_path("../../", __dir__),
       properties: {
         "BUNDLE_IN_DEBUG" => "true",
-        "org.gradle.daemon" => "false",
-        "org.gradle.workers.max" => "4",
+        # Let Gradle daemon/config cache speed up repeat builds within the job
+        "org.gradle.daemon" => "true",
+        # Align workers to runner cores to avoid thrash on 2‑core GitHub runners
+        "org.gradle.workers.max" => "2",
         "versionName" => version,
         "versionCode" => version_code
       },

@@ -158,12 +158,15 @@ def ios_deploy_production!(options = {})
   # Build IPA for production
   # ---------------------------------------------------------------------------
   UI.message('🏗️ Building production IPA...')
+  derived_data_path = ENV['DERIVED_DATA_PATH'] || File.expand_path('~/Library/Developer/Xcode/DerivedData')
+
   build_app(
     workspace: workspace,
     scheme: scheme,
-    clean: true,
+    clean: false, # reuse cached DerivedData when available
     configuration: 'Release',
     export_method: 'app-store',
+    derived_data_path: derived_data_path,
     xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" " \
             "DEVELOPMENT_TEAM=#{team_id} " \
             "PROVISIONING_PROFILE_SPECIFIER=\"#{profile_name}\" " \

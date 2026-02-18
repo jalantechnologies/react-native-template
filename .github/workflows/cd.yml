@@ -2,14 +2,57 @@ name: cd
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
 
 concurrency:
   group: cd-preview-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Detect changed files
+    runs-on: ubuntu-latest
+    outputs:
+      android: ${{ steps.filter.outputs.android }}
+      ios: ${{ steps.filter.outputs.ios }}
+      doc_only: ${{ steps.doc_only.outputs.value }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            android:
+              - 'android/**'
+              - '.github/actions/deploy_android_**'
+              - '**/*.gradle*'
+              - 'package.json'
+              - 'yarn.lock'
+            ios:
+              - 'ios/**'
+              - '.github/actions/deploy_ios_**'
+              - '.ruby-version'
+              - 'Gemfile*'
+              - 'package.json'
+              - 'yarn.lock'
+            docs:
+              - 'docs/**'
+              - '**/*.md'
+
+      - id: doc_only
+        run: |
+          if [[ "${{ steps.filter.outputs.docs }}" == "true" && "${{ steps.filter.outputs.android }}" != "true" && "${{ steps.filter.outputs.ios }}" != "true" ]]; then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
   check_version_number:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
+    needs: changes
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -30,7 +73,8 @@ jobs:
           fi
 
   release_notes_check:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
+    needs: changes
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false'
     runs-on: ubuntu-latest
     outputs:
       release_notes: ${{ steps.check.outputs.release_notes }}
@@ -47,20 +91,20 @@ jobs:
           notes_ext: '.md'
 
   deploy_android:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [check_version_number, release_notes_check]
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false' && needs.changes.outputs.android == 'true'
+    needs: [changes, check_version_number, release_notes_check]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
       contents: read
     steps:
-      - name: Checkout (root for actions)
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Checkout (app code)
-        uses: actions/checkout@v4
+      - name: Setup Gradle cache
+        uses: gradle/actions/setup-gradle@v4
         with:
-          path: app
+          cache-read-only: ${{ github.base_ref != 'main' }}
 
       - name: Inject Doppler Preview Secrets
         uses: ./.github/actions/inject_doppler_secrets
@@ -68,7 +112,7 @@ jobs:
           doppler_token: ${{ secrets.DOPPLER_PREVIEW_TOKEN }}
           doppler_project: react-native-template
           doppler_environment: preview
-          working_directory: app
+          working_directory: .
 
       - name: Deploy android app to Firebase App Distribution
         uses: ./.github/actions/deploy_android_preview
@@ -93,9 +137,9 @@ jobs:
           ios_apple_id: ${{ secrets.IOS_APPLE_ID }}
 
   deploy_ios:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [check_version_number, release_notes_check]
-    runs-on: macos-15
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false' && needs.changes.outputs.ios == 'true'
+    needs: [changes, check_version_number, release_notes_check]
+    runs-on: macos-15-xlarge
     timeout-minutes: 60
     permissions:
       pull-requests: write

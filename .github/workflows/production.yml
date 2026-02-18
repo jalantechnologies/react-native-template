@@ -53,7 +53,7 @@ jobs:
           RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
 
   deploy_ios:
-    runs-on: macos-15
+    runs-on: macos-15-xlarge
     needs: [release_notes_check]
     timeout-minutes: 30
     steps:

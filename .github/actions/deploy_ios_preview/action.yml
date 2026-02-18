@@ -63,6 +63,8 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version-file: .nvmrc
+        cache: 'yarn'
+        cache-dependency-path: 'yarn.lock'
 
     - name: Enable Corepack
       run: corepack enable
@@ -73,6 +75,7 @@ runs:
       shell: bash
 
     - name: Cache CocoaPods
+      id: pods-cache
       uses: actions/cache@v4
       with:
         path: |
@@ -83,11 +86,32 @@ runs:
         restore-keys: |
           ${{ runner.os }}-pods-
 
+    - name: Cache SwiftPM
+      id: spm-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/Library/Caches/org.swift.swiftpm
+          ~/Library/Developer/Xcode/DerivedData/SourcePackages
+        key: ${{ runner.os }}-spm-${{ hashFiles('ios/Package.resolved', 'ios/Package.swift', 'ios/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
+    - name: Cache Xcode DerivedData
+      uses: actions/cache@v4
+      with:
+        path: ~/Library/Developer/Xcode/DerivedData
+        key: ${{ runner.os }}-derived-${{ hashFiles('ios/Podfile.lock', 'yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-derived-
+
     - name: Install CocoaPods dependencies
       working-directory: ios
       shell: bash
       run: |
-        pod repo update
+        if [[ "${{ steps.pods-cache.outputs.cache-hit }}" != "true" ]]; then
+          pod repo update
+        fi
         bundle exec pod update boost --no-repo-update
         bundle exec pod install
 
@@ -129,15 +153,13 @@ runs:
         IOS_APP_IDENTIFIER: ${{ inputs.IOS_APP_IDENTIFIER }}
         IOS_KEYCHAIN_PASSWORD: ${{ inputs.IOS_KEYCHAIN_PASSWORD }}
 
-    - name: Clear Derived Data
-      run: rm -rf ~/Library/Developer/Xcode/DerivedData
-      shell: bash
 
     - name: iOS PR Deploy to TestFlight
       working-directory: ios
       run: bundle exec fastlane ios pr_deploy
       shell: bash
       env:
+        DERIVED_DATA_PATH: ~/Library/Developer/Xcode/DerivedData
         MATCH_PASSWORD: ${{ inputs.IOS_MATCH_PASSWORD }}
         IOS_MATCH_REPOSITORY_URL: ${{ inputs.IOS_MATCH_REPOSITORY_URL }}
         IOS_APPLE_ID: ${{ inputs.IOS_APPLE_ID }}

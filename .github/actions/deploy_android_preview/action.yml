@@ -56,7 +56,7 @@ runs:
         distribution: 'temurin'
 
     - name: Setup Gradle (build cache)
-      uses: gradle/actions/setup-gradle@v3
+      uses: gradle/actions/setup-gradle@v4
       with:
         build-root-directory: android
         cache-read-only: ${{ github.base_ref != 'main' }}

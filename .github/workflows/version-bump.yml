@@ -73,14 +73,26 @@ jobs:
           NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
           NOTES_FILE="docs/release_notes/release_notes.md"
           VERSIONED_NOTES="docs/release_notes/${NEW_VERSION}.md"
+          PLACEHOLDER_PATTERN='^[[:space:]]*<enter release notes for the next version here([[:space:]]*\(max 500 chars\))?[[:space:]]*>?[[:space:]]*$'
+
+          # git commit needs a local author identity on the runner.
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           
           if [ ! -f "$NOTES_FILE" ]; then
             echo "::error::Release notes file not found"
             exit 1
           fi
           
-          if [ ! -s "$NOTES_FILE" ]; then
-            echo "::error::Release notes file is empty"
+          CONTENT=$(cat "$NOTES_FILE")
+          STRIPPED_CONTENT=$(printf "%s" "$CONTENT" | tr -d '[:space:]')
+          if [ -z "$STRIPPED_CONTENT" ]; then
+            echo "::error::Release notes file contains only whitespace"
+            exit 1
+          fi
+
+          if printf "%s" "$CONTENT" | grep -qE "$PLACEHOLDER_PATTERN"; then
+            echo "::error::Release notes still contain placeholder text"
             exit 1
           fi
           
@@ -92,9 +104,42 @@ jobs:
           
           git add package.json "$VERSIONED_NOTES" "$NOTES_FILE"
           git commit -m "chore: bump version to v${NEW_VERSION}"
+
+      - name: Reset release notes template (no semver label)
+        if: steps.bump.outputs.should_bump != 'true'
+        id: reset_notes
+        run: |
+          NOTES_FILE="docs/release_notes/release_notes.md"
+          PLACEHOLDER_PATTERN='^[[:space:]]*<enter release notes for the next version here([[:space:]]*\(max 500 chars\))?[[:space:]]*>?[[:space:]]*$'
+
+          if [ ! -f "$NOTES_FILE" ]; then
+            echo "::error::Release notes file not found"
+            exit 1
+          fi
+
+          CONTENT=$(cat "$NOTES_FILE")
+          if printf "%s" "$CONTENT" | grep -qE "$PLACEHOLDER_PATTERN"; then
+            echo "should_push=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          cat <<'EOF' > "$NOTES_FILE"
+          <enter release notes for the next version here (max 500 chars)>
+          EOF
+
+          git add "$NOTES_FILE"
+          if git diff --cached --quiet; then
+            echo "should_push=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "chore: reset release notes template"
+            echo "should_push=true" >> "$GITHUB_OUTPUT"
+          fi
           
       - name: Push changes
-        if: steps.bump.outputs.should_bump == 'true'
+        if: steps.bump.outputs.should_bump == 'true' || steps.reset_notes.outputs.should_push == 'true'
         env:
           GH_APP_TOKEN: ${{ steps.app-token.outputs.token }}
           TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
@@ -106,9 +151,22 @@ jobs:
 
           git remote set-url origin "https://x-access-token:${GH_APP_TOKEN}@github.com/${{ github.repository }}"
 
+          START_COMMIT=$(git rev-parse HEAD)
           pushed=false
           for attempt in 1 2 3; do
-            if git pull --rebase origin "${TARGET_BRANCH}" && git push origin "HEAD:${TARGET_BRANCH}"; then
+            # Ensure each retry starts from a clean state.
+            git rebase --abort 2>/dev/null || true
+            git reset --hard "$START_COMMIT"
+            git fetch origin "${TARGET_BRANCH}"
+
+            if ! git rebase "origin/${TARGET_BRANCH}"; then
+              git rebase --abort || true
+              echo "Rebase failed on attempt $attempt, retrying in 5s..."
+              sleep 5
+              continue
+            fi
+
+            if git push origin "HEAD:${TARGET_BRANCH}"; then
               pushed=true
               break
             fi
@@ -141,4 +199,8 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Reason:** No semver label found on merged PR." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Please add one of: semver: patch | semver: minor | semver: major" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.reset_notes.outputs.should_push }}" = "true" ]; then
+            echo "- Reset \`docs/release_notes/release_notes.md\` to template on main." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- Release notes template already in expected state; no commit was needed." >> $GITHUB_STEP_SUMMARY
+          fi

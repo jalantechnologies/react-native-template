@@ -1,6 +1,4 @@
-### CI/CD automation update
-- Added post-merge auto version bump on `main` using semver labels from merged PRs.
-- `release_notes.md` is now rotated to `docs/release_notes/<version>.md` during bump, then reset with a fresh template.
-- Production and permanent preview run only from the bump commit push.
-- Version bump uses `Better Software-version-bump-bot` with branch-rule bypass.
-- Updated CD/automation docs with fork setup and required app permissions.
+### CI/CD hotfix
+- Fixed `Version Bump` failure on merge where `git commit` failed with missing author identity.
+- Added local git author config in `version-bump.yml` before committing rotated release notes.
+- Restores bump commit creation so production and permanent preview can trigger from the bump push.

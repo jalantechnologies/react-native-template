@@ -1,0 +1,144 @@
+name: Version Bump
+on:
+  pull_request_target:
+    types: [closed]
+    branches: [main]
+
+concurrency:
+  group: version-bump-main
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.VERSION_BUMP_APP_ID }}
+          private-key: ${{ secrets.VERSION_BUMP_PRIVATE_KEY }}
+
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.base.ref }}
+          token: ${{ steps.app-token.outputs.token }}
+          
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          
+      - name: Determine version bump
+        id: bump
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = context.payload.pull_request.labels.map(l => l.name);
+            console.log('PR Labels:', labels);
+            
+            let bump = null;
+            if (labels.includes('semver: major')) bump = 'major';
+            else if (labels.includes('semver: minor')) bump = 'minor';
+            else if (labels.includes('semver: patch')) bump = 'patch';
+            
+            if (bump) {
+              core.setOutput('type', bump);
+              core.setOutput('should_bump', 'true');
+              core.info(`Version bump: ${bump}`);
+            } else {
+              core.setOutput('should_bump', 'false');
+              core.info('No semver label found, skipping version bump and downstream workflows.');
+            }
+            
+      - name: Bump version
+        if: steps.bump.outputs.should_bump == 'true'
+        id: bump_version
+        env:
+          npm_config_package_lock: "false"
+        run: |
+          npm version ${{ steps.bump.outputs.type }} --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION"
+          
+      - name: Rotate release notes
+        if: steps.bump.outputs.should_bump == 'true'
+        run: |
+          NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
+          NOTES_FILE="docs/release_notes/release_notes.md"
+          VERSIONED_NOTES="docs/release_notes/${NEW_VERSION}.md"
+          
+          if [ ! -f "$NOTES_FILE" ]; then
+            echo "::error::Release notes file not found"
+            exit 1
+          fi
+          
+          if [ ! -s "$NOTES_FILE" ]; then
+            echo "::error::Release notes file is empty"
+            exit 1
+          fi
+          
+          mv "$NOTES_FILE" "$VERSIONED_NOTES"
+          
+          cat <<'EOF' > "$NOTES_FILE"
+          <enter release notes for the next version here (max 500 chars)>
+          EOF
+          
+          git add package.json "$VERSIONED_NOTES" "$NOTES_FILE"
+          git commit -m "chore: bump version to v${NEW_VERSION}"
+          
+      - name: Push changes
+        if: steps.bump.outputs.should_bump == 'true'
+        env:
+          GH_APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
+        run: |
+          if [ -z "$GH_APP_TOKEN" ]; then
+            echo "::error::Failed to create GitHub App token."
+            exit 1
+          fi
+
+          git remote set-url origin "https://x-access-token:${GH_APP_TOKEN}@github.com/${{ github.repository }}"
+
+          pushed=false
+          for attempt in 1 2 3; do
+            if git pull --rebase origin "${TARGET_BRANCH}" && git push origin "HEAD:${TARGET_BRANCH}"; then
+              pushed=true
+              break
+            fi
+
+            echo "Push attempt $attempt failed, retrying in 5s..."
+            sleep 5
+          done
+
+          if [ "$pushed" != "true" ]; then
+            echo "::error::Failed to push after 3 attempts."
+            exit 1
+          fi
+
+      - name: Summary
+        if: steps.bump.outputs.should_bump == 'true'
+        run: |
+          NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
+          BRANCH="${{ github.event.pull_request.base.ref }}"
+          echo "## ✅ Version Bumped Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **New version:** v${NEW_VERSION}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Bump type:** ${{ steps.bump.outputs.type }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${BRANCH}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Next step:** Production and permanent preview workflows run from the pushed bump commit on ${BRANCH}" >> $GITHUB_STEP_SUMMARY
+          
+      - name: Summary (no semver label)
+        if: always() && steps.bump.outputs.should_bump != 'true'
+        run: |
+          echo "## ⚠️ Version Bump Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Reason:** No semver label found on merged PR." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Please add one of: semver: patch | semver: minor | semver: major" >> $GITHUB_STEP_SUMMARY

@@ -8,27 +8,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check_version_number:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        
-      - name: Compare package.json versions
-        run: |
-          # Fetch the main branch package.json
-          git fetch origin main
-          MAIN_VERSION=$(jq -r .version <(git show origin/main:package.json))
-          PR_VERSION=$(jq -r .version < package.json)
-          echo "Main branch version: $MAIN_VERSION"
-          echo "PR branch version: $PR_VERSION"
-          # Compare versions
-          if [ "$(printf '%s\n%s' "$MAIN_VERSION" "$PR_VERSION" | sort -V | head -n1)" != "$MAIN_VERSION" ] || [ "$MAIN_VERSION" == "$PR_VERSION" ]; then
-            echo "Error: PR version ($PR_VERSION) must be strictly greater than main version ($MAIN_VERSION)."
-            exit 1
-          fi
-
   release_notes_check:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
@@ -42,13 +21,11 @@ jobs:
         id: check
         uses: ./.github/actions/release_notes_check
         with:
-          version_file: 'package.json'
-          notes_dir: 'docs/release_notes'
-          notes_ext: '.md'
+          notes_file: 'docs/release_notes/release_notes.md'
 
   deploy_android:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [check_version_number, release_notes_check]
+    needs: [release_notes_check]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -94,7 +71,7 @@ jobs:
 
   deploy_ios:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
-    needs: [check_version_number, release_notes_check]
+    needs: [release_notes_check]
     runs-on: macos-15
     timeout-minutes: 60
     permissions:

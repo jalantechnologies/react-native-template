@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - package.json
 
 permissions:
   contents: write
@@ -13,7 +15,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  commit_message_gate:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.gate.outputs.should_run }}
+    steps:
+      - name: Validate bump commit message
+        id: gate
+        env:
+          HEAD_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          SUBJECT=$(printf "%s" "$HEAD_MESSAGE" | head -n 1)
+          if printf "%s" "$SUBJECT" | grep -Eq '^chore: bump version to v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          fi
+
   release_notes_check:
+    needs: [commit_message_gate]
+    if: needs.commit_message_gate.outputs.should_run == 'true'
     runs-on: ubuntu-latest
     outputs:
       release_notes: ${{ steps.check.outputs.release_notes }}

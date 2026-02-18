@@ -23,6 +23,11 @@ runs:
     - name: Inject Doppler secrets into environment
       shell: bash
       run: |
+        set -euo pipefail
+
+        WORKDIR="${{ inputs.working_directory }}"
+        ENV_FILE="${WORKDIR}/.env"
+
         echo "Fetching Doppler secrets for project: ${{ inputs.doppler_project }}, environment: ${{ inputs.doppler_environment }}"
         
         # Download secrets for the specified environment and project
@@ -31,24 +36,29 @@ runs:
           --config=${{ inputs.doppler_environment }} > .doppler_env
         
         # Update the existing .env file with values from Doppler secrets
-        if [ -f ${{ inputs.working_directory }}/.env ]; then
+        if [ -f "$ENV_FILE" ]; then
           while IFS='=' read -r key value; do
             # Skip empty lines and comments
             [[ -z "$key" || "$key" =~ ^# ]] && continue
+
+            SAFE_KEY=$(printf '%s' "$key" | sed 's/[.[\*^$(){}+?|/]/\\&/g')
             
-            if grep -q "^$key=" ${{ inputs.working_directory }}/.env; then
+            if grep -Eq "^${SAFE_KEY}=" "$ENV_FILE"; then
+              # Escape dynamic values for safe sed replacement.
+              SAFE_VALUE=$(printf '%s' "$value" | sed 's/[&|\\]/\\&/g')
+
               # macOS (BSD) sed requires '' after -i, Linux (GNU) sed doesn't
               if [[ "$OSTYPE" == "darwin"* ]]; then
-                sed -i '' "s|^$key=.*|$key=$value|" ${{ inputs.working_directory }}/.env
+                sed -i '' "s|^${SAFE_KEY}=.*|${key}=${SAFE_VALUE}|" "$ENV_FILE"
               else
-                sed -i "s|^$key=.*|$key=$value|" ${{ inputs.working_directory }}/.env
+                sed -i "s|^${SAFE_KEY}=.*|${key}=${SAFE_VALUE}|" "$ENV_FILE"
               fi
             else
-              echo "$key=$value" >> ${{ inputs.working_directory }}/.env
+              echo "$key=$value" >> "$ENV_FILE"
             fi
           done < .doppler_env
         else
-          mv .doppler_env ${{ inputs.working_directory }}/.env
+          mv .doppler_env "$ENV_FILE"
         fi
         
         # Clean up the temporary file
@@ -59,5 +69,6 @@ runs:
     - name: Verify .env file (Safe Verification)
       shell: bash
       run: |
+        set -euo pipefail
         echo "Keys in .env:"
-        grep -o '^[^=]*' ${{ inputs.working_directory }}/.env
+        grep -o '^[^=]*' "${{ inputs.working_directory }}/.env"

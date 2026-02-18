@@ -2,7 +2,7 @@
 
 GitHub Actions + Fastlane handle preview, production, and permanent-preview deployments for Android and iOS.
 
-- **Triggers:** PR events (preview deploys), and pushes to `main` (production + permanent preview).
+- **Triggers:** PR events (preview deploys), merged PRs to `main` (auto version bump), and version-bump commit pushes to `main` (production + permanent preview).
 - **Issue routing:** file CD issues in GitHub with the `Devops` label so deployment owners are notified.
 
 ## Workflow Flow Diagram
@@ -10,13 +10,17 @@ GitHub Actions + Fastlane handle preview, production, and permanent-preview depl
 ```mermaid
 flowchart TB
   PR[Pull Request opened or updated] --> PRWF[cd.yml]
-  PRWF --> PRGATES[Version check + Release notes check]
+  PRWF --> PRGATES[Release notes check]
   PRGATES --> PRPASS{Checks pass?}
   PRPASS -->|Yes| PRDEPLOY[Build and Deploy Android + iOS preview<br/>and update PR comment links]
   PRPASS -->|No| PRSTOP[Stop deployment]
 
-  MAIN[Push to main] --> PRODWF[production.yml]
-  MAIN --> PPWF[permanent_preview.yml]
+  MERGE[PR merged into main] --> VBWF[version-bump.yml]
+  VBWF --> VBCHK{Semver label present?}
+  VBCHK -->|No| VBSKIP[Skip bump and downstream release workflows]
+  VBCHK -->|Yes| VBPUSH[Push chore: bump version commit to main]
+  VBPUSH --> PRODWF[production.yml]
+  VBPUSH --> PPWF[permanent_preview.yml]
   PRODWF --> PRODRN[Release notes validation]
   PRODRN --> PRODBUILD[Build Android and IOS production apps]
   PRODBUILD --> PRODDEPLOY[Deploy Android apk to Play + iOS .ipa to App Store]
@@ -29,8 +33,7 @@ flowchart TB
 
 **What runs**
 
-- Version check: PR [`package.json`](../package.json) version must be strictly greater than `main`; otherwise the workflow fails and skips deploys.
-- Release notes validation: requires [`docs/release_notes/{version}.md`](./release_notes/), non-empty, ≤ 500 characters. The validated text is emitted as workflow output and injected into:
+- Release notes validation: requires [`docs/release_notes/release_notes.md`](./release_notes/release_notes.md), non-empty, <= 500 characters, and not equal to placeholder-only content. The validated text is emitted as workflow output and injected into:
   - [`android/fastlane/metadata/android/en-US/changelogs/default.txt`](../android/fastlane/metadata/android/en-US/changelogs/default.txt)
   - ENV variable for iOS Fastlane upload (“What to Test”)
 - Environment injection: Doppler secrets write environment-specific `.env` values for preview builds.
@@ -45,13 +48,59 @@ flowchart TB
   - Uses Fastlane with preview signing, attaches release notes, and comments on the PR with build link.
 - PR comment summarizes Firebase + TestFlight artifacts with links.
 
-## Production Deployment ([`production.yml`](../.github/workflows/production.yml))
+## Automatic Version Bump ([`version-bump.yml`](../.github/workflows/version-bump.yml))
 
-**Trigger:** push to `main` (post-merge).
+**Trigger:** merged pull requests to `main` (`pull_request_target` on `closed` + `if: merged == true`).
+
+**Why bot is required**
+
+- `main` is protected for security and regular code changes are expected to land via pull requests only.
+- Version bump is a post-merge automation commit, so it needs a controlled bypass identity.
+- This project uses `Better Software-version-bump-bot` as that controlled identity.
 
 **What runs**
 
-- Release notes validation identical to preview (file must exist, non-empty, ≤ 500 chars); writes to Fastlane metadata of both ios and android.
+- Uses GitHub App `Better Software-version-bump-bot` (configured at org level) for authenticated push to `main`.
+- Creates GitHub App token using:
+  - `VERSION_BUMP_APP_ID`
+  - `VERSION_BUMP_PRIVATE_KEY`
+- Reads semver label from merged PR:
+  - `semver: patch` / `semver: minor` / `semver: major`
+- If no semver label exists:
+  - Marks bump as skipped in summary.
+  - Does not create a commit.
+  - Production and permanent preview do not run from this merge.
+- If semver label exists:
+  - Bumps `package.json`.
+  - Rotates `docs/release_notes/release_notes.md` -> `docs/release_notes/<new_version>.md`.
+  - Creates fresh `docs/release_notes/release_notes.md` with template placeholder.
+  - Commits `chore: bump version to v<new_version>`.
+  - Pushes to `main` with retry logic to handle races.
+
+**Fork requirement**
+
+- For forks, this workflow requires equivalent credentials in that fork:
+  - preferred: GitHub App installation with branch-ruleset bypass + `VERSION_BUMP_APP_ID` and `VERSION_BUMP_PRIVATE_KEY`, or
+  - fallback: a PAT with repo/workflow access and bypass rights.
+- Required permissions for the GitHub App:
+  - Read access to metadata and pull requests
+  - Read and write access to actions and code (repository contents)
+
+## Production Deployment ([`production.yml`](../.github/workflows/production.yml))
+
+**Trigger:** push to `main` with path filters for:
+- `package.json`
+
+**Execution guard:** runs only when commit subject matches:
+- `^chore: bump version to v[0-9]+\.[0-9]+\.[0-9]+$`
+
+**What runs**
+
+- Release notes validation using current package version file:
+  - `version` from [`package.json`](../package.json)
+  - notes file derived as `docs/release_notes/<version>.md`
+  - file must exist, non-empty, <= 500 chars, and not placeholder-only content
+- Notes are written to Fastlane metadata for Android and passed for iOS release notes.
 - Doppler secret injection for production env values.
 - Android production build → Google Play Internal track:
   - Takes `versionNameOverride` from [`package.json`](../package.json)
@@ -63,21 +112,32 @@ flowchart TB
 
 ## Permanent Preview ([`permanent_preview.yml`](../.github/workflows/permanent_preview.yml))
 
-**Trigger:** push to `main` (runs alongside production).
+**Trigger:** same as production (push to `main` with `package.json` path filter).
+
+**Execution guard:** runs only when commit subject matches:
+- `^chore: bump version to v[0-9]+\.[0-9]+\.[0-9]+$`
 
 **What runs**
 
-- Validates release notes for the current version and exposes them as outputs.
+- Validates release notes for current package version (`docs/release_notes/<version>.md`).
 - Builds Android preview (release-signed) and iOS preview (release-signed) with timestamped build numbers.
 - Publishes artifacts to GitHub Actions and to a GitHub Release tagged `preview-v<version>`.
 
 ## Release Notes Structure & Gates
 
-Release notes must live at [`docs/release_notes/{version}.md`](./release_notes/) and are enforced in all CD workflows:
+Two release-note files are used across the pipeline:
 
-- File must exist, be non-empty, and be ≤ 500 characters.
-- Content is emitted as workflow output and written to Fastlane metadata for Android/iOS.
-- Production runs also write `{versionCode}.txt` beside the default Play Console changelog.
+1. Rolling PR notes file: [`docs/release_notes/release_notes.md`](./release_notes/release_notes.md)
+   - validated in PR preview workflow (`cd.yml`)
+2. Versioned release notes file: [`docs/release_notes/<version>.md`](./release_notes/)
+   - created by `version-bump.yml`
+   - validated by production and permanent preview workflows
+
+Validation rules:
+- File must exist.
+- File must not be empty/whitespace-only.
+- File must be <= 500 characters.
+- File must not be placeholder-only content.
 
 ## Environment Variables (GitHub Secrets)
 
@@ -97,9 +157,13 @@ Release notes must live at [`docs/release_notes/{version}.md`](./release_notes/)
 | `ANDROID_KEY_ALIAS`               | Keystore alias.                                                       |
 | `ANDROID_KEY_PASSWORD`            | Key alias password.                                                   |
 | `GPLAY_SERVICE_ACCOUNT_KEY_JSON`  | Play Console service account key for uploads.                         |
+| `VERSION_BUMP_APP_ID`             | GitHub App ID used by the version-bump workflow.                      |
+| `VERSION_BUMP_PRIVATE_KEY`        | GitHub App private key used to mint installation tokens for that app. |
 | `SONAR_TOKEN`                     | SonarQube auth token (used in CI checks).                             |
 | `SONAR_HOST_URL`                  | SonarQube server URL.                                                 |
 | `DOPPLER_PREVIEW_TOKEN`           | Doppler token for preview env injection.                              |
+
+For this organization, the configured GitHub App is `Better Software-version-bump-bot`.
 
 ### iOS Secrets
 

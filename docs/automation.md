@@ -7,6 +7,7 @@ This project uses GitHub Actions, Doppler, and Fastlane to run PR previews and p
 Read deeper workflow behavior in [CI](./ci.md) and [CD](./cd.md).
 
 - [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) — Pull request checks (lint, type-check, SonarQube).
+- [`.github/workflows/pr-labeler.yml`](../.github/workflows/pr-labeler.yml) — Separate PR hook that validates semantic titles and auto-applies `type:`/`semver:` labels (see [CI guide](./ci.md#pr-titles--auto-labeling)).
 - [`.github/workflows/cd.yml`](../.github/workflows/cd.yml) — PR preview deployments (Android Firebase + iOS TestFlight) with release-notes validation.
 - [`.github/workflows/version-bump.yml`](../.github/workflows/version-bump.yml) — Runs after PR merge to `main`, bumps version, rotates release notes, and pushes bump commit.
 - [`.github/workflows/production.yml`](../.github/workflows/production.yml) — Production deploys from the version-bump commit pushed to `main`.

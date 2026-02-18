@@ -73,6 +73,11 @@ jobs:
           NEW_VERSION="${{ steps.bump_version.outputs.new_version }}"
           NOTES_FILE="docs/release_notes/release_notes.md"
           VERSIONED_NOTES="docs/release_notes/${NEW_VERSION}.md"
+          PLACEHOLDER_PATTERN='^[[:space:]]*<enter release notes for the next version here([[:space:]]*\(max 500 chars\))?[[:space:]]*>?[[:space:]]*$'
+
+          # git commit needs a local author identity on the runner.
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           
           if [ ! -f "$NOTES_FILE" ]; then
             echo "::error::Release notes file not found"
@@ -81,6 +86,18 @@ jobs:
           
           if [ ! -s "$NOTES_FILE" ]; then
             echo "::error::Release notes file is empty"
+            exit 1
+          fi
+
+          CONTENT=$(cat "$NOTES_FILE")
+          STRIPPED_CONTENT=$(printf "%s" "$CONTENT" | tr -d '[:space:]')
+          if [ -z "$STRIPPED_CONTENT" ]; then
+            echo "::error::Release notes file contains only whitespace"
+            exit 1
+          fi
+
+          if printf "%s" "$CONTENT" | grep -qiE "$PLACEHOLDER_PATTERN"; then
+            echo "::error::Release notes still contain placeholder text"
             exit 1
           fi
           
@@ -106,9 +123,24 @@ jobs:
 
           git remote set-url origin "https://x-access-token:${GH_APP_TOKEN}@github.com/${{ github.repository }}"
 
+          START_COMMIT=$(git rev-parse HEAD)
           pushed=false
           for attempt in 1 2 3; do
-            if git pull --rebase origin "${TARGET_BRANCH}" && git push origin "HEAD:${TARGET_BRANCH}"; then
+            # Ensure each retry starts from a clean state.
+            if [ -d .git/rebase-apply ] || [ -d .git/rebase-merge ]; then
+              git rebase --abort || true
+            fi
+            git reset --hard "$START_COMMIT"
+            git fetch origin "${TARGET_BRANCH}"
+
+            if ! git rebase "origin/${TARGET_BRANCH}"; then
+              git rebase --abort || true
+              echo "Rebase failed on attempt $attempt, retrying in 5s..."
+              sleep 5
+              continue
+            fi
+
+            if git push origin "HEAD:${TARGET_BRANCH}"; then
               pushed=true
               break
             fi

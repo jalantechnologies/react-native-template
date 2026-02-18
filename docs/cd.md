@@ -90,9 +90,9 @@ flowchart TB
 
 **Trigger:** push to `main` with path filters for:
 - `package.json`
-- `docs/release_notes/**`
 
-**Execution guard:** runs only when head commit starts with `chore: bump version to v`.
+**Execution guard:** runs only when commit subject matches:
+- `^chore: bump version to v[0-9]+\.[0-9]+\.[0-9]+$`
 
 **What runs**
 
@@ -112,9 +112,10 @@ flowchart TB
 
 ## Permanent Preview ([`permanent_preview.yml`](../.github/workflows/permanent_preview.yml))
 
-**Trigger:** same as production (push to `main` with `package.json`/release-notes path filters).
+**Trigger:** same as production (push to `main` with `package.json` path filter).
 
-**Execution guard:** runs only when head commit starts with `chore: bump version to v`.
+**Execution guard:** runs only when commit subject matches:
+- `^chore: bump version to v[0-9]+\.[0-9]+\.[0-9]+$`
 
 **What runs**
 
@@ -156,11 +157,13 @@ Validation rules:
 | `ANDROID_KEY_ALIAS`               | Keystore alias.                                                       |
 | `ANDROID_KEY_PASSWORD`            | Key alias password.                                                   |
 | `GPLAY_SERVICE_ACCOUNT_KEY_JSON`  | Play Console service account key for uploads.                         |
-| `VERSION_BUMP_APP_ID`             | GitHub App ID for `Better Software-version-bump-bot`.                 |
-| `VERSION_BUMP_PRIVATE_KEY`        | GitHub App private key used to mint installation tokens.              |
+| `VERSION_BUMP_APP_ID`             | GitHub App ID used by the version-bump workflow.                      |
+| `VERSION_BUMP_PRIVATE_KEY`        | GitHub App private key used to mint installation tokens for that app. |
 | `SONAR_TOKEN`                     | SonarQube auth token (used in CI checks).                             |
 | `SONAR_HOST_URL`                  | SonarQube server URL.                                                 |
 | `DOPPLER_PREVIEW_TOKEN`           | Doppler token for preview env injection.                              |
+
+For this organization, the configured GitHub App is `Better Software-version-bump-bot`.
 
 ### iOS Secrets
 

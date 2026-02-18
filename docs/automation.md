@@ -24,7 +24,7 @@ Read deeper workflow behavior in [CI](./ci.md) and [CD](./cd.md).
 
 ### Authentication and push identity
 
-- This repo uses the GitHub App identity `Better Software-version-bump-bot` for automated bump commits.
+- This repo uses the GitHub App identity `Better Software-version-bump-bot` for automated version bump commits.
 - The app is installed at organization level, and its credentials are managed as organization secrets.
 - We use this bot because `main` is protected for security: direct pushes are restricted and normal development changes must go through pull requests.
 - The bot is the controlled exception for only the post-merge automation commit (`chore: bump version to v...`).
@@ -68,11 +68,11 @@ If an outsider forks this repository and wants the same release automation:
 ## Downstream Release Triggering
 
 - `production.yml` and `permanent_preview.yml` are both `push` workflows on `main`.
-- Both are further guarded to run only when commit message starts with:
-  - `chore: bump version to v`
-- Both also filter paths:
+- They are triggered by the version-bump commit push.
+- Both use a strict commit-subject regex gate:
+  - `^chore: bump version to v[0-9]+\.[0-9]+\.[0-9]+$`
+- Both use `on.push.paths` for:
   - `package.json`
-  - `docs/release_notes/**`
 
 This guarantees production/permanent-preview runs happen only from the version-bump commit path.
 

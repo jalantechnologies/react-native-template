@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - package.json
-      - docs/release_notes/**
 
 permissions:
   contents: write

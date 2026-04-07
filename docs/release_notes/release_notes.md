@@ -1,1 +1,1 @@
-<enter release notes for the next version here (max 500 chars)>
+- Renamed project image references from boilerplate-react-native to react-native-template

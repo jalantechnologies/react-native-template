@@ -97,6 +97,15 @@ jobs:
         run: |
           echo "## ✅ Android Deployment Successful" >> $GITHUB_STEP_SUMMARY
           echo "Version ${{ needs.release_notes_check.outputs.version }} deployed to Play Store" >> $GITHUB_STEP_SUMMARY
+
+      - name: Failure summary
+        if: failure()
+        run: |
+          echo "## ❌ Android Production Deploy Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Android production build or Play Store upload failed. Review the step logs above for details." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
           
   deploy_ios:
     runs-on: macos-15
@@ -135,3 +144,12 @@ jobs:
         run: |
           echo "## ✅ iOS Deployment Successful" >> $GITHUB_STEP_SUMMARY
           echo "Version ${{ needs.release_notes_check.outputs.version }} deployed to App Store" >> $GITHUB_STEP_SUMMARY
+
+      - name: Failure summary
+        if: failure()
+        run: |
+          echo "## ❌ iOS Production Deploy Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "iOS production build or App Store upload failed. Review the step logs above for details." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY

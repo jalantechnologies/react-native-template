@@ -46,6 +46,15 @@ jobs:
         if: always()
         run: rm -f /tmp/gcp_key.json
 
+      - name: Failure summary
+        if: failure()
+        run: |
+          echo "## ❌ Android Cleanup Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Firebase App Distribution cleanup for PR #${{ github.event.pull_request.number }} failed. Review the step logs above for details." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+
 
   ios_cleanup:
     runs-on: macos-15
@@ -74,4 +83,13 @@ jobs:
       - name: Run Fastlane cleanup
         working-directory: ios
         run: bundle exec fastlane pr_cleanup
+
+      - name: Failure summary
+        if: failure()
+        run: |
+          echo "## ❌ iOS Cleanup Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "TestFlight cleanup for PR #${{ github.event.pull_request.number }} failed. Review the step logs above for details." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
 

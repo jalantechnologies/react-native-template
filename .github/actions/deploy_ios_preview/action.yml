@@ -108,11 +108,13 @@ runs:
 
     - name: Write iOS changelog for Fastlane
       shell: bash
+      env:
+        RELEASE_NOTES: ${{ inputs.RELEASE_NOTES }}
       run: |
         CHANGELOG_PATH="ios/fastlane/changelog.txt"
         mkdir -p "$(dirname "$CHANGELOG_PATH")"
-        echo "RELEASE NOTES: ${{ inputs.RELEASE_NOTES }}"
-        printf "%s" "${{ inputs.RELEASE_NOTES }}" > "$CHANGELOG_PATH"
+        echo "RELEASE NOTES: $RELEASE_NOTES"
+        printf "%s" "$RELEASE_NOTES" > "$CHANGELOG_PATH"
         echo "📝 Wrote iOS changelog to $CHANGELOG_PATH"
         
     - name: Clean Match cache

@@ -217,6 +217,11 @@ jobs:
           else
             gh release create "$TAG" --title "$TITLE" --notes-file production-release-notes.md --draft=false --prerelease=false --latest
           fi
-          if ls production-artifacts/*.aab >/dev/null 2>&1 || ls production-artifacts/*.ipa >/dev/null 2>&1; then
-            gh release upload "$TAG" production-artifacts/*.aab production-artifacts/*.ipa --clobber 2>/dev/null || true
+          AAB=$(find production-artifacts -name "*.aab" | head -1)
+          IPA=$(find production-artifacts -name "*.ipa" | head -1)
+          if [ -z "$AAB" ] && [ -z "$IPA" ]; then
+            echo "::error::No production artifacts found to upload to GitHub Release"
+            exit 1
           fi
+          [ -n "$AAB" ] && gh release upload "$TAG" "$AAB" --clobber
+          [ -n "$IPA" ] && gh release upload "$TAG" "$IPA" --clobber

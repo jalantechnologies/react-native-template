@@ -63,15 +63,10 @@ runs:
 
     - name: Export Release Notes
       shell: bash
-      env:
-        RELEASE_NOTES_VALUE: ${{ inputs.RELEASE_NOTES }}
       run: |
-        {
-          echo "RELEASE_NOTES<<EOF"
-          printf "%s" "$RELEASE_NOTES_VALUE"
-          echo ""
-          echo "EOF"
-        } >> "$GITHUB_ENV"
+        echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+        echo "${{ inputs.RELEASE_NOTES }}" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
 
     - name: Decode and save GCP service account key
       shell: bash

@@ -1,2 +1,1 @@
-- Production workflow now publishes a GitHub Release tagged v<version> with Android AAB and iOS IPA attached after successful store deployments.
-- Permanent preview releases are renamed to Preview Release v<version> and no longer marked as latest, so the latest badge correctly reflects production releases.
+<enter release notes for the next version here (max 500 chars)>

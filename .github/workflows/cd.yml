@@ -27,13 +27,13 @@ jobs:
           filters: |
             android:
               - 'android/**'
-              - '.github/actions/deploy_android_**'
+              - '.github/actions/deploy_android_*/**'
               - '**/*.gradle*'
               - 'package.json'
               - 'yarn.lock'
             ios:
               - 'ios/**'
-              - '.github/actions/deploy_ios_**'
+              - '.github/actions/deploy_ios_*/**'
               - '.ruby-version'
               - 'Gemfile*'
               - 'package.json'

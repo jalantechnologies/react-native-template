@@ -6,6 +6,7 @@ def ios_deploy_production!(options = {})
   require 'fileutils'
   require 'json'
   require 'fastlane'
+  require 'spaceship'
   require_relative 'release_notes_helper'
 
   # ---------------------------------------------------------------------------
@@ -77,6 +78,63 @@ def ios_deploy_production!(options = {})
     key_content: api_key_b64,
     is_key_content_base64: true
   )
+
+  # Ensure Spaceship uses the same API key for Connect API calls below.
+  # Older fastlane versions return a Hash; newer versions return a Token-like object.
+  Spaceship::ConnectAPI.token =
+    if api_key.respond_to?(:token)
+      api_key
+    elsif api_key.is_a?(Hash)
+      key_content = api_key[:key] || api_key['key']
+      if (api_key[:is_key_content_base64] || api_key['is_key_content_base64']) && key_content
+        key_content = Base64.decode64(key_content)
+      end
+      UI.user_error!('❌ ASC API key content is missing') if key_content.to_s.strip.empty?
+
+      in_house = api_key.key?(:in_house) ? api_key[:in_house] : api_key['in_house']
+      in_house = false if in_house.nil?
+
+      Spaceship::ConnectAPI::Token.create(
+        key_id: api_key[:key_id] || api_key['key_id'],
+        issuer_id: api_key[:issuer_id] || api_key['issuer_id'],
+        key: key_content,
+        filepath: api_key[:filepath] || api_key['filepath'],
+        duration: api_key[:duration] || api_key['duration'],
+        in_house: in_house
+      )
+    else
+      UI.user_error!("❌ Unexpected api_key type: #{api_key.class}")
+    end
+
+  # ---------------------------------------------------------------------------
+  # Guard: block deploy if any version is currently in review
+  # ---------------------------------------------------------------------------
+  app = Spaceship::ConnectAPI::App.find(app_identifier)
+  versions = app.get_app_store_versions(filter: { platform: 'IOS' })
+
+  state_of = lambda do |v|
+    v.respond_to?(:app_store_state) ? v.app_store_state : v.app_version_state
+  end
+
+  review_states   = %w[WAITING_FOR_REVIEW READY_FOR_REVIEW IN_REVIEW PENDING_APPLE_REVIEW]
+  editable_states = %w[PREPARE_FOR_SUBMISSION DEVELOPER_REJECTED REJECTED METADATA_REJECTED READY_FOR_REVIEW]
+
+  pending_reviews = versions.select { |v| review_states.include?(state_of.call(v)) }
+  unless pending_reviews.empty?
+    states = pending_reviews.map { |v| "#{v.version_string} (#{state_of.call(v)})" }.join(', ')
+    UI.user_error!("❌ App Store has version(s) in review: #{states}. Remove from review or wait until they finish before deploying.")
+  end
+
+  target_version = versions.find { |v| v.version_string == marketing_version }
+  if target_version
+    state = state_of.call(target_version)
+    unless editable_states.include?(state)
+      UI.user_error!("❌ App Store version #{marketing_version} exists but is in state #{state}, which is not editable. Bump the version in package.json or move it to Prepare for Submission.")
+    end
+    UI.message("📌 Using existing App Store version #{marketing_version} (state: #{state}).")
+  else
+    UI.message("🆕 No App Store version #{marketing_version} found; letting upload_to_app_store create it in 'Prepare for Submission'.")
+  end
 
   # ---------------------------------------------------------------------------
   # Set marketing version + compute production build number from it
@@ -252,6 +310,7 @@ def ios_deploy_production!(options = {})
   upload_to_app_store(
     api_key: api_key,
     app_identifier: app_identifier,
+    app_version: marketing_version,
     ipa: ipa_path,
     metadata_path: File.join(__dir__, '..', 'metadata'),
     skip_screenshots: true,

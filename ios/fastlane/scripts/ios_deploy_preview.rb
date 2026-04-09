@@ -175,12 +175,8 @@ def ios_deploy_preview!(options = {})
       app_identifier: app_identifier,
       ipa: ipa_path,
 
-      # Per-build metadata
-      changelog: testflight_changelog,  # "What to Test"
-      localized_build_info: localized_build_info,
-
       # Internal-only distribution — instant, no Apple beta review required
-      skip_waiting_for_build_processing: false,  # wait so changelog can be attached
+      skip_waiting_for_build_processing: true,   # no need to wait; internal testers access via TestFlight app
       distribute_external: false,
     )
     UI.success("✅ TestFlight upload complete! Build: #{next_build}")

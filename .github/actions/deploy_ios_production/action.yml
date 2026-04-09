@@ -86,9 +86,9 @@ runs:
           ios/Pods
           ~/Library/Caches/CocoaPods
           ~/.cocoapods
-        key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+        key: ${{ runner.os }}-pods-v2-${{ hashFiles('ios/Podfile.lock') }}
         restore-keys: |
-          ${{ runner.os }}-pods-
+          ${{ runner.os }}-pods-v2-
 
     - name: Cache SwiftPM
       id: spm-cache

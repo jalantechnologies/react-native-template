@@ -116,7 +116,7 @@ def ios_deploy_production!(options = {})
     v.respond_to?(:app_store_state) ? v.app_store_state : v.app_version_state
   end
 
-  review_states   = %w[WAITING_FOR_REVIEW READY_FOR_REVIEW IN_REVIEW PENDING_APPLE_REVIEW]
+  review_states   = %w[WAITING_FOR_REVIEW IN_REVIEW PENDING_APPLE_REVIEW]
   editable_states = %w[PREPARE_FOR_SUBMISSION DEVELOPER_REJECTED REJECTED METADATA_REJECTED READY_FOR_REVIEW]
 
   pending_reviews = versions.select { |v| review_states.include?(state_of.call(v)) }

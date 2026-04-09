@@ -1,1 +1,1 @@
-<enter release notes for the next version here (max 500 chars)>
+- Added App Store Connect review guard to prevent production deploys from overwriting in-review versions

@@ -17,6 +17,7 @@ jobs:
         with:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
+
       - name: sonarqube-scan-pullrequest
         uses: sonarsource/sonarqube-scan-action@master
         if: ${{ github.base_ref == 'main' }}
@@ -30,6 +31,15 @@ jobs:
             -Dsonar.pullrequest.base=${{ github.base_ref }}
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=1000
+
+      - name: Failure summary
+        if: failure()
+        run: |
+          echo "## ❌ SonarQube Analysis Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Quality gate check did not pass. Review the step logs above for details." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
 
   lint:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false
@@ -59,3 +69,12 @@ jobs:
       - name: Run type-check
         working-directory: app
         run: yarn type-check
+
+      - name: Failure summary
+        if: failure()
+        run: |
+          echo "## ❌ Lint / Type-check Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "One or more checks failed. Review the step logs above for details." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY

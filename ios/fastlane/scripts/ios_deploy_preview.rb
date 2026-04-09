@@ -163,9 +163,13 @@ def ios_deploy_preview!(options = {})
 
   # IMPORTANT:
   # - Assumes Beta App Info + Test Info already configured in App Store Connect.
-  # - Assumes external group "QA" exists and has testers.
+  # - PR preview builds are distributed to internal testers only (no beta review
+  #   required). External distribution is intentionally disabled here — Apple only
+  #   allows one build per version in beta review at a time, so external distribution
+  #   on every PR build causes queue blocking and ~30 min delays. External testers
+  #   should receive builds via the permanent-preview or production flows instead.
   begin
-    UI.message('☁️ Uploading to TestFlight...')
+    UI.message('☁️ Uploading to TestFlight (internal testers only)...')
     upload_to_testflight(
       api_key: api_key,                 # from app_store_connect_api_key above
       app_identifier: app_identifier,
@@ -175,11 +179,9 @@ def ios_deploy_preview!(options = {})
       changelog: testflight_changelog,  # "What to Test"
       localized_build_info: localized_build_info,
 
-      # Distribution
+      # Internal-only distribution — instant, no Apple beta review required
       skip_waiting_for_build_processing: false,  # wait so changelog can be attached
-      distribute_external: true,                 # send to external testers, project specific
-      groups: ["External Testers"],    # <-- project-specific, see comment
-      notify_external_testers: true,             # send email/notification, project specific
+      distribute_external: false,
     )
     UI.success("✅ TestFlight upload complete! Build: #{next_build}")
   rescue => e

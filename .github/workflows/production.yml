@@ -6,6 +6,9 @@ on:
     paths:
       - package.json
 
+permissions:
+  contents: write
+
 concurrency:
   group: cd-production
   cancel-in-progress: true
@@ -92,6 +95,24 @@ jobs:
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
           
+      - name: Stage Android production AAB
+        if: success()
+        shell: bash
+        run: |
+          mkdir -p production-artifacts
+          AAB=$(find android/app/build/outputs/bundle -name "*.aab" | head -1)
+          if [ -n "$AAB" ]; then
+            cp "$AAB" production-artifacts/react-native-template.aab
+          fi
+
+      - name: Upload Android production artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-production-release
+          path: production-artifacts/react-native-template.aab
+          if-no-files-found: warn
+
       - name: Android deployment summary
         if: success()
         run: |
@@ -106,7 +127,7 @@ jobs:
           echo "Android production build or Play Store upload failed. Review the step logs above for details." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
-          
+
   deploy_ios:
     runs-on: macos-15
     needs: [release_notes_check]
@@ -139,6 +160,24 @@ jobs:
           IOS_DEV_EMAIL: ${{ secrets.IOS_DEV_EMAIL }}
           IOS_MATCH_DEPLOY_KEY: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
           
+      - name: Stage iOS production IPA
+        if: success()
+        shell: bash
+        run: |
+          mkdir -p production-artifacts
+          IPA=$(find ios -maxdepth 2 -name "*.ipa" | head -1)
+          if [ -n "$IPA" ]; then
+            cp "$IPA" production-artifacts/react-native-template.ipa
+          fi
+
+      - name: Upload iOS production artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-production-release
+          path: production-artifacts/react-native-template.ipa
+          if-no-files-found: warn
+
       - name: iOS deployment summary
         if: success()
         run: |
@@ -153,3 +192,54 @@ jobs:
           echo "iOS production build or App Store upload failed. Review the step logs above for details." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+
+  publish_production_release:
+    runs-on: ubuntu-latest
+    needs: [release_notes_check, deploy_android, deploy_ios]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: production-artifacts
+          merge-multiple: true
+
+      - name: Prepare release notes
+        shell: bash
+        env:
+          VERSION: ${{ needs.release_notes_check.outputs.version }}
+          RELEASE_NOTES: ${{ needs.release_notes_check.outputs.release_notes }}
+        run: |
+          {
+            echo "## Release v${VERSION}"
+            echo ""
+            echo "- Version: ${VERSION}"
+            echo "- Commit: ${GITHUB_SHA}"
+            echo ""
+            echo "### Release Notes"
+            echo "${RELEASE_NOTES}"
+          } > production-release-notes.md
+
+      - name: Create or update production release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.release_notes_check.outputs.version }}
+        run: |
+          TAG="v${VERSION}"
+          TITLE="Release v${VERSION}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "$TITLE" --notes-file production-release-notes.md --draft=false --prerelease=false --latest
+          else
+            gh release create "$TAG" --title "$TITLE" --notes-file production-release-notes.md --draft=false --prerelease=false --latest
+          fi
+          AAB=$(find production-artifacts -name "*.aab" | head -1)
+          IPA=$(find production-artifacts -name "*.ipa" | head -1)
+          if [ -z "$AAB" ] && [ -z "$IPA" ]; then
+            echo "::error::No production artifacts found to upload to GitHub Release"
+            exit 1
+          fi
+          [ -n "$AAB" ] && gh release upload "$TAG" "$AAB" --clobber
+          [ -n "$IPA" ] && gh release upload "$TAG" "$IPA" --clobber

@@ -24,6 +24,7 @@ flowchart TB
   PRODWF --> PRODRN[Release notes validation]
   PRODRN --> PRODBUILD[Build Android and IOS production apps]
   PRODBUILD --> PRODDEPLOY[Deploy Android apk to Play + iOS .ipa to App Store]
+  PRODDEPLOY --> PRODRELEASE[Publish GitHub Release with production artifacts]
   PPWF --> PPRN[Release notes validation]
   PPRN --> PPBUILD[Build signed Android/iOS preview artifacts]
   PPBUILD --> PPPUBLISH[Publish preview GitHub Release]
@@ -109,6 +110,11 @@ flowchart TB
 - iOS production build → App Store Connect:
   - `version` from [`package.json`](../package.json)
   - `build_number` derived from marketing version (e.g., `1.0.13` → `1000013`).
+- After both store deployments succeed, a GitHub Release tagged `v<version>` is created (or updated if it already exists) with:
+  - Title: `Release v<version>`
+  - Body populated from `docs/release_notes/<version>.md`
+  - Android AAB and iOS IPA attached as release assets
+  - Marked as the latest release
 
 ## Permanent Preview ([`permanent_preview.yml`](../.github/workflows/permanent_preview.yml))
 
@@ -121,7 +127,7 @@ flowchart TB
 
 - Validates release notes for current package version (`docs/release_notes/<version>.md`).
 - Builds Android preview (release-signed) and iOS preview (release-signed) with timestamped build numbers.
-- Publishes artifacts to GitHub Actions and to a GitHub Release tagged `preview-v<version>`.
+- Publishes artifacts to GitHub Actions and to a GitHub Release tagged `preview-v<version>` with title `Preview Release v<version>`. This release is not marked as latest.
 
 ## Release Notes Structure & Gates
 

@@ -110,10 +110,8 @@ runs:
       shell: bash
       run: |
         if [[ "${{ steps.pods-cache.outputs.cache-hit }}" != "true" ]]; then
-          pod repo update
+          RCT_NEW_ARCH_ENABLED=1 bundle exec pod install
         fi
-        bundle exec pod update boost --no-repo-update
-        bundle exec pod install
 
     - name: Set up SSH for Match
       uses: webfactory/ssh-agent@v0.7.0

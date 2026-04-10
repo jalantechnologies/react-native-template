@@ -64,9 +64,10 @@ runs:
       shell: bash
 
     - name: Cache CocoaPods
+      id: pods-cache
       uses: actions/cache@v4
       with:
-        path: | 
+        path: |
           ios/Pods
           ~/Library/Caches/CocoaPods
           ~/.cocoapods
@@ -74,11 +75,24 @@ runs:
         restore-keys: |
           ${{ runner.os }}-pods-
 
+    - name: Cache SwiftPM
+      id: spm-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/Library/Caches/org.swift.swiftpm
+          ~/Library/Developer/Xcode/DerivedData/SourcePackages
+        key: ${{ runner.os }}-spm-${{ hashFiles('ios/Package.resolved', 'ios/Package.swift', 'ios/Podfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+
     - name: Install CocoaPods dependencies
       working-directory: ios
       shell: bash
       run: |
-        pod repo update
+        if [[ "${{ steps.pods-cache.outputs.cache-hit }}" != "true" ]]; then
+          pod repo update
+        fi
         bundle exec pod update boost --no-repo-update
         bundle exec pod install
 
@@ -107,15 +121,12 @@ runs:
         IOS_APP_IDENTIFIER: ${{ inputs.ios_app_identifier }}
         IOS_KEYCHAIN_PASSWORD: ${{ inputs.ios_keychain_password }}
 
-    - name: Clear Derived Data
-      run: rm -rf ~/Library/Developer/Xcode/DerivedData
-      shell: bash
-
     - name: Build the iOS Permanent Preview IPA
       working-directory: ios
       run: bundle exec fastlane ios ios_permanent_preview build_number:${{ inputs.build_number }} output_directory:../preview-artifacts output_name:react-native-template-preview.ipa
       shell: bash
       env:
+        DERIVED_DATA_PATH: ~/Library/Developer/Xcode/DerivedData
         FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: "15"
         FASTLANE_XCODEBUILD_SETTINGS_RETRIES: "5"
         MATCH_PASSWORD: ${{ inputs.ios_match_password }}

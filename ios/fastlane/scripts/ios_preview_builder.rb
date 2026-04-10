@@ -59,8 +59,10 @@ options.fetch(:keychain_password)
   FileUtils.mkdir_p(output_directory)
 
   UI.message('🏗️ Building IPA...')
+  derived_data_path = ENV['DERIVED_DATA_PATH'] || File.expand_path('~/Library/Developer/Xcode/DerivedData')
+
   build_app(
-    clean: true,
+    clean: false, # leverage cached DerivedData between CI runs
     scheme: scheme,
     workspace: workspace,
     configuration: configuration,
@@ -68,6 +70,7 @@ options.fetch(:keychain_password)
     output_directory: output_directory,
     output_name: output_name,
     verbose: true,
+    derived_data_path: derived_data_path,
     xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=\"Apple Distribution\" DEVELOPMENT_TEAM=#{team_id} PROVISIONING_PROFILE_SPECIFIER=\"#{profile_name}\" PRODUCT_BUNDLE_IDENTIFIER=#{app_identifier}",
     export_options: {
       compileBitcode: false,

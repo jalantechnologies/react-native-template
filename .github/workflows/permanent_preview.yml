@@ -97,7 +97,7 @@ jobs:
           echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
 
   build_ios_permanent_preview:
-    runs-on: macos-14
+    runs-on: macos-15-xlarge
     timeout-minutes: 60
     needs: [release_notes_check]
     steps:

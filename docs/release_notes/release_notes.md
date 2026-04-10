@@ -1,1 +1,1 @@
-<enter release notes for the next version here (max 500 chars)>
+- Optimized CI/CD pipeline to reduce build times and costs by adding path-based job skipping, yarn/Gradle/CocoaPods/DerivedData caching, and faster Apple-silicon runners

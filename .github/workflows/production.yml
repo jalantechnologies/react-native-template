@@ -129,7 +129,7 @@ jobs:
           echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
 
   deploy_ios:
-    runs-on: macos-15
+    runs-on: macos-15-xlarge
     needs: [release_notes_check]
     timeout-minutes: 30
     steps:

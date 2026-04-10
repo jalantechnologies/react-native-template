@@ -2,6 +2,8 @@
 
 Production-ready React Native boilerplate with TypeScript, navigation, state management, monitoring, and CI/CD pipelines.
 
+Live demo on Google Play: [Boilerplate](https://play.google.com/store/apps/details?id=com.bettrsw.boilerplate.app)
+
 ## Quickstart
 
 ```sh
@@ -30,6 +32,7 @@ yarn android              # or: yarn ios
 - [CI](docs/ci.md) — GitHub Actions checks and SonarQube gate expectations
 - [CD](docs/cd.md) — preview/production/permanent-preview deployment pipelines
 - [Troubleshooting](docs/troubleshooting.md) — common local build fixes
+- [Privacy Policy](https://jalantechnologies.github.io/react-native-template/privacy-policy.html) — Play Store privacy policy, served via GitHub Pages (enable in repo Settings → Pages → Deploy from branch `main` → `/` root)
 
 ## License
 

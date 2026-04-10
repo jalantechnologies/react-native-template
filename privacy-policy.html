@@ -47,17 +47,25 @@
 
   <h2>3. Automatically Collected Data</h2>
   <p>
-    Third-party SDKs integrated for monitoring and crash reporting may automatically collect
-    device-level information such as device model, OS version, app version, and crash diagnostics.
-    This data is used solely to improve application stability and is not linked to any individual
-    identity.
+    The App integrates Datadog for observability. Datadog may automatically collect the following:
+  </p>
+  <ul>
+    <li><strong>Device and app diagnostics</strong> — device model, OS version, app version, and native crash reports</li>
+    <li><strong>User interactions</strong> — tap events and UI element interactions (element type or accessibility label)</li>
+    <li><strong>Network requests</strong> — XHR/HTTP resource timing and error information</li>
+    <li><strong>Session replay</strong> — screen recordings at a 20% sample rate; sensitive text inputs are masked, and touch events are visible</li>
+    <li><strong>JavaScript errors</strong> — unhandled errors and stack traces</li>
+  </ul>
+  <p>
+    This data is used solely to monitor application stability and performance. It is processed by
+    Datadog under their privacy policy and is not sold or used for advertising purposes.
   </p>
 
   <h2>4. Third-Party Services</h2>
-  <p>The App may use the following third-party services, each governed by their own privacy policy:</p>
+  <p>The App uses the following third-party services, each governed by their own privacy policy:</p>
   <ul>
     <li>Google Play Services — device authentication and app distribution</li>
-    <li>Sentry — error and crash monitoring</li>
+    <li><a href="https://www.datadoghq.com/legal/privacy/">Datadog</a> — performance monitoring, error tracking, and session replay</li>
   </ul>
 
   <h2>5. Data Retention</h2>

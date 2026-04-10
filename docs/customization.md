@@ -1,29 +1,67 @@
 # Customizing the Template
 
-Use these steps to rebrand the template for your product.
+After forking, the project must be renamed from `Boilerplate` to your app name and its package identifier updated throughout.
 
-## App Name
+## Recommended: AI-Assisted Rename
 
-1. Update [`app.json`](../app.json) `name` and `displayName`.
-2. Update [`package.json`](../package.json) `name`.
+The fastest and most reliable path is to use Claude Code. A ready-made prompt is provided that instructs Claude to make every change in one session.
 
-## Android
+1. Fork the repository and open a Claude Code session at the project root.
+2. Open [`docs/ai-setup-prompt.md`](./ai-setup-prompt.md).
+3. Fill in your `APP_NAME` and `BUNDLE_ID` values in the prompt block.
+4. Paste the entire prompt into Claude Code and let it make all changes.
+5. When Claude confirms, run `yarn pod-install` to reinstall iOS pods.
 
-- [`android/settings.gradle`](../android/settings.gradle): set `rootProject.name`.
-- [`android/app/build.gradle`](../android/app/build.gradle): update `namespace` and `applicationId`.
-- Keep `production` as the base package; `preview` flavor uses `applicationIdSuffix ".preview"` so installs remain side by side.
-- Rename package directories under [`android/app/src/*/java/com/boilerplate/`](../android/app/src).
-- Update package declarations in Java/Kotlin files.
-- [`android/app/src/main/res/values/strings.xml`](../android/app/src/main/res/values/strings.xml): adjust `app_name`.
+## What Gets Changed
 
-## iOS
+The prompt covers every location where `Boilerplate` / `com.bettrsw.boilerplate.app` appears:
 
-- Rename [`ios/Boilerplate`](../ios/Boilerplate) folder to your app name.
-- Update targets in [`ios/Podfile`](../ios/Podfile).
-- Update `CFBundleDisplayName` in [`ios/Boilerplate/Info.plist`](../ios/Boilerplate/Info.plist).
-- Run `yarn pod-install` after changes.
+| Area | Files |
+|---|---|
+| Android build | `android/settings.gradle`, `android/app/build.gradle` |
+| Android sources | `MainActivity.kt`, `MainApplication.kt`, `SplashActivity.kt`, `ReactNativeFlipper.java` — package declarations + directory rename |
+| Android resources | `android/app/src/main/res/values/strings.xml` |
+| Android CI | `android/fastlane/Appfile` |
+| iOS sources | `AppDelegate.mm`, `Info.plist`, `LaunchScreen.storyboard`, `BoilerplateTests.m` |
+| iOS project | `project.pbxproj`, `Podfile`, `*.xcscheme`, `contents.xcworkspacedata` |
+| iOS directories | `Boilerplate/`, `BoilerplateTests/`, `Boilerplate.xcodeproj/`, `Boilerplate.xcworkspace/` |
+| Root | `app.json`, `package.json`, `sonar-project.properties` |
+
+## Manual Reference
+
+If you need to update only specific parts, these are the exact locations:
+
+### Android
+
+- `android/settings.gradle` — `rootProject.name`
+- `android/app/build.gradle` — `namespace` and `applicationId`
+- `android/app/src/main/res/values/strings.xml` — `app_name`
+- All `.kt` / `.java` files under `android/app/src/*/java/com/boilerplate/` — package declaration
+- `MainActivity.kt` — `getMainComponentName()` return value
+- Rename `android/app/src/*/java/com/boilerplate/` directories to your app name (lowercase)
+- `android/fastlane/Appfile` — fallback `package_name`
+
+### iOS
+
+- `ios/Boilerplate/AppDelegate.mm` — `self.moduleName`
+- `ios/Boilerplate/Info.plist` — `CFBundleDisplayName`
+- `ios/Boilerplate/LaunchScreen.storyboard` — title label `text`
+- `ios/BoilerplateTests/BoilerplateTests.m` — `@interface` and `@implementation` class name
+- `ios/Podfile` — `target` names
+- `ios/Boilerplate.xcodeproj/project.pbxproj` — global replace `Boilerplate` → new name
+- `ios/Boilerplate.xcodeproj/xcshareddata/xcschemes/Boilerplate.xcscheme` — content + filename
+- `ios/Boilerplate.xcworkspace/contents.xcworkspacedata` — `FileRef` location
+- Rename `ios/Boilerplate*/` directories and `ios/Boilerplate*.xcodeproj/` / `ios/Boilerplate*.xcworkspace/`
+- Delete `ios/Podfile.lock` and run `yarn pod-install`
+
+### Root
+
+- `app.json` — `name` and `displayName`
+- `package.json` — `name`
+- `sonar-project.properties` — `sonar.projectKey`
 
 ## CI/CD Metadata
 
-- [`.github/workflows/*.yml`](../.github/workflows): update any hardcoded project identifiers.
-- [`sonar-project.properties`](../sonar-project.properties): set the correct `sonar.projectKey`.
+Update any hardcoded project identifiers in:
+- [`.github/workflows/*.yml`](../.github/workflows) — app identifiers, project keys
+- Environment secrets in Doppler — `IOS_APP_IDENTIFIER`, `ANDROID_APP_IDENTIFIER`, bundle signing details

@@ -4,7 +4,7 @@ Production-ready React Native boilerplate with TypeScript, navigation, state man
 
 ## Post-Fork Setup
 
-After forking, rename the project from `Boilerplate` to your app — see [Customization](docs/customization.md) for the AI-assisted one-session approach.
+After forking, rename the project from `Boilerplate` to your app — see [Customization](docs/customization.md) for an AI-assisted one-session approach (Claude Code, Cursor, Copilot Workspace, or any AI coding assistant).
 
 ## Quickstart
 

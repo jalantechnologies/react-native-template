@@ -4,13 +4,13 @@ After forking, the project must be renamed from `Boilerplate` to your app name a
 
 ## Recommended: AI-Assisted Rename
 
-The fastest and most reliable path is to use Claude Code. A ready-made prompt is provided that instructs Claude to make every change in one session.
+The fastest and most reliable path is to use an AI coding assistant (Claude Code, Cursor, Copilot Workspace, or similar). A ready-made prompt is provided that instructs the AI to make every change in one session.
 
-1. Fork the repository and open a Claude Code session at the project root.
+1. Fork the repository and open an AI coding session at the project root.
 2. Open [`docs/ai-setup-prompt.md`](./ai-setup-prompt.md).
 3. Fill in your `APP_NAME` and `BUNDLE_ID` values in the prompt block.
-4. Paste the entire prompt into Claude Code and let it make all changes.
-5. When Claude confirms, run `yarn pod-install` to reinstall iOS pods.
+4. Paste the entire prompt into your AI assistant and let it make all changes.
+5. When the AI confirms, run `yarn pod-install` to reinstall iOS pods.
 
 ## What Gets Changed
 

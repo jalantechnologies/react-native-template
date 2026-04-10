@@ -1,13 +1,13 @@
-# Post-Fork Setup — Claude Prompt
+# Post-Fork Setup — AI Rename Prompt
 
-After forking this template, open a **Claude Code** session at the project root and paste the contents of the prompt below. Fill in your values for `APP_NAME` and `BUNDLE_ID` before pasting.
+After forking this template, open an AI coding session (Claude Code, Cursor, Copilot Workspace, or similar) at the project root and paste the contents of the prompt below. Fill in your values for `APP_NAME` and `BUNDLE_ID` before pasting.
 
 > **APP_NAME** — PascalCase, single word, no spaces (e.g. `TrackIt`)
 > **BUNDLE_ID** — reverse-domain bundle identifier (e.g. `com.mycompany.trackit`)
 
 ---
 
-## Prompt (paste into Claude Code)
+## Prompt (paste into your AI assistant)
 
 ```
 I've just forked react-native-template. Rename the project from "Boilerplate" to my app.

@@ -28,6 +28,7 @@ jobs:
               - 'src/**'
               - 'android/**'
               - 'ios/**'
+              - '.github/**'
               - 'package.json'
               - 'yarn.lock'
               - 'app.json'

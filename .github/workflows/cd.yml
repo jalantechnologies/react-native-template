@@ -28,12 +28,14 @@ jobs:
             android:
               - 'android/**'
               - '.github/actions/deploy_android_*/**'
+              - '.github/actions/mobile-scan/**'
               - '**/*.gradle*'
               - 'package.json'
               - 'yarn.lock'
             ios:
               - 'ios/**'
               - '.github/actions/deploy_ios_*/**'
+              - '.github/actions/mobile-scan/**'
               - '.ruby-version'
               - 'Gemfile*'
               - 'package.json'

@@ -3,7 +3,11 @@ name: setup-ios-preview-match
 # in the Match certificates repo. Delete this file after it runs successfully.
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - rehan/fix/ios-preview-bundle-identifier
+    paths:
+      - .github/workflows/setup_ios_preview_match.yml
 
 jobs:
   create_preview_profile:

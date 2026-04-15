@@ -107,7 +107,7 @@ jobs:
 
       - name: Upload Android production artifact
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-production-release
           path: production-artifacts/react-native-template.aab
@@ -172,7 +172,7 @@ jobs:
 
       - name: Upload iOS production artifact
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ios-production-release
           path: production-artifacts/react-native-template.ipa
@@ -201,7 +201,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: production-artifacts
           merge-multiple: true

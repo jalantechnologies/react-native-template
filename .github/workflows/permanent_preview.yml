@@ -81,7 +81,7 @@ jobs:
           android_key_password: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
       - name: Upload Android artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-preview-release
           path: preview-artifacts/react-native-template-preview.apk
@@ -130,7 +130,7 @@ jobs:
           ios_match_deploy_key: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
 
       - name: Upload iOS artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ios-preview-release
           path: preview-artifacts/react-native-template-preview.ipa
@@ -153,7 +153,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: preview-artifacts
           merge-multiple: true

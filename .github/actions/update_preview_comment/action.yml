@@ -20,7 +20,7 @@ runs:
   using: composite
   steps:
     - name: Upsert preview PR comment
-      uses: actions/github-script@v7
+      uses: actions/github-script@v9
       with:
         script: |
           const marker = '<!-- preview-build-links -->';

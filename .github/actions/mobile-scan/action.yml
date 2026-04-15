@@ -10,6 +10,10 @@ inputs:
     description: 'Glob path to the iOS IPA for Ostorlab binary scan (leave empty to skip)'
     required: false
     default: ''
+  ostorlab-api-key:
+    description: 'Ostorlab API key (required when android-apk-path or ios-ipa-path is provided)'
+    required: false
+    default: ''
 
 outputs:
   has-issues:
@@ -37,7 +41,7 @@ runs:
       with:
         asset_type: 'android-apk'
         target: ${{ inputs.android-apk-path }}
-        api-key: ${{ secrets.OSTORLAB_API_KEY }}
+        api-key: ${{ inputs.ostorlab-api-key }}
 
     - name: Ostorlab iOS IPA scan
       id: ostorlab_ios
@@ -47,7 +51,7 @@ runs:
       with:
         asset_type: 'ios-ipa'
         target: ${{ inputs.ios-ipa-path }}
-        api-key: ${{ secrets.OSTORLAB_API_KEY }}
+        api-key: ${{ inputs.ostorlab-api-key }}
 
     - name: Set has-issues output
       id: scan

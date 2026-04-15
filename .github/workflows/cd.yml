@@ -86,6 +86,8 @@ jobs:
 
       - name: Run mobile security scan
         uses: ./.github/actions/mobile-scan
+        with:
+          ostorlab-api-key: ${{ secrets.OSTORLAB_API_KEY }}
 
       - name: Failure summary
         if: failure()
@@ -106,6 +108,8 @@ jobs:
 
       - name: Run mobile security scan
         uses: ./.github/actions/mobile-scan
+        with:
+          ostorlab-api-key: ${{ secrets.OSTORLAB_API_KEY }}
 
       - name: Failure summary
         if: failure()

@@ -76,9 +76,49 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
 
-  deploy_android:
+  scan_android:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false' && needs.changes.outputs.android == 'true'
     needs: [changes, release_notes_check]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run mobile security scan
+        uses: ./.github/actions/mobile-scan
+
+      - name: Failure summary
+        if: failure()
+        run: |
+          echo "## ❌ Android Security Scan Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Trivy found HIGH or CRITICAL vulnerabilities in source/dependencies. Resolve them before deploying." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+
+  scan_ios:
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false' && needs.changes.outputs.ios == 'true'
+    needs: [changes, release_notes_check]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run mobile security scan
+        uses: ./.github/actions/mobile-scan
+
+      - name: Failure summary
+        if: failure()
+        run: |
+          echo "## ❌ iOS Security Scan Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Trivy found HIGH or CRITICAL vulnerabilities in source/dependencies. Resolve them before deploying." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+
+  deploy_android:
+    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false' && needs.changes.outputs.android == 'true'
+    needs: [changes, release_notes_check, scan_android]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -133,7 +173,7 @@ jobs:
 
   deploy_ios:
     if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false' && needs.changes.outputs.ios == 'true'
-    needs: [changes, release_notes_check]
+    needs: [changes, release_notes_check, scan_ios]
     runs-on: macos-15-xlarge
     timeout-minutes: 60
     permissions:

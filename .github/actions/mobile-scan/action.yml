@@ -1,0 +1,63 @@
+name: 'Mobile Security Scan'
+description: 'Scan source/dependencies with Trivy and optionally scan APK/IPA binaries with Ostorlab'
+
+inputs:
+  android-apk-path:
+    description: 'Glob path to the Android APK for Ostorlab binary scan (leave empty to skip)'
+    required: false
+    default: ''
+  ios-ipa-path:
+    description: 'Glob path to the iOS IPA for Ostorlab binary scan (leave empty to skip)'
+    required: false
+    default: ''
+
+outputs:
+  has-issues:
+    description: 'Set to "true" if any scan found HIGH or CRITICAL vulnerabilities'
+    value: ${{ steps.scan.outputs.has-issues }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Trivy source and dependency scan
+      id: trivy
+      uses: aquasecurity/trivy-action@0.33.0
+      continue-on-error: true
+      with:
+        scan-type: 'fs'
+        format: 'github'
+        severity: 'HIGH,CRITICAL'
+        ignore-unfixed: true
+
+    - name: Ostorlab Android APK scan
+      id: ostorlab_android
+      if: inputs.android-apk-path != ''
+      uses: ostorlab/github-action@main
+      continue-on-error: true
+      with:
+        asset_type: 'android-apk'
+        target: ${{ inputs.android-apk-path }}
+        api-key: ${{ secrets.OSTORLAB_API_KEY }}
+
+    - name: Ostorlab iOS IPA scan
+      id: ostorlab_ios
+      if: inputs.ios-ipa-path != ''
+      uses: ostorlab/github-action@main
+      continue-on-error: true
+      with:
+        asset_type: 'ios-ipa'
+        target: ${{ inputs.ios-ipa-path }}
+        api-key: ${{ secrets.OSTORLAB_API_KEY }}
+
+    - name: Set has-issues output
+      id: scan
+      if: steps.trivy.outcome == 'failure' || steps.ostorlab_android.outcome == 'failure' || steps.ostorlab_ios.outcome == 'failure'
+      shell: bash
+      run: echo "has-issues=true" >> $GITHUB_OUTPUT
+
+    - name: Fail if vulnerabilities found
+      if: steps.trivy.outcome == 'failure' || steps.ostorlab_android.outcome == 'failure' || steps.ostorlab_ios.outcome == 'failure'
+      shell: bash
+      run: |
+        echo "❌ Security scan found HIGH or CRITICAL vulnerabilities. Blocking deployment."
+        exit 1

@@ -1,0 +1,40 @@
+name: setup-ios-preview-match
+# ONE-TIME USE: Creates the provisioning profile for the iOS preview bundle ID
+# in the Match certificates repo. Delete this file after it runs successfully.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create_preview_profile:
+    runs-on: macos-15
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '.ruby-version'
+          bundler-cache: true
+          working-directory: ios
+
+      - name: Set up SSH for Match
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}
+
+      - name: Add GitHub to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Run match to create preview provisioning profile
+        working-directory: ios
+        run: bundle exec fastlane match appstore --readonly false
+        env:
+          MATCH_PASSWORD: ${{ secrets.IOS_MATCH_PASSWORD }}
+          IOS_MATCH_REPOSITORY_URL: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
+          IOS_APP_IDENTIFIER: ${{ secrets.IOS_PREVIEW_APP_IDENTIFIER }}
+          IOS_APP_STORE_TEAM_ID: ${{ secrets.IOS_APP_STORE_TEAM_ID }}

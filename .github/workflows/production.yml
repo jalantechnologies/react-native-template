@@ -68,9 +68,51 @@ jobs:
           notes_dir: 'docs/release_notes'
           notes_ext: '.md'
           
-  deploy_android:
+  scan_android:
     runs-on: ubuntu-latest
     needs: [release_notes_check]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run mobile security scan
+        uses: ./.github/actions/mobile-scan
+        with:
+          ostorlab-api-key: ${{ secrets.OSTORLAB_API_KEY }}
+
+      - name: Failure summary
+        if: failure()
+        run: |
+          echo "## ❌ Android Security Scan Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Trivy found HIGH or CRITICAL vulnerabilities in source/dependencies. Resolve them before deploying." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+
+  scan_ios:
+    runs-on: ubuntu-latest
+    needs: [release_notes_check]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run mobile security scan
+        uses: ./.github/actions/mobile-scan
+        with:
+          ostorlab-api-key: ${{ secrets.OSTORLAB_API_KEY }}
+
+      - name: Failure summary
+        if: failure()
+        run: |
+          echo "## ❌ iOS Security Scan Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Trivy found HIGH or CRITICAL vulnerabilities in source/dependencies. Resolve them before deploying." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+
+  deploy_android:
+    runs-on: ubuntu-latest
+    needs: [release_notes_check, scan_android]
     steps:
       - name: Checkout (app)
         uses: actions/checkout@v4
@@ -130,7 +172,7 @@ jobs:
 
   deploy_ios:
     runs-on: macos-15-xlarge
-    needs: [release_notes_check]
+    needs: [release_notes_check, scan_ios]
     timeout-minutes: 30
     steps:
       - name: Checkout (app)

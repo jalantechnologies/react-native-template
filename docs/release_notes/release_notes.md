@@ -1,2 +1,1 @@
-- Replaced Swift shim workaround with first-class Swift runtime linking via ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES build setting
-- Added Podfile post_install hook to apply Swift linking setting across all pod targets for Xcode 26+ compatibility
+<enter release notes for the next version here (max 500 chars)>

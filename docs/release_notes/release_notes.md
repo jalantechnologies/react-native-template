@@ -1,1 +1,2 @@
-<enter release notes for the next version here (max 500 chars)>
+- Removed unused Docker scaffolding (Dockerfile, docker-compose files, .dockerignore)
+- Removed unused GitHub Actions composite actions for Docker build and check

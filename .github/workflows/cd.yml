@@ -123,7 +123,7 @@ jobs:
           echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
 
   deploy_android:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false' && needs.changes.outputs.android == 'true'
+    if: false
     needs: [changes, release_notes_check, scan_android]
     runs-on: ubuntu-latest
     permissions:
@@ -178,7 +178,7 @@ jobs:
           echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
 
   deploy_ios:
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.draft == false && needs.changes.outputs.doc_only == 'false' && needs.changes.outputs.ios == 'true'
+    if: false
     needs: [changes, release_notes_check, scan_ios]
     runs-on: macos-15-xlarge
     timeout-minutes: 60

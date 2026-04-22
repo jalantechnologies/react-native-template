@@ -93,6 +93,7 @@ jobs:
           echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
 
   build_android_permanent_preview:
+    if: false
     runs-on: ubuntu-latest
     needs: [release_notes_check, scan_android]
     steps:
@@ -139,6 +140,7 @@ jobs:
           echo "**Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
 
   build_ios_permanent_preview:
+    if: false
     runs-on: macos-15-xlarge
     timeout-minutes: 60
     needs: [release_notes_check, scan_ios]

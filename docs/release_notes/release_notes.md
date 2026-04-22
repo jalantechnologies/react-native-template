@@ -1,1 +1,1 @@
-<enter release notes for the next version here (max 500 chars)>
+iOS preview builds now use a separate bundle identifier (IOS_PREVIEW_APP_IDENTIFIER), allowing preview and production apps to coexist on the same device — matching the existing Android preview flavour behaviour.

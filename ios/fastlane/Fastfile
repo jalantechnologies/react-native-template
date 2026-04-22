@@ -16,6 +16,7 @@ platform :ios do
   lane :ci_signing_setup do
     match(type: "appstore", readonly: true, keychain_name: "ios.keychain", keychain_password: ENV["IOS_KEYCHAIN_PASSWORD"])
   end
+
   # Deploys a PR build to TestFlight (internal testers only).
   # This lane is triggered from CI and uses environment variables to stay generic.
   # Upload fails if required env vars or bundle outputs are missing.

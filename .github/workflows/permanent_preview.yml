@@ -166,7 +166,7 @@ jobs:
           build_number: ${{ steps.ios_build.outputs.build_number }}
           ios_match_password: ${{ secrets.IOS_MATCH_PASSWORD }}
           ios_match_repository_url: ${{ secrets.IOS_MATCH_REPOSITORY_URL }}
-          ios_app_identifier: ${{ secrets.IOS_APP_IDENTIFIER }}
+          ios_preview_app_identifier: ${{ secrets.IOS_PREVIEW_APP_IDENTIFIER }}
           ios_keychain_password: ${{ secrets.IOS_KEYCHAIN_PASSWORD }}
           ios_app_store_team_id: ${{ secrets.IOS_APP_STORE_TEAM_ID }}
           ios_match_deploy_key: ${{ secrets.IOS_MATCH_DEPLOY_KEY }}

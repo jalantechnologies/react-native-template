@@ -10,9 +10,9 @@ inputs:
   ios_match_repository_url:
     required: true
     description: 'Match repository URL for certs'
-  ios_app_identifier:
+  ios_preview_app_identifier:
     required: true
-    description: 'Bundle ID for the app'
+    description: 'Preview bundle ID for the iOS app'
   ios_keychain_password:
     required: true
     description: 'Keychain password for Fastlane'
@@ -116,7 +116,7 @@ runs:
       env:
         MATCH_PASSWORD: ${{ inputs.ios_match_password }}
         IOS_MATCH_REPOSITORY_URL: ${{ inputs.ios_match_repository_url }}
-        IOS_APP_IDENTIFIER: ${{ inputs.ios_app_identifier }}
+        IOS_APP_IDENTIFIER: ${{ inputs.ios_preview_app_identifier }}
         IOS_KEYCHAIN_PASSWORD: ${{ inputs.ios_keychain_password }}
 
     - name: Build the iOS Permanent Preview IPA
@@ -130,7 +130,7 @@ runs:
         MATCH_PASSWORD: ${{ inputs.ios_match_password }}
         IOS_MATCH_REPOSITORY_URL: ${{ inputs.ios_match_repository_url }}
         IOS_KEYCHAIN_PASSWORD: ${{ inputs.ios_keychain_password }}
-        IOS_APP_IDENTIFIER: ${{ inputs.ios_app_identifier }}
+        IOS_APP_IDENTIFIER: ${{ inputs.ios_preview_app_identifier }}
         IOS_APP_STORE_TEAM_ID: ${{ inputs.ios_app_store_team_id }}
         BUILD_NUMBER: ${{ inputs.build_number }}
 

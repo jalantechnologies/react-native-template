@@ -1,1 +1,1 @@
-Disabled Android and iOS deployments temporarily.
+<enter release notes for the next version here (max 500 chars)>

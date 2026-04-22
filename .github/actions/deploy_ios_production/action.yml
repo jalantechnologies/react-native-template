@@ -57,12 +57,12 @@ runs:
       shell: bash
 
     - name: Set Node Version
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version-file: .nvmrc
 
     - name: Cache node modules
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           **/node_modules
@@ -80,7 +80,7 @@ runs:
 
     - name: Cache CocoaPods
       id: pods-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           ios/Pods
@@ -92,7 +92,7 @@ runs:
 
     - name: Cache SwiftPM
       id: spm-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           ~/Library/Caches/org.swift.swiftpm
@@ -110,7 +110,7 @@ runs:
         fi
 
     - name: Set up SSH for Match
-      uses: webfactory/ssh-agent@v0.7.0
+      uses: webfactory/ssh-agent@v0.10.0
       with:
         ssh-private-key: ${{ inputs.IOS_MATCH_DEPLOY_KEY }}
 
@@ -163,7 +163,7 @@ runs:
 
     - name: Upload Xcode build logs
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: xcode-build-logs
         path: /Users/runner/Library/Logs/gym/*.log

@@ -18,7 +18,7 @@ runs:
   using: "composite"
   steps:
     - name: Install Doppler CLI
-      uses: dopplerhq/cli-action@v3
+      uses: dopplerhq/cli-action@v4
     
     - name: Inject Doppler secrets into environment
       shell: bash
